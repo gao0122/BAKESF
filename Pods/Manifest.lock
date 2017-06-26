@@ -1,139 +1,45 @@
 PODS:
-  - Alamofire (4.4.0)
-  - Firebase/AdMob (4.0.0):
-    - Firebase/Core
-    - Google-Mobile-Ads-SDK (= 7.20.0)
-  - Firebase/Auth (4.0.0):
-    - Firebase/Core
-    - FirebaseAuth (= 4.0.0)
-  - Firebase/Core (4.0.0):
-    - FirebaseAnalytics (= 4.0.0)
-    - FirebaseCore (= 4.0.0)
-  - Firebase/Crash (4.0.0):
-    - Firebase/Core
-    - FirebaseCrash (= 2.0.0)
-  - Firebase/Database (4.0.0):
-    - Firebase/Core
-    - FirebaseDatabase (= 4.0.0)
-  - Firebase/DynamicLinks (4.0.0):
-    - Firebase/Core
-    - FirebaseDynamicLinks (= 2.0.0)
-  - Firebase/Messaging (4.0.0):
-    - Firebase/Core
-    - FirebaseMessaging (= 2.0.0)
-  - Firebase/RemoteConfig (4.0.0):
-    - Firebase/Core
-    - FirebaseRemoteConfig (= 2.0.0)
-  - Firebase/Storage (4.0.0):
-    - Firebase/Core
-    - FirebaseStorage (= 2.0.0)
-  - FirebaseAnalytics (4.0.0):
-    - FirebaseCore (~> 4.0)
-    - FirebaseInstanceID (~> 2.0)
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
-  - FirebaseAuth (4.0.0):
-    - FirebaseAnalytics (~> 4.0)
-    - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
-    - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (4.0.0):
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
-  - FirebaseCrash (2.0.0):
-    - FirebaseAnalytics (~> 4.0)
-    - FirebaseInstanceID (~> 2.0)
-    - GoogleToolboxForMac/Logger (~> 2.1)
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
-    - Protobuf (~> 3.1)
-  - FirebaseDatabase (4.0.0):
-    - FirebaseAnalytics (~> 4.0)
-  - FirebaseDynamicLinks (2.0.0):
-    - FirebaseAnalytics (~> 4.0)
-  - FirebaseInstanceID (2.0.0):
-    - FirebaseCore (~> 4.0)
-  - FirebaseMessaging (2.0.0):
-    - FirebaseAnalytics (~> 4.0)
-    - FirebaseCore (~> 4.0)
-    - FirebaseInstanceID (~> 2.0)
-    - GoogleToolboxForMac/Logger (~> 2.1)
-    - Protobuf (~> 3.1)
-  - FirebaseRemoteConfig (2.0.0):
-    - FirebaseAnalytics (~> 4.0)
-    - FirebaseInstanceID (~> 2.0)
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
-    - Protobuf (~> 3.1)
-  - FirebaseStorage (2.0.0):
-    - FirebaseAnalytics (~> 4.0)
-    - FirebaseCore (~> 4.0)
-    - GTMSessionFetcher/Core (~> 1.1)
-  - Google-Mobile-Ads-SDK (7.20.0)
-  - GoogleToolboxForMac/DebugUtils (2.1.1):
-    - GoogleToolboxForMac/Defines (= 2.1.1)
-  - GoogleToolboxForMac/Defines (2.1.1)
-  - GoogleToolboxForMac/Logger (2.1.1):
-    - GoogleToolboxForMac/Defines (= 2.1.1)
-  - GoogleToolboxForMac/NSData+zlib (2.1.1):
-    - GoogleToolboxForMac/Defines (= 2.1.1)
-  - GoogleToolboxForMac/NSDictionary+URLArguments (2.1.1):
-    - GoogleToolboxForMac/DebugUtils (= 2.1.1)
-    - GoogleToolboxForMac/Defines (= 2.1.1)
-    - GoogleToolboxForMac/NSString+URLArguments (= 2.1.1)
-  - GoogleToolboxForMac/NSString+URLArguments (2.1.1)
-  - GTMSessionFetcher/Core (1.1.10)
-  - MOBFoundation_IDFA (2.2.19)
+  - Alamofire (4.2.0)
+  - Crashlytics (3.8.4):
+    - Fabric (~> 1.6.3)
+  - Fabric (1.6.11)
+  - LeanCloud (10.0.2):
+    - LeanCloud/Storage (= 10.0.2)
+  - LeanCloud/Storage (10.0.2):
+    - Alamofire (~> 4.2.0)
+  - MOBFoundation (3.0.0)
   - PagingMenuController (2.2.0)
-  - Protobuf (3.3.0)
-  - Realm (2.7.0):
-    - Realm/Headers (= 2.7.0)
-  - Realm/Headers (2.7.0)
-  - RealmSwift (2.7.0):
-    - Realm (= 2.7.0)
-  - SMSSDK (2.1.5):
-    - MOBFoundation_IDFA
-  - SwipeViewController (0.1.8)
-  - Toast-Swift (2.0.0)
+  - Realm (2.8.3):
+    - Realm/Headers (= 2.8.3)
+  - Realm/Headers (2.8.3)
+  - RealmSwift (2.8.3):
+    - Realm (= 2.8.3)
+  - SMSSDK (3.0.0):
+    - MOBFoundation
+  - WechatOpenSDK (1.7.7)
 
 DEPENDENCIES:
-  - Alamofire (~> 4.4)
-  - Firebase/AdMob
-  - Firebase/Auth
-  - Firebase/Core
-  - Firebase/Crash
-  - Firebase/Database
-  - Firebase/DynamicLinks
-  - Firebase/Messaging
-  - Firebase/RemoteConfig
-  - Firebase/Storage
-  - MOBFoundation_IDFA
+  - Alamofire
+  - Crashlytics
+  - Fabric
+  - LeanCloud
   - PagingMenuController
   - RealmSwift
   - SMSSDK
-  - SwipeViewController
-  - Toast-Swift (~> 2.0.0)
+  - WechatOpenSDK
 
 SPEC CHECKSUMS:
-  Alamofire: dc44b1600b800eb63da6a19039a0083d62a6a62d
-  Firebase: 284eea779b73fdff309791817da7c68bff8dd572
-  FirebaseAnalytics: 6f08e746f7d66f5452931bc2e822b5df9c66b64a
-  FirebaseAuth: ebb6abcbabae00fc47446d690c19ce68d8484fde
-  FirebaseCore: 85ad466044c2f013cdb167f85d426d15b128114a
-  FirebaseCrash: 600ec2cbd8e10c3064a42de2c6ee7687bd02a076
-  FirebaseDatabase: d829b3a8c3e2ac7a16773c5df226966b0805dfc2
-  FirebaseDynamicLinks: ad3bef2e8addfa1490af9db02201429c5c9447dd
-  FirebaseInstanceID: 9fbf536668f4d3f0880e7438456dabd1376e294b
-  FirebaseMessaging: 227406c05b0dc9290702d2e9f18ab5528f0c2cf2
-  FirebaseRemoteConfig: b1bde8c572a1ca13558b5b179f4563cb877aa34b
-  FirebaseStorage: 8110a1ed2034c8fbfd83890d2acc9cdbbd99afec
-  Google-Mobile-Ads-SDK: 168312cdc167fa22746d4ea8e839fc4825dd2966
-  GoogleToolboxForMac: 8e329f1b599f2512c6b10676d45736bcc2cbbeb0
-  GTMSessionFetcher: 30d874b96d0d76028f61fbd122801e3f030d47db
-  MOBFoundation_IDFA: 4561562ab2364873a904a590dcdffea9f10ab8c6
+  Alamofire: aa2e09d871c9160ac53c90e83c68064a94e3dfbe
+  Crashlytics: 79e236942ca1e7fc641df1feb9a275360a78ab6a
+  Fabric: 5911403591946b8228ab1c51d98f1d7137e863c6
+  LeanCloud: e1e54faeae61634c3b98b437415f0f3ac2837fe1
+  MOBFoundation: e6572a62983a44fa048c4038842ade1494c10059
   PagingMenuController: 6176618987bb170096664f2da097313e45ed9c31
-  Protobuf: d582fecf68201eac3d79ed61369ef45734394b9c
-  Realm: 07e5d3a9e0e41d65fd5f9f05150ed6295d0f093b
-  RealmSwift: 6d06425d3900c86473c4f323bf6949b43fca22bc
-  SMSSDK: 7d19654f9d36392988e96bf697afdac983808b1a
-  SwipeViewController: 0e396aa7d7756c30f8914ef59aea2a3d7d7798bc
-  Toast-Swift: 5b2f8f720f7e78e48511f693df1f9c9a6e38a25a
+  Realm: 3601ef091c8c499a31101d8563b991e75546cdce
+  RealmSwift: 8183818515471b01a99abdd2970f8e4fd52b6f4a
+  SMSSDK: e4706231a3e6aa5620ec8a2d3fdc4d16870f746e
+  WechatOpenSDK: cbd332148eb792d444ed4eec94f421d98f2046ee
 
-PODFILE CHECKSUM: f102ba2dcef99c5476a89a19d974be86513e1238
+PODFILE CHECKSUM: f0df6256357e3f91124bf7386ae14fd2c1a0ccf4
 
 COCOAPODS: 1.2.1

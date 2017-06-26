@@ -10,9 +10,13 @@ import RealmSwift
 
 class UserRealm: Object {
     
-    dynamic var id: String!
-    dynamic var name: String!
-    dynamic var phone: String!
-    dynamic var pwd: String!
+    dynamic var id: String = ""
+    dynamic var name: String = ""
+    dynamic var phone: String = ""
+    dynamic var current = false
+ 
+    override static func primaryKey() -> String? {
+        return "id"
+    }
     
 }

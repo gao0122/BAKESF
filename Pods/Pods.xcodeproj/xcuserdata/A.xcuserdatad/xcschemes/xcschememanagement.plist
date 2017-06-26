@@ -9,12 +9,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>GTMSessionFetcher.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>GoogleToolboxForMac.xcscheme</key>
+		<key>LeanCloud.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -29,11 +24,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Protobuf.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>Realm.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -44,35 +34,20 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>SwipeViewController.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>Toast-Swift.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>34FC10F40140880F53E63161C26292A8</key>
+		<key>16A69473E5872AF26C758803BD454B9E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>42D3E65D3783137E8BDB490E0A390339</key>
+		<key>3E01143F3C6C5F4C651109AE4A7F4DAA</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>45DB32370E7CFABDD194C6F17F3D5796</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>62BF12B547BEBA665B5CDB7BAD928805</key>
+		<key>533220F17E97DCD9DFE2901C2AA6EFFE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -82,27 +57,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>6D5CEDECD3D8DC52EA507E0431BDA8A0</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>725719441BB190BA7711B5FE7E57CA80</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>8068A888FE2068F495D40AD853C4BC10</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>88E9EC28B8B46C3631E6B242B50F4442</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C052BEBFBD0AB5218CC64BA3450F6547</key>
+		<key>936D2E69D4F0A1FEE13393A976C9245D</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		000D13761EFF859000A19D5A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13751EFF859000A19D5A /* Extensions.swift */; };
+		000D13781EFF862700A19D5A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13771EFF862700A19D5A /* Constants.swift */; };
 		0034EE341EE7D59A005300AE /* SellerPagingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE331EE7D59A005300AE /* SellerPagingVC.swift */; };
 		0034EE361EE9116B005300AE /* SellerBuyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE351EE9116B005300AE /* SellerBuyVC.swift */; };
 		0034EE381EE91176005300AE /* SellerPreVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE371EE91176005300AE /* SellerPreVC.swift */; };
@@ -14,7 +16,6 @@
 		0044B0AC1ED17B3C003DE5AF /* HomeSellerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0044B0AB1ED17B3C003DE5AF /* HomeSellerTableViewCell.swift */; };
 		0048FDA91EE9E6AC002B49B6 /* SellerBuyBakeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDA81EE9E6AC002B49B6 /* SellerBuyBakeTableCell.swift */; };
 		0048FDAB1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDAA1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift */; };
-		0048FDAD1EEA7606002B49B6 /* CurrentSeller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDAC1EEA7606002B49B6 /* CurrentSeller.swift */; };
 		004BF0E01ED184CF00554A5E /* HomeSellerTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004BF0DF1ED184CF00554A5E /* HomeSellerTableView.swift */; };
 		006024F21EC9738800FFB859 /* MeMasterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006024F11EC9738800FFB859 /* MeMasterVC.swift */; };
 		006024F41EC973D600FFB859 /* MeMemoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006024F31EC973D600FFB859 /* MeMemoryVC.swift */; };
@@ -30,22 +31,21 @@
 		00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C841EC80BBC00B78151 /* LaunchScreen.storyboard */; };
 		00629C911EC8146900B78151 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00629C901EC8146900B78151 /* Alamofire.framework */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
-		00AA8DD11EDDA57800684826 /* RecentUserRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00AA8DD01EDDA57800684826 /* RecentUserRealm.swift */; };
 		00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */; };
-		00B474E51ECD75BA00ED1B7A /* FIRHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E41ECD75BA00ED1B7A /* FIRHelper.swift */; };
 		00B491A91EE4CFE1000C63EB /* SellerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B491A81EE4CFE1000C63EB /* SellerVC.swift */; };
-		00D0AF961EDECB0500B1F5A2 /* auth.html in Resources */ = {isa = PBXBuildFile; fileRef = 00D0AF951EDECB0500B1F5A2 /* auth.html */; };
 		00D0AF981EDEFB3100B1F5A2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 00D0AF971EDEFB3100B1F5A2 /* GoogleService-Info.plist */; };
 		00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D0AF991EE3C7F300B1F5A2 /* Helper.swift */; };
 		00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 00E14EF51ECAE016008197A3 /* Assets.xcassets */; };
 		00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EF81ECB1866008197A3 /* MeVC.swift */; };
-		00E14EFB1ECBF5C4008197A3 /* MeLoginByMsgVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFA1ECBF5C4008197A3 /* MeLoginByMsgVC.swift */; };
-		00E14EFD1ECBF5D2008197A3 /* MeLoginByPwdVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFC1ECBF5D2008197A3 /* MeLoginByPwdVC.swift */; };
+		00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */; };
 		00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFE1ECC9587008197A3 /* UserRealm.swift */; };
+		00E9030F1F012C030064F078 /* MeSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E9030E1F012C030064F078 /* MeSettingVC.swift */; };
 		7C78423555574DE0438F2E2B /* Pods_BAKESF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E044B49E4EC9FEE17E3750AB /* Pods_BAKESF.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		000D13751EFF859000A19D5A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		000D13771EFF862700A19D5A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		0034EE331EE7D59A005300AE /* SellerPagingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerPagingVC.swift; sourceTree = "<group>"; };
 		0034EE351EE9116B005300AE /* SellerBuyVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerBuyVC.swift; sourceTree = "<group>"; };
 		0034EE371EE91176005300AE /* SellerPreVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerPreVC.swift; sourceTree = "<group>"; };
@@ -53,7 +53,6 @@
 		0044B0AB1ED17B3C003DE5AF /* HomeSellerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeSellerTableViewCell.swift; sourceTree = "<group>"; };
 		0048FDA81EE9E6AC002B49B6 /* SellerBuyBakeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerBuyBakeTableCell.swift; sourceTree = "<group>"; };
 		0048FDAA1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerBuyBakeCollectionView.swift; sourceTree = "<group>"; };
-		0048FDAC1EEA7606002B49B6 /* CurrentSeller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentSeller.swift; sourceTree = "<group>"; };
 		004BF0DF1ED184CF00554A5E /* HomeSellerTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeSellerTableView.swift; sourceTree = "<group>"; };
 		006024F11EC9738800FFB859 /* MeMasterVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeMasterVC.swift; sourceTree = "<group>"; };
 		006024F31EC973D600FFB859 /* MeMemoryVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeMemoryVC.swift; sourceTree = "<group>"; };
@@ -72,20 +71,17 @@
 		00629C8D1EC8123E00B78151 /* BAKESF-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BAKESF-Bridging-Header.h"; sourceTree = "<group>"; };
 		00629C901EC8146900B78151 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/BAKESF-fjjjbtxahaznllbtrbwqrssaqyyd/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
-		00AA8DD01EDDA57800684826 /* RecentUserRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentUserRealm.swift; sourceTree = "<group>"; };
 		00B474DD1ECD655C00ED1B7A /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/../build/Debug-iphoneos/Realm/Realm.framework"; sourceTree = "<group>"; };
 		00B474DF1ECD656000ED1B7A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "Pods/../build/Debug-iphoneos/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
 		00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmHelper.swift; sourceTree = "<group>"; };
-		00B474E41ECD75BA00ED1B7A /* FIRHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FIRHelper.swift; sourceTree = "<group>"; };
 		00B491A81EE4CFE1000C63EB /* SellerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerVC.swift; sourceTree = "<group>"; };
-		00D0AF951EDECB0500B1F5A2 /* auth.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = auth.html; sourceTree = "<group>"; };
 		00D0AF971EDEFB3100B1F5A2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		00D0AF991EE3C7F300B1F5A2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		00E14EF51ECAE016008197A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		00E14EF81ECB1866008197A3 /* MeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeVC.swift; sourceTree = "<group>"; };
-		00E14EFA1ECBF5C4008197A3 /* MeLoginByMsgVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeLoginByMsgVC.swift; sourceTree = "<group>"; };
-		00E14EFC1ECBF5D2008197A3 /* MeLoginByPwdVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeLoginByPwdVC.swift; sourceTree = "<group>"; };
+		00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeLoginVC.swift; sourceTree = "<group>"; };
 		00E14EFE1ECC9587008197A3 /* UserRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRealm.swift; sourceTree = "<group>"; };
+		00E9030E1F012C030064F078 /* MeSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingVC.swift; sourceTree = "<group>"; };
 		71DAA475814F006DBCEAEEAC /* Pods-BAKESF.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BAKESF.release.xcconfig"; path = "Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF.release.xcconfig"; sourceTree = "<group>"; };
 		A684E2CFBACBDC8710C974F1 /* Pods-BAKESF.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BAKESF.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF.debug.xcconfig"; sourceTree = "<group>"; };
 		E044B49E4EC9FEE17E3750AB /* Pods_BAKESF.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BAKESF.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -111,8 +107,8 @@
 				006024F11EC9738800FFB859 /* MeMasterVC.swift */,
 				006024F31EC973D600FFB859 /* MeMemoryVC.swift */,
 				006024F51EC97D8700FFB859 /* MeTweetVC.swift */,
-				00E14EFA1ECBF5C4008197A3 /* MeLoginByMsgVC.swift */,
-				00E14EFC1ECBF5D2008197A3 /* MeLoginByPwdVC.swift */,
+				00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */,
+				00E9030E1F012C030064F078 /* MeSettingVC.swift */,
 			);
 			name = MeVC;
 			sourceTree = "<group>";
@@ -134,7 +130,6 @@
 		00629C6D1EC80BBC00B78151 = {
 			isa = PBXGroup;
 			children = (
-				00D0AF941EDECB0500B1F5A2 /* web */,
 				00629C781EC80BBC00B78151 /* BAKESF */,
 				00629C771EC80BBC00B78151 /* Products */,
 				011A9034769B3CE574824EC3 /* Pods */,
@@ -155,10 +150,10 @@
 			isa = PBXGroup;
 			children = (
 				00629C791EC80BBC00B78151 /* AppDelegate.swift */,
-				00B491AA1EE4CFEF000C63EB /* Seller */,
-				00E14F001ECC958F008197A3 /* Classes */,
 				00B474E31ECD6A2D00ED1B7A /* Helpers */,
+				00E14F001ECC958F008197A3 /* Classes */,
 				006024F81EC98F3300FFB859 /* HomeVC */,
+				00B491AA1EE4CFEF000C63EB /* Seller */,
 				00E14EF71ECB03E1008197A3 /* OrderVC */,
 				006024F71EC97D9000FFB859 /* MeVC */,
 				00629C7F1EC80BBC00B78151 /* Main.storyboard */,
@@ -173,8 +168,9 @@
 		00B474E31ECD6A2D00ED1B7A /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				000D13751EFF859000A19D5A /* Extensions.swift */,
+				000D13771EFF862700A19D5A /* Constants.swift */,
 				00D0AF991EE3C7F300B1F5A2 /* Helper.swift */,
-				00B474E41ECD75BA00ED1B7A /* FIRHelper.swift */,
 				00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */,
 			);
 			name = Helpers;
@@ -194,14 +190,6 @@
 			name = Seller;
 			sourceTree = "<group>";
 		};
-		00D0AF941EDECB0500B1F5A2 /* web */ = {
-			isa = PBXGroup;
-			children = (
-				00D0AF951EDECB0500B1F5A2 /* auth.html */,
-			);
-			path = web;
-			sourceTree = "<group>";
-		};
 		00E14EF71ECB03E1008197A3 /* OrderVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -215,8 +203,6 @@
 			isa = PBXGroup;
 			children = (
 				00E14EFE1ECC9587008197A3 /* UserRealm.swift */,
-				00AA8DD01EDDA57800684826 /* RecentUserRealm.swift */,
-				0048FDAC1EEA7606002B49B6 /* CurrentSeller.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -254,6 +240,7 @@
 				00629C741EC80BBC00B78151 /* Resources */,
 				32A12C5312D0D9EADB063726 /* [CP] Embed Pods Frameworks */,
 				341DC6A20EDE9E8E9E72D57E /* [CP] Copy Pods Resources */,
+				000D13791EFF99A200A19D5A /* Fabric */,
 			);
 			buildRules = (
 			);
@@ -308,7 +295,6 @@
 				00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */,
 				00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */,
 				00D0AF981EDEFB3100B1F5A2 /* GoogleService-Info.plist in Resources */,
-				00D0AF961EDECB0500B1F5A2 /* auth.html in Resources */,
 				00629C811EC80BBC00B78151 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -316,6 +302,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		000D13791EFF99A200A19D5A /* Fabric */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Fabric;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" 6ed525405b1959fae4852dff3430290a0df718f8 6789b3ff23d692a1aab39d71ab1cf28f6363937f03edc161eb7f675b1a28211b";
+		};
 		32A12C5312D0D9EADB063726 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -369,21 +369,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				006024F61EC97D8700FFB859 /* MeTweetVC.swift in Sources */,
+				00E9030F1F012C030064F078 /* MeSettingVC.swift in Sources */,
 				006025001EC9995400FFB859 /* HomeVC.swift in Sources */,
 				006024F41EC973D600FFB859 /* MeMemoryVC.swift in Sources */,
 				0034EE341EE7D59A005300AE /* SellerPagingVC.swift in Sources */,
 				006024FC1EC9900000FFB859 /* HomeFollowVC.swift in Sources */,
 				00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */,
-				00E14EFD1ECBF5D2008197A3 /* MeLoginByPwdVC.swift in Sources */,
 				0044B0AC1ED17B3C003DE5AF /* HomeSellerTableViewCell.swift in Sources */,
-				0048FDAD1EEA7606002B49B6 /* CurrentSeller.swift in Sources */,
+				000D13781EFF862700A19D5A /* Constants.swift in Sources */,
 				00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */,
 				0034EE361EE9116B005300AE /* SellerBuyVC.swift in Sources */,
 				006024FE1EC9900F00FFB859 /* HomeSellerVC.swift in Sources */,
 				0034EE381EE91176005300AE /* SellerPreVC.swift in Sources */,
 				006024FA1EC98FCF00FFB859 /* HomeMasterVC.swift in Sources */,
 				0034EE3A1EE91182005300AE /* SellerTweetVC.swift in Sources */,
-				00B474E51ECD75BA00ED1B7A /* FIRHelper.swift in Sources */,
 				00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */,
 				009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */,
 				0048FDAB1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift in Sources */,
@@ -392,8 +391,8 @@
 				00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */,
 				0048FDA91EE9E6AC002B49B6 /* SellerBuyBakeTableCell.swift in Sources */,
 				006024F21EC9738800FFB859 /* MeMasterVC.swift in Sources */,
-				00AA8DD11EDDA57800684826 /* RecentUserRealm.swift in Sources */,
-				00E14EFB1ECBF5C4008197A3 /* MeLoginByMsgVC.swift in Sources */,
+				000D13761EFF859000A19D5A /* Extensions.swift in Sources */,
+				00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */,
 				00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */,
 				006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */,
 				004BF0E01ED184CF00554A5E /* HomeSellerTableView.swift in Sources */,

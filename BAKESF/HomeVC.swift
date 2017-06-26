@@ -8,29 +8,23 @@
 
 import UIKit
 import PagingMenuController
-import Alamofire
 
 class HomeVC: UIViewController {
 
     @IBOutlet weak var masterView: UIView!
-    @IBOutlet weak var searchBtn: UIButton!
-    @IBOutlet weak var searchTextBtn: UIButton!
-    @IBOutlet weak var searchBarBtn: UIButton!
+    @IBOutlet weak var searchBar: UISearchBar!
     
-    var user = RecentUserRealm()
+    var user: UserRealm!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        searchBarBtn.layer.cornerRadius = 5
-        
-        RealmHelper.initCurrentSeller()
-        
-        if let usr = RealmHelper.retrieveRecentUser().first {
+        if let usr = RealmHelper.retrieveCurrentUser() {
+            // has logged in
             self.user = usr
+            
         } else {
-            RealmHelper.addUser(user: UserRealm())
-            RealmHelper.updateRecentUser(user: user)
+            // login
         }
 
         // page menu
@@ -107,11 +101,6 @@ class HomeVC: UIViewController {
         
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
 }
 
 

@@ -9,8 +9,9 @@
 import UIKit
 import Alamofire
 import QuartzCore
+import LeanCloud
 
-class HomeSellerVC: UIViewController, UITableViewDataSource, UIGestureRecognizerDelegate {
+class HomeSellerVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var tableView: HomeSellerTableView!
     
@@ -19,21 +20,27 @@ class HomeSellerVC: UIViewController, UITableViewDataSource, UIGestureRecognizer
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = self
-        tableView.allowsSelection = true
         
     }
     
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    override func viewWillAppear(_ animated: Bool) {
+        
     }
-
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+    }
+    
     class func instantiateFromStoryboard() -> HomeSellerVC {
         return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! HomeSellerVC
     }
     
+    
+    // MARK: - TableView
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -50,16 +57,6 @@ class HomeSellerVC: UIViewController, UITableViewDataSource, UIGestureRecognizer
         let commentsNum = seller["commentsNum"] as! Int
         cell.commentsNumber.setTitle("\(commentsNum) 评论", for: .normal)
         
-        let topics = seller["topics"] as! [String]
-        var topicsStr = ""
-        if topics.count > 1 {
-            topicsStr.append("\(topics.first!)...")
-        } else {
-            topicsStr.append("\(topics.first ?? "")")
-        }
-        
-        cell.topicButton.setTitle(topicsStr, for: .normal)
-        
         let hpName = "seller\(indexPath.row)_hp"
         cell.headphoto.image = UIImage(named: hpName)
         cell.headphoto.contentMode = .scaleAspectFill
@@ -72,43 +69,36 @@ class HomeSellerVC: UIViewController, UITableViewDataSource, UIGestureRecognizer
         cell.bgImage.contentMode = .scaleAspectFill
         cell.bgImage.clipsToBounds = true
         
+        cell.followBlurView.layer.cornerRadius = 5
+        cell.followBlurView.layer.masksToBounds = true
+        
         return cell
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let id = segue.identifier {
-            if id == "homeToSeller" {
-                
-                let sourceVC = segue.source
-                sourceVC.tabBarController?.tabBar.isHidden = true
-                sourceVC.navigationController?.interactivePopGestureRecognizer?.delegate = self
-                sourceVC.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
-                
-                RealmHelper.updateCurrentSellerID(id: tableView.indexPathForSelectedRow!.row, seller: RealmHelper.retrieveCurrentSeller())
-            }
-        }
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-    }
-    
-    @IBAction func unwindToHomeSellerVC(segue: UIStoryboardSegue) {
-        segue.source.tabBarController?.tabBar.isHidden = false
-    }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 4
     }
     
-    @IBAction func sellerCellTapped(_ tap: UITapGestureRecognizer) {
-        // to seller view page
+    // MARK: - Segue
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let id = segue.identifier {
+            switch id {
+            case "homeToSeller":
+                let sourceVC = segue.source
+                sourceVC.navigationController?.interactivePopGestureRecognizer?.delegate = self
+                sourceVC.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
                 
-        let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-        let sellerVC = storyboard.instantiateViewController(withIdentifier: "SellerVC") as! SellerVC
-        
-        
-        self.present(sellerVC, animated: true, completion: nil)
+                if let sellerVC = segue.destination as? SellerVC {
+                    sellerVC.id = tableView.indexPathForSelectedRow!.row
+                }
+            default:
+                break
+            }
+        }
+    }
+    
+    @IBAction func unwindToHomeSellerVC(segue: UIStoryboardSegue) {
+        segue.source.tabBarController?.tabBar.isHidden = false
     }
     
 }

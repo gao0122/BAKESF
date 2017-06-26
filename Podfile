@@ -7,34 +7,28 @@ target 'BAKESF' do
 
   # Pods for BAKESF
 
-  # Firebase
-  pod 'Firebase/Core'
-  pod 'Firebase/Messaging'
-  pod 'Firebase/Database'
-  pod 'Firebase/DynamicLinks'
-  pod 'Firebase/Crash'
-  pod 'Firebase/RemoteConfig'
-  pod 'Firebase/Auth'
-  pod 'Firebase/AdMob'
-  pod 'Firebase/Storage'
-
-  # Mob product framework
-  pod 'MOBFoundation_IDFA'
-
   # SMSSDK
   pod 'SMSSDK'
 
   # http networking
-  pod 'Alamofire', '~> 4.4'
-
+  pod 'Alamofire'
+  
   # local database
   pod 'RealmSwift'
   
-  # make a toast
-  pod 'Toast-Swift', '~> 2.0.0'
-
   # page view controller
   pod "PagingMenuController"
-  pod "SwipeViewController"
+
+  # wx
+  pod "WechatOpenSDK"
+
+  # fabric 
+  pod 'Fabric'
+  pod 'Crashlytics'
+
+  # leancloud
+  pod 'LeanCloud'
 
 end
+
+

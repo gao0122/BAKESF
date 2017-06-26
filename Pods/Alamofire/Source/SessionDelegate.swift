@@ -438,9 +438,11 @@ extension SessionDelegate: URLSessionTaskDelegate {
         let completeTask: (URLSession, URLSessionTask, Error?) -> Void = { [weak self] session, task, error in
             guard let strongSelf = self else { return }
 
-            strongSelf.taskDidComplete?(session, task, error)
-
-            strongSelf[task]?.delegate.urlSession(session, task: task, didCompleteWithError: error)
+            if let taskDidComplete = strongSelf.taskDidComplete {
+                taskDidComplete(session, task, error)
+            } else if let delegate = strongSelf[task]?.delegate {
+                delegate.urlSession(session, task: task, didCompleteWithError: error)
+            }
 
             NotificationCenter.default.post(
                 name: Notification.Name.Task.DidComplete,
@@ -469,10 +471,10 @@ extension SessionDelegate: URLSessionTaskDelegate {
         /// If an error occurred and the retrier is set, asynchronously ask the retrier if the request
         /// should be retried. Otherwise, complete the task by notifying the task delegate.
         if let retrier = retrier, let error = error {
-            retrier.should(sessionManager, retry: request, with: error) { [weak self] shouldRetry, timeDelay in
+            retrier.should(sessionManager, retry: request, with: error) { [weak self] shouldRetry, delay in
                 guard shouldRetry else { completeTask(session, task, error) ; return }
 
-                DispatchQueue.utility.after(timeDelay) { [weak self] in
+                DispatchQueue.utility.after(delay) { [weak self] in
                     guard let strongSelf = self else { return }
 
                     let retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false

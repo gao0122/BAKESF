@@ -9,25 +9,24 @@
 import UIKit
 import PagingMenuController
 
-class MeVC: UIViewController {
+class MeVC: UIViewController, UIGestureRecognizerDelegate {
     
     @IBOutlet weak var loginBtn: UIButton!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var bgImageView: UIImageView!
     
-    var user = RecentUserRealm()
+    var user: UserRealm!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         var bgImage = UIImage()
 
-        user = RealmHelper.retrieveRecentUser().first!
-        
-        if user.phone != nil && user.phone.characters.count == 11 {
-            loginBtn.setTitle("重新登录", for: UIControlState.normal)
-            userNameLabel.text = "欢迎 \(user.phone!)"
-            
+        if let usr = RealmHelper.retrieveCurrentUser() {
+            loginBtn.setTitle("已登录", for: UIControlState.disabled)
+            loginBtn.isEnabled = false
+            userNameLabel.text = "欢迎 \(user.phone)"
+            user = usr
             // todo
             bgImage = UIImage()
         } else {
@@ -36,7 +35,9 @@ class MeVC: UIViewController {
             
             bgImage = UIImage()
         }
+        
         bgImageView.image = bgImage
+        
         
         // page menu 
         struct MeMemory: MenuItemViewCustomizable {
@@ -107,35 +108,38 @@ class MeVC: UIViewController {
 
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    override func viewDidDisappear(_ animated: Bool) {
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
-
+    override func viewWillAppear(_ animated: Bool) {
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = false
+    }
     
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
+        if let id = segue.identifier {
+            switch id {
+            case "showLogin":
+                let sourceVC = segue.source
+                sourceVC.navigationController?.interactivePopGestureRecognizer?.delegate = self
+                sourceVC.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+            case "unwindToMeFromLogin":
+                userNameLabel.text = "欢迎 \(self.user.phone)"
+            default:
+                break
+            }
+        }
     }
 
     
-    @IBAction func loginBtnPressed(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-        
-        let meLoginByMsgVC = storyboard.instantiateViewController(withIdentifier: "loginByMsg") as! MeLoginByMsgVC
-
-        if loginBtn.titleLabel?.text == "重新登录" {
-            
-            self.alertOkayOrNot(okTitle: "确定", notTitle: "取消", msg: "确定登出此账号并重新登录吗？", okAct: { _ in
-                self.user = RecentUserRealm()
-            }, notAct: { _ in })
-            self.present(meLoginByMsgVC, animated: true, completion: nil)
-            
-        } else if loginBtn.titleLabel?.text == "立即登录" {
-            
-            self.present(meLoginByMsgVC, animated: true, completion: nil)
-        }
+    @IBAction func unwindToMeVC(segue: UIStoryboardSegue) {
+        // show tab bar after unwinding
+        segue.source.tabBarController?.tabBar.isHidden = false
     }
     
 }

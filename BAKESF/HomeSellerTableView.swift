@@ -8,19 +8,6 @@
 
 import UIKit
 
-class HomeSellerTableView: UITableView, UITableViewDelegate {
-
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return 4
-//    }
-//    
-//    func numberOfSections(in tableView: UITableView) -> Int {
-//        return 1
-//    }
-//    
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        
-//        
-//    }
-
+class HomeSellerTableView: UITableView {
+    
 }

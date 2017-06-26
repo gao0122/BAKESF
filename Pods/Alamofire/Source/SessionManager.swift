@@ -874,16 +874,12 @@ open class SessionManager {
                     return
                 }
 
-                DispatchQueue.utility.after(timeDelay) {
-                    guard let strongSelf = self else { return }
+                let retrySucceeded = strongSelf.retry(request)
 
-                    let retrySucceeded = strongSelf.retry(request)
-
-                    if retrySucceeded, let task = request.task {
-                        strongSelf.delegate[task] = request
-                    } else {
-                        if strongSelf.startRequestsImmediately { request.resume() }
-                    }
+                if retrySucceeded, let task = request.task {
+                    strongSelf.delegate[task] = request
+                } else {
+                    if strongSelf.startRequestsImmediately { request.resume() }
                 }
             }
         }

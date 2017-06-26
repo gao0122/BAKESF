@@ -13,16 +13,11 @@ class HomeSellerTableViewCell: UITableViewCell, UIImagePickerControllerDelegate,
     @IBOutlet weak var bgImage: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var followBtn: UIButton!
+    @IBOutlet weak var followBlurView: UIVisualEffectView!
     @IBOutlet weak var headphoto: UIImageView!
     @IBOutlet weak var commentsNumber: UIButton!
-    @IBOutlet weak var topicButton: UIButton!
+    @IBOutlet weak var whiteFiveStars: UIImageView!
     
-    @IBOutlet weak var stars: UICollectionView! {
-        didSet {
-            stars.allowsSelection = false
-        }
-    }
-
     var picker: UIImagePickerController = UIImagePickerController()
     var rootVC: UIViewController!
     
@@ -30,9 +25,6 @@ class HomeSellerTableViewCell: UITableViewCell, UIImagePickerControllerDelegate,
         
         // openGallary() : - Test photo gallary
         
-    }
-        
-    @IBAction func topicBtnPressed(_ sender: Any) {
     }
     
     @IBAction func commentNumberBtnPressed(_ sender: Any) {

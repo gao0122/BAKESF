@@ -7,16 +7,44 @@
 //
 
 import UIKit
+import SystemConfiguration
 
-extension UIViewController {
-    
-    func alertOkayOrNot(title: String = "", okTitle: String, notTitle: String, msg: String, okAct: @escaping (UIAlertAction) -> Void, notAct: @escaping (UIAlertAction) -> Void) {
-        
-        let alertController = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-        let okayAction = UIAlertAction(title: okTitle, style: .default, handler: okAct)
-        let cancelAction = UIAlertAction(title: notTitle, style: .cancel, handler: notAct)
-        alertController.addAction(okayAction)
-        alertController.addAction(cancelAction)
-        self.present(alertController, animated: true, completion: nil)
-    }
+enum State {
+    case login, logout
 }
+
+// check if is connected to the network
+public func connectedToNetwork() -> Bool {
+    var zeroAddress = sockaddr_in()
+    zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
+    zeroAddress.sin_family = sa_family_t(AF_INET)
+    
+    guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
+        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+            SCNetworkReachabilityCreateWithAddress(nil, $0)
+        }
+    }) else {
+        return false
+    }
+    
+    var flags: SCNetworkReachabilityFlags = []
+    if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
+        return false
+    }
+    
+    let isReachable = flags.contains(.reachable)
+    let needsConnection = flags.contains(.connectionRequired)
+    
+    return (isReachable && !needsConnection)
+}
+
+public func generateRandomPwd(length: Int = 14) -> String {
+    let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*()_+-="
+    var pwd = "Bk"
+    for _ in 0..<length {
+        let index = Int(arc4random_uniform(UInt32(chars.characters.count)))
+        pwd.append(chars.substring(from: index, to: index + 1))
+    }
+    return pwd
+}
+

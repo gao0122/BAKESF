@@ -9,7 +9,7 @@
 import UIKit
 import PagingMenuController
 
-class SellerVC: UIViewController {
+class SellerVC: UIViewController, UIGestureRecognizerDelegate {
     
     @IBOutlet weak var sellerInfoBgImage: UIImageView!
     @IBOutlet weak var introBtn: UIButton!
@@ -20,7 +20,6 @@ class SellerVC: UIViewController {
     @IBOutlet weak var hpImage: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var addressLabel: UIButton!
-    @IBOutlet weak var stars: UICollectionView!
     @IBOutlet weak var starsHover: UIImageView!
     @IBOutlet weak var commentNumberBtn: UIButton!
     @IBOutlet weak var starLabel: UIButton!
@@ -32,7 +31,6 @@ class SellerVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        id = RealmHelper.retrieveCurrentSellerID()
         ids = String(id)
         seller = sellers[ids] as! [String: Any]
         
@@ -110,7 +108,6 @@ class SellerVC: UIViewController {
         }
         
 
-        
         bgImage.image = UIImage(named: "seller" + ids + "_bg")
         bgImage.contentMode = .scaleAspectFill
         bgImage.clipsToBounds = true
@@ -146,13 +143,34 @@ class SellerVC: UIViewController {
         starsHover.frame.origin.x += x
         starsHover.frame.size.width -= x
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+
+    }
 
     @IBAction func introBtnPressed(_ sender: Any) {
         
     }
     
-    @IBAction func screenEdgePanBackToHome(_ sender: Any) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+    }
+    
+    override func unwind(for unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
+        
+    }
+    
+    @IBAction func screenEdgePanBackToHomeFromSeller(_ sender: Any) {
         self.performSegue(withIdentifier: "unwindToHomeFromSeller", sender: sender)
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
     }
     
 }

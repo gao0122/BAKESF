@@ -22,8 +22,7 @@ class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         bakeCollectionView.dataSource = self
         bakeCollectionView.allowsSelection = false
         
-        
-        bake = sellers["\(RealmHelper.retrieveCurrentSellerID())"] as! [String : Any]
+        bake = sellers["1"] as! [String : Any]
         bakes = bake["bakes"] as! [String: Any]
 
     }
@@ -62,10 +61,6 @@ class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         }
         
         return count
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
     }
     
     class func instantiateFromStoryboard() -> SellerBuyVC {
