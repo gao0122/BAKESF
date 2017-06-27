@@ -20,22 +20,12 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        var bgImage = UIImage()
 
-        if let usr = RealmHelper.retrieveCurrentUser() {
-            loginBtn.setTitle("已登录", for: UIControlState.disabled)
-            loginBtn.isEnabled = false
-            userNameLabel.text = "欢迎 \(user.phone)"
-            user = usr
-            // todo
-            bgImage = UIImage()
-        } else {
-            loginBtn.setTitle("立即登录", for: UIControlState.normal)
-            userNameLabel.text = ""
-            
-            bgImage = UIImage()
-        }
+        let _ = checkCurrentUser()
         
+        var bgImage = UIImage()
+        // todo
+        bgImage = UIImage()
         bgImageView.image = bgImage
         
         
@@ -120,6 +110,10 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate {
         self.tabBarController?.tabBar.isHidden = false
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let id = segue.identifier {
@@ -138,8 +132,31 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate {
 
     
     @IBAction func unwindToMeVC(segue: UIStoryboardSegue) {
-        // show tab bar after unwinding
-        segue.source.tabBarController?.tabBar.isHidden = false
+        let _ = checkCurrentUser()
+        
+        if let id = segue.identifier {
+            switch id {
+            case "unwindToMeFromLogin":
+                break
+            case "unwindToMeFromSetting":
+                break
+            default:
+                break
+            }
+        }
+    }
+    
+    func checkCurrentUser() -> Bool {
+        if let usr = RealmHelper.retrieveCurrentUser() {
+            user = usr
+            loginBtn.isHidden = true
+            userNameLabel.text = "欢迎 \(user.phone)"
+            return true
+        } else {
+            loginBtn.isHidden = false
+            userNameLabel.text = ""
+            return false
+        }
     }
     
 }

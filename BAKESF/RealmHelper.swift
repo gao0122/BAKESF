@@ -14,7 +14,7 @@ class RealmHelper {
     static func addUser(user: UserRealm) {
         let realm = try! Realm()
         try! realm.write {
-            realm.add(user)
+            realm.add(user)            
         }
     }
     
@@ -27,6 +27,18 @@ class RealmHelper {
         let realm = try! Realm()
         try! realm.write {
             user.phone = phone
+        }
+    }
+    
+    static func setCurrentUser(withID id: String) -> Bool {
+        let realm = try! Realm()
+        if let user = realm.object(ofType: UserRealm.self, forPrimaryKey: id) {
+            try! realm.write {
+                user.current = true
+            }
+            return true
+        } else {
+            return false
         }
     }
     

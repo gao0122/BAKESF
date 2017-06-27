@@ -145,10 +145,14 @@ class SellerVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = true
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
+
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
 
     }
 

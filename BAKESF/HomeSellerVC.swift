@@ -31,6 +31,10 @@ class HomeSellerVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         self.tabBarController?.tabBar.isHidden = false
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
     override func viewDidDisappear(_ animated: Bool) {
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }

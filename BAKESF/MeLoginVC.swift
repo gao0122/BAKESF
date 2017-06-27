@@ -14,6 +14,8 @@ enum LoginState {
     case normal, sending, loggingIn
 }
 
+let TEST = true
+
 class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var backToMeBtn: UIButton!
@@ -27,7 +29,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     @IBOutlet weak var loginByMsgOrPwd: UIButton!
     
     var users: Results<UserRealm>!
-    let getMsgText = "获取验证码"
+
     let totalSeconds = 42 + 3
     var seconds = 0
     var timer = Timer()
@@ -54,7 +56,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = true
+
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -114,54 +116,34 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         
         // MARK: - test user
         //phoneNum = "13143128565"
-        
-        if self.phoneNum.characters.count > 0 {
-            if self.phoneNum == phoneTextField.text {
+        if self.phoneTextField.text!.characters.count > 0 {
+            if self.phoneNum == phoneTextField.text || TEST {
                 if let code = msgTextField.text {
                     if code.characters.count > 0 {
                         if self.state == .normal {
                             self.loginBtn.isEnabled = false
                             self.state = .loggingIn
-                            SMSSDK.commitVerificationCode(code, phoneNumber: self.phoneNum, zone: "86", result: {
-                                error in
-                                if error == nil {
-                                    print("verified successfully")
-                                    let userLC = LCUser()
-                                    userLC.mobilePhoneNumber = LCString(self.phoneNum)
-                                    userLC.password = LCString(generateRandomPwd())
-                                    userLC.username = LCString("用户\(self.phoneNum)")
-                                    
-                                    userLC.signUp({
-                                        result in
-                                        if result.isSuccess {
-                                            // new
-                                            let id = userLC.objectId!.value
-                                            let userRealm = UserRealm()
-                                            userRealm.id = id
-                                            userRealm.phone = self.phoneNum
-                                            userRealm.name = userLC.username!.value
-                                            userRealm.current = true
-                                            RealmHelper.addUser(user: userRealm)
-                                        } else {
-                                            // old
-                                            printit(any: "sigu up error \(result.error!.code)")
+                            if TEST {
+                                login(sender)
+                            } else {
+                                SMSSDK.commitVerificationCode(code, phoneNumber: self.phoneNum, zone: "86", result: {
+                                    error in
+                                    if error == nil {
+                                        printit(any: "verified successfully")
+                                        self.login(sender)
+                                    } else {
+                                        let errorMsg = error!.localizedDescription
+                                        if errorMsg.contains("468") {
+                                            self.view.notify(text: "验证码错误", color: .red)
+                                        } else if errorMsg.contains("467") {
+                                            self.view.notify(text: "5分钟内校验错误超过3次，请稍后再试", color: .red)
                                         }
-                                        self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)
-                                    })
-                                                                    
-                                } else {
-
-                                    let errorMsg = error!.localizedDescription
-                                    if errorMsg.contains("468") {
-                                        self.view.notify(text: "验证码错误", color: .red)
-                                    } else if errorMsg.contains("467") {
-                                        self.view.notify(text: "5分钟内校验错误超过3次，请稍后再试", color: .red)
+                                        print(error!.localizedDescription)
                                     }
-                                    print(error!.localizedDescription)
-                                }
-                                self.loginBtn.isEnabled = true
-                                self.state = .normal
-                            })
+                                    self.loginBtn.isEnabled = true
+                                    self.state = .normal
+                                })
+                            }
                         }
                     } else {
                         // please input verification code
@@ -169,13 +151,67 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                     }
                 }
             } else {
-                // please input phone number
-                self.view.notify(text: "请输入正确的手机号码", color: .orange)
+                // please input verified phone number
+                self.view.notify(text: "请输入接受验证的手机号码", color: .orange)
             }
         } else {
             // please input the right phone number
             self.view.notify(text: "请输入手机号码", color: .orange)
         }
+    }
+    
+    func login(_ sender: Any) {
+        if TEST {
+            self.phoneNum = self.phoneTextField.text!
+        }
+        let userLC = LCUser()
+        userLC.mobilePhoneNumber = LCString(self.phoneNum)
+        userLC.password = LCString(generateRandomPwd())
+        userLC.username = LCString("用户\(self.phoneNum)")
+        userLC.set("mobilePhoneVeryfied", value: LCBool(true))
+        userLC.signUp({
+            result in
+            if result.isSuccess {
+                // new
+                self.addRealmUser(user: userLC)
+            } else {
+                // old
+                printit(any: "sigu up error \(result.error!.code)")
+                switch result.error!.code {
+                case 218:
+                    let query = LCQuery(className: "_User")
+                    query.whereKey("mobilePhoneNumber", .equalTo(self.phoneNum))
+                    query.getFirst {
+                        result in
+                        switch result  {
+                        case .success(let usr as LCUser):
+                            // retrieved old user
+                            let id = usr.objectId!.value
+                            if !RealmHelper.setCurrentUser(withID: id) {
+                                self.addRealmUser(user: userLC)
+                            }
+                        case .failure(let error):
+                            printit(any: error)
+                        default:
+                            break
+                        }
+                    }
+                default:
+                    break
+                }
+            }
+            self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)
+        })
+    }
+    
+    func addRealmUser(user: LCUser) {
+        let id = user.objectId!.value
+        let userRealm = UserRealm()
+        userRealm.id = id
+        userRealm.phone = self.phoneNum
+        userRealm.name = user.username!.value
+        userRealm.current = true
+        RealmHelper.addUser(user: userRealm)
     }
     
     func dismissKeyboard(sender: UISegmentedControl) {

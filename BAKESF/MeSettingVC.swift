@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MeSettingVC: UIViewController {
+class MeSettingVC: UIViewController, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var userNameBtn: UIButton!
     @IBOutlet weak var logoutBtn: UIButton!
@@ -20,7 +20,11 @@ class MeSettingVC: UIViewController {
 
         // Do any additional setup after loading the view.
         if let usr = RealmHelper.retrieveCurrentUser() {
+            user = usr
             userNameBtn.setTitle(usr.name, for: .normal)
+            logoutBtn.isEnabled = true
+        } else {
+            logoutBtn.isEnabled = false
         }
     }
 

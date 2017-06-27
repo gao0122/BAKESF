@@ -9,7 +9,7 @@
 import UIKit
 import PagingMenuController
 
-class HomeVC: UIViewController {
+class HomeVC: UIViewController, UISearchBarDelegate {
 
     @IBOutlet weak var masterView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -24,9 +24,10 @@ class HomeVC: UIViewController {
             self.user = usr
             
         } else {
-            // login
+            // to login
         }
 
+        
         // page menu
         struct HomeSeller: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {

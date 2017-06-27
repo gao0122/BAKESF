@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		000D13761EFF859000A19D5A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13751EFF859000A19D5A /* Extensions.swift */; };
 		000D13781EFF862700A19D5A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13771EFF862700A19D5A /* Constants.swift */; };
+		001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001DB09C1F024CD100A09F32 /* CommunityVC.swift */; };
 		0034EE341EE7D59A005300AE /* SellerPagingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE331EE7D59A005300AE /* SellerPagingVC.swift */; };
 		0034EE361EE9116B005300AE /* SellerBuyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE351EE9116B005300AE /* SellerBuyVC.swift */; };
 		0034EE381EE91176005300AE /* SellerPreVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE371EE91176005300AE /* SellerPreVC.swift */; };
@@ -46,6 +47,7 @@
 /* Begin PBXFileReference section */
 		000D13751EFF859000A19D5A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		000D13771EFF862700A19D5A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		001DB09C1F024CD100A09F32 /* CommunityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityVC.swift; sourceTree = "<group>"; };
 		0034EE331EE7D59A005300AE /* SellerPagingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerPagingVC.swift; sourceTree = "<group>"; };
 		0034EE351EE9116B005300AE /* SellerBuyVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerBuyVC.swift; sourceTree = "<group>"; };
 		0034EE371EE91176005300AE /* SellerPreVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerPreVC.swift; sourceTree = "<group>"; };
@@ -100,6 +102,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		001DB09E1F024CDB00A09F32 /* CommunityVC */ = {
+			isa = PBXGroup;
+			children = (
+				001DB09C1F024CD100A09F32 /* CommunityVC.swift */,
+			);
+			name = CommunityVC;
+			sourceTree = "<group>";
+		};
 		006024F71EC97D9000FFB859 /* MeVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -155,6 +165,7 @@
 				006024F81EC98F3300FFB859 /* HomeVC */,
 				00B491AA1EE4CFEF000C63EB /* Seller */,
 				00E14EF71ECB03E1008197A3 /* OrderVC */,
+				001DB09E1F024CDB00A09F32 /* CommunityVC */,
 				006024F71EC97D9000FFB859 /* MeVC */,
 				00629C7F1EC80BBC00B78151 /* Main.storyboard */,
 				00E14EF51ECAE016008197A3 /* Assets.xcassets */,
@@ -393,6 +404,7 @@
 				006024F21EC9738800FFB859 /* MeMasterVC.swift in Sources */,
 				000D13761EFF859000A19D5A /* Extensions.swift in Sources */,
 				00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */,
+				001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */,
 				00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */,
 				006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */,
 				004BF0E01ED184CF00554A5E /* HomeSellerTableView.swift in Sources */,

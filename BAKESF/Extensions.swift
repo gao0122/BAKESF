@@ -83,7 +83,7 @@ extension String {
     func substring(from: Int, to: Int) -> String {
         if to > characters.count || from >= to { return "" }
         let fromIndex = self.index(startIndex, offsetBy: from)
-        let toIndex = self.index(startIndex, offsetBy: to + 1)
+        let toIndex = self.index(startIndex, offsetBy: to)
         return substring(with: fromIndex..<toIndex)
     }
     
