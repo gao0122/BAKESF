@@ -11,7 +11,7 @@ target 'BAKESF' do
   pod 'SMSSDK'
 
   # http networking
-  pod 'Alamofire'
+  #pod 'Alamofire'
   
   # local database
   pod 'RealmSwift'
@@ -20,7 +20,7 @@ target 'BAKESF' do
   pod "PagingMenuController"
 
   # wx
-  pod "WechatOpenSDK"
+  #pod "WechatOpenSDK"
 
   # fabric 
   pod 'Fabric'
@@ -28,6 +28,12 @@ target 'BAKESF' do
 
   # leancloud
   pod 'LeanCloud'
+
+  # avos
+  pod 'AVOSCloud'
+
+  # sdwebimage
+  pod 'SDWebImage'
 
 end
 

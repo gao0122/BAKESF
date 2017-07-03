@@ -14,9 +14,11 @@ class UserRealm: Object {
     dynamic var name: String = ""
     dynamic var phone: String = ""
     dynamic var current = false
+    
+    dynamic var headphoto: Data = Data()
  
     override static func primaryKey() -> String? {
-        return "id"
+        return "phone"
     }
     
 }

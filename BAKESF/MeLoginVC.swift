@@ -14,6 +14,10 @@ enum LoginState {
     case normal, sending, loggingIn
 }
 
+enum TimerState {
+    case inited, rolling, done
+}
+
 let TEST = true
 
 class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate {
@@ -35,7 +39,8 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     var timer = Timer()
     var timerIsOn = false
     var hasSent = false
-    var state: LoginState = .normal
+    var loginState: LoginState = .normal
+    var timerState: TimerState = .inited
     var phoneNum = ""
     
     override func viewDidLoad() {
@@ -77,59 +82,153 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     
     @IBAction func getMsgPressed(_ sender: Any) {
         if let phone = phoneTextField.text {
-            
-            if self.state == .normal {
-                self.state = .sending
-                self.getMsgBtn.setTitle("正在发送...", for: .focused)
-                SMSSDK.getVerificationCode(by: SMSGetCodeMethodSMS, phoneNumber: phone, zone: "86", result: {
-                    error in
-                    
-                    if error == nil {
-                        self.getMsgBtn.isEnabled = false
-                        self.getMsgBtn.setTitleColor(colors[.white], for: .disabled)
-                        
-                        self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateTimer(sender: )), userInfo: nil, repeats: true)
-                        
-                        self.phoneNum = phone
-                    } else {
-                        let errorMsg = error!.localizedDescription
-                        print(errorMsg)
-                        if errorMsg.contains("456") {
-                            self.view.notify(text: "请输入手机号码", color: .orange)
-                        } else if errorMsg.contains("457") {
-                            self.view.notify(text: "请输入有效的手机号码", color: .orange)
-                        } else if errorMsg.contains("458") {
-                            self.view.notify(text: "发送失败，输入的手机号码在发送黑名单中", color: .red)
-                        } else if errorMsg.contains("459") {
-                            self.view.notify(text: "发送失败，不支持该地区发送短信", color: .red)
-                        } else {
-                            self.view.notify(text: "发送失败", color: .red)
+            if self.loginState == .normal {
+                self.loginState = .sending
+                self.getMsgBtn.isEnabled = false
+                self.getMsgBtn.setTitleColor(UIColor.gray, for: .disabled)
+                self.getMsgBtn.setTitle("正在发送...", for: .disabled)
+                if self.timerState == .done {
+                    self.sendMsg(phone: phone)
+                } else {
+                    let query = LCQuery(className: "Baker")
+                    query.whereKey("mobilePhoneNumber", .equalTo(phone))
+                    query.getFirst {
+                        result in
+                        switch result {
+                        case .success(let usr as LCBaker):
+                            var canSendMsg = false
+                            let sentLCDate = usr.get("msgSentDate") as? LCDate
+                            if sentLCDate == nil {
+                                canSendMsg = true
+                            } else {
+                                let secs = Date().seconds(fromDate: sentLCDate!.value)
+                                if secs > self.totalSeconds {
+                                    canSendMsg = true
+                                } else {
+                                    // notify how many seconds left
+                                    self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .orange)
+                                    canSendMsg = false
+                                }
+                            }
+                            
+                            if canSendMsg {
+                                self.sendMsg(phone: phone)
+                            } else {
+                                self.resetGetMsgBtn()
+                            }
+                        case .failure(let error):
+                            //error
+                            let userLC = LCBaker()
+                            let pwd = generateRandomPwd()
+                            let uname = "u\(phone)"
+                            let acl = LCACL()
+                            acl.setAccess(LCACL.Permission.write, allowed: true)
+                            acl.setAccess(LCACL.Permission.read, allowed: true)
+                            userLC.ACL = acl
+                            userLC.mobilePhoneNumber = LCString(phone)
+                            userLC.password = LCString(pwd)
+                            userLC.username = LCString(uname)
+                            userLC.save {
+                                result in
+                                switch result {
+                                case .success:
+                                    self.sendMsg(phone: phone)
+                                case .failure(let error):
+                                    let code = error.code
+                                    switch code {
+                                    case 217:
+                                        break
+                                    default:
+                                        break
+                                    }
+                                    self.resetGetMsgBtn()
+                                }
+                            }
+                        default:
+                            break
                         }
                     }
-                    self.state = .normal
-                })
+                }
+            }
+        }
+    }
+    
+    func sendMsg(phone: String) {
+        self.phoneNum = phone
+        if TEST {
+            self.msgTextField.becomeFirstResponder()
+            self.timerState = .rolling
+            self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateTimer(sender: )), userInfo: nil, repeats: true)
+            self.updateSentMsgDate(phone: phone)
+            return
+        }
+        SMSSDK.getVerificationCode(by: SMSGetCodeMethodSMS, phoneNumber: phone, zone: "86", result: {
+            error in
+            if error == nil {
+                self.msgTextField.becomeFirstResponder()
+                self.timerState = .rolling
+                self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateTimer(sender: )), userInfo: nil, repeats: true)
+                self.updateSentMsgDate(phone: phone)
+            } else {
+                let errorMsg = error!.localizedDescription
+                print(errorMsg)
+                if errorMsg.contains("456") {
+                    self.view.notify(text: "请输入手机号码", color: .orange)
+                } else if errorMsg.contains("457") {
+                    self.view.notify(text: "请输入有效的手机号码", color: .orange)
+                } else if errorMsg.contains("458") {
+                    self.view.notify(text: "发送失败，输入的手机号码在发送黑名单中", color: .red)
+                } else if errorMsg.contains("459") {
+                    self.view.notify(text: "发送失败，不支持该地区发送短信", color: .red)
+                } else {
+                    self.view.notify(text: "发送失败", color: .red)
+                }
+            }
+            self.loginState = .normal
+        })
+    }
+    
+    func updateSentMsgDate(phone: String) {
+        let query = LCQuery(className: "Baker")
+        query.whereKey("mobilePhoneNumber", .equalTo(phone))
+        query.getFirst {
+            result in
+            switch result  {
+            case .success(let usr as LCBaker):
+                usr.set("msgSentDate", value: LCDate())
+                usr.save {
+                    result in
+                    switch result {
+                    case .success:
+                        break
+                    case .failure(let error):
+                        printit(any: error)
+                    }
+                }
+            case .failure(let error):
+                printit(any: error)
+            default:
+                break
             }
         }
     }
     
     @IBAction func loginBtnPressed(_ sender: Any) {
-        
-        // MARK: - test user
-        //phoneNum = "13143128565"
         if self.phoneTextField.text!.characters.count > 0 {
-            if self.phoneNum == phoneTextField.text || TEST {
+            if self.phoneNum == phoneTextField.text {
                 if let code = msgTextField.text {
                     if code.characters.count > 0 {
-                        if self.state == .normal {
+                        if self.loginState != .loggingIn {
                             self.loginBtn.isEnabled = false
-                            self.state = .loggingIn
+                            self.loginState = .loggingIn
                             if TEST {
-                                login(sender)
+                                self.login(sender)
+                                self.loginBtn.isEnabled = true
+                                self.loginState = .normal
                             } else {
                                 SMSSDK.commitVerificationCode(code, phoneNumber: self.phoneNum, zone: "86", result: {
                                     error in
                                     if error == nil {
-                                        printit(any: "verified successfully")
                                         self.login(sender)
                                     } else {
                                         let errorMsg = error!.localizedDescription
@@ -141,7 +240,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                                         print(error!.localizedDescription)
                                     }
                                     self.loginBtn.isEnabled = true
-                                    self.state = .normal
+                                    self.loginState = .normal
                                 })
                             }
                         }
@@ -161,50 +260,16 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     }
     
     func login(_ sender: Any) {
-        if TEST {
-            self.phoneNum = self.phoneTextField.text!
+        if RealmHelper.retrieveUser(withPhone: self.phoneNum) == nil {
+            addRealmUser(user: retrieveBaker(withPhone: self.phoneNum)!)
+        } else {
+            let _ = RealmHelper.setCurrentUser(withPhone: self.phoneNum)
         }
-        let userLC = LCUser()
-        userLC.mobilePhoneNumber = LCString(self.phoneNum)
-        userLC.password = LCString(generateRandomPwd())
-        userLC.username = LCString("用户\(self.phoneNum)")
-        userLC.set("mobilePhoneVeryfied", value: LCBool(true))
-        userLC.signUp({
-            result in
-            if result.isSuccess {
-                // new
-                self.addRealmUser(user: userLC)
-            } else {
-                // old
-                printit(any: "sigu up error \(result.error!.code)")
-                switch result.error!.code {
-                case 218:
-                    let query = LCQuery(className: "_User")
-                    query.whereKey("mobilePhoneNumber", .equalTo(self.phoneNum))
-                    query.getFirst {
-                        result in
-                        switch result  {
-                        case .success(let usr as LCUser):
-                            // retrieved old user
-                            let id = usr.objectId!.value
-                            if !RealmHelper.setCurrentUser(withID: id) {
-                                self.addRealmUser(user: userLC)
-                            }
-                        case .failure(let error):
-                            printit(any: error)
-                        default:
-                            break
-                        }
-                    }
-                default:
-                    break
-                }
-            }
-            self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)
-        })
+        self.loginState = .normal
+        self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)
     }
     
-    func addRealmUser(user: LCUser) {
+    func addRealmUser(user: LCBaker) {
         let id = user.objectId!.value
         let userRealm = UserRealm()
         userRealm.id = id
@@ -224,23 +289,37 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         return true
     }
     
+    
+    // When user switch to another app the timer will be paused, 
+    // we are not going to update it in background.
+    // Update timer by real time in case user quit the app and restart it.
+    // But here we only save the data when app will terminate.
     func updateTimer(sender: UISegmentedControl) {
         seconds += 1
         
         let timeLeft = totalSeconds - seconds
         if timeLeft > 0 {
-            getMsgBtn.setTitle("已发送 (\(timeLeft))", for: .normal)
+            self.getMsgBtn.setTitleColor(UIColor.gray, for: .disabled)
+            getMsgBtn.setTitle("已发送 (\(timeLeft))", for: .disabled)
         } else {
-            // stop timer
-            timer.invalidate()
-            timer = Timer()
-            seconds = 0
-            getMsgBtn.setTitle("获取验证码", for: .normal)
-            getMsgBtn.isEnabled = true
-            self.getMsgBtn.setTitleColor(loginBtn.currentTitleColor, for: UIControlState.normal)
+            resetTimer()
         }
     }
-
+    
+    func resetGetMsgBtn() {
+        loginState = .normal
+        getMsgBtn.setTitle("获取验证码", for: .normal)
+        getMsgBtn.isEnabled = true
+        getMsgBtn.setTitleColor(loginBtn.currentTitleColor, for: .normal)
+    }
+    
+    func resetTimer() {
+        timer.invalidate()
+        timerState = .done
+        timer = Timer()
+        seconds = 0
+        resetGetMsgBtn()
+    }
     
     @IBAction func screenEdgePanBackToMeFromLogin(_ sender: UIScreenEdgePanGestureRecognizer) {
         self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)

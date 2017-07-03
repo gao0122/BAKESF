@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import LeanCloud
 
 public var notifying: Bool = false
 
@@ -85,6 +86,38 @@ extension String {
         let fromIndex = self.index(startIndex, offsetBy: from)
         let toIndex = self.index(startIndex, offsetBy: to)
         return substring(with: fromIndex..<toIndex)
+    }
+    
+}
+
+
+// MARK: - Data 
+extension Data {
+    
+    var imageFormat: ImageFormat {
+        var buffer = [UInt8](repeatElement(0, count: 1))
+        self.copyBytes(to: &buffer, from: NSRange(location: 0, length: 0).toRange()!)
+        if buffer == ImageHeaderData.png {
+            return .png
+        } else if buffer == ImageHeaderData.jpeg {
+            return .jpeg
+        } else if buffer == ImageHeaderData.gif {
+            return .gif
+        } else if buffer == ImageHeaderData.tiff01 || buffer == ImageHeaderData.tiff02 {
+            return .tiff
+        } else {
+            return .unknown
+        }
+    }
+    
+}
+
+
+// MARK: - Date
+extension Date {
+    
+    func seconds(fromDate from: Date) -> Int {
+        return Calendar.current.dateComponents([.second], from: from, to: self).second ?? 0
     }
     
 }

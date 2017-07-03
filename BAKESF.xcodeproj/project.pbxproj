@@ -30,8 +30,8 @@
 		00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00629C7D1EC80BBC00B78151 /* OrderVC.swift */; };
 		00629C811EC80BBC00B78151 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C7F1EC80BBC00B78151 /* Main.storyboard */; };
 		00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C841EC80BBC00B78151 /* LaunchScreen.storyboard */; };
-		00629C911EC8146900B78151 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00629C901EC8146900B78151 /* Alamofire.framework */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
+		00B4709B1F0404DD00725C95 /* LCBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* LCBaker.swift */; };
 		00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */; };
 		00B491A91EE4CFE1000C63EB /* SellerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B491A81EE4CFE1000C63EB /* SellerVC.swift */; };
 		00D0AF981EDEFB3100B1F5A2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 00D0AF971EDEFB3100B1F5A2 /* GoogleService-Info.plist */; };
@@ -73,6 +73,7 @@
 		00629C8D1EC8123E00B78151 /* BAKESF-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BAKESF-Bridging-Header.h"; sourceTree = "<group>"; };
 		00629C901EC8146900B78151 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/BAKESF-fjjjbtxahaznllbtrbwqrssaqyyd/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
+		00B4709A1F0404DD00725C95 /* LCBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LCBaker.swift; sourceTree = "<group>"; };
 		00B474DD1ECD655C00ED1B7A /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/../build/Debug-iphoneos/Realm/Realm.framework"; sourceTree = "<group>"; };
 		00B474DF1ECD656000ED1B7A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "Pods/../build/Debug-iphoneos/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
 		00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmHelper.swift; sourceTree = "<group>"; };
@@ -94,7 +95,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00629C911EC8146900B78151 /* Alamofire.framework in Frameworks */,
 				7C78423555574DE0438F2E2B /* Pods_BAKESF.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -168,8 +168,8 @@
 				001DB09E1F024CDB00A09F32 /* CommunityVC */,
 				006024F71EC97D9000FFB859 /* MeVC */,
 				00629C7F1EC80BBC00B78151 /* Main.storyboard */,
-				00E14EF51ECAE016008197A3 /* Assets.xcassets */,
 				00629C841EC80BBC00B78151 /* LaunchScreen.storyboard */,
+				00E14EF51ECAE016008197A3 /* Assets.xcassets */,
 				00629C871EC80BBC00B78151 /* Info.plist */,
 				00D0AF971EDEFB3100B1F5A2 /* GoogleService-Info.plist */,
 			);
@@ -214,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				00E14EFE1ECC9587008197A3 /* UserRealm.swift */,
+				00B4709A1F0404DD00725C95 /* LCBaker.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -397,6 +398,7 @@
 				00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */,
 				009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */,
 				0048FDAB1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift in Sources */,
+				00B4709B1F0404DD00725C95 /* LCBaker.swift in Sources */,
 				00B491A91EE4CFE1000C63EB /* SellerVC.swift in Sources */,
 				00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */,
 				00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */,

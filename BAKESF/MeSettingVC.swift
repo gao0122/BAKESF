@@ -18,6 +18,9 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let users = RealmHelper.retrieveUsers()
+        
+        
         // Do any additional setup after loading the view.
         if let usr = RealmHelper.retrieveCurrentUser() {
             user = usr
@@ -37,7 +40,6 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate {
         // Pass the selected object to the new view controller.
     }
 
-    
     @IBAction func logoutBtnPressed(_ sender: Any) {
         RealmHelper.logoutCurrentUser(user: user)
         performSegue(withIdentifier: "unwindToMeFromSetting", sender: sender)

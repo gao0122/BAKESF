@@ -23,18 +23,17 @@ class HomeSellerTableViewCell: UITableViewCell, UIImagePickerControllerDelegate,
     
     @IBAction func followBtnPressed(_ sender: UIButton) {
         
-        // openGallary() : - Test photo gallary
-        
     }
     
     @IBAction func commentNumberBtnPressed(_ sender: Any) {
+        
     }
     
 
     func vcInit() {
-        picker.delegate = self
-        
         rootVC = self.window!.rootViewController!
+        picker.delegate = self
+        //picker.sourceType = .camera
     }
 
     func openCamera() {

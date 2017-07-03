@@ -8,26 +8,31 @@
 
 import UIKit
 import PagingMenuController
+import LeanCloud
+import AVOSCloud
 
-class MeVC: UIViewController, UIGestureRecognizerDelegate {
+class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet weak var loginBtn: UIButton!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var bgImageView: UIImageView!
-    
+    @IBOutlet weak var editBtn: UIButton!
+    @IBOutlet weak var headphoto: UIButton!
+    @IBOutlet weak var settingBtn: UIButton!
+    @IBOutlet weak var followeeBtn: UIButton!
+    @IBOutlet weak var followerBtn: UIButton!
+    @IBOutlet weak var likeBtn: UIButton!
+
     var user: UserRealm!
     
+    var picker: UIImagePickerController = UIImagePickerController()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
         let _ = checkCurrentUser()
         
-        var bgImage = UIImage()
-        // todo
-        bgImage = UIImage()
-        bgImageView.image = bgImage
-        
+        vcInit()
         
         // page menu 
         struct MeMemory: MenuItemViewCustomizable {
@@ -129,7 +134,6 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate {
             }
         }
     }
-
     
     @IBAction func unwindToMeVC(segue: UIStoryboardSegue) {
         let _ = checkCurrentUser()
@@ -146,13 +150,100 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+    @IBAction func editBtnPressed(_ sender: Any) {
+        let alertVC = UIAlertController(title: "编辑头像", message: "", preferredStyle: .actionSheet)
+        let cameraAct = UIAlertAction(title: "打开相机", style: .default, handler: {
+            _ in
+            self.openCamera()
+        })
+        let gallaryAct = UIAlertAction(title: "打开相册", style: .default, handler: {
+            _ in
+            self.openGallary()
+        })
+        let cancelAct = UIAlertAction(title: "取消", style: .cancel, handler: nil)
+        alertVC.addAction(cameraAct)
+        alertVC.addAction(gallaryAct)
+        alertVC.addAction(cancelAct)
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    
+    
+    // MARK: - Image Picker
+    func vcInit() {
+        picker.delegate = self
+    }
+    
+    func openCamera() {
+        if (UIImagePickerController.isSourceTypeAvailable(.camera)) {
+            picker.sourceType = .camera
+            self.present(picker, animated: true, completion: nil)
+        }
+    }
+    
+    func openGallary() {
+        picker.sourceType = .photoLibrary
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            self.present(picker, animated: true, completion: nil)
+        } else {
+            print("device: \(UIDevice.current.userInterfaceIdiom)")
+        }
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+
+        if let img = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            bgImageView.image = img
+            bgImageView.image?.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: .tile)
+            
+            if let data = UIImagePNGRepresentation(img) {
+                saveImgToLC(data: data)
+            } else if let data = UIImageJPEGRepresentation(img, 1) {
+                saveImgToLC(data: data)
+            }
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+        print("picker did cancel")
+    }
+    
+    
+    func saveImgToLC(data: Data) {
+        let file = AVFile(data: data)
+        file.saveInBackground({
+            succeed, error in
+            if succeed {
+                let usr = retrieveBaker(withPhone: self.user!.phone)!
+                usr.headphoto = file
+                usr.save {
+                    result in
+                    switch result {
+                    case .success(let usr as LCBaker):
+                        self.view.notify(text: "上传成功", color: .green)
+                    case .failure(let error):
+                        self.view.notify(text: "上传失败", color: .red)
+                    default:
+                        break
+                    }
+                }
+                printit(any: file.url)
+            } else {
+                printit(any: error?.localizedDescription)
+            }
+        })
+    }
+
     func checkCurrentUser() -> Bool {
         if let usr = RealmHelper.retrieveCurrentUser() {
             user = usr
+            editBtn.isHidden = false
             loginBtn.isHidden = true
-            userNameLabel.text = "欢迎 \(user.phone)"
+            userNameLabel.text = "\(user.name)"
             return true
         } else {
+            editBtn.isHidden = true
             loginBtn.isHidden = false
             userNameLabel.text = ""
             return false

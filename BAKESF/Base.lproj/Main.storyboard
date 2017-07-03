@@ -51,7 +51,7 @@
                         <viewControllerLayoutGuide type="bottom" id="M9G-Xs-UaO"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="pVs-oj-Bjp">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="443"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="463"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
@@ -607,7 +607,7 @@
                                 </connections>
                             </containerView>
                             <searchBar contentMode="redraw" fixedFrame="YES" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="Cm8-Hu-zKd">
-                                <rect key="frame" x="8" y="34" width="346" height="44"/>
+                                <rect key="frame" x="8" y="30" width="346" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -615,7 +615,7 @@
                                 </connections>
                             </searchBar>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="珠海" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="RRc-fU-Ikq">
-                                <rect key="frame" x="354" y="46" width="44" height="21"/>
+                                <rect key="frame" x="354" y="41" width="50" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <accessibility key="accessibilityConfiguration" identifier="locationLabel"/>
                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
@@ -862,8 +862,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" restorationIdentifier="meBackgroundImg" translatesAutoresizingMaskIntoConstraints="NO" id="JyP-Ua-lxU">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="244"/>
+                            <imageView contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" restorationIdentifier="meBackgroundImg" translatesAutoresizingMaskIntoConstraints="NO" id="JyP-Ua-lxU">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="224"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <accessibility key="accessibilityConfiguration" identifier="meBackgroundImg">
                                     <accessibilityTraits key="traits" button="YES" image="YES"/>
@@ -871,7 +871,7 @@
                                 </accessibility>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="TRb-RM-daR">
-                                <rect key="frame" x="97" y="63" width="219" height="21"/>
+                                <rect key="frame" x="110" y="57" width="219" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <accessibility key="accessibilityConfiguration" identifier="userNameLabelinMe" label="s"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -879,14 +879,14 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SPw-QV-cnf">
-                                <rect key="frame" x="0.0" y="244" width="414" height="443"/>
+                                <rect key="frame" x="0.0" y="224" width="414" height="463"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <connections>
                                     <segue destination="gc4-mK-rnU" kind="embed" id="ln2-Ma-1Te"/>
                                 </connections>
                             </containerView>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b3F-m9-phI">
-                                <rect key="frame" x="154" y="109" width="105" height="26"/>
+                                <rect key="frame" x="109" y="56" width="105" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <accessibility key="accessibilityConfiguration" identifier="login"/>
                                 <state key="normal" title="立即登录"/>
@@ -894,22 +894,66 @@
                                     <segue destination="D7x-gp-VRR" kind="show" identifier="showLogin" id="TEk-YY-aeW"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A6y-9r-De0">
-                                <rect key="frame" x="336" y="37" width="69" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A6y-9r-De0">
+                                <rect key="frame" x="370" y="32" width="27" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <state key="normal" title="设置"/>
+                                <state key="normal" image="setting"/>
                                 <connections>
                                     <segue destination="n7f-Fo-oLm" kind="show" id="m5g-ig-8pl"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I0l-1v-avf">
+                                <rect key="frame" x="41" y="57" width="60" height="60"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="头像"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hnV-Cq-AJr">
+                                <rect key="frame" x="82" y="62" width="14" height="14"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="camera"/>
+                                <connections>
+                                    <action selector="editBtnPressed:" destination="6OQ-zj-lqd" eventType="touchUpInside" id="EF9-ho-9jV"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nXY-pQ-kSo">
+                                <rect key="frame" x="153" y="181" width="108" height="30"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <state key="normal" title="粉丝"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3AS-hJ-qKq">
+                                <rect key="frame" x="32" y="181" width="108" height="30"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <state key="normal" title="关注"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3n7-d1-TgB">
+                                <rect key="frame" x="274" y="181" width="108" height="30"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <state key="normal" title="赞"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ymM-9u-p9W">
+                                <rect key="frame" x="109" y="86" width="219" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" identifier="userNameLabelinMe" label="s"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.070392709459999994" green="0.070185349199999997" blue="0.072097081219999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="g1M-JB-X8b"/>
                     <connections>
                         <outlet property="bgImageView" destination="JyP-Ua-lxU" id="8B9-ba-4yZ"/>
+                        <outlet property="editBtn" destination="hnV-Cq-AJr" id="nPg-6z-fo0"/>
+                        <outlet property="followeeBtn" destination="3AS-hJ-qKq" id="Z4d-66-8La"/>
+                        <outlet property="followerBtn" destination="nXY-pQ-kSo" id="yWe-HD-jeN"/>
+                        <outlet property="headphoto" destination="I0l-1v-avf" id="dbF-X0-3cK"/>
+                        <outlet property="likeBtn" destination="3n7-d1-TgB" id="Gkj-g8-eI6"/>
                         <outlet property="loginBtn" destination="b3F-m9-phI" id="Ugk-vO-Pd5"/>
+                        <outlet property="settingBtn" destination="A6y-9r-De0" id="wAV-JE-vBB"/>
                         <outlet property="userNameLabel" destination="TRb-RM-daR" id="Cun-FI-tNL"/>
                     </connections>
                 </viewController>
@@ -1175,7 +1219,9 @@
         <image name="Order-20" width="20" height="20"/>
         <image name="Star-18" width="18" height="17"/>
         <image name="User-Filled-20" width="20" height="20"/>
+        <image name="camera" width="14" height="14"/>
         <image name="second" width="30" height="30"/>
+        <image name="setting" width="29" height="29"/>
         <image name="white" width="80" height="112"/>
     </resources>
 </document>
