@@ -16,7 +16,7 @@ class LCBaker: LCObject {
     dynamic var password: LCString?
     dynamic var username: LCString?
     dynamic var msgSentDate: LCDate?
-    dynamic var headphoto: AVFile?
+    dynamic var headphoto: LCString?
     
     override static func objectClassName() -> String {
         return "Baker"

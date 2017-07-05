@@ -13,7 +13,6 @@ import UIKit
 enum BKColor {
     case green, orange, red, white, black
 }
-
 let colors: [BKColor : UIColor] = [
     .green: UIColor(red: 16 / 255, green: 206 / 255, blue: 105 / 255, alpha: 1),
     .red: UIColor(red: 255 / 255, green: 36 / 255, blue: 40 / 255, alpha: 1),
@@ -22,4 +21,13 @@ let colors: [BKColor : UIColor] = [
     .black: UIColor(red: 0.032, green: 0.032, blue: 0.032, alpha: 1)
 ]
 
+enum LCKey {
+    case name, phone, pwd, msgSentDate
+}
+let lcKey: [LCKey : String] = [
+    .name: "username",
+    .phone: "mobilePhoneNumber",
+    .pwd: "password",
+    .msgSentDate: "msgSentDate"
+]
 

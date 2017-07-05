@@ -42,8 +42,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         if let vc = window?.rootViewController?.childViewControllerForStatusBarStyle {
             if let vc = vc as? UINavigationController {
-                if let vc = vc as? MeLoginVC {
-                    vc.getMsgBtn.titleLabel?.text
+                if let vc = vc.childViewControllerForStatusBarStyle as? MeLoginVC {
+                    if vc.seconds > 0 {
+                        let query = LCQuery(className: "Baker")
+                        query.whereKey(lcKey[.phone]!, .equalTo(vc.phoneNum))
+                        query.getFirst {
+                            result in
+                            switch result {
+                            case .success(let usr as LCBaker):
+                                vc.seconds = Date().seconds(fromDate: usr.msgSentDate!.value)
+                            default:
+                                break
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -58,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         if let vc = window?.rootViewController?.childViewControllerForStatusBarStyle {
             if let vc = vc as? UINavigationController {
-                if let vc = vc as? MeLoginVC {
+                if let vc = vc.childViewControllerForStatusBarStyle as? MeLoginVC {
                     
                 }
             }

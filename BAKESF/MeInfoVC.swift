@@ -1,54 +1,33 @@
 //
-//  MeSettingVC.swift
+//  MeInfoVC.swift
 //  BAKESF
 //
-//  Created by 高宇超 on 6/26/17.
+//  Created by 高宇超 on 7/5/17.
 //  Copyright © 2017 Yuchao. All rights reserved.
 //
 
 import UIKit
 
-class MeSettingVC: UIViewController, UIGestureRecognizerDelegate {
+class MeInfoVC: UIViewController {
 
-    @IBOutlet weak var userNameBtn: UIButton!
-    @IBOutlet weak var logoutBtn: UIButton!
-    @IBOutlet var edgePanGesture: UIScreenEdgePanGestureRecognizer!
-    
-    var user: UserRealm!
     var navigationDelegate: NavigationControllerDelegate?
     let edgePanGestrue = UIScreenEdgePanGestureRecognizer()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         edgePanGestrue.edges = .left
         edgePanGestrue.addTarget(self, action: #selector(MeSettingVC.panGestureToMeFromSetting(_:)))
         view.addGestureRecognizer(edgePanGestrue)
         
-        //let users = RealmHelper.retrieveUsers()
-        
-        // Do any additional setup after loading the view.
-        if let usr = RealmHelper.retrieveCurrentUser() {
-            user = usr
-            userNameBtn.setTitle(usr.name, for: .normal)
-            logoutBtn.isEnabled = true
-        } else {
-            logoutBtn.isEnabled = false
-        }
     }
-
-
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-    }
-
-    @IBAction func logoutBtnPressed(_ sender: Any) {
-        RealmHelper.logoutCurrentUser(user: user)
-        performSegue(withIdentifier: "unwindToMeFromSetting", sender: sender)
     }
     
     @IBAction func panGestureToMeFromSetting(_ sender: UIScreenEdgePanGestureRecognizer) {
@@ -61,7 +40,7 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate {
         case .began:
             navigationDelegate = self.navigationController?.delegate as? NavigationControllerDelegate
             navigationDelegate?.interactive = true
-            self.performSegue(withIdentifier: "unwindToMeFromSetting", sender: sender)
+            self.performSegue(withIdentifier: "unwindToMeFromInfo", sender: sender)
         case .changed:
             navigationDelegate?.interactionController.update(percent)
         case .cancelled, .ended:
@@ -76,5 +55,5 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate {
             break
         }
     }
-    
+
 }

@@ -27,13 +27,13 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     @IBOutlet weak var msgTextField: UITextField!
     @IBOutlet weak var getMsgBtn: UIButton!
     @IBOutlet weak var loginBtn: UIButton!
-    @IBOutlet weak var screenEdgePan: UIScreenEdgePanGestureRecognizer!
     @IBOutlet weak var loginByWX: UIButton!
     @IBOutlet weak var loginByWB: UIButton!
     @IBOutlet weak var loginByMsgOrPwd: UIButton!
     
+    var navigationDelegate: NavigationControllerDelegate?
+    let edgePanGestrue = UIScreenEdgePanGestureRecognizer()
     var users: Results<UserRealm>!
-
     let totalSeconds = 42 + 3
     var seconds = 0
     var timer = Timer()
@@ -48,8 +48,11 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
 
         msgTextField.delegate = self
         phoneTextField.delegate = self
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
-
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
+        edgePanGestrue.edges = .left
+        edgePanGestrue.addTarget(self, action: #selector(MeLoginVC.screenEdgePanBackToMeFromLogin(_:)))
+        view.addGestureRecognizer(edgePanGestrue)
+        
         users = RealmHelper.retrieveUsers()
         
         getMsgBtn.layer.cornerRadius = 2
@@ -61,9 +64,14 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     }
 
     override func viewWillAppear(_ animated: Bool) {
-
+        
     }
     
+    deinit {
+        edgePanGestrue.removeTarget(self, action: #selector(MeLoginVC.screenEdgePanBackToMeFromLogin(_:)))
+    }
+    
+    // MARK: - TextField
     func textFieldDidBeginEditing(_ textField: UITextField) {
         // TODO :- all views move to up for 10px
     }
@@ -73,20 +81,23 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     }
     
     @IBAction func loginByMsgOrPwd(_ sender: Any) {
-        
+        // TODO: - here
     }
     
     @IBAction func loginByWX(_ sender: Any) {
-        self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)
+        
+    }
+    
+    @IBAction func loginByWB(_ sender: Any) {
     }
     
     @IBAction func getMsgPressed(_ sender: Any) {
         if let phone = phoneTextField.text {
             if self.loginState == .normal {
                 self.loginState = .sending
-                self.getMsgBtn.isEnabled = false
-                self.getMsgBtn.setTitleColor(UIColor.gray, for: .disabled)
-                self.getMsgBtn.setTitle("正在发送...", for: .disabled)
+                self.getMsgBtn.isUserInteractionEnabled = false
+                self.getMsgBtn.titleLabel?.alpha = 0.51
+                self.getMsgBtn.setTitle("正在发送...", for: .normal)
                 if self.timerState == .done {
                     self.sendMsg(phone: phone)
                 } else {
@@ -276,6 +287,10 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         userRealm.phone = self.phoneNum
         userRealm.name = user.username!.value
         userRealm.current = true
+        if let url = URL(string: user.headphoto!.value) {
+            let data = try? Data(contentsOf: url)
+            userRealm.headphoto = data
+        }
         RealmHelper.addUser(user: userRealm)
     }
     
@@ -299,17 +314,17 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         
         let timeLeft = totalSeconds - seconds
         if timeLeft > 0 {
-            self.getMsgBtn.setTitleColor(UIColor.gray, for: .disabled)
-            getMsgBtn.setTitle("已发送 (\(timeLeft))", for: .disabled)
+            self.getMsgBtn.setTitle("已发送 (\(timeLeft))", for: .normal)
         } else {
-            resetTimer()
+            self.resetTimer()
         }
     }
     
     func resetGetMsgBtn() {
         loginState = .normal
+        getMsgBtn.titleLabel?.alpha = 1
         getMsgBtn.setTitle("获取验证码", for: .normal)
-        getMsgBtn.isEnabled = true
+        getMsgBtn.isUserInteractionEnabled = true
         getMsgBtn.setTitleColor(loginBtn.currentTitleColor, for: .normal)
     }
     
@@ -321,8 +336,30 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         resetGetMsgBtn()
     }
     
-    @IBAction func screenEdgePanBackToMeFromLogin(_ sender: UIScreenEdgePanGestureRecognizer) {
-        self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)
+    func screenEdgePanBackToMeFromLogin(_ sender: UIScreenEdgePanGestureRecognizer) {
+        let translationX = sender.translation(in: view).x
+        let translationBase: CGFloat = view.frame.width
+        let translationAbs = translationX > 0 ? translationX : -translationX
+        let percent = translationAbs > translationBase ? 1.0 : translationAbs / translationBase
+        
+        switch sender.state {
+        case .began:
+            navigationDelegate = self.navigationController?.delegate as? NavigationControllerDelegate
+            navigationDelegate?.interactive = true
+            self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)
+        case .changed:
+            navigationDelegate?.interactionController.update(percent)
+        case .cancelled, .ended:
+            // if the half of the view is dismissed or the x velocity is very large
+            if percent > 0.5 || sender.velocity(in: view!).x > 1000 {
+                navigationDelegate?.interactionController.finish()
+            } else {
+                navigationDelegate?.interactionController.cancel()
+            }
+            navigationDelegate?.interactive = false
+        default:
+            break
+        }
     }
     
 }

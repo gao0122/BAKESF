@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00020F861F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */; };
+		00020F881F0C201E008ABFB1 /* MeInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F871F0C201E008ABFB1 /* MeInfoVC.swift */; };
 		000D13761EFF859000A19D5A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13751EFF859000A19D5A /* Extensions.swift */; };
 		000D13781EFF862700A19D5A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13771EFF862700A19D5A /* Constants.swift */; };
 		001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001DB09C1F024CD100A09F32 /* CommunityVC.swift */; };
@@ -31,10 +33,10 @@
 		00629C811EC80BBC00B78151 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C7F1EC80BBC00B78151 /* Main.storyboard */; };
 		00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C841EC80BBC00B78151 /* LaunchScreen.storyboard */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
+		00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */; };
 		00B4709B1F0404DD00725C95 /* LCBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* LCBaker.swift */; };
 		00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */; };
 		00B491A91EE4CFE1000C63EB /* SellerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B491A81EE4CFE1000C63EB /* SellerVC.swift */; };
-		00D0AF981EDEFB3100B1F5A2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 00D0AF971EDEFB3100B1F5A2 /* GoogleService-Info.plist */; };
 		00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D0AF991EE3C7F300B1F5A2 /* Helper.swift */; };
 		00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 00E14EF51ECAE016008197A3 /* Assets.xcassets */; };
 		00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EF81ECB1866008197A3 /* MeVC.swift */; };
@@ -45,6 +47,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakesfTransitionAnimator.swift; sourceTree = "<group>"; };
+		00020F871F0C201E008ABFB1 /* MeInfoVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeInfoVC.swift; sourceTree = "<group>"; };
 		000D13751EFF859000A19D5A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		000D13771EFF862700A19D5A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		001DB09C1F024CD100A09F32 /* CommunityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityVC.swift; sourceTree = "<group>"; };
@@ -73,12 +77,12 @@
 		00629C8D1EC8123E00B78151 /* BAKESF-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BAKESF-Bridging-Header.h"; sourceTree = "<group>"; };
 		00629C901EC8146900B78151 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/BAKESF-fjjjbtxahaznllbtrbwqrssaqyyd/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
+		00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		00B4709A1F0404DD00725C95 /* LCBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LCBaker.swift; sourceTree = "<group>"; };
 		00B474DD1ECD655C00ED1B7A /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/../build/Debug-iphoneos/Realm/Realm.framework"; sourceTree = "<group>"; };
 		00B474DF1ECD656000ED1B7A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "Pods/../build/Debug-iphoneos/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
 		00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmHelper.swift; sourceTree = "<group>"; };
 		00B491A81EE4CFE1000C63EB /* SellerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerVC.swift; sourceTree = "<group>"; };
-		00D0AF971EDEFB3100B1F5A2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		00D0AF991EE3C7F300B1F5A2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		00E14EF51ECAE016008197A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		00E14EF81ECB1866008197A3 /* MeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeVC.swift; sourceTree = "<group>"; };
@@ -119,6 +123,7 @@
 				006024F51EC97D8700FFB859 /* MeTweetVC.swift */,
 				00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */,
 				00E9030E1F012C030064F078 /* MeSettingVC.swift */,
+				00020F871F0C201E008ABFB1 /* MeInfoVC.swift */,
 			);
 			name = MeVC;
 			sourceTree = "<group>";
@@ -171,7 +176,6 @@
 				00629C841EC80BBC00B78151 /* LaunchScreen.storyboard */,
 				00E14EF51ECAE016008197A3 /* Assets.xcassets */,
 				00629C871EC80BBC00B78151 /* Info.plist */,
-				00D0AF971EDEFB3100B1F5A2 /* GoogleService-Info.plist */,
 			);
 			path = BAKESF;
 			sourceTree = "<group>";
@@ -215,6 +219,8 @@
 			children = (
 				00E14EFE1ECC9587008197A3 /* UserRealm.swift */,
 				00B4709A1F0404DD00725C95 /* LCBaker.swift */,
+				00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */,
+				00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -306,7 +312,6 @@
 			files = (
 				00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */,
 				00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */,
-				00D0AF981EDEFB3100B1F5A2 /* GoogleService-Info.plist in Resources */,
 				00629C811EC80BBC00B78151 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,10 +396,12 @@
 				000D13781EFF862700A19D5A /* Constants.swift in Sources */,
 				00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */,
 				0034EE361EE9116B005300AE /* SellerBuyVC.swift in Sources */,
+				00020F861F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift in Sources */,
 				006024FE1EC9900F00FFB859 /* HomeSellerVC.swift in Sources */,
 				0034EE381EE91176005300AE /* SellerPreVC.swift in Sources */,
 				006024FA1EC98FCF00FFB859 /* HomeMasterVC.swift in Sources */,
 				0034EE3A1EE91182005300AE /* SellerTweetVC.swift in Sources */,
+				00020F881F0C201E008ABFB1 /* MeInfoVC.swift in Sources */,
 				00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */,
 				009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */,
 				0048FDAB1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift in Sources */,
@@ -406,6 +413,7 @@
 				006024F21EC9738800FFB859 /* MeMasterVC.swift in Sources */,
 				000D13761EFF859000A19D5A /* Extensions.swift in Sources */,
 				00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */,
+				00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */,
 				001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */,
 				00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */,
 				006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */,

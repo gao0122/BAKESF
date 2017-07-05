@@ -10,10 +10,6 @@ import UIKit
 import SystemConfiguration
 import LeanCloud
 
-enum State {
-    case login, logout
-}
-
 enum ImageFormat {
     case unknown, png, jpeg, gif, tiff
 }

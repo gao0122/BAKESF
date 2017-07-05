@@ -10,6 +10,7 @@ import UIKit
 import PagingMenuController
 import LeanCloud
 import AVOSCloud
+import Crashlytics
 
 class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -19,9 +20,12 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
     @IBOutlet weak var editBtn: UIButton!
     @IBOutlet weak var headphoto: UIButton!
     @IBOutlet weak var settingBtn: UIButton!
+    @IBOutlet weak var tweetsBtn: UIButton!
     @IBOutlet weak var followeeBtn: UIButton!
     @IBOutlet weak var followerBtn: UIButton!
     @IBOutlet weak var likeBtn: UIButton!
+    @IBOutlet weak var editInfoBtn: UIButton!
+    @IBOutlet weak var editBtnBg: UIButton!
 
     var user: UserRealm!
     
@@ -144,6 +148,8 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
                 break
             case "unwindToMeFromSetting":
                 break
+            case "unwindToMeFromInfo":
+                break
             default:
                 break
             }
@@ -151,7 +157,7 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
     }
     
     @IBAction func editBtnPressed(_ sender: Any) {
-        let alertVC = UIAlertController(title: "编辑头像", message: "", preferredStyle: .actionSheet)
+        let alertVC = UIAlertController(title: "", message: "编辑头像", preferredStyle: .actionSheet)
         let cameraAct = UIAlertAction(title: "打开相机", style: .default, handler: {
             _ in
             self.openCamera()
@@ -168,11 +174,30 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
     }
     
     
-    // MARK: - Image Picker
     func vcInit() {
         picker.delegate = self
+        headphoto.layer.cornerRadius = headphoto.frame.width / 2
+        headphoto.layer.masksToBounds = true
+        loginBtn.layer.cornerRadius = 4
+        loginBtn.layer.masksToBounds = true
+        loginBtn.layer.borderWidth = 1
+        loginBtn.layer.borderColor = colors[BKColor.black]!.cgColor
+        likeBtn.layer.cornerRadius = 4
+        likeBtn.layer.masksToBounds = true
+        likeBtn.layer.borderWidth = 1
+        likeBtn.layer.borderColor = colors[BKColor.black]!.cgColor
+        editInfoBtn.layer.cornerRadius = 4
+        editInfoBtn.layer.masksToBounds = true
+        editInfoBtn.layer.borderWidth = 1
+        editInfoBtn.layer.borderColor = colors[BKColor.black]!.cgColor
+        editBtnBg.layer.cornerRadius = editBtnBg.frame.width / 2
+        editBtnBg.layer.masksToBounds = true
+        editBtnBg.layer.backgroundColor = colors[BKColor.white]!.cgColor
+        editBtnBg.alpha = 0.88
+        view.bringSubview(toFront: editBtn)
     }
     
+    // MARK: - Image Picker
     func openCamera() {
         if (UIImagePickerController.isSourceTypeAvailable(.camera)) {
             picker.sourceType = .camera
@@ -193,13 +218,8 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         picker.dismiss(animated: true, completion: nil)
 
         if let img = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            bgImageView.image = img
-            bgImageView.image?.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: .tile)
-            
-            if let data = UIImagePNGRepresentation(img) {
-                saveImgToLC(data: data)
-            } else if let data = UIImageJPEGRepresentation(img, 1) {
-                saveImgToLC(data: data)
+            if let data = img.imageData {
+                saveImgToLC(data: data, img: img)
             }
         }
     }
@@ -209,29 +229,35 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         print("picker did cancel")
     }
     
-    
-    func saveImgToLC(data: Data) {
+    func saveImgToLC(data: Data, img: UIImage) {
+        // TODO: - delete the origin file in LeanCloud
+        let scaledImg = img.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
+        RealmHelper.saveHeadphoto(user: user, data: scaledImg.imageData!)
+        
         let file = AVFile(data: data)
         file.saveInBackground({
             succeed, error in
             if succeed {
                 let usr = retrieveBaker(withPhone: self.user!.phone)!
-                usr.headphoto = file
+                usr.headphoto = LCString(file.url!)
                 usr.save {
                     result in
                     switch result {
-                    case .success(let usr as LCBaker):
-                        self.view.notify(text: "上传成功", color: .green)
+                    case .success:
+                        self.headphoto.setImage(scaledImg, for: .normal)
+                        self.view.notify(text: "修改成功", color: .green)
                     case .failure(let error):
-                        self.view.notify(text: "上传失败", color: .red)
-                    default:
-                        break
+                        self.view.notify(text: "修改失败", color: .red)
+                        Answers.logCustomEvent(withName: "修改头像失败", customAttributes: ["user": error.userInfo ?? "", "phone": self.user.phone, "error": error.reason ?? error.localizedDescription])
                     }
                 }
-                printit(any: file.url)
             } else {
-                printit(any: error?.localizedDescription)
+                printit(any: error!.localizedDescription)
             }
+            self.view.isUserInteractionEnabled = true
+        }, progressBlock: {
+            percent in
+            self.view.isUserInteractionEnabled = false
         })
     }
 
@@ -239,13 +265,21 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         if let usr = RealmHelper.retrieveCurrentUser() {
             user = usr
             editBtn.isHidden = false
+            editBtnBg.isHidden = false
+            editInfoBtn.isHidden = false
             loginBtn.isHidden = true
             userNameLabel.text = "\(user.name)"
+            if let data = usr.headphoto {
+                let img = UIImage(data: data)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
+                headphoto.setImage(img, for: .normal)
+            }
             return true
         } else {
             editBtn.isHidden = true
+            editBtnBg.isHidden = true
+            editInfoBtn.isHidden = true
             loginBtn.isHidden = false
-            userNameLabel.text = ""
+            userNameLabel.text = "个人主页"
             return false
         }
     }
