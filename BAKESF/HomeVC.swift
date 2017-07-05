@@ -13,12 +13,16 @@ class HomeVC: UIViewController, UISearchBarDelegate {
 
     @IBOutlet weak var masterView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var locationBtn: UIButton!
     
     var user: UserRealm!
+    var searchBarWidth: CGFloat! = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        searchBarWidth = searchBar.frame.width
+
         if let usr = RealmHelper.retrieveCurrentUser() {
             // has logged in
             self.user = usr
@@ -102,6 +106,41 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         
     }
 
+    // MARK: - SearchBar
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        self.searchBar.setShowsCancelButton(true, animated: true)
+        UIView.animate(withDuration: 0.23, delay: 0, options: [.curveEaseInOut], animations: {
+            self.searchBarFocusAni()
+        }, completion: {
+            finished in
+            self.searchBarFocusAni()
+        })
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        dismissKeyboard(sender: self)
+        self.searchBar.setShowsCancelButton(false, animated: true)
+        UIView.animate(withDuration: 0.21, delay: 0, options: [.curveEaseInOut], animations: {
+            self.searchBarCancelAni()
+        }, completion: {
+            finished in
+            self.searchBarCancelAni()
+        })
+    }
+    
+    func dismissKeyboard(sender: Any) {
+        searchBar.resignFirstResponder()
+    }
+
+    func searchBarFocusAni() {
+        self.searchBar.frame.size.width = self.view.frame.width - 16
+        self.locationBtn.alpha = 0
+    }
+    
+    func searchBarCancelAni() {
+        self.searchBar.frame.size.width = self.searchBarWidth
+        self.locationBtn.alpha = 1
+    }
 }
 
 

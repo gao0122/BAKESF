@@ -7,6 +7,8 @@
 //
 
 import RealmSwift
+import AVOSCloud
+import LeanCloud
 
 class RealmHelper {
     
@@ -25,11 +27,16 @@ class RealmHelper {
         }
     }
     
-    static func setCurrentUser(withPhone phone: String) -> Bool {
+    static func setCurrentUser(baker: LCBaker, data: Data?) -> Bool {
+        let id = baker.objectId!.value
         let realm = try! Realm()
-        if let user = realm.object(ofType: UserRealm.self, forPrimaryKey: phone) {
+        if let user = realm.object(ofType: UserRealm.self, forPrimaryKey: id) {
             try! realm.write {
                 user.current = true
+                user.name = baker.username!.value
+                user.phone = baker.mobilePhoneNumber!.value
+                user.headphotoURL = baker.headphoto?.value
+                user.headphoto = data
             }
             return true
         } else {
@@ -52,6 +59,11 @@ class RealmHelper {
         return realm.objects(UserRealm.self).filter("phone = '\(phone)'").first
     }
     
+    static func retrieveUser(withID id: String) -> UserRealm? {
+        let realm = try! Realm()
+        return realm.objects(UserRealm.self).filter("id = '\(id)'").first
+    }
+    
     static func logoutCurrentUser(user: UserRealm) -> Void {
         let realm = try! Realm()
         try! realm.write {
@@ -59,17 +71,11 @@ class RealmHelper {
         }
     }
     
-    static func saveHeadphoto(user: UserRealm, data: Data) {
+    static func saveHeadphoto(user: UserRealm, data: Data, url: String) {
         let realm = try! Realm()
         try! realm.write {
             user.headphoto = data
-        }
-    }
-    
-    static func saveBgImg(user: UserRealm, name: String) {
-        let realm = try! Realm()
-        try! realm.write {
-            user.name = name
+            user.headphotoURL = url
         }
     }
     

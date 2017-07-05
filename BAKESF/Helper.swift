@@ -69,6 +69,11 @@ func retrieveBaker(withPhone phone: String) -> LCBaker? {
     return query.getFirst().object as? LCBaker
 }
 
+func retrieveBaker(withID id: String) -> LCBaker? {
+    let query = LCQuery(className: "Baker")
+    return query.get(id).object as? LCBaker
+}
+
 
 
 // MARK: - to copy and paste

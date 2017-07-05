@@ -8,7 +8,7 @@
 
 import UIKit
 
-class OrderVC: UIViewController {
+class OrderVC: UIViewController, UITableViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,5 +25,8 @@ class OrderVC: UIViewController {
     }
     
 
+    // MARK: - TableView
+    
+    
 }
 

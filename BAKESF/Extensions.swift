@@ -86,6 +86,13 @@ extension String {
         return substring(with: fromIndex..<toIndex)
     }
     
+    func toHttps() -> String {
+        var str = self
+        if str.hasPrefix("http://") {
+            str = "https://" + str.components(separatedBy: "http://").joined()
+        }
+        return str
+    }
 }
 
 
@@ -125,7 +132,7 @@ extension Date {
 extension UIImage {
     
     var imageData: Data? {
-        return UIImagePNGRepresentation(self) ?? UIImageJPEGRepresentation(self, 1)
+        return UIImageJPEGRepresentation(self, 1) ?? UIImagePNGRepresentation(self) 
     }
     
     func cropToBounds(width: CGFloat, height: CGFloat) -> UIImage {
@@ -175,4 +182,60 @@ extension UIImage {
         return cropToBounds(width: len, height: len).resize(width: width, height: height)
     }
     
+    func fixOrientation() -> UIImage {
+        // No-op if the orientation is already correct
+        if (self.imageOrientation == UIImageOrientation.up ) {
+            return self;
+        }
+        
+        // We need to calculate the proper transformation to make the image upright.
+        // We do it in 2 steps: Rotate if Left/Right/Down, and then flip if Mirrored.
+        var transform: CGAffineTransform = CGAffineTransform.identity
+        
+        if (self.imageOrientation == UIImageOrientation.down || self.imageOrientation == UIImageOrientation.downMirrored ) {
+            transform = transform.translatedBy(x: self.size.width, y: self.size.height)
+            transform = transform.rotated(by: CGFloat(Double.pi))
+        }
+        
+        if (self.imageOrientation == UIImageOrientation.left || self.imageOrientation == UIImageOrientation.leftMirrored ) {
+            transform = transform.translatedBy(x: self.size.width, y: 0)
+            transform = transform.rotated(by: CGFloat(Double.pi / 2.0))
+        }
+        
+        if (self.imageOrientation == UIImageOrientation.right || self.imageOrientation == UIImageOrientation.rightMirrored ) {
+            transform = transform.translatedBy(x: 0, y: self.size.height);
+            transform = transform.rotated(by: CGFloat(-Double.pi / 2.0));
+        }
+        
+        if (self.imageOrientation == UIImageOrientation.upMirrored || self.imageOrientation == UIImageOrientation.downMirrored ) {
+            transform = transform.translatedBy(x: self.size.width, y: 0)
+            transform = transform.scaledBy(x: -1, y: 1)
+        }
+        
+        if (self.imageOrientation == UIImageOrientation.leftMirrored || self.imageOrientation == UIImageOrientation.rightMirrored ) {
+            transform = transform.translatedBy(x: self.size.height, y: 0);
+            transform = transform.scaledBy(x: -1, y: 1);
+        }
+        
+        // Now we draw the underlying CGImage into a new context, applying the transform
+        // calculated above.
+        let ctx: CGContext = CGContext(data: nil, width: Int(self.size.width), height: Int(self.size.height),
+                                       bitsPerComponent: self.cgImage!.bitsPerComponent, bytesPerRow: 0,
+                                       space: self.cgImage!.colorSpace!,
+                                       bitmapInfo: self.cgImage!.bitmapInfo.rawValue)!;
+        ctx.concatenate(transform)
+        
+        if (self.imageOrientation == UIImageOrientation.left ||
+            self.imageOrientation == UIImageOrientation.leftMirrored ||
+            self.imageOrientation == UIImageOrientation.right ||
+            self.imageOrientation == UIImageOrientation.rightMirrored ) {
+            ctx.draw(self.cgImage!, in: CGRect(x: 0,y: 0,width: self.size.height,height: self.size.width))
+        } else {
+            ctx.draw(self.cgImage!, in: CGRect(x: 0,y: 0,width: self.size.width,height: self.size.height))
+        }
+        
+        // And now we just create a new UIImage from the drawing context and return it
+        return UIImage(cgImage: ctx.makeImage()!)
+    }
+
 }

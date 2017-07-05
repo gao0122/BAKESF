@@ -9,6 +9,7 @@
 import UIKit
 import RealmSwift
 import LeanCloud
+import AVOSCloud
 
 enum LoginState {
     case normal, sending, loggingIn
@@ -42,6 +43,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     var loginState: LoginState = .normal
     var timerState: TimerState = .inited
     var phoneNum = ""
+    var userID = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -123,6 +125,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                             }
                             
                             if canSendMsg {
+                                self.userID = usr.objectId!.value
                                 self.sendMsg(phone: phone)
                             } else {
                                 self.resetGetMsgBtn()
@@ -143,6 +146,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                                 result in
                                 switch result {
                                 case .success:
+                                    self.userID = userLC.objectId!.value
                                     self.sendMsg(phone: phone)
                                 case .failure(let error):
                                     let code = error.code
@@ -271,27 +275,65 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     }
     
     func login(_ sender: Any) {
-        if RealmHelper.retrieveUser(withPhone: self.phoneNum) == nil {
-            addRealmUser(user: retrieveBaker(withPhone: self.phoneNum)!)
+        var isFirstLogin = false
+        let baker = retrieveBaker(withPhone: self.phoneNum)!
+        if RealmHelper.retrieveUser(withID: self.userID) == nil {
+            isFirstLogin = true
         } else {
-            let _ = RealmHelper.setCurrentUser(withPhone: self.phoneNum)
+            isFirstLogin = false
         }
+        self.retrieveHeadphotoAndSetUser(baker: baker, first: isFirstLogin)
         self.loginState = .normal
-        self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)
     }
     
-    func addRealmUser(user: LCBaker) {
-        let id = user.objectId!.value
-        let userRealm = UserRealm()
-        userRealm.id = id
-        userRealm.phone = self.phoneNum
-        userRealm.name = user.username!.value
-        userRealm.current = true
-        if let url = URL(string: user.headphoto!.value) {
-            let data = try? Data(contentsOf: url)
-            userRealm.headphoto = data
+    func retrieveHeadphotoAndSetUser(baker: LCBaker, first isFirstLogin: Bool) {
+        if let url = baker.headphoto?.value {
+            if url == "-" {
+                if isFirstLogin {
+                    RealmHelper.addUser(user: realmUser(byLCBaker: baker, data: nil))
+                } else {
+                    _ = RealmHelper.setCurrentUser(baker: baker, data: nil)
+                }
+                self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: self)
+                return
+            }
+            let file = AVFile(url: url)
+            let width = self.view.frame.width
+            let progressView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 3))
+            progressView.backgroundColor = colors[.red]!
+            self.view.addSubview(progressView)
+            self.view.bringSubview(toFront: progressView)
+            file.getDataInBackground({
+                result, error in
+                if result != nil && error == nil {
+                    let data = UIImage(data: result!)?.cropAndResize(width: 100, height: 100).imageData
+                    if isFirstLogin {
+                        RealmHelper.addUser(user: self.realmUser(byLCBaker: baker, data: data))
+                    } else {
+                        _ = RealmHelper.setCurrentUser(baker: baker, data: data)
+                    }
+                    self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: self)
+                } else {
+                    self.view.notify(text: "登录失败", color: .red)
+                    printit(any: error!.localizedDescription)
+                }
+                progressView.removeFromSuperview()
+            }, progressBlock: {
+                percent in
+                progressView.frame.size.width = width * CGFloat(percent) / 100
+            })
         }
-        RealmHelper.addUser(user: userRealm)
+    }
+    
+    func realmUser(byLCBaker baker: LCBaker, data: Data?) -> UserRealm {
+        let userRealm = UserRealm()
+        userRealm.id = baker.objectId!.value
+        userRealm.phone = self.phoneNum
+        userRealm.name = baker.username!.value
+        userRealm.current = true
+        userRealm.headphotoURL = baker.headphoto?.value
+        userRealm.headphoto = data
+        return userRealm
     }
     
     func dismissKeyboard(sender: UISegmentedControl) {

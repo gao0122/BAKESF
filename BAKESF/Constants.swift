@@ -22,12 +22,13 @@ let colors: [BKColor : UIColor] = [
 ]
 
 enum LCKey {
-    case name, phone, pwd, msgSentDate
+    case name, phone, pwd, msgSentDate, url
 }
 let lcKey: [LCKey : String] = [
     .name: "username",
     .phone: "mobilePhoneNumber",
     .pwd: "password",
-    .msgSentDate: "msgSentDate"
+    .msgSentDate: "msgSentDate",
+    .url: "url"
 ]
 

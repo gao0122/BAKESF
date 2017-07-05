@@ -84,10 +84,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RFb-7u-F90">
-                                <rect key="frame" x="20" y="33" width="37" height="33"/>
+                                <rect key="frame" x="10" y="33" width="37" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <accessibility key="accessibilityConfiguration" identifier="backFromLoginByMsgToMe"/>
-                                <state key="normal" title="Bk" image="Back-36"/>
+                                <state key="normal" image="Back-36"/>
                                 <connections>
                                     <segue destination="gF9-0Z-pAj" kind="unwind" identifier="unwindToMeFromLogin" unwindAction="unwindToMeVCWithSegue:" id="dP3-At-xOD"/>
                                 </connections>
@@ -213,10 +213,10 @@
                                 <state key="normal" title="Hello"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mjQ-F1-ix9">
-                                <rect key="frame" x="20" y="33" width="37" height="33"/>
+                                <rect key="frame" x="10" y="33" width="37" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <accessibility key="accessibilityConfiguration" identifier="backFromLoginByMsgToMe"/>
-                                <state key="normal" title="Bk" image="Back-36"/>
+                                <state key="normal" image="Back-36"/>
                                 <connections>
                                     <segue destination="obu-3J-sko" kind="unwind" identifier="unwindToMeFromSetting" unwindAction="unwindToMeVCWithSegue:" id="qXE-EN-u4y"/>
                                 </connections>
@@ -256,10 +256,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ANj-OX-cc1">
-                                <rect key="frame" x="20" y="33" width="37" height="33"/>
+                                <rect key="frame" x="10" y="33" width="37" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <accessibility key="accessibilityConfiguration" identifier="backFromLoginByMsgToMe"/>
-                                <state key="normal" title="Bk" image="Back-36"/>
+                                <state key="normal" image="Back-36"/>
                                 <connections>
                                     <segue destination="Vng-mw-7Ab" kind="unwind" identifier="unwindToMeFromInfo" unwindAction="unwindToMeVCWithSegue:" id="tmc-yS-naH"/>
                                 </connections>
@@ -628,6 +628,14 @@
                                     <segue destination="rRs-rg-31l" kind="embed" id="Naf-Ee-ere"/>
                                 </connections>
                             </containerView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M1y-bj-hnT">
+                                <rect key="frame" x="354" y="41" width="50" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <state key="normal" title="珠海">
+                                    <color key="titleColor" red="0.098039217289999994" green="0.098039217289999994" blue="0.098039217289999994" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                            </button>
                             <searchBar contentMode="redraw" fixedFrame="YES" searchBarStyle="minimal" translatesAutoresizingMaskIntoConstraints="NO" id="Cm8-Hu-zKd">
                                 <rect key="frame" x="8" y="30" width="346" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -636,19 +644,12 @@
                                     <outlet property="delegate" destination="K90-pZ-4BZ" id="aIu-tj-q3y"/>
                                 </connections>
                             </searchBar>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="珠海" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="RRc-fU-Ikq">
-                                <rect key="frame" x="354" y="41" width="50" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <accessibility key="accessibilityConfiguration" identifier="locationLabel"/>
-                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <navigationItem key="navigationItem" id="v3O-G6-yMn"/>
                     <connections>
+                        <outlet property="locationBtn" destination="M1y-bj-hnT" id="9Lx-CG-Vav"/>
                         <outlet property="masterView" destination="yfd-n7-P0V" id="cAF-P4-zdR"/>
                         <outlet property="searchBar" destination="Cm8-Hu-zKd" id="weZ-Ys-AUG"/>
                     </connections>
@@ -687,14 +688,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="262" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="CyZ-Ah-7BS" customClass="HomeSellerTableView" customModule="BAKESF" customModuleProvider="target">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="262" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="CyZ-Ah-7BS" customClass="HomeSellerTableView" customModule="BAKESF" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="homeSellerTableViewCell" rowHeight="262" id="EFq-Sb-Rj4" customClass="HomeSellerTableViewCell" customModule="BAKESF" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="262"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="EFq-Sb-Rj4" id="kbB-5k-ONi">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="261.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
@@ -782,6 +783,7 @@
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
                                             <outlet property="bgImage" destination="g8W-6j-r79" id="gZD-qe-Ywd"/>
                                             <outlet property="commentsNumber" destination="RXQ-TJ-PlN" id="JjE-vd-ZT2"/>

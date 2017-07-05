@@ -218,46 +218,72 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         picker.dismiss(animated: true, completion: nil)
 
         if let img = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            if let data = img.imageData {
-                saveImgToLC(data: data, img: img)
+            if let data = img.fixOrientation().imageData {
+                saveImgToLC(data: data, img: img.fixOrientation())
             }
         }
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
-        print("picker did cancel")
+    }
+    
+    func deleteOriginHeadphoto(url urlToDelete: String) {
+        // TODO: - delete the origin file in LeanCloud
+        let query = AVFileQuery(className: "_File")
+        query.whereKey(lcKey[.url]!, equalTo: urlToDelete)
+        query.findFilesInBackground({
+            result, error in
+            if error == nil {
+                if let obj = result?.first {
+                    let file = obj as! AVFile
+                    file.deleteInBackground({
+                        succeeded, error in
+                        if succeeded {
+                        } else {
+                        }
+                    })
+                }
+            }
+        })
     }
     
     func saveImgToLC(data: Data, img: UIImage) {
-        // TODO: - delete the origin file in LeanCloud
-        let scaledImg = img.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
-        RealmHelper.saveHeadphoto(user: user, data: scaledImg.imageData!)
-        
+        guard let urlToDelete = user.headphotoURL else { return }
+        let scaledImg = img.cropAndResize(width: headphoto.frame.width, height: headphoto.frame.height)
         let file = AVFile(data: data)
+        let width = self.view.frame.width
+        let progressView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 3))
+        progressView.backgroundColor = colors[.white]!
+        self.view.addSubview(progressView)
+        self.view.bringSubview(toFront: progressView)
         file.saveInBackground({
-            succeed, error in
-            if succeed {
-                let usr = retrieveBaker(withPhone: self.user!.phone)!
+            succeeded, error in
+            if succeeded {
+                RealmHelper.saveHeadphoto(user: self.user, data: scaledImg.imageData!, url: file.url!)
+                let usr = retrieveBaker(withID: self.user!.id)!
                 usr.headphoto = LCString(file.url!)
                 usr.save {
                     result in
                     switch result {
                     case .success:
                         self.headphoto.setImage(scaledImg, for: .normal)
+                        self.deleteOriginHeadphoto(url: urlToDelete)
                         self.view.notify(text: "修改成功", color: .green)
                     case .failure(let error):
-                        self.view.notify(text: "修改失败", color: .red)
-                        Answers.logCustomEvent(withName: "修改头像失败", customAttributes: ["user": error.userInfo ?? "", "phone": self.user.phone, "error": error.reason ?? error.localizedDescription])
+                        self.view.notify(text: "上传失败", color: .red)
+                        Answers.logCustomEvent(withName: "上传头像失败", customAttributes: ["user": error.userInfo ?? "", "phone": self.user.phone, "error": error.reason ?? error.localizedDescription])
                     }
                 }
             } else {
                 printit(any: error!.localizedDescription)
             }
+            progressView.removeFromSuperview()
             self.view.isUserInteractionEnabled = true
         }, progressBlock: {
             percent in
             self.view.isUserInteractionEnabled = false
+            progressView.frame.size.width = width * CGFloat(percent) / 100
         })
     }
 
@@ -271,7 +297,7 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
             userNameLabel.text = "\(user.name)"
             if let data = usr.headphoto {
                 let img = UIImage(data: data)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
-                headphoto.setImage(img, for: .normal)
+                headphoto.setImage(img?.fixOrientation(), for: .normal)
             }
             return true
         } else {
@@ -280,6 +306,7 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
             editInfoBtn.isHidden = true
             loginBtn.isHidden = false
             userNameLabel.text = "个人主页"
+            headphoto.setImage(UIImage(named: "巧克力布丁")!, for: .normal)
             return false
         }
     }

@@ -42,13 +42,17 @@
 	<string>96930d98f423bab80d07f6e381bca20a</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>clouddn.com</key>
 			<dict>
-				<key>IncludesSubdomains</key>
+				<key>NSIncludesSubdomains</key>
 				<true/>
-				<key>TemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
 		</dict>
