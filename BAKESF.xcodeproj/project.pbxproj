@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		00020F861F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */; };
 		00020F881F0C201E008ABFB1 /* MeInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F871F0C201E008ABFB1 /* MeInfoVC.swift */; };
+		00020F8D1F0E2D5D008ABFB1 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F891F0E2D5D008ABFB1 /* CGFloat+Extensions.swift */; };
+		00020F8E1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F8A1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift */; };
+		00020F8F1F0E2D5D008ABFB1 /* CGVector+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F8B1F0E2D5D008ABFB1 /* CGVector+Extensions.swift */; };
+		00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F8C1F0E2D5D008ABFB1 /* Int+Extensions.swift */; };
 		000D13761EFF859000A19D5A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13751EFF859000A19D5A /* Extensions.swift */; };
 		000D13781EFF862700A19D5A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13771EFF862700A19D5A /* Constants.swift */; };
 		001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001DB09C1F024CD100A09F32 /* CommunityVC.swift */; };
@@ -49,6 +53,10 @@
 /* Begin PBXFileReference section */
 		00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakesfTransitionAnimator.swift; sourceTree = "<group>"; };
 		00020F871F0C201E008ABFB1 /* MeInfoVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeInfoVC.swift; sourceTree = "<group>"; };
+		00020F891F0E2D5D008ABFB1 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
+		00020F8A1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
+		00020F8B1F0E2D5D008ABFB1 /* CGVector+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGVector+Extensions.swift"; sourceTree = "<group>"; };
+		00020F8C1F0E2D5D008ABFB1 /* Int+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		000D13751EFF859000A19D5A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		000D13771EFF862700A19D5A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		001DB09C1F024CD100A09F32 /* CommunityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityVC.swift; sourceTree = "<group>"; };
@@ -187,6 +195,10 @@
 				000D13771EFF862700A19D5A /* Constants.swift */,
 				00D0AF991EE3C7F300B1F5A2 /* Helper.swift */,
 				00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */,
+				00020F891F0E2D5D008ABFB1 /* CGFloat+Extensions.swift */,
+				00020F8A1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift */,
+				00020F8B1F0E2D5D008ABFB1 /* CGVector+Extensions.swift */,
+				00020F8C1F0E2D5D008ABFB1 /* Int+Extensions.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -391,6 +403,7 @@
 				006024F41EC973D600FFB859 /* MeMemoryVC.swift in Sources */,
 				0034EE341EE7D59A005300AE /* SellerPagingVC.swift in Sources */,
 				006024FC1EC9900000FFB859 /* HomeFollowVC.swift in Sources */,
+				00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */,
 				00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */,
 				0044B0AC1ED17B3C003DE5AF /* HomeSellerTableViewCell.swift in Sources */,
 				000D13781EFF862700A19D5A /* Constants.swift in Sources */,
@@ -399,12 +412,15 @@
 				00020F861F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift in Sources */,
 				006024FE1EC9900F00FFB859 /* HomeSellerVC.swift in Sources */,
 				0034EE381EE91176005300AE /* SellerPreVC.swift in Sources */,
+				00020F8D1F0E2D5D008ABFB1 /* CGFloat+Extensions.swift in Sources */,
 				006024FA1EC98FCF00FFB859 /* HomeMasterVC.swift in Sources */,
 				0034EE3A1EE91182005300AE /* SellerTweetVC.swift in Sources */,
 				00020F881F0C201E008ABFB1 /* MeInfoVC.swift in Sources */,
 				00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */,
 				009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */,
+				00020F8F1F0E2D5D008ABFB1 /* CGVector+Extensions.swift in Sources */,
 				0048FDAB1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift in Sources */,
+				00020F8E1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift in Sources */,
 				00B4709B1F0404DD00725C95 /* LCBaker.swift in Sources */,
 				00B491A91EE4CFE1000C63EB /* SellerVC.swift in Sources */,
 				00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */,

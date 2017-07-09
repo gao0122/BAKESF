@@ -15,8 +15,13 @@ class HomeVC: UIViewController, UISearchBarDelegate {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var locationBtn: UIButton!
     
+    private var sellerTableView: UITableView!
+    private var bakeTableView: UITableView!
+    private var followTableView: UITableView!
+    
     var user: UserRealm!
     var searchBarWidth: CGFloat! = 0
+    var hasSetSellerView = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +35,8 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         } else {
             // to login
         }
-
+        
+        
         
         // page menu
         struct HomeSeller: MenuItemViewCustomizable {
@@ -87,8 +93,12 @@ class HomeVC: UIViewController, UISearchBarDelegate {
                 print()
                 
             case let .didMoveController(menuController, previousMenuController):
-                print()
-                
+                if let vc = menuController as? HomeSellerVC {
+                    if !self.hasSetSellerView {
+                        self.hasSetSellerView = true
+                        self.sellerTableView = vc.tableView
+                    }
+                }
             case let .willMoveItem(menuItemView, previousMenuItemView):
                 print()
             
@@ -105,7 +115,7 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         }
         
     }
-
+    
     // MARK: - SearchBar
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         self.searchBar.setShowsCancelButton(true, animated: true)

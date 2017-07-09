@@ -15,12 +15,18 @@ class HomeSellerVC: UIViewController, UITableViewDelegate, UITableViewDataSource
 
     @IBOutlet weak var tableView: HomeSellerTableView!
     
+    lazy var refresher: UIRefreshControl = {
+        let refresher = UIRefreshControl()
+        refresher.attributedTitle = NSAttributedString(string: "下拉刷新")
+        refresher.addTarget(self, action: #selector(HomeSellerVC.sellerRefresh(_:)), for: UIControlEvents.valueChanged)
+        return refresher
+    }()
     
-    // TODO :- embeded nav controller
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        tableView.addSubview(refresher)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,6 +50,12 @@ class HomeSellerVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     }
     
     
+    func sellerRefresh(_ sender: UIRefreshControl) {
+        tableView.reloadData()
+        refresher.endRefreshing()
+    }
+    
+
     // MARK: - TableView
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -80,8 +92,10 @@ class HomeSellerVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return sellers.count
     }
+    
+    
     
     // MARK: - Segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

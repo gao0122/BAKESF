@@ -8,6 +8,10 @@
 
 import UIKit
 
-class SellerBuyBakeCollectionView: UICollectionView {
+class SellerBuyBakeCollectionView: UICollectionView, UIGestureRecognizerDelegate {
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
+    }
     
 }

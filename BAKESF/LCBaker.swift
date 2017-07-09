@@ -18,6 +18,8 @@ class LCBaker: LCObject {
     dynamic var msgSentDate: LCDate?
     dynamic var headphoto: LCString?
     
+    
+    
     override static func objectClassName() -> String {
         return "Baker"
     }

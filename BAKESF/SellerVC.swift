@@ -8,9 +8,17 @@
 
 import UIKit
 import PagingMenuController
+import AVOSCloud
+import LeanCloud
+
 
 class SellerVC: UIViewController, UIGestureRecognizerDelegate {
     
+    enum MenuAniState {
+        case expanded
+        case collapsed
+    }
+
     @IBOutlet weak var sellerInfoBgImage: UIImageView!
     @IBOutlet weak var introBtn: UIButton!
     @IBOutlet weak var sellerNameLabel: UILabel!
@@ -23,17 +31,36 @@ class SellerVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var starsHover: UIImageView!
     @IBOutlet weak var commentNumberBtn: UIButton!
     @IBOutlet weak var starLabel: UIButton!
+    @IBOutlet weak var shopView: UIView!
+    @IBOutlet weak var cartView: UIView!
+    @IBOutlet weak var broadcastLabel: UILabel!
     
+    private var bakeCollectionView: SellerBuyBakeCollectionView!
+    
+    let topViewHeight: CGFloat = 78
     var id: Int!
     var ids: String!
     var seller: [String: Any]!
+
+    let menuAniDuration: TimeInterval = 0.39
+    var originShopY: CGFloat = 0
+    var startTranslationY: CGFloat = 0
+    var startMenuState: MenuAniState!
+    var addedPanRecognizer = false
+    var hasSetSellerVC = false
+    
+    var menuAniState: MenuAniState = .collapsed
+    var runningMenuAnimators = [UIViewPropertyAnimator]()
+    var menuProgressWhenInterrupted = [CGFloat]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        originShopY = broadcastLabel.frame.origin.y + 24
+        shopView.frame.origin.y = originShopY
+        
         ids = String(id)
         seller = sellers[ids] as! [String: Any]
-        
         
         // page menu
         struct SellerBuy: MenuItemViewCustomizable {
@@ -70,7 +97,7 @@ class SellerVC: UIViewController, UIGestureRecognizerDelegate {
             let sellerBuyVC = SellerBuyVC.instantiateFromStoryboard()
             let sellerPreVC = SellerPreVC.instantiateFromStoryboard()
             let sellerTweetVC = SellerTweetVC.instantiateFromStoryboard()
-            
+
             var componentType: ComponentType {
                 return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [sellerBuyVC, sellerPreVC, sellerTweetVC])
             }
@@ -82,28 +109,28 @@ class SellerVC: UIViewController, UIGestureRecognizerDelegate {
         let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         pagingMenuController.setup(option)
+        
+        if !self.hasSetSellerVC {
+            self.hasSetSellerVC = true
+            self.bakeCollectionView = option.sellerBuyVC.bakeCollectionView as! SellerBuyBakeCollectionView!
+            option.sellerBuyVC.bakeCollectionView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(SellerVC.panGestureAni(sender:))))
+        }
+
         pagingMenuController.onMove = {
             state in
-            
             switch state {
             case let .willMoveController(menuController, previousMenuController):
-                print()
-                
+                break
             case let .didMoveController(menuController, previousMenuController):
-                print()
-                
+                break
             case let .willMoveItem(menuItemView, previousMenuItemView):
-                print()
-                
+                break
             case let .didMoveItem(menuItemView, previousMenuItemView):
-                print()
-                
+                break
             case .didScrollStart:
-                print()
-                
+                break
             case .didScrollEnd:
-                print()
-                
+                break
             }
         }
         
@@ -139,9 +166,12 @@ class SellerVC: UIViewController, UIGestureRecognizerDelegate {
         
         let x = starsHover.frame.width * CGFloat(s)
         print(x)
-        
+        // TODO: - stars
         starsHover.frame.origin.x += x
         starsHover.frame.size.width -= x
+        
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -156,12 +186,24 @@ class SellerVC: UIViewController, UIGestureRecognizerDelegate {
 
     }
 
+    
     @IBAction func introBtnPressed(_ sender: Any) {
         
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+        if let id = segue.identifier {
+            switch id {
+            case "sellerBuyMenuSegue":
+                if let vc = segue.destination as? SellerPagingVC {
+
+                }
+            case "sellerBuyCartSegue":
+                break
+            default:
+                break
+            }
+        }
     }
     
     override func unwind(for unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
@@ -177,96 +219,167 @@ class SellerVC: UIViewController, UIGestureRecognizerDelegate {
         return false
     }
     
+    
+    func menuAnimateTransitionIfNeeded(state: MenuAniState, duration: TimeInterval) {
+        if runningMenuAnimators.isEmpty {
+            let menuFrameAnimator = self.menuFrameAnimator(duration: duration, state: state)
+            menuFrameAnimator.startAnimation()
+            runningMenuAnimators.append(menuFrameAnimator)
+            
+            switch state {
+            case .collapsed:
+                break
+            case .expanded:
+                break
+            }
+            switchMenuState()
+            startMenuState = menuAniState
+        }
+    }
+    
+    func menuFrameAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
+        let frameAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
+            _ in
+            switch state {
+            case .expanded:
+                self.hideMenu()
+            case .collapsed:
+                self.showMenu()
+            }
+        }
+        frameAnimator.addCompletion {
+            finalPosition in
+            if let index = self.runningMenuAnimators.index(of: frameAnimator) {
+                self.runningMenuAnimators.remove(at: index)
+            }
+            if finalPosition == .start {
+                switch state {
+                case .expanded:
+                    self.showMenu()
+                case .collapsed:
+                    self.hideMenu()
+                }
+            }
+        }
+        return frameAnimator
+    }
+    
+
+    func menuAnimateOrReverseRunningTransition(state: MenuAniState, duration: TimeInterval) {
+        if runningMenuAnimators.isEmpty {
+            menuAnimateTransitionIfNeeded(state: state, duration: duration)
+        } else {
+            runningMenuAnimators.forEach { $0.isReversed = !$0.isReversed }
+            switchMenuState()
+        }
+    }
+    
+    func showMenu() {
+        self.shopView.frame.origin.y = self.topViewHeight
+    }
+    
+    func hideMenu() {
+        self.shopView.frame.origin.y = self.originShopY
+    }
+    
+    func switchMenuState() {
+        menuAniState = menuAniState == .expanded ? .collapsed : .expanded
+    }
+
+    func panGestureAni(sender: UIPanGestureRecognizer) {
+        guard let view = sender.view else { return }
+        let velocity = sender.velocity(in: view)
+        switch sender.state {
+        case .began:
+            startTranslationY = sender.location(in: self.view).y
+            menuStartInteractiveTransition(state: menuAniState, duration: menuAniDuration)
+        case .changed:
+            if sender.numberOfTouches == 0 { break }
+            let y = sender.location(ofTouch: 0, in: self.view).y
+            let ty = y - startTranslationY
+            let fraction = computeFraction(velocity: velocity, ty: ty, locationY: sender.location(ofTouch: 0, in: self.view).y)
+            menuUpdateInteractiveTransition(fractionComplete: fraction)
+        case .ended:
+            let cancel: Bool
+            switch menuAniState {
+            case .expanded:
+                cancel = velocity.y > 0
+            case .collapsed:
+                cancel = velocity.y < 0
+            }
+            menuContinueInteractiveTransition(cancel: cancel)
+        case .cancelled, .failed:
+            menuContinueInteractiveTransition(cancel: true)
+        case .possible:
+            break
+        }
+    }
+    
+    func menuStartInteractiveTransition(state: MenuAniState, duration: TimeInterval) {
+        menuAnimateTransitionIfNeeded(state: state, duration: duration)
+        runningMenuAnimators.forEach { $0.pauseAnimation() }
+        menuProgressWhenInterrupted = runningMenuAnimators.map { $0.fractionComplete }
+    }
+    
+    func computeFraction(velocity: CGPoint, ty: CGFloat, locationY: CGFloat) -> CGFloat {
+        var fraction: CGFloat = ty / (originShopY - topViewHeight)
+        switch menuAniState {
+        case .expanded:
+            if velocity.y >= 0 && fraction >= 0 {
+                // expanding but paning down
+                let progress = menuProgressWhenInterrupted.first!
+                if progress == 0 {
+                    // not interrupted
+                    startTranslationY = locationY   // reset the start translation position
+                    fraction = progress
+                } else {
+                    // interrupted
+                    fraction = abs(fraction)
+                }
+            } else {
+                // noraml case
+                fraction = abs(fraction)
+                if fraction > 1 {
+                    startTranslationY -= (fraction - 1) * (originShopY - topViewHeight)
+                }
+            }
+        case .collapsed:
+            if velocity.y <= 0 && fraction <= 0 {
+                let progress = menuProgressWhenInterrupted.first!
+                if progress == 0 {
+                    startTranslationY = locationY
+                    fraction = progress
+                } else {
+                    fraction = abs(fraction)
+                }
+            } else {
+                fraction = abs(fraction)
+                if fraction > 1 {
+                    startTranslationY += (fraction - 1) * (originShopY - topViewHeight)
+                }
+            }
+        }
+        if menuProgressWhenInterrupted.first! > 0 {
+            fraction = ty < 0 ? fraction : -fraction
+            fraction = startMenuState == .expanded ? fraction : -fraction
+        }
+        return fraction
+    }
+    
+    func menuUpdateInteractiveTransition(fractionComplete: CGFloat) {
+        let animatorAndProgress = zip(runningMenuAnimators, menuProgressWhenInterrupted)
+        animatorAndProgress.forEach { $0.0.fractionComplete = $0.1 + fractionComplete }
+    }
+    
+    func menuContinueInteractiveTransition(cancel: Bool) {
+        if cancel {
+            menuAnimateOrReverseRunningTransition(state: menuAniState, duration: menuAniDuration)
+        }
+        let timing = UISpringTimingParameters(dampingRatio: 1)
+        runningMenuAnimators.forEach { $0.continueAnimation(withTimingParameters: timing, durationFactor: 0) }
+    }
+
 }
 
 
-
-let sellers: [String: Any] = [
-    "0": [
-        "name": "北欧宜家小食",
-        "comments": [
-            ["user": "primo", "content": "delicious!"],
-            ["user": "primo", "content": "delicious!"]
-        ],
-        "commentsNum": 423,
-        "stars": 4.5,
-        "topics": ["#私家烘焙", "#焙可推荐"],
-        
-        "bakes": [
-            "0": ["name": "名媛塔", "price": 36.00, "star": 4.2, "amount": 5],
-            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 0],
-            "2": ["name": "巧克力布丁", "price": 12.00, "star": 4.5, "amount": 2],
-            "3": ["name": "巧克力条", "price": 52.00, "star": 3.1, "amount": 6],
-            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 0],
-            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 0],
-            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 0],
-            "7": ["name": "草莓杯子蛋糕", "price": 28.00, "star": 2.9, "amount": 1],
-            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 0],
-            "9": ["name": "黄桃家", "price": 189.00, "star": 4.6, "amount": 1]
-        ]
-    ],
-    "1": [
-        "name": "南墨尔本的克莱门",
-        "comments": ["user": "primo", "content": "good good good!"],
-        "commentsNum": 208,
-        "stars": 4.8,
-        "topics": ["#北美"],
-        
-        "bakes": [
-            "0": ["name": "名媛塔", "price": 36.00, "star": 4.2, "amount": 5],
-            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 0],
-            "2": ["name": "巧克力布丁", "price": 12.00, "star": 4.5, "amount": 2],
-            "3": ["name": "巧克力条", "price": 52.00, "star": 3.1, "amount": 6],
-            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 0],
-            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 0],
-            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 0],
-            "7": ["name": "草莓杯子蛋糕", "price": 28.00, "star": 2.9, "amount": 1],
-            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 0],
-            "9": ["name": "黄桃家", "price": 189.00, "star": 4.6, "amount": 1]
-        ]
-        
-    ],
-    "2": [
-        "name": "甜品师 Megan 的店",
-        "comments": ["user": "primo", "content": "very nice try!"],
-        "commentsNum": 1922,
-        "stars": 4.9,
-        "topics": [],
-        
-        "bakes": [
-            "0": ["name": "名媛塔", "price": 36.00, "star": 4.2, "amount": 5],
-            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 0],
-            "2": ["name": "巧克力布丁", "price": 12.00, "star": 4.5, "amount": 2],
-            "3": ["name": "巧克力条", "price": 52.00, "star": 3.1, "amount": 6],
-            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 0],
-            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 0],
-            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 0],
-            "7": ["name": "草莓杯子蛋糕", "price": 28.00, "star": 2.9, "amount": 1],
-            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 0],
-            "9": ["name": "黄桃家", "price": 189.00, "star": 4.6, "amount": 1]
-        ]
-        
-    ],
-    "3": [
-        "name": "茵茵的厨房",
-        "comments": ["user": "primo", "content": "wow!"],
-        "commentsNum": 879,
-        "stars": 4.4,
-        "topics": ["#烘焙教学", "#焙可推荐"],
-        
-        "bakes": [
-            "0": ["name": "名媛塔", "price": 36.00, "star": 4.2, "amount": 5],
-            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 0],
-            "2": ["name": "巧克力布丁", "price": 12.00, "star": 4.5, "amount": 2],
-            "3": ["name": "巧克力条", "price": 52.00, "star": 3.1, "amount": 6],
-            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 0],
-            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 0],
-            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 0],
-            "7": ["name": "草莓杯子蛋糕", "price": 28.00, "star": 2.9, "amount": 1],
-            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 0],
-            "9": ["name": "黄桃家", "price": 189.00, "star": 4.6, "amount": 1]
-        ]
-        
-    ]
-]
 

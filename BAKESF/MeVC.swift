@@ -229,7 +229,6 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
     }
     
     func deleteOriginHeadphoto(url urlToDelete: String) {
-        // TODO: - delete the origin file in LeanCloud
         let query = AVFileQuery(className: "_File")
         query.whereKey(lcKey[.url]!, equalTo: urlToDelete)
         query.findFilesInBackground({

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate {
 
     @IBOutlet weak var bakeCollectionView: UICollectionView!
     
@@ -18,15 +18,22 @@ class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        bakeCollectionView.dataSource = self
+        
+        
         bakeCollectionView.allowsSelection = false
         
         bake = sellers["1"] as! [String : Any]
         bakes = bake["bakes"] as! [String: Any]
 
+        //bakeCollectionView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(panGestureShowMenu(sender:))))
+    }
+
+    class func instantiateFromStoryboard() -> SellerBuyVC {
+        return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! SellerBuyVC
     }
     
+    
+    // MARK: - CollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = bakeCollectionView.dequeueReusableCell(withReuseIdentifier: "sellerBuyBakeTableCell", for: IndexPath(row: indexPath.row, section: indexPath.section)) as! SellerBuyBakeTableCell
@@ -47,9 +54,9 @@ class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-
         var count = bakes.count
         
+        // count the bakes whose amount is larger than 0
         for bakee in bakes {
             let bakeInfo = bakee.value as! [String: Any]
             
@@ -63,13 +70,20 @@ class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         return count
     }
     
-    class func instantiateFromStoryboard() -> SellerBuyVC {
-        return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! SellerBuyVC
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+    }
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+    }
+
+    func panGestureShowMenu(sender: UIPanGestureRecognizer) {
+        
     }
     
     
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -77,6 +91,5 @@ class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
 
 }
