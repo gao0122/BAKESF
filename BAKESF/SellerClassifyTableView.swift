@@ -1,17 +1,19 @@
 //
-//  SellerBuyBakeCollectionView.swift
+//  SellerClassifyTableView.swift
 //  BAKESF
 //
-//  Created by 高宇超 on 6/8/17.
+//  Created by 高宇超 on 7/11/17.
 //  Copyright © 2017 Yuchao. All rights reserved.
 //
 
 import UIKit
 
-class SellerBuyBakeCollectionView: UICollectionView, UIGestureRecognizerDelegate {
+class SellerClassifyTableView: UITableView, UIGestureRecognizerDelegate {
+    
+    var shouldScroll = false
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return false
+        return self.shouldScroll
     }
     
 }

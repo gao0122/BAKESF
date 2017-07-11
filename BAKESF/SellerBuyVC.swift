@@ -8,10 +8,14 @@
 
 import UIKit
 
-class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UIGestureRecognizerDelegate {
+class SellerBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
-    @IBOutlet weak var bakeCollectionView: UICollectionView!
+    @IBOutlet weak var tableviewContainer: UIView!
+    @IBOutlet weak var classifyTableView: SellerClassifyTableView!
+    @IBOutlet weak var bakeTableView: SellerBuyBakeTableView!
     
+    var shopView: UIView!
+    var originShopY: CGFloat!
     var bake: [String: Any]!
     var bakes: [String: Any]!
     var buyBake = [Int]()
@@ -19,13 +23,14 @@ class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        classifyTableView.frame.size.height = tableviewContainer.frame.height
+        bakeTableView.frame.size.height = tableviewContainer.frame.height
         
-        bakeCollectionView.allowsSelection = false
+        classifyTableView.isScrollEnabled = false
         
         bake = sellers["1"] as! [String : Any]
         bakes = bake["bakes"] as! [String: Any]
 
-        //bakeCollectionView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(panGestureShowMenu(sender:))))
     }
 
     class func instantiateFromStoryboard() -> SellerBuyVC {
@@ -33,53 +38,86 @@ class SellerBuyVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     }
     
     
-    // MARK: - CollectionView
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let cell = bakeCollectionView.dequeueReusableCell(withReuseIdentifier: "sellerBuyBakeTableCell", for: IndexPath(row: indexPath.row, section: indexPath.section)) as! SellerBuyBakeTableCell
-        let bakee = bakes["\(buyBake[indexPath.row])"] as! [String: Any]
-        
-        let bakeName = bakee["name"] as! String
-        let price = bakee["price"] as! Double
-        let left = bakee["amount"] as! Int
-        // let star = bakee["star"] as! Double
-
-        
-        cell.bakeImage.image = UIImage(named: bakeName)
-        cell.nameLabel.text = bakeName
-        cell.priceLabel.text = "¥\(price)"
-        cell.leftLabel.text = "剩余 \(left)"
-
-        return cell
+    // MARK: - TableView
+    func numberOfSections(in tableView: UITableView) -> Int {
+        switch tableView.tag {
+        case 0: // classify table
+            return 1
+        case 1: // bake table
+            return 1
+        default:
+            return 1
+        }
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        var count = bakes.count
-        
-        // count the bakes whose amount is larger than 0
-        for bakee in bakes {
-            let bakeInfo = bakee.value as! [String: Any]
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch tableView.tag {
+        case 0:
+            let cell = classifyTableView.dequeueReusableCell(withIdentifier: "sellerClassifyTableCell", for: IndexPath(row: indexPath.row, section: indexPath.section)) as! SellerClassifyTableCell
+            cell.selectionStyle = .none
+            cell.classLabel.text = "分类"
+            return cell
+        case 1:
+            let cell = bakeTableView.dequeueReusableCell(withIdentifier: "sellerBuyBakeTableCell", for: IndexPath(row: indexPath.row, section: indexPath.section)) as! SellerBuyBakeTableCell
+            cell.selectionStyle = .none
             
-            if (bakeInfo["amount"] as! Int) <= 0 {
-                count -= 1
-            } else {
-                buyBake.append(Int(bakee.key)!)
-            }
+            let bakee = bakes["\(buyBake[indexPath.row])"] as! [String: Any]
+            
+            let bakeName = bakee["name"] as! String
+            let price = bakee["price"] as! Double
+            let left = bakee["amount"] as! Int
+            // let star = bakee["star"] as! Double
+            
+            cell.bakeImage.image = UIImage(named: bakeName)
+            cell.nameLabel.text = bakeName
+            cell.priceLabel.text = "¥\(price)"
+            cell.leftLabel.text = "剩余 \(left)"
+            return cell
+        default:
+            return UITableViewCell()
         }
-        
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        var count = 0
+        switch tableView.tag {
+        case 0:
+            count = 1
+        case 1:
+            count = bakes.count
+            // count the bakes whose amount is larger than 0
+            for bakee in bakes {
+                let bakeInfo = bakee.value as! [String: Any]
+                
+                if (bakeInfo["amount"] as! Int) <= 0 {
+                    count -= 1
+                } else {
+                    buyBake.append(Int(bakee.key)!)
+                }
+            }
+        default:
+            break
+        }
         return count
     }
     
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
+        if scrollView.tag != 1 { return }
+        if scrollView.contentOffset.y < 0 {
+            scrollView.contentOffset = .zero
+        } else {
+            scrollView.isScrollEnabled = true
+        }
     }
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
-    }
-
-    func panGestureShowMenu(sender: UIPanGestureRecognizer) {
-        
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        printit(any: "end decelerating \(shopView.frame.origin.y)")
+        if shopView.frame.origin.y == originShopY {
+            bakeTableView.shouldScroll = false
+        }
+        if scrollView.contentOffset.y <= 0 {
+            scrollView.contentOffset = .zero
+        }
     }
     
     

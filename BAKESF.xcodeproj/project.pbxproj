@@ -20,9 +20,11 @@
 		0034EE361EE9116B005300AE /* SellerBuyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE351EE9116B005300AE /* SellerBuyVC.swift */; };
 		0034EE381EE91176005300AE /* SellerPreVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE371EE91176005300AE /* SellerPreVC.swift */; };
 		0034EE3A1EE91182005300AE /* SellerTweetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE391EE91181005300AE /* SellerTweetVC.swift */; };
+		004318321F13EF8E00FD0227 /* SellerClassifyTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004318311F13EF8E00FD0227 /* SellerClassifyTableCell.swift */; };
+		004318341F13F21900FD0227 /* SellerClassifyTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004318331F13F21900FD0227 /* SellerClassifyTableView.swift */; };
 		0044B0AC1ED17B3C003DE5AF /* HomeSellerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0044B0AB1ED17B3C003DE5AF /* HomeSellerTableViewCell.swift */; };
 		0048FDA91EE9E6AC002B49B6 /* SellerBuyBakeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDA81EE9E6AC002B49B6 /* SellerBuyBakeTableCell.swift */; };
-		0048FDAB1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDAA1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift */; };
+		0048FDAB1EEA725C002B49B6 /* SellerBuyBakeTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDAA1EEA725C002B49B6 /* SellerBuyBakeTableView.swift */; };
 		004BF0E01ED184CF00554A5E /* HomeSellerTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004BF0DF1ED184CF00554A5E /* HomeSellerTableView.swift */; };
 		006024F21EC9738800FFB859 /* MeMasterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006024F11EC9738800FFB859 /* MeMasterVC.swift */; };
 		006024F41EC973D600FFB859 /* MeMemoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006024F31EC973D600FFB859 /* MeMemoryVC.swift */; };
@@ -42,6 +44,7 @@
 		00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */; };
 		00B491A91EE4CFE1000C63EB /* SellerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B491A81EE4CFE1000C63EB /* SellerVC.swift */; };
 		00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D0AF991EE3C7F300B1F5A2 /* Helper.swift */; };
+		00D23B911F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D23B901F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift */; };
 		00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 00E14EF51ECAE016008197A3 /* Assets.xcassets */; };
 		00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EF81ECB1866008197A3 /* MeVC.swift */; };
 		00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */; };
@@ -64,9 +67,11 @@
 		0034EE351EE9116B005300AE /* SellerBuyVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerBuyVC.swift; sourceTree = "<group>"; };
 		0034EE371EE91176005300AE /* SellerPreVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerPreVC.swift; sourceTree = "<group>"; };
 		0034EE391EE91181005300AE /* SellerTweetVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerTweetVC.swift; sourceTree = "<group>"; };
+		004318311F13EF8E00FD0227 /* SellerClassifyTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerClassifyTableCell.swift; sourceTree = "<group>"; };
+		004318331F13F21900FD0227 /* SellerClassifyTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerClassifyTableView.swift; sourceTree = "<group>"; };
 		0044B0AB1ED17B3C003DE5AF /* HomeSellerTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeSellerTableViewCell.swift; sourceTree = "<group>"; };
 		0048FDA81EE9E6AC002B49B6 /* SellerBuyBakeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerBuyBakeTableCell.swift; sourceTree = "<group>"; };
-		0048FDAA1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerBuyBakeCollectionView.swift; sourceTree = "<group>"; };
+		0048FDAA1EEA725C002B49B6 /* SellerBuyBakeTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerBuyBakeTableView.swift; sourceTree = "<group>"; };
 		004BF0DF1ED184CF00554A5E /* HomeSellerTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeSellerTableView.swift; sourceTree = "<group>"; };
 		006024F11EC9738800FFB859 /* MeMasterVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeMasterVC.swift; sourceTree = "<group>"; };
 		006024F31EC973D600FFB859 /* MeMemoryVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeMemoryVC.swift; sourceTree = "<group>"; };
@@ -92,6 +97,7 @@
 		00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmHelper.swift; sourceTree = "<group>"; };
 		00B491A81EE4CFE1000C63EB /* SellerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SellerVC.swift; sourceTree = "<group>"; };
 		00D0AF991EE3C7F300B1F5A2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		00D23B901F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIPanDirectionGestureRecognizer.swift; sourceTree = "<group>"; };
 		00E14EF51ECAE016008197A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		00E14EF81ECB1866008197A3 /* MeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeVC.swift; sourceTree = "<group>"; };
 		00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeLoginVC.swift; sourceTree = "<group>"; };
@@ -199,6 +205,7 @@
 				00020F8A1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift */,
 				00020F8B1F0E2D5D008ABFB1 /* CGVector+Extensions.swift */,
 				00020F8C1F0E2D5D008ABFB1 /* Int+Extensions.swift */,
+				00D23B901F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -211,8 +218,10 @@
 				0034EE351EE9116B005300AE /* SellerBuyVC.swift */,
 				0034EE371EE91176005300AE /* SellerPreVC.swift */,
 				0034EE391EE91181005300AE /* SellerTweetVC.swift */,
-				0048FDAA1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift */,
+				0048FDAA1EEA725C002B49B6 /* SellerBuyBakeTableView.swift */,
 				0048FDA81EE9E6AC002B49B6 /* SellerBuyBakeTableCell.swift */,
+				004318331F13F21900FD0227 /* SellerClassifyTableView.swift */,
+				004318311F13EF8E00FD0227 /* SellerClassifyTableCell.swift */,
 			);
 			name = Seller;
 			sourceTree = "<group>";
@@ -402,6 +411,7 @@
 				006025001EC9995400FFB859 /* HomeVC.swift in Sources */,
 				006024F41EC973D600FFB859 /* MeMemoryVC.swift in Sources */,
 				0034EE341EE7D59A005300AE /* SellerPagingVC.swift in Sources */,
+				004318341F13F21900FD0227 /* SellerClassifyTableView.swift in Sources */,
 				006024FC1EC9900000FFB859 /* HomeFollowVC.swift in Sources */,
 				00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */,
 				00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */,
@@ -412,6 +422,7 @@
 				00020F861F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift in Sources */,
 				006024FE1EC9900F00FFB859 /* HomeSellerVC.swift in Sources */,
 				0034EE381EE91176005300AE /* SellerPreVC.swift in Sources */,
+				004318321F13EF8E00FD0227 /* SellerClassifyTableCell.swift in Sources */,
 				00020F8D1F0E2D5D008ABFB1 /* CGFloat+Extensions.swift in Sources */,
 				006024FA1EC98FCF00FFB859 /* HomeMasterVC.swift in Sources */,
 				0034EE3A1EE91182005300AE /* SellerTweetVC.swift in Sources */,
@@ -419,7 +430,7 @@
 				00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */,
 				009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */,
 				00020F8F1F0E2D5D008ABFB1 /* CGVector+Extensions.swift in Sources */,
-				0048FDAB1EEA725C002B49B6 /* SellerBuyBakeCollectionView.swift in Sources */,
+				0048FDAB1EEA725C002B49B6 /* SellerBuyBakeTableView.swift in Sources */,
 				00020F8E1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift in Sources */,
 				00B4709B1F0404DD00725C95 /* LCBaker.swift in Sources */,
 				00B491A91EE4CFE1000C63EB /* SellerVC.swift in Sources */,
@@ -432,6 +443,7 @@
 				00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */,
 				001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */,
 				00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */,
+				00D23B911F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift in Sources */,
 				006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */,
 				004BF0E01ED184CF00554A5E /* HomeSellerTableView.swift in Sources */,
 			);

@@ -14,7 +14,6 @@ class SellerPagingVC: PagingMenuController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
     }
     
 }
@@ -32,14 +31,14 @@ var sellers: [String: Any] = [
         
         "bakes": [
             "0": ["name": "名媛塔", "price": 36.00, "star": 4.2, "amount": 5],
-            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 0],
+            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 10],
             "2": ["name": "巧克力布丁", "price": 12.00, "star": 4.5, "amount": 2],
             "3": ["name": "巧克力条", "price": 52.00, "star": 3.1, "amount": 6],
-            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 0],
-            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 0],
-            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 0],
+            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 4],
+            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 20],
+            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 23],
             "7": ["name": "草莓杯子蛋糕", "price": 28.00, "star": 2.9, "amount": 1],
-            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 0],
+            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 19],
             "9": ["name": "黄桃家", "price": 189.00, "star": 4.6, "amount": 1]
         ]
     ],
@@ -52,14 +51,14 @@ var sellers: [String: Any] = [
         
         "bakes": [
             "0": ["name": "名媛塔", "price": 36.00, "star": 4.2, "amount": 5],
-            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 0],
+            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 10],
             "2": ["name": "巧克力布丁", "price": 12.00, "star": 4.5, "amount": 2],
             "3": ["name": "巧克力条", "price": 52.00, "star": 3.1, "amount": 6],
-            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 0],
-            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 0],
-            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 0],
+            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 4],
+            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 20],
+            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 23],
             "7": ["name": "草莓杯子蛋糕", "price": 28.00, "star": 2.9, "amount": 1],
-            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 0],
+            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 19],
             "9": ["name": "黄桃家", "price": 189.00, "star": 4.6, "amount": 1]
         ]
     ],
@@ -72,14 +71,14 @@ var sellers: [String: Any] = [
         
         "bakes": [
             "0": ["name": "名媛塔", "price": 36.00, "star": 4.2, "amount": 5],
-            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 0],
+            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 10],
             "2": ["name": "巧克力布丁", "price": 12.00, "star": 4.5, "amount": 2],
             "3": ["name": "巧克力条", "price": 52.00, "star": 3.1, "amount": 6],
-            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 0],
-            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 0],
-            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 0],
+            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 4],
+            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 20],
+            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 23],
             "7": ["name": "草莓杯子蛋糕", "price": 28.00, "star": 2.9, "amount": 1],
-            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 0],
+            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 19],
             "9": ["name": "黄桃家", "price": 189.00, "star": 4.6, "amount": 1]
         ]
     ],
@@ -92,14 +91,14 @@ var sellers: [String: Any] = [
         
         "bakes": [
             "0": ["name": "名媛塔", "price": 36.00, "star": 4.2, "amount": 5],
-            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 0],
+            "1": ["name": "咖喱披萨", "price": 99.00, "star": 3.0, "amount": 10],
             "2": ["name": "巧克力布丁", "price": 12.00, "star": 4.5, "amount": 2],
             "3": ["name": "巧克力条", "price": 52.00, "star": 3.1, "amount": 6],
-            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 0],
-            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 0],
-            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 0],
+            "4": ["name": "春之物语", "price": 128.00, "star": 4.3, "amount": 4],
+            "5": ["name": "樱桃派", "price": 218.00, "star": 2.5, "amount": 20],
+            "6": ["name": "海森林", "price": 146.00, "star": 4.6, "amount": 23],
             "7": ["name": "草莓杯子蛋糕", "price": 28.00, "star": 2.9, "amount": 1],
-            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 0],
+            "8": ["name": "蓝莓蛋糕", "price": 98.00, "star": 4.0, "amount": 19],
             "9": ["name": "黄桃家", "price": 189.00, "star": 4.6, "amount": 1]
         ]
     ]

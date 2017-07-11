@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SellerBuyBakeTableCell: UICollectionViewCell {
+class SellerBuyBakeTableCell: UITableViewCell {
     
     @IBOutlet weak var bakeImage: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
@@ -17,12 +17,6 @@ class SellerBuyBakeTableCell: UICollectionViewCell {
     @IBOutlet weak var oneMoreBtn: UIButton!
 
     var bakeID = ""
-    
-    @IBAction func oneMoreBtnPressed(_ sender: Any) {
-        
-        
-        
-    }
-    
+
 }
 

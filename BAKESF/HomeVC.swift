@@ -37,7 +37,6 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         }
         
         
-        
         // page menu
         struct HomeSeller: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
@@ -85,32 +84,25 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         pagingMenuController.setup(option)
+        self.sellerTableView = option.homeSellerVC.tableView
+
         pagingMenuController.onMove = {
             state in
-            
             switch state {
             case let .willMoveController(menuController, previousMenuController):
-                print()
-                
+                break
             case let .didMoveController(menuController, previousMenuController):
-                if let vc = menuController as? HomeSellerVC {
-                    if !self.hasSetSellerView {
-                        self.hasSetSellerView = true
-                        self.sellerTableView = vc.tableView
-                    }
+                if let _ = menuController as? HomeFollowVC {
+                    self.tabBarController?.tabBar.isHidden = false
                 }
             case let .willMoveItem(menuItemView, previousMenuItemView):
-                print()
-            
+                break
             case let .didMoveItem(menuItemView, previousMenuItemView):
-                print()
-            
+                break
             case .didScrollStart:
-                print()
-            
+                break
             case .didScrollEnd:
-                print()
-            
+                break
             }
         }
         
