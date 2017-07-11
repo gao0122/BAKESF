@@ -10,17 +10,15 @@ import UIKit
 import SystemConfiguration
 import LeanCloud
 
-enum ImageFormat {
-    case unknown, png, jpeg, gif, tiff
+
+
+func printit(any: Any) {
+    print()
+    print("------------------------------")
+    print(any)
+    print("------------------------------")
 }
 
-struct ImageHeaderData {
-    static var png: [UInt8] = [0x89]
-    static var jpeg: [UInt8] = [0xFF]
-    static var gif: [UInt8] = [0x47]
-    static var tiff01: [UInt8] = [0x49]
-    static var tiff02: [UInt8] = [0x4D]
-}
 
 // check if is connected to the network
 func connectedToNetwork() -> Bool {
@@ -76,7 +74,7 @@ func retrieveBaker(withID id: String) -> LCBaker? {
 
 
 
-// MARK: - to copy and paste
+// MARK: - just for copy and paste
 func helperBaker(phone: String) {
     let query = LCQuery(className: "Baker")
     query.whereKey("mobilePhoneNumber", .equalTo(phone))

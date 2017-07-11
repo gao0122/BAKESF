@@ -129,7 +129,6 @@ class SellerVC: UIViewController, UIGestureRecognizerDelegate {
         self.bakeTableView = option.sellerBuyVC.bakeTableView
         self.classifyTableView = option.sellerBuyVC.classifyTableView
         let pan = UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(SellerVC.panGestureAni(sender:)))
-        pagingMenuController.menuView?.addGestureRecognizer(pan)
         self.sellerBuyVC.bakeTableView.addGestureRecognizer(pan)
 
 //        pagingMenuController.onMove = {
@@ -207,8 +206,8 @@ class SellerVC: UIViewController, UIGestureRecognizerDelegate {
         if let id = segue.identifier {
             switch id {
             case "sellerBuyMenuSegue":
-                if let _ = segue.destination as? SellerPagingVC {
-                    
+                if let vc = segue.destination as? SellerPagingVC {
+                    vc.view.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(SellerVC.panGestureAni(sender:))))
                 }
             case "sellerBuyCartSegue":
                 break

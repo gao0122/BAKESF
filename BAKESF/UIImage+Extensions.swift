@@ -1,138 +1,29 @@
 //
-//  Extensions.swift
+//  UIImage+Extensions.swift
 //  BAKESF
 //
-//  Created by 高宇超 on 6/25/17.
+//  Created by 高宇超 on 7/11/17.
 //  Copyright © 2017 Yuchao. All rights reserved.
 //
 
-import Foundation
 import UIKit
-import LeanCloud
 
-public var notifying: Bool = false
-
-func printit(any: Any) {
-    print()
-    print("------------------------------")
-    print(any)
-    print("------------------------------")
+enum ImageFormat {
+    case unknown, png, jpeg, gif, tiff
 }
 
-
-// MARK: - UIView
-//
-extension UIView {
-    
-    func notify(text: String, color: BKColor, duration: TimeInterval = 1.98) {
-        if !notifying {
-            notifying = true
-            let notifyHeight: CGFloat = 64
-            let label = UILabel()
-            label.restorationIdentifier = "notifyLabel"
-            label.frame.size = CGSize(width: self.frame.width, height: notifyHeight)
-            label.frame.origin = CGPoint(x: 0, y: -notifyHeight)
-            label.font = UIFont.init(name: ".SFUIText-Light", size: 15)
-            label.numberOfLines = 2
-            label.text = "\n\(text)"
-            label.textColor = color == .white ? colors[.black] : colors[.white]
-            label.textAlignment = .center
-            label.alpha = 0.4
-            label.backgroundColor = colors[color]
-            self.addSubview(label)
-            self.bringSubview(toFront: label)
-            UIView.animate(withDuration: 0.22, delay: 0, options: [.curveEaseInOut], animations: {
-                label.frame.origin.y = 0
-                label.alpha = 1
-            }, completion: {
-                finished in
-                UIView.animate(withDuration: 0.18, delay: duration, options: [.curveEaseInOut], animations: {
-                    label.frame.origin.y = -notifyHeight
-                    label.alpha = 0.4
-                }, completion: {
-                    finished in
-                    label.removeFromSuperview()
-                    notifying = false
-                })
-            })
-        }
-    }
-    
+struct ImageHeaderData {
+    static var png: [UInt8] = [0x89]
+    static var jpeg: [UInt8] = [0xFF]
+    static var gif: [UInt8] = [0x47]
+    static var tiff01: [UInt8] = [0x49]
+    static var tiff02: [UInt8] = [0x4D]
 }
 
-
-// MARK: - UIViewController
-extension UIViewController {
-    
-    func alertOkayOrNot(title: String = "", okTitle: String, notTitle: String, msg: String, okAct: @escaping (UIAlertAction) -> Void, notAct: @escaping (UIAlertAction) -> Void) {
-        
-        let alertController = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-        let okayAction = UIAlertAction(title: okTitle, style: .default, handler: okAct)
-        let cancelAction = UIAlertAction(title: notTitle, style: .cancel, handler: notAct)
-        alertController.addAction(okayAction)
-        alertController.addAction(cancelAction)
-        self.present(alertController, animated: true, completion: nil)
-    }
-}
-
-
-// MARK: - String
-extension String {
-    
-    func substring(from: Int, to: Int) -> String {
-        if to > characters.count || from >= to { return "" }
-        let fromIndex = self.index(startIndex, offsetBy: from)
-        let toIndex = self.index(startIndex, offsetBy: to)
-        return substring(with: fromIndex..<toIndex)
-    }
-    
-    func toHttps() -> String {
-        var str = self
-        if str.hasPrefix("http://") {
-            str = "https://" + str.components(separatedBy: "http://").joined()
-        }
-        return str
-    }
-}
-
-
-// MARK: - Data 
-extension Data {
-    
-    var imageFormat: ImageFormat {
-        var buffer = [UInt8](repeatElement(0, count: 1))
-        self.copyBytes(to: &buffer, from: NSRange(location: 0, length: 0).toRange()!)
-        if buffer == ImageHeaderData.png {
-            return .png
-        } else if buffer == ImageHeaderData.jpeg {
-            return .jpeg
-        } else if buffer == ImageHeaderData.gif {
-            return .gif
-        } else if buffer == ImageHeaderData.tiff01 || buffer == ImageHeaderData.tiff02 {
-            return .tiff
-        } else {
-            return .unknown
-        }
-    }
-    
-}
-
-
-// MARK: - Date
-extension Date {
-    
-    func seconds(fromDate from: Date) -> Int {
-        return Calendar.current.dateComponents([.second], from: from, to: self).second ?? 0
-    }
-    
-}
-
-
-// MARK: - UIImage
 extension UIImage {
     
     var imageData: Data? {
-        return UIImageJPEGRepresentation(self, 1) ?? UIImagePNGRepresentation(self) 
+        return UIImageJPEGRepresentation(self, 1) ?? UIImagePNGRepresentation(self)
     }
     
     func cropToBounds(width: CGFloat, height: CGFloat) -> UIImage {
@@ -237,5 +128,6 @@ extension UIImage {
         // And now we just create a new UIImage from the drawing context and return it
         return UIImage(cgImage: ctx.makeImage()!)
     }
-
+    
 }
+
