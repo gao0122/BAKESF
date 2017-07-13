@@ -90,6 +90,8 @@ strip_invalid_archs() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AVOSCloud/AVOSCloud.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/AVOSCloudIM/AVOSCloudIM.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/AVOSCloudLiveQuery/AVOSCloudLiveQuery.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Alamofire/Alamofire.framework"
   install_framework "$BUILT_PRODUCTS_DIR/LeanCloud/LeanCloud.framework"
   install_framework "$BUILT_PRODUCTS_DIR/PagingMenuController/PagingMenuController.framework"
@@ -99,6 +101,8 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AVOSCloud/AVOSCloud.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/AVOSCloudIM/AVOSCloudIM.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/AVOSCloudLiveQuery/AVOSCloudLiveQuery.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Alamofire/Alamofire.framework"
   install_framework "$BUILT_PRODUCTS_DIR/LeanCloud/LeanCloud.framework"
   install_framework "$BUILT_PRODUCTS_DIR/PagingMenuController/PagingMenuController.framework"

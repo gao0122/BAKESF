@@ -27,20 +27,20 @@ class RealmHelper {
         }
     }
     
-    static func setCurrentUser(baker: LCBaker, data: Data?) -> Bool {
-        let id = baker.objectId!.value
+    static func setCurrentUser(baker: AVBaker, data: Data?) -> UserRealm? {
+        let id = baker.objectId!
         let realm = try! Realm()
         if let user = realm.object(ofType: UserRealm.self, forPrimaryKey: id) {
             try! realm.write {
                 user.current = true
-                user.name = baker.username!.value
-                user.phone = baker.mobilePhoneNumber!.value
-                user.headphotoURL = baker.headphoto?.value
+                user.name = baker.username!
+                user.phone = baker.mobilePhoneNumber!
+                user.headphotoURL = baker.headphoto
                 user.headphoto = data
             }
-            return true
+            return user
         } else {
-            return false
+            return nil
         }
     }
     
@@ -74,9 +74,11 @@ class RealmHelper {
     static func saveHeadphoto(user: UserRealm, data: Data, url: String) {
         let realm = try! Realm()
         try! realm.write {
+            printit(any: "saved image")
             user.headphoto = data
             user.headphotoURL = url
         }
+        printit(any: "not saved?")
     }
     
 }

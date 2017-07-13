@@ -8,6 +8,7 @@
 
 import UIKit
 import PagingMenuController
+import AVOSCloud
 
 class HomeVC: UIViewController, UISearchBarDelegate {
 
@@ -21,7 +22,7 @@ class HomeVC: UIViewController, UISearchBarDelegate {
     
     var user: UserRealm!
     var searchBarWidth: CGFloat! = 0
-    var hasSetSellerView = false
+    var hasSetShopView = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,25 +39,25 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         
         
         // page menu
-        struct HomeSeller: MenuItemViewCustomizable {
+        struct HomeShop: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "私房"))
+                return .text(title: MenuItemText(text: "私房", selectedColor: colors[.bkRed]!))
             }
         }
         struct HomeBake: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "食野"))
+                return .text(title: MenuItemText(text: "食野", selectedColor: colors[.bkRed]!))
             }
         }
         struct HomeFollow: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "关注"))
+                return .text(title: MenuItemText(text: "收藏", selectedColor: colors[.bkRed]!))
             }
         }
         
         struct MenuOptions: MenuViewCustomizable {
             var itemsOptions: [MenuItemViewCustomizable] {
-                return [HomeSeller(), HomeBake(), HomeFollow()]
+                return [HomeShop(), HomeBake(), HomeFollow()]
             }
             
             var scroll: MenuScrollingMode
@@ -64,17 +65,17 @@ class HomeVC: UIViewController, UISearchBarDelegate {
             var animationDuration: TimeInterval
             
             var focusMode: MenuFocusMode {
-                return .underline(height: 3, color: UIColor.black, horizontalPadding: 10, verticalPadding: 0)
+                return .none //underline(height: 3, color: colors[.bkRed]!, horizontalPadding: 10, verticalPadding: 0)
             }
         }
         
         struct PagingMenuOptions: PagingMenuControllerCustomizable {
-            let homeSellerVC = HomeSellerVC.instantiateFromStoryboard()
+            let homeShopVC = HomeShopVC.instantiateFromStoryboard()
             let homeBakeVC = HomeBakeVC.instantiateFromStoryboard()
             let homeFollowVC = HomeFollowVC.instantiateFromStoryboard()
 
             var componentType: ComponentType {
-                return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [homeSellerVC, homeBakeVC, homeFollowVC])
+                return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [homeShopVC, homeBakeVC, homeFollowVC])
             }
             
             var defaultPage: Int
@@ -84,7 +85,7 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         pagingMenuController.setup(option)
-        self.sellerTableView = option.homeSellerVC.tableView
+        self.sellerTableView = option.homeShopVC.tableView
 
         pagingMenuController.onMove = {
             state in

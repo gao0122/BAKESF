@@ -1,0 +1,6 @@
+framework module AVOSCloudLiveQuery {
+  umbrella header "AVOSCloudLiveQuery-umbrella.h"
+
+  export *
+  module * { export * }
+}

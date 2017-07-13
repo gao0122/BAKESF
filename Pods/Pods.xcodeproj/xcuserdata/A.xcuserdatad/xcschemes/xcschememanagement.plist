@@ -9,6 +9,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>AVOSCloudIM.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>AVOSCloudLiveQuery.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Alamofire.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -47,7 +57,12 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>3CC7E178119897686C0F632B4E98DC42</key>
+		<key>0D2F3E0223D3E035B59D1B7532001048</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0F0916EF6EF0CD3CB0D9332F26FE9CCC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -57,7 +72,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>47A8382D75D7F9582E450BF8EE6D8294</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>6ADB3656BDFD85FB77E0CAB44BFF61E6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6F92EFADEFBE4B662F58D122DFCCBF99</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7EE8D6A4BF814C31EE3DDBE4B01ADA53</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -67,22 +97,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8BD2715506AAD2A40D2EAA690A1722FE</key>
+		<key>9EC33D2C000F4C04E257005BBDE57FAF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>C3F1BD6E6447C86B0F3C1500EF8A9E01</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DB25A9FD31E0C1E9762C40C8314F3786</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>E5441D3898E7859A8EEF4180B8F45C8B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

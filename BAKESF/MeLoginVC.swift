@@ -32,6 +32,9 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     @IBOutlet weak var loginByWB: UIButton!
     @IBOutlet weak var loginByMsgOrPwd: UIButton!
     
+    var avbaker: AVBaker!
+    var userRealm: UserRealm!
+    
     var navigationDelegate: NavigationControllerDelegate?
     let edgePanGestrue = UIScreenEdgePanGestureRecognizer()
     var users: Results<UserRealm>!
@@ -76,6 +79,18 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     
     deinit {
         edgePanGestrue.removeTarget(self, action: #selector(MeLoginVC.screenEdgePanBackToMeFromLogin(_:)))
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let id = segue.identifier {
+            switch id {
+            case "unwindToMeFromLogin":
+                let meVC = segue.destination as! MeVC
+                meVC.avbaker = self.avbaker
+            default:
+                break
+            }
+        }
     }
     
     // MARK: - TextField
@@ -141,18 +156,19 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                 if self.timerState == .done {
                     self.sendMsg(phone: phone)
                 } else {
-                    let query = LCQuery(className: "Baker")
-                    query.whereKey("mobilePhoneNumber", .equalTo(phone))
-                    query.getFirst {
-                        result in
-                        switch result {
-                        case .success(let usr as LCBaker):
+                    let query = AVBaker.query()
+                    query.whereKey(lcKey[.phone]!, equalTo: phone)
+                    query.getFirstObjectInBackground({
+                        object, error in
+                        if error == nil {
+                            // old user
+                            let usr = object as! AVBaker
                             var canSendMsg = false
-                            let sentLCDate = usr.get("msgSentDate") as? LCDate
+                            let sentLCDate = usr.msgSentDate
                             if sentLCDate == nil {
                                 canSendMsg = true
                             } else {
-                                let secs = Date().seconds(fromDate: sentLCDate!.value)
+                                let secs = Date().seconds(fromDate: sentLCDate!)
                                 if secs > self.totalSeconds {
                                     canSendMsg = true
                                 } else {
@@ -163,44 +179,34 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                             }
                             
                             if canSendMsg {
-                                self.userID = usr.objectId!.value
+                                self.userID = usr.objectId!
                                 self.sendMsg(phone: phone)
                             } else {
                                 self.resetGetMsgBtn()
                             }
-                        case .failure(let error):
-                            //error
-                            let userLC = LCBaker()
+                        } else {
+                            // new user
+                            let userAV = AVBaker()
                             let pwd = generateRandomPwd()
                             let uname = "u\(phone)"
-                            let acl = LCACL()
-                            acl.setAccess(LCACL.Permission.write, allowed: true)
-                            acl.setAccess(LCACL.Permission.read, allowed: true)
-                            userLC.ACL = acl
-                            userLC.mobilePhoneNumber = LCString(phone)
-                            userLC.password = LCString(pwd)
-                            userLC.username = LCString(uname)
-                            userLC.save {
-                                result in
-                                switch result {
-                                case .success:
-                                    self.userID = userLC.objectId!.value
+                            let acl = AVACL()
+                            acl.setPublicReadAccess(true)
+                            acl.setPublicWriteAccess(true)
+                            userAV.acl = acl
+                            userAV.mobilePhoneNumber = phone
+                            userAV.password = pwd
+                            userAV.username = uname
+                            userAV.saveInBackground({
+                                succeeded, error in
+                                if succeeded {
+                                    self.userID = userAV.objectId!
                                     self.sendMsg(phone: phone)
-                                case .failure(let error):
-                                    let code = error.code
-                                    switch code {
-                                    case 217:
-                                        break
-                                    default:
-                                        break
-                                    }
+                                } else {
                                     self.resetGetMsgBtn()
                                 }
-                            }
-                        default:
-                            break
+                            })
                         }
-                    }
+                    })
                 }
             }
         }
@@ -242,28 +248,18 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     }
     
     func updateSentMsgDate(phone: String) {
-        let query = LCQuery(className: "Baker")
-        query.whereKey("mobilePhoneNumber", .equalTo(phone))
-        query.getFirst {
-            result in
-            switch result  {
-            case .success(let usr as LCBaker):
-                usr.set("msgSentDate", value: LCDate())
-                usr.save {
-                    result in
-                    switch result {
-                    case .success:
-                        break
-                    case .failure(let error):
-                        printit(any: error)
-                    }
-                }
-            case .failure(let error):
-                printit(any: error)
-            default:
-                break
+        let query = AVBaker.query()
+        query.whereKey(lcKey[.phone]!, equalTo: phone)
+        query.getFirstObjectInBackground({
+            object, error in
+            if error == nil {
+                let usr = object as! AVBaker
+                usr.msgSentDate = Date()
+                _ = usr.save()
+            } else {
+                // error
             }
-        }
+        })
     }
     
     @IBAction func loginBtnPressed(_ sender: Any) {
@@ -324,23 +320,25 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     func loginByMsg(_ sender: Any) {
         var isFirstLogin = false
         let baker = retrieveBaker(withPhone: self.phoneNum)!
-        if RealmHelper.retrieveUser(withID: self.userID) == nil {
-            isFirstLogin = true
-        } else {
+        if let usr = RealmHelper.retrieveUser(withID: self.userID) {
+            userRealm = usr
             isFirstLogin = false
+        } else {
+            isFirstLogin = true
         }
         self.retrieveHeadphotoAndSetUser(baker: baker, first: isFirstLogin)
         self.loginState = .normal
     }
     
-    func retrieveHeadphotoAndSetUser(baker: LCBaker, first isFirstLogin: Bool) {
-        if let url = baker.headphoto?.value {
+    func retrieveHeadphotoAndSetUser(baker: AVBaker, first isFirstLogin: Bool) {
+        if let url = baker.headphoto {
             if url == "-" {
                 if isFirstLogin {
-                    RealmHelper.addUser(user: realmUser(byLCBaker: baker, data: nil))
+                    RealmHelper.addUser(user: realmUser(byAVBaker: baker, data: nil))
                 } else {
-                    _ = RealmHelper.setCurrentUser(baker: baker, data: nil)
+                    userRealm = RealmHelper.setCurrentUser(baker: baker, data: nil)
                 }
+                self.avbaker = baker
                 self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: self)
                 return
             }
@@ -355,10 +353,11 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                 if result != nil && error == nil {
                     let data = UIImage(data: result!)?.cropAndResize(width: 100, height: 100).imageData
                     if isFirstLogin {
-                        RealmHelper.addUser(user: self.realmUser(byLCBaker: baker, data: data))
+                        RealmHelper.addUser(user: self.realmUser(byAVBaker: baker, data: data))
                     } else {
-                        _ = RealmHelper.setCurrentUser(baker: baker, data: data)
+                        self.userRealm = RealmHelper.setCurrentUser(baker: baker, data: data)
                     }
+                    self.avbaker = baker
                     self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: self)
                 } else {
                     self.view.notify(text: "登录失败", color: .red)
@@ -372,13 +371,13 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         }
     }
     
-    func realmUser(byLCBaker baker: LCBaker, data: Data?) -> UserRealm {
+    func realmUser(byAVBaker baker: AVBaker, data: Data?) -> UserRealm {
         let userRealm = UserRealm()
-        userRealm.id = baker.objectId!.value
+        userRealm.id = baker.objectId!
         userRealm.phone = self.phoneNum
-        userRealm.name = baker.username!.value
+        userRealm.name = baker.username!
         userRealm.current = true
-        userRealm.headphotoURL = baker.headphoto?.value
+        userRealm.headphotoURL = baker.headphoto
         userRealm.headphoto = data
         return userRealm
     }

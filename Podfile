@@ -31,6 +31,7 @@ target 'BAKESF' do
 
   # avos
   pod 'AVOSCloud'
+  pod 'AVOSCloudLiveQuery'
 
   # sdwebimage
   pod 'SDWebImage'

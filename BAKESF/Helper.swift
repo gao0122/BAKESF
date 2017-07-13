@@ -8,9 +8,7 @@
 
 import UIKit
 import SystemConfiguration
-import LeanCloud
-
-
+import AVOSCloud
 
 func printit(any: Any) {
     print()
@@ -55,39 +53,42 @@ func generateRandomPwd(length: Int = 14) -> String {
     return pwd
 }
 
-func hasLCBakerRegistered(withPhone phone: String) -> Bool {
-    let query = LCQuery(className: "Baker")
-    query.whereKey("mobilePhoneNumber", .equalTo(phone))
-    return query.getFirst().isSuccess
+func hasAVBakerRegistered(withPhone phone: String) -> Bool {
+    let query = AVBaker.query()
+    query.whereKey(lcKey[.phone]!, equalTo: phone)
+    return query.getFirstObject() == nil
 }
 
-func retrieveBaker(withPhone phone: String) -> LCBaker? {
-    let query = LCQuery(className: "Baker")
-    query.whereKey("mobilePhoneNumber", .equalTo(phone))
-    return query.getFirst().object as? LCBaker
+func retrieveBaker(withPhone phone: String) -> AVBaker? {
+    let query = AVBaker.query()
+    query.whereKey(lcKey[.phone]!, equalTo: phone)
+    return query.getFirstObject() as? AVBaker
 }
 
-func retrieveBaker(withID id: String) -> LCBaker? {
-    let query = LCQuery(className: "Baker")
-    return query.get(id).object as? LCBaker
+func retrieveBaker(withID id: String) -> AVBaker? {
+    let query = AVBaker.query()
+    return query.getObjectWithId(id) as? AVBaker
 }
 
+func retrieveFile(withURL url: String) -> AVFile? {
+    let query = AVFileQuery(className: "_File")
+    query.whereKey(lcKey[.url]!, equalTo: url)
+    let files = try! query.findFiles()
+    return files.first as? AVFile
+}
 
 
 // MARK: - just for copy and paste
 func helperBaker(phone: String) {
-    let query = LCQuery(className: "Baker")
-    query.whereKey("mobilePhoneNumber", .equalTo(phone))
-    query.getFirst {
-        result in
-        switch result {
-        case .success(let usr as LCBaker):
-            break
-        case .failure(let error):
-            break
-        default:
-            break
+    let query = AVQuery(className: "Baker")
+    query.whereKey("mobilePhoneNumber", equalTo: phone)
+    query.getFirstObjectInBackground({
+        object, error in
+        if error == nil {
+            
+        } else {
+            
         }
-    }
+    })
 }
 

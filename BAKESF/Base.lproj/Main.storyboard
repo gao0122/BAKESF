@@ -354,7 +354,7 @@
         <!--商家主页-->
         <scene sceneID="33N-1s-Deo">
             <objects>
-                <viewController storyboardIdentifier="SellerVC" title="商家主页" id="s06-tB-2Dw" customClass="SellerVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShopVC" title="商家主页" id="s06-tB-2Dw" customClass="ShopVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="lWE-fx-b3D"/>
                         <viewControllerLayoutGuide type="bottom" id="4VU-Y7-rMf"/>
@@ -510,7 +510,7 @@
                                     <color key="titleShadowColor" red="0.05808444960849362" green="0.13089094490667708" blue="0.21643004441624369" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <segue destination="Mhy-30-k4X" kind="unwind" identifier="unwindToHomeFromSeller" unwindAction="unwindToHomeSellerVCWithSegue:" id="71S-eN-0h3"/>
+                                    <segue destination="Mhy-30-k4X" kind="unwind" identifier="unwindToHomeFromShop" unwindAction="unwindToHomeShopVCWithSegue:" id="71S-eN-0h3"/>
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ukQ-ua-M9u" userLabel="shopping">
@@ -521,7 +521,7 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Trs-K9-Hbw" userLabel="cart">
-                                <rect key="frame" x="0.0" y="736" width="414" height="128"/>
+                                <rect key="frame" x="0.0" y="608" width="414" height="128"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <connections>
                                     <segue destination="HkV-co-K2I" kind="embed" identifier="sellerBuyCartSegue" id="t9c-7l-xPF"/>
@@ -557,17 +557,17 @@
                 <screenEdgePanGestureRecognizer minimumNumberOfTouches="1" maximumNumberOfTouches="1" id="Sga-UK-d4c">
                     <rectEdge key="edges" left="YES"/>
                     <connections>
-                        <action selector="screenEdgePanBackToHomeFromSeller:" destination="s06-tB-2Dw" id="joB-og-wxJ"/>
+                        <action selector="screenEdgePanBackToHomeFromShop:" destination="s06-tB-2Dw" id="joB-og-wxJ"/>
                         <outlet property="delegate" destination="s06-tB-2Dw" id="9Oc-uc-sPd"/>
                     </connections>
                 </screenEdgePanGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="4307.2463768115949" y="-2437.5"/>
         </scene>
-        <!--Seller PagingVC-->
+        <!--Shop PagingVC-->
         <scene sceneID="6xK-zm-QCP">
             <objects>
-                <viewController storyboardIdentifier="SellerPagingVC" id="9Bi-5Y-ITQ" customClass="SellerPagingVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShopPagingVC" id="9Bi-5Y-ITQ" customClass="ShopPagingVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="rdc-Bb-t7x"/>
                         <viewControllerLayoutGuide type="bottom" id="xfi-hh-0g7"/>
@@ -585,7 +585,7 @@
         <!--预约-->
         <scene sceneID="mAo-le-qwu">
             <objects>
-                <viewController storyboardIdentifier="SellerPreVC" title="预约" id="McQ-5c-q1Z" customClass="SellerPreVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShopPreVC" title="预约" id="McQ-5c-q1Z" customClass="ShopPreVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="cI2-TA-CJF"/>
                         <viewControllerLayoutGuide type="bottom" id="bnn-VS-oXn"/>
@@ -603,7 +603,7 @@
         <!--广播-->
         <scene sceneID="98Y-lQ-wAG">
             <objects>
-                <viewController storyboardIdentifier="SellerTweetVC" title="广播" id="lUe-HB-a4S" customClass="SellerTweetVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShopTweetVC" title="广播" id="lUe-HB-a4S" customClass="ShopTweetVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="fYK-v1-fuV"/>
                         <viewControllerLayoutGuide type="bottom" id="1k7-fe-4Qc"/>
@@ -706,7 +706,7 @@
         <!--主页店铺-->
         <scene sceneID="BbZ-jd-hQM">
             <objects>
-                <viewController storyboardIdentifier="HomeSellerVC" title="主页店铺" id="P7A-fq-gnq" customClass="HomeSellerVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="HomeShopVC" title="主页店铺" id="P7A-fq-gnq" customClass="HomeShopVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Unb-6L-u21"/>
                         <viewControllerLayoutGuide type="bottom" id="Yl8-oa-Nx2"/>
@@ -715,12 +715,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="262" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="CyZ-Ah-7BS" customClass="HomeSellerTableView" customModule="BAKESF" customModuleProvider="target">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="262" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="CyZ-Ah-7BS" customClass="HomeShopTableView" customModule="BAKESF" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="homeSellerTableViewCell" rowHeight="262" id="EFq-Sb-Rj4" customClass="HomeSellerTableViewCell" customModule="BAKESF" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="homeShopTableViewCell" rowHeight="262" id="EFq-Sb-Rj4" customClass="HomeShopTableViewCell" customModule="BAKESF" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="262"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="EFq-Sb-Rj4" id="kbB-5k-ONi">
@@ -728,7 +728,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g8W-6j-r79">
-                                                    <rect key="frame" x="-2.5" y="8" width="414" height="188"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="196"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <accessibility key="accessibilityConfiguration">
                                                         <accessibilityTraits key="traits" button="YES" image="YES"/>
@@ -736,20 +736,11 @@
                                                     </accessibility>
                                                     <gestureRecognizers/>
                                                 </imageView>
-                                                <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HuX-tT-vSy">
-                                                    <rect key="frame" x="331" y="24" width="61.5" height="33"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                    <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" id="NIE-e7-0Mq">
-                                                        <rect key="frame" x="0.0" y="0.0" width="61.5" height="33"/>
-                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    </view>
-                                                    <blurEffect style="light"/>
-                                                </visualEffectView>
-                                                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jHu-Q8-NhD">
-                                                    <rect key="frame" x="331" y="24" width="61.5" height="33"/>
+                                                <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jHu-Q8-NhD">
+                                                    <rect key="frame" x="352" y="20" width="45" height="22"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <state key="normal" title="+ 关注">
+                                                    <state key="normal" title="收藏">
                                                         <color key="titleColor" red="0.90261501736111116" green="0.22686089409722221" blue="0.34575737847222221" alpha="1" colorSpace="calibratedRGB"/>
                                                     </state>
                                                     <connections>
@@ -774,7 +765,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RXQ-TJ-PlN">
-                                                    <rect key="frame" x="174" y="227" width="85" height="21.5"/>
+                                                    <rect key="frame" x="174" y="226.5" width="85" height="22"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <state key="normal" title="941 评论">
@@ -814,12 +805,11 @@
                                         <connections>
                                             <outlet property="bgImage" destination="g8W-6j-r79" id="gZD-qe-Ywd"/>
                                             <outlet property="commentsNumber" destination="RXQ-TJ-PlN" id="JjE-vd-ZT2"/>
-                                            <outlet property="followBlurView" destination="HuX-tT-vSy" id="ZHh-2V-h1A"/>
                                             <outlet property="followBtn" destination="jHu-Q8-NhD" id="ZOr-hF-iOO"/>
                                             <outlet property="headphoto" destination="RmB-7D-rV6" id="4K1-O6-5ew"/>
                                             <outlet property="nameLabel" destination="DnO-Ir-Tmh" id="CfH-Gr-rRQ"/>
                                             <outlet property="whiteFiveStars" destination="nTZ-SR-SaI" id="Qd1-Yf-UOG"/>
-                                            <segue destination="s06-tB-2Dw" kind="show" identifier="homeToSeller" id="Cqc-hv-Szg"/>
+                                            <segue destination="s06-tB-2Dw" kind="show" identifier="homeToShop" id="Cqc-hv-Szg"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -1001,6 +991,9 @@
                                 <rect key="frame" x="20" y="77" width="80" height="80"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="巧克力布丁"/>
+                                <connections>
+                                    <action selector="headphotoTapped:" destination="6OQ-zj-lqd" eventType="touchUpInside" id="tfY-hD-XqL"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SAo-bU-rHw">
                                 <rect key="frame" x="77" y="134" width="20" height="20"/>
@@ -1094,7 +1087,7 @@
         <!--现货-->
         <scene sceneID="IId-DV-nAK">
             <objects>
-                <viewController storyboardIdentifier="SellerBuyVC" title="现货" id="4Qh-RM-tfN" customClass="SellerBuyVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShopBuyVC" title="现货" id="4Qh-RM-tfN" customClass="ShopBuyVC" customModule="BAKESF" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="cXZ-2f-ldf"/>
                         <viewControllerLayoutGuide type="bottom" id="qTT-ij-rOK"/>
@@ -1110,17 +1103,17 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JmU-LJ-eci" userLabel="container">
-                                <rect key="frame" x="20" y="14" width="374" height="722"/>
+                                <rect key="frame" x="20" y="0.0" width="374" height="736"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="90" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Qdb-qx-n2e" customClass="SellerClassifyTableView" customModule="BAKESF" customModuleProvider="target">
-                                <rect key="frame" x="20" y="14" width="70" height="722"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="90" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Qdb-qx-n2e" customClass="ShopClassifyTableView" customModule="BAKESF" customModuleProvider="target">
+                                <rect key="frame" x="20" y="0.0" width="70" height="736"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="70" id="4lt-Ng-VMX"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="sellerClassifyTableCell" rowHeight="89" id="0Td-3J-TQN" customClass="SellerClassifyTableCell" customModule="BAKESF" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="shopClassifyTableCell" rowHeight="89" id="0Td-3J-TQN" customClass="ShopClassifyTableCell" customModule="BAKESF" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="70" height="89"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0Td-3J-TQN" id="ZPP-fZ-c5u">
@@ -1146,11 +1139,11 @@
                                     <outlet property="delegate" destination="4Qh-RM-tfN" id="UIU-hr-fGZ"/>
                                 </connections>
                             </tableView>
-                            <tableView clipsSubviews="YES" tag="1" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" rowHeight="89" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZZy-Qs-Zua" customClass="SellerBuyBakeTableView" customModule="BAKESF" customModuleProvider="target">
-                                <rect key="frame" x="90" y="14" width="304" height="722"/>
+                            <tableView clipsSubviews="YES" tag="1" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" rowHeight="89" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZZy-Qs-Zua" customClass="ShopBuyBakeTableView" customModule="BAKESF" customModuleProvider="target">
+                                <rect key="frame" x="90" y="0.0" width="304" height="736"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="sellerBuyBakeTableCell" rowHeight="89" id="59s-q2-S2u" customClass="SellerBuyBakeTableCell" customModule="BAKESF" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="shopBuyBakeTableCell" rowHeight="89" id="59s-q2-S2u" customClass="ShopBuyBakeTableCell" customModule="BAKESF" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="304" height="89"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="59s-q2-S2u" id="ByN-mx-25q">
@@ -1210,7 +1203,7 @@
                             <constraint firstItem="Qdb-qx-n2e" firstAttribute="leading" secondItem="JmU-LJ-eci" secondAttribute="leading" id="0z3-MY-bHa"/>
                             <constraint firstItem="Ff4-OC-cCJ" firstAttribute="leading" secondItem="S6a-71-Vc0" secondAttribute="leading" id="3AA-we-ek3"/>
                             <constraint firstItem="JmU-LJ-eci" firstAttribute="top" secondItem="Qdb-qx-n2e" secondAttribute="top" id="6rE-31-7bU"/>
-                            <constraint firstItem="Qdb-qx-n2e" firstAttribute="top" secondItem="S6a-71-Vc0" secondAttribute="topMargin" constant="14" id="EM2-1w-Dlc"/>
+                            <constraint firstItem="Qdb-qx-n2e" firstAttribute="top" secondItem="S6a-71-Vc0" secondAttribute="topMargin" id="EM2-1w-Dlc"/>
                             <constraint firstItem="ZZy-Qs-Zua" firstAttribute="bottom" secondItem="qTT-ij-rOK" secondAttribute="top" id="Ej9-jk-CA4"/>
                             <constraint firstItem="Qdb-qx-n2e" firstAttribute="top" secondItem="ZZy-Qs-Zua" secondAttribute="top" id="Id6-Dt-nWv"/>
                             <constraint firstItem="ZZy-Qs-Zua" firstAttribute="leading" secondItem="Qdb-qx-n2e" secondAttribute="trailing" id="Ioc-xU-hoU"/>

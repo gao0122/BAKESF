@@ -21,7 +21,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
         LeanCloud.initialize(applicationID: "rok9QXYLMgzG02tv2uErl7fU-gzGzoHsz", applicationKey: "7ABa2kGT3QqlarNhVdLFvMeC")
+        AVBaker.registerSubclass()
+        AVShop.registerSubclass()
         AVOSCloud.setApplicationId("rok9QXYLMgzG02tv2uErl7fU-gzGzoHsz", clientKey: "7ABa2kGT3QqlarNhVdLFvMeC")
+        
         Fabric.with([Crashlytics.self, Answers.self])
         
         return true
@@ -44,17 +47,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if let vc = vc as? UINavigationController {
                 if let vc = vc.childViewControllerForStatusBarStyle as? MeLoginVC {
                     if vc.seconds > 0 {
-                        let query = LCQuery(className: "Baker")
-                        query.whereKey(lcKey[.phone]!, .equalTo(vc.phoneNum))
-                        query.getFirst {
-                            result in
-                            switch result {
-                            case .success(let usr as LCBaker):
-                                vc.seconds = Date().seconds(fromDate: usr.msgSentDate!.value)
-                            default:
-                                break
+                        let query = AVBaker.query()
+                        query.whereKey(lcKey[.phone]!, equalTo: vc.phoneNum)
+                        query.getFirstObjectInBackground({
+                            object, error in
+                            if error == nil {
+                                let usr = object as! AVBaker
+                                vc.seconds = Date().seconds(fromDate: usr.msgSentDate!)
                             }
-                        }
+                        })
                     }
                 }
             }
@@ -70,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         if let vc = window?.rootViewController?.childViewControllerForStatusBarStyle {
             if let vc = vc as? UINavigationController {
-                if let vc = vc.childViewControllerForStatusBarStyle as? MeLoginVC {
+                if let _ = vc.childViewControllerForStatusBarStyle as? MeLoginVC {
                     
                 }
             }

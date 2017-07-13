@@ -4,4 +4,5 @@
 
 #import <SMS_SDK/SMSSDK.h>
 #import <AVOSCloud/AVCloud.h>
+#import <AVOSCloudLiveQuery/AVLiveQuery.h>
 

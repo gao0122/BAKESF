@@ -28,25 +28,30 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
     @IBOutlet weak var editBtnBg: UIButton!
 
     var user: UserRealm!
+    var avbaker: AVBaker!
     
     var picker: UIImagePickerController = UIImagePickerController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let _ = checkCurrentUser()
+        checkCurrentUser()
         
         vcInit()
         
+        
+        
+        
+        /* Paging Menu
         // page menu 
         struct MeMemory: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "回忆"))
+                return .text(title: MenuItemText(text: "回忆", selectedColor: colors[.bkRed]!))
             }
         }
         struct MeTweet: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "推文"))
+                return .text(title: MenuItemText(text: "推文", selectedColor: colors[.bkRed]!))
             }
         }
         
@@ -60,7 +65,7 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
             var animationDuration: TimeInterval
             
             var focusMode: MenuFocusMode {
-                return .underline(height: 3, color: UIColor.black, horizontalPadding: 10, verticalPadding: 0)
+                return .none //underline(height: 3, color: colors[.bkRed]!, horizontalPadding: 10, verticalPadding: 0)
             }
         }
         
@@ -79,31 +84,25 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         pagingMenuController.setup(option)
-        pagingMenuController.onMove = {
-            state in
-            
-            switch state {
-            case let .willMoveController(menuController, previousMenuController):
-                print()
-                
-            case let .didMoveController(menuController, previousMenuController):
-                print()
-                
-            case let .willMoveItem(menuItemView, previousMenuItemView):
-                print()
-                
-            case let .didMoveItem(menuItemView, previousMenuItemView):
-                print()
-                
-            case .didScrollStart:
-                print()
-                
-            case .didScrollEnd:
-                print()
-                
-            }
-        }
         
+//        pagingMenuController.onMove = {
+//            state in
+//            switch state {
+//            case let .willMoveController(menuController, previousMenuController):
+//                break
+//            case let .didMoveController(menuController, previousMenuController):
+//                break
+//            case let .willMoveItem(menuItemView, previousMenuItemView):
+//                break
+//            case let .didMoveItem(menuItemView, previousMenuItemView):
+//                break
+//            case .didScrollStart:
+//                break
+//            case .didScrollEnd:
+//                break
+//            }
+//        }
+         */
 
     }
 
@@ -140,7 +139,7 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
     }
     
     @IBAction func unwindToMeVC(segue: UIStoryboardSegue) {
-        let _ = checkCurrentUser()
+        checkCurrentUser()
         
         if let id = segue.identifier {
             switch id {
@@ -156,6 +155,27 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         }
     }
     
+    @IBAction func headphotoTapped(_ sender: Any) {
+        if user != nil {
+            if avbaker.headphoto == user.headphotoURL { return }
+            let fileQuery = AVFileQuery(className: "_File")
+            fileQuery.whereKey(lcKey[.url]!, equalTo: avbaker.headphoto!)
+            fileQuery.findFilesInBackground({
+                objects, error in
+                if error == nil {
+                    if let file = objects?.first as? AVFile {
+                        if let data = file.getData() {
+                            let data = UIImage(data: data)?.cropAndResize(width: 150, height: 150).imageData
+                            let img = UIImage(data: data!)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
+                            self.headphoto.setImage(img?.fixOrientation(), for: .normal)
+                            _ = RealmHelper.setCurrentUser(baker: self.avbaker, data: data)
+                        }
+                    }
+                }
+            })
+        }
+    }
+
     @IBAction func editBtnPressed(_ sender: Any) {
         let alertVC = UIAlertController(title: "", message: "编辑头像", preferredStyle: .actionSheet)
         let cameraAct = UIAlertAction(title: "打开相机", style: .default, handler: {
@@ -260,21 +280,23 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
             succeeded, error in
             if succeeded {
                 RealmHelper.saveHeadphoto(user: self.user, data: scaledImg.imageData!, url: file.url!)
-                let usr = retrieveBaker(withID: self.user!.id)!
-                usr.headphoto = LCString(file.url!)
-                usr.save {
-                    result in
-                    switch result {
-                    case .success:
+                self.avbaker.headphoto = file.url!
+                self.avbaker.setObject(file.url!, forKey: "headphoto")
+                self.avbaker.saveInBackground({
+                    succeeded, error in
+                    if succeeded {
                         self.headphoto.setImage(scaledImg, for: .normal)
                         self.deleteOriginHeadphoto(url: urlToDelete)
                         self.view.notify(text: "修改成功", color: .green)
-                    case .failure(let error):
+                    } else {
                         self.view.notify(text: "上传失败", color: .red)
-                        Answers.logCustomEvent(withName: "上传头像失败", customAttributes: ["user": error.userInfo ?? "", "phone": self.user.phone, "error": error.reason ?? error.localizedDescription])
+                        Answers.logCustomEvent(withName: "上传头像失败", customAttributes: ["phone": self.user.phone, "error": error!.localizedDescription])
+                        printit(any: error!.localizedDescription)
                     }
-                }
+                })
             } else {
+                self.view.notify(text: "上传失败", color: .red)
+                Answers.logCustomEvent(withName: "上传头像失败", customAttributes: ["phone": self.user.phone, "error": error!.localizedDescription])
                 printit(any: error!.localizedDescription)
             }
             progressView.removeFromSuperview()
@@ -286,29 +308,33 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         })
     }
 
-    func checkCurrentUser() -> Bool {
+    func checkCurrentUser() {
         if let usr = RealmHelper.retrieveCurrentUser() {
             user = usr
             editBtn.isHidden = false
             editBtnBg.isHidden = false
             editInfoBtn.isHidden = false
             loginBtn.isHidden = true
-            userNameLabel.text = "\(user.name)"
+            userNameLabel.text = "\(usr.name)"
+            avbaker = retrieveBaker(withID: usr.id)
             if let data = usr.headphoto {
                 let img = UIImage(data: data)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
-                headphoto.setImage(img?.fixOrientation(), for: .normal)
+                self.headphoto.setImage(img?.fixOrientation(), for: .normal)
             }
-            return true
         } else {
-            editBtn.isHidden = true
-            editBtnBg.isHidden = true
-            editInfoBtn.isHidden = true
-            loginBtn.isHidden = false
-            userNameLabel.text = "个人主页"
-            headphoto.setImage(UIImage(named: "巧克力布丁")!, for: .normal)
-            return false
+            setupLogout()
         }
     }
+    
+    func setupLogout() {
+        editBtn.isHidden = true
+        editBtnBg.isHidden = true
+        editInfoBtn.isHidden = true
+        loginBtn.isHidden = false
+        userNameLabel.text = "个人主页"
+        headphoto.setImage(UIImage(named: "巧克力布丁")!, for: .normal)
+    }
+    
     
 }
 
