@@ -155,7 +155,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func liveQuery(_ liveQuery: AVLiveQuery, objectDidCreate object: Any) {
-        object
+        
     }
 
 

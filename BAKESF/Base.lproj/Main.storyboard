@@ -517,14 +517,14 @@
                                 <rect key="frame" x="2" y="66" width="410" height="670"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <connections>
-                                    <segue destination="9Bi-5Y-ITQ" kind="embed" identifier="sellerBuyMenuSegue" id="BmW-d3-Mxf"/>
+                                    <segue destination="9Bi-5Y-ITQ" kind="embed" identifier="shopBuyMenuSegue" id="BmW-d3-Mxf"/>
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Trs-K9-Hbw" userLabel="cart">
                                 <rect key="frame" x="0.0" y="608" width="414" height="128"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <connections>
-                                    <segue destination="HkV-co-K2I" kind="embed" identifier="sellerBuyCartSegue" id="t9c-7l-xPF"/>
+                                    <segue destination="HkV-co-K2I" kind="embed" identifier="shopBuyCartSegue" id="t9c-7l-xPF"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -543,10 +543,8 @@
                         <outlet property="commentNumberBtn" destination="Dfd-RC-skp" id="YhD-Zr-fiZ"/>
                         <outlet property="hpImage" destination="yVi-ZT-iZh" id="amC-AN-DEN"/>
                         <outlet property="introBtn" destination="HVX-yt-pke" id="gns-5i-CoP"/>
-                        <outlet property="nameLabel" destination="W20-NH-ghQ" id="oX4-yM-BOD"/>
-                        <outlet property="sellerCardView" destination="Onp-sy-hes" id="MUx-6R-YbW"/>
-                        <outlet property="sellerInfoBgImage" destination="1Iz-fu-kRh" id="wHj-i5-ga4"/>
-                        <outlet property="sellerNameLabel" destination="W20-NH-ghQ" id="9fw-dn-3eb"/>
+                        <outlet property="shopCardView" destination="Onp-sy-hes" id="VyA-hJ-qrA"/>
+                        <outlet property="shopNameLabel" destination="W20-NH-ghQ" id="mow-pT-09O"/>
                         <outlet property="shopView" destination="ukQ-ua-M9u" id="8ql-DZ-M29"/>
                         <outlet property="starLabel" destination="ozz-37-gd6" id="GYb-nt-j14"/>
                         <outlet property="starsHover" destination="57D-Tp-coC" id="xTl-yN-NhI"/>

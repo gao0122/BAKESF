@@ -157,8 +157,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
                 sourceVC.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
                 
                 if let sellerVC = segue.destination as? ShopVC {
-                    let cell = sender as! HomeShopTableViewCell
-                    sellerVC.id = tableView.indexPathForSelectedRow!.row
+                    sellerVC.avshop = avshops[tableView.indexPathForSelectedRow!.row]
                 }
             default:
                 break

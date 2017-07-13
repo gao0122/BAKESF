@@ -19,15 +19,13 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         case collapsed
     }
 
-    @IBOutlet weak var sellerInfoBgImage: UIImageView!
     @IBOutlet weak var introBtn: UIButton!
-    @IBOutlet weak var sellerNameLabel: UILabel!
+    @IBOutlet weak var shopNameLabel: UILabel!
     @IBOutlet weak var back: UIButton!
     @IBOutlet weak var bgVisualEffectView: UIVisualEffectView!
     @IBOutlet weak var bgImage: UIImageView!
     @IBOutlet weak var cardBgImage: UIImageView!
     @IBOutlet weak var hpImage: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var addressLabel: UIButton!
     @IBOutlet weak var starsHover: UIImageView!
     @IBOutlet weak var commentNumberBtn: UIButton!
@@ -35,19 +33,15 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var shopView: UIView!
     @IBOutlet weak var cartView: UIView!
     @IBOutlet weak var broadcastLabel: UILabel! // TODO: expanded and collapsed
-    @IBOutlet weak var sellerCardView: UIView!
+    @IBOutlet weak var shopCardView: UIView!
     
-    private var sellerBuyVC: ShopBuyVC!
+    private var shopBuyVC: ShopBuyVC!
     private var bakeTableView: ShopBuyBakeTableView!
     private var classifyTableView: ShopClassifyTableView!
     
     var avshop: AVShop!
     
     let topViewHeight: CGFloat = 66
-    var id: Int!
-    var ids: String!
-    var seller: [String: Any]!
-
     let menuAniDuration: TimeInterval = 0.48
     let nameLabelTransformY: CGFloat = 172
     var startTranslationY: CGFloat = 0
@@ -68,15 +62,12 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         super.viewDidLoad()
         
         originShopY = broadcastLabel.frame.origin.y + 24
-        originCardY = sellerCardView.frame.origin.y
+        originCardY = shopCardView.frame.origin.y
         originHeadphotoY = hpImage.frame.origin.y
-        originNameY = nameLabel.frame.origin.y
+        originNameY = shopNameLabel.frame.origin.y
         shopViewStartY = originShopY
         shopView.frame.origin.y = originShopY
         bgVisualEffectView.effect = nil
-        
-        ids = String(id)
-        seller = theShops[ids] as! [String: Any]
         
         // page menu
         struct ShopBuy: MenuItemViewCustomizable {
@@ -110,12 +101,12 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         }
         
         struct PagingMenuOptions: PagingMenuControllerCustomizable {
-            let sellerBuyVC = ShopBuyVC.instantiateFromStoryboard()
-            let sellerPreVC = ShopPreVC.instantiateFromStoryboard()
-//            let sellerTweetVC = ShopTweetVC.instantiateFromStoryboard()
+            let shopBuyVC = ShopBuyVC.instantiateFromStoryboard()
+            let shopPreVC = ShopPreVC.instantiateFromStoryboard()
+//            let shopTweetVC = ShopTweetVC.instantiateFromStoryboard()
 
             var componentType: ComponentType {
-                return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [sellerBuyVC, sellerPreVC])
+                return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [shopBuyVC, shopPreVC])
             }
             
             var defaultPage: Int
@@ -124,15 +115,17 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         
         let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
+        // setup shopBuyVC
+        option.shopBuyVC.shopView = self.shopView
+        option.shopBuyVC.originShopY = self.originShopY
+        option.shopBuyVC.avshop = self.avshop
         pagingMenuController.setup(option)
         
-        option.sellerBuyVC.shopView = self.shopView
-        option.sellerBuyVC.originShopY = self.originShopY
-        self.sellerBuyVC = option.sellerBuyVC
-        self.bakeTableView = option.sellerBuyVC.bakeTableView
-        self.classifyTableView = option.sellerBuyVC.classifyTableView
+        self.shopBuyVC = option.shopBuyVC
+        self.bakeTableView = option.shopBuyVC.bakeTableView
+        self.classifyTableView = option.shopBuyVC.classifyTableView
         let pan = UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:)))
-        self.sellerBuyVC.bakeTableView.addGestureRecognizer(pan)
+        self.shopBuyVC.bakeTableView.addGestureRecognizer(pan)
 
 //        pagingMenuController.onMove = {
 //            state in
@@ -153,11 +146,11 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
 //        }
         
 
-        bgImage.image = UIImage(named: "seller" + ids + "_bg")
+        bgImage.sd_setImage(with: URL(string: avshop.bgImage!.url!))
         bgImage.contentMode = .scaleAspectFill
         bgImage.clipsToBounds = true
         
-        hpImage.image = UIImage(named: "seller" + ids + "_hp")
+        hpImage.sd_setImage(with: URL(string: avshop.headphoto!.url!))
         hpImage.contentMode = .scaleAspectFill
         hpImage.clipsToBounds = true
         hpImage.layer.cornerRadius = hpImage.frame.size.width / 2
@@ -172,20 +165,19 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         cardBgImage.layer.shadowRadius = 10
         cardBgImage.clipsToBounds = false
 
-        nameLabel.text = (seller["name"] as! String)
-        addressLabel.setTitle(" 广东省珠海市唐家湾金凤路28号", for: .normal)
-        commentNumberBtn.setTitle("\(seller["commentsNum"] as! Int) 评论", for: .normal)
+        shopNameLabel.text = avshop.name!
+        addressLabel.setTitle(" \(avshop.address!)", for: .normal)
+        commentNumberBtn.setTitle("\(423) 评论", for: .normal)
         
-        let star = seller["stars"] as! Double
+        let star = 4.4
         starLabel.setTitle(String(format: "%.2f", star), for: .normal)
-        starLabel.setTitle("5.00", for: .normal)
         
         let s = 1 - star / 5
         let x = starsHover.frame.width * CGFloat(s)
         // TODO: - stars
         starsHover.frame.origin.x += x
         starsHover.frame.size.width -= x
-        
+        starsHover.layoutIfNeeded()
         
     }
     
@@ -209,11 +201,11 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let id = segue.identifier {
             switch id {
-            case "sellerBuyMenuSegue":
+            case "shopBuyMenuSegue":
                 if let vc = segue.destination as? ShopPagingVC {
                     vc.view.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
                 }
-            case "sellerBuyCartSegue":
+            case "shopBuyCartSegue":
                 break
             default:
                 break
@@ -233,7 +225,6 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     override var prefersStatusBarHidden: Bool {
         return false
     }
-    
     
     
     // MARK: - interactive animations
@@ -338,11 +329,11 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             _ in
             switch state {
             case .expanded:
-                self.nameLabel.frame.origin.y = self.originNameY
-                self.nameLabel.transform = CGAffineTransform.identity // hide menu
+                self.shopNameLabel.frame.origin.y = self.originNameY
+                self.shopNameLabel.transform = CGAffineTransform.identity // hide menu
             case .collapsed:
-                self.nameLabel.frame.origin.y = self.originNameY - self.nameLabelTransformY
-                self.nameLabel.transform = CGAffineTransform(scaleX: 1.2, y: 1.2) // show menu
+                self.shopNameLabel.frame.origin.y = self.originNameY - self.nameLabelTransformY
+                self.shopNameLabel.transform = CGAffineTransform(scaleX: 1.2, y: 1.2) // show menu
             }
         }
         titleAnimator.addCompletion {
@@ -353,11 +344,11 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             if finalPosition == .start {
                 switch state {
                 case .expanded:
-                    self.nameLabel.frame.origin.y = self.originNameY - self.nameLabelTransformY
-                    self.nameLabel.transform = CGAffineTransform(scaleX: 1.2, y: 1.2) // show menu
+                    self.shopNameLabel.frame.origin.y = self.originNameY - self.nameLabelTransformY
+                    self.shopNameLabel.transform = CGAffineTransform(scaleX: 1.2, y: 1.2) // show menu
                 case .collapsed:
-                    self.nameLabel.frame.origin.y = self.originNameY
-                    self.nameLabel.transform = CGAffineTransform.identity // hide menu
+                    self.shopNameLabel.frame.origin.y = self.originNameY
+                    self.shopNameLabel.transform = CGAffineTransform.identity // hide menu
                 }
             }
         }
@@ -400,11 +391,11 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             _ in
             switch state {
             case .expanded:
-                self.sellerCardView.alpha = 1 // hide menu
-                self.sellerCardView.transform = CGAffineTransform.identity
+                self.shopCardView.alpha = 1 // hide menu
+                self.shopCardView.transform = CGAffineTransform.identity
             case .collapsed:
-                self.sellerCardView.alpha = 0 // show menu
-                self.sellerCardView.transform = CGAffineTransform(scaleX: 0.2, y: 0.2).concatenating(CGAffineTransform(translationX: 0, y: -self.originCardY))
+                self.shopCardView.alpha = 0 // show menu
+                self.shopCardView.transform = CGAffineTransform(scaleX: 0.2, y: 0.2).concatenating(CGAffineTransform(translationX: 0, y: -self.originCardY))
             }
         }
         cardAnimator.addCompletion {
@@ -415,11 +406,11 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             if finalPosition == .start {
                 switch state {
                 case .expanded:
-                    self.sellerCardView.alpha = 0 // show menu
-                    self.sellerCardView.transform = CGAffineTransform(scaleX: 0.2, y: 0.2).concatenating(CGAffineTransform(translationX: 0, y: -self.originCardY))
+                    self.shopCardView.alpha = 0 // show menu
+                    self.shopCardView.transform = CGAffineTransform(scaleX: 0.2, y: 0.2).concatenating(CGAffineTransform(translationX: 0, y: -self.originCardY))
                 case .collapsed:
-                    self.sellerCardView.alpha = 1 // hide menu
-                    self.sellerCardView.transform = CGAffineTransform.identity
+                    self.shopCardView.alpha = 1 // hide menu
+                    self.shopCardView.transform = CGAffineTransform.identity
                 }
             }
         }
