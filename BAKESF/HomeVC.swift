@@ -32,7 +32,6 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         if let usr = RealmHelper.retrieveCurrentUser() {
             // has logged in
             self.user = usr
-            
         } else {
             // to login
         }
@@ -41,17 +40,17 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         // page menu
         struct HomeShop: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "私房", selectedColor: colors[.bkRed]!))
+                return .text(title: MenuItemText(text: "私房", selectedColor: UIColor.red))
             }
         }
         struct HomeBake: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "食野", selectedColor: colors[.bkRed]!))
+                return .text(title: MenuItemText(text: "食野", selectedColor: UIColor.red))
             }
         }
         struct HomeFollow: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "收藏", selectedColor: colors[.bkRed]!))
+                return .text(title: MenuItemText(text: "收藏", selectedColor: UIColor.red))
             }
         }
         
@@ -65,7 +64,7 @@ class HomeVC: UIViewController, UISearchBarDelegate {
             var animationDuration: TimeInterval
             
             var focusMode: MenuFocusMode {
-                return .none //underline(height: 3, color: colors[.bkRed]!, horizontalPadding: 10, verticalPadding: 0)
+                return .none //underline(height: 3, color: UIColor.red, horizontalPadding: 10, verticalPadding: 0)
             }
         }
         
@@ -109,6 +108,7 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         
     }
     
+   
     // MARK: - SearchBar
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         self.searchBar.setShowsCancelButton(true, animated: true)
@@ -122,7 +122,6 @@ class HomeVC: UIViewController, UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         dismissKeyboard(sender: self)
-        self.searchBar.setShowsCancelButton(false, animated: true)
         UIView.animate(withDuration: 0.21, delay: 0, options: [.curveEaseInOut], animations: {
             self.searchBarCancelAni()
         }, completion: {
@@ -131,8 +130,9 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         })
     }
     
-    func dismissKeyboard(sender: Any) {
-        searchBar.resignFirstResponder()
+    func dismissKeyboard(_ sender: Any) {
+        self.searchBar.resignFirstResponder()
+        self.searchBar.setShowsCancelButton(false, animated: true)
     }
 
     func searchBarFocusAni() {

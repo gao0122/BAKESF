@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import LeanCloud
 import AVOSCloud
 import Fabric
 import Crashlytics
@@ -20,10 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
-        LeanCloud.initialize(applicationID: "rok9QXYLMgzG02tv2uErl7fU-gzGzoHsz", applicationKey: "7ABa2kGT3QqlarNhVdLFvMeC")
-        AVBaker.registerSubclass()
-        AVShop.registerSubclass()
+        registerSubclassesForAVObjects()
         AVOSCloud.setApplicationId("rok9QXYLMgzG02tv2uErl7fU-gzGzoHsz", clientKey: "7ABa2kGT3QqlarNhVdLFvMeC")
+        AVOSCloud.setAllLogsEnabled(false)
         
         Fabric.with([Crashlytics.self, Answers.self])
         
@@ -78,5 +76,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    func registerSubclassesForAVObjects() -> Void {
+        AVBaker.registerSubclass()
+        AVShop.registerSubclass()
+        AVBake.registerSubclass()
+    }
 }
 

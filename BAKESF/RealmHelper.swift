@@ -8,7 +8,6 @@
 
 import RealmSwift
 import AVOSCloud
-import LeanCloud
 
 class RealmHelper {
     

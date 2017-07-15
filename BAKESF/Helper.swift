@@ -80,8 +80,8 @@ func retrieveFile(withURL url: String) -> AVFile? {
 
 // MARK: - just for copy and paste
 func helperBaker(phone: String) {
-    let query = AVQuery(className: "Baker")
-    query.whereKey("mobilePhoneNumber", equalTo: phone)
+    let query = AVBaker.query()
+    query.whereKey(lcKey[.phone]!, equalTo: phone)
     query.getFirstObjectInBackground({
         object, error in
         if error == nil {

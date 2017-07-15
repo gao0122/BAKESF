@@ -26,27 +26,29 @@ extension UIImage {
         return UIImageJPEGRepresentation(self, 1) ?? UIImagePNGRepresentation(self)
     }
     
-    func cropToBounds(width: CGFloat, height: CGFloat) -> UIImage {
+    func cropTo(x: CGFloat = 0, y: CGFloat = 0, width: CGFloat, height: CGFloat, bounds: Bool = false) -> UIImage {
         let contextImage: UIImage = UIImage(cgImage: self.cgImage!)
         
         let contextSize: CGSize = contextImage.size
         
-        var posX: CGFloat = 0.0
-        var posY: CGFloat = 0.0
+        var posX: CGFloat = x
+        var posY: CGFloat = y
         var cgwidth: CGFloat = width
         var cgheight: CGFloat = height
         
-        // See what size is longer and create the center off of that
-        if contextSize.width > contextSize.height {
-            posX = ((contextSize.width - contextSize.height) / 2)
-            posY = 0
-            cgwidth = contextSize.height
-            cgheight = contextSize.height
-        } else {
-            posX = 0
-            posY = ((contextSize.height - contextSize.width) / 2)
-            cgwidth = contextSize.width
-            cgheight = contextSize.width
+        if bounds {
+            // See what size is longer and create the center off of that
+            if contextSize.width > contextSize.height {
+                posX = (contextSize.width - contextSize.height) / 2
+                posY = 0
+                cgwidth = contextSize.height
+                cgheight = contextSize.height
+            } else {
+                posX = 0
+                posY = (contextSize.height - contextSize.width) / 2
+                cgwidth = contextSize.width
+                cgheight = contextSize.width
+            }
         }
         
         let rect: CGRect = CGRect(x: posX, y: posY, width: cgwidth, height: cgheight)
@@ -58,6 +60,10 @@ extension UIImage {
         let image: UIImage = UIImage(cgImage: imageRef, scale: self.scale, orientation: self.imageOrientation)
         
         return image
+    }
+    
+    func cropToBounds(width: CGFloat, height: CGFloat) -> UIImage {
+        return cropTo(width: width, height: height, bounds: true)
     }
     
     func resize(width: CGFloat, height: CGFloat) -> UIImage {

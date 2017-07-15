@@ -16,7 +16,7 @@ class ShopBuyBakeTableCell: UITableViewCell {
     @IBOutlet weak var leftLabel: UILabel!
     @IBOutlet weak var oneMoreBtn: UIButton!
 
-    var bakeID = ""
+    var bake: AVBake!
 
 }
 

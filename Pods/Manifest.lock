@@ -13,8 +13,6 @@ PODS:
   - AVOSCloudLiveQuery (6.1.1):
     - AVOSCloud (= 6.1.1)
     - AVOSCloudIM (= 6.1.1)
-  - Crashlytics (3.8.5):
-    - Fabric (~> 1.6.3)
   - Fabric (1.6.12)
   - LeanCloud (10.0.2):
     - LeanCloud/Storage (= 10.0.2)
@@ -36,7 +34,6 @@ PODS:
 DEPENDENCIES:
   - AVOSCloud
   - AVOSCloudLiveQuery
-  - Crashlytics
   - Fabric
   - LeanCloud
   - PagingMenuController
@@ -49,7 +46,6 @@ SPEC CHECKSUMS:
   AVOSCloud: a21318994cd97adaf9bf19cf0ac38187b3d94f00
   AVOSCloudIM: 5ac1d53078cfd81e193e1eb6a365842d96ad3009
   AVOSCloudLiveQuery: 2a974d305ba6b8f661f8d882b0a449762799b954
-  Crashlytics: dfbae35ef22ca189240d230ad501feea4ee85d2d
   Fabric: f050464eac45a2ce5a8e6e6a07e977c0df32fe28
   LeanCloud: e1e54faeae61634c3b98b437415f0f3ac2837fe1
   MOBFoundation: e6572a62983a44fa048c4038842ade1494c10059
@@ -59,6 +55,6 @@ SPEC CHECKSUMS:
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   SMSSDK: a811c8ea6e89393097037b7cf6493248a40e50f0
 
-PODFILE CHECKSUM: 65d85b5acd93d8d3ba9a65618f0791353e36c917
+PODFILE CHECKSUM: ba176661d7a7a8acc79844f29c8a60b050cefd66
 
 COCOAPODS: 1.2.1

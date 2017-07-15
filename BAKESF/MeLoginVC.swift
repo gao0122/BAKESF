@@ -8,7 +8,6 @@
 
 import UIKit
 import RealmSwift
-import LeanCloud
 import AVOSCloud
 
 enum LoginState {

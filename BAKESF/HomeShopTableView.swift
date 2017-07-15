@@ -8,6 +8,6 @@
 
 import UIKit
 
-class HomeShopTableView: UITableView {
+class HomeShopTableView: UITableView, UIGestureRecognizerDelegate {
     
 }

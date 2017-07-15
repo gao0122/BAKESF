@@ -9,7 +9,6 @@
 import UIKit
 import PagingMenuController
 import AVOSCloud
-import LeanCloud
 import AVOSCloudLiveQuery
 
 class ShopVC: UIViewController, UIGestureRecognizerDelegate {
@@ -27,13 +26,21 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var cardBgImage: UIImageView!
     @IBOutlet weak var hpImage: UIImageView!
     @IBOutlet weak var addressLabel: UIButton!
-    @IBOutlet weak var starsHover: UIImageView!
+    @IBOutlet weak var stars: UIImageView!
+    @IBOutlet weak var starsGray: UIImageView!
     @IBOutlet weak var commentNumberBtn: UIButton!
     @IBOutlet weak var starLabel: UIButton!
     @IBOutlet weak var shopView: UIView!
     @IBOutlet weak var cartView: UIView!
-    @IBOutlet weak var broadcastLabel: UILabel! // TODO: expanded and collapsed
+    @IBOutlet weak var broadcastLabel: UILabel!
     @IBOutlet weak var shopCardView: UIView!
+    @IBOutlet weak var cartBar: UIView!
+    @IBOutlet weak var cartFocusBgView: UIView!
+    @IBOutlet weak var cartBarBlurView: UIVisualEffectView!
+    @IBOutlet weak var checkBtn: UIButton!
+    @IBOutlet weak var distributionFeeLabel: UILabel!
+    @IBOutlet weak var totalFeeLabel: UILabel!
+    @IBOutlet weak var totalAmountLabel: UILabel!
     
     private var shopBuyVC: ShopBuyVC!
     private var bakeTableView: ShopBuyBakeTableView!
@@ -44,6 +51,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     let topViewHeight: CGFloat = 66
     let menuAniDuration: TimeInterval = 0.48
     let nameLabelTransformY: CGFloat = 172
+    let cartBarHeight: CGFloat = 50
     var startTranslationY: CGFloat = 0
     var startMenuState: MenuAniState = .collapsed
     var addedPanRecognizer = false
@@ -52,39 +60,28 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     var originHeadphotoY: CGFloat!
     var originNameY: CGFloat!
     var shopViewStartY: CGFloat!
+    var originCartBarY: CGFloat!
     
     var menuAniState: MenuAniState = .collapsed
     var runningMenuAnimators = [UIViewPropertyAnimator]()
     var menuProgressWhenInterrupted = [CGFloat]()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        originShopY = broadcastLabel.frame.origin.y + 24
-        originCardY = shopCardView.frame.origin.y
-        originHeadphotoY = hpImage.frame.origin.y
-        originNameY = shopNameLabel.frame.origin.y
-        shopViewStartY = originShopY
-        shopView.frame.origin.y = originShopY
-        bgVisualEffectView.effect = nil
+        self.preInit()
         
         // page menu
         struct ShopBuy: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "橱窗现货", selectedColor: colors[.bkRed]!))
+                return .text(title: MenuItemText(text: "橱窗现货", selectedColor: UIColor.red))
             }
         }
         struct ShopPre: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "美味预约", selectedColor: colors[.bkRed]!))
+                return .text(title: MenuItemText(text: "美味预约", selectedColor: UIColor.red))
             }
         }
-//        struct ShopTweet: MenuItemViewCustomizable {
-//            var displayMode: MenuItemDisplayMode {
-//                return .text(title: MenuItemText(text: "私房广播"))
-//            }
-//        }
         
         struct MenuOptions: MenuViewCustomizable {
             var itemsOptions: [MenuItemViewCustomizable] {
@@ -96,14 +93,13 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             var animationDuration: TimeInterval
             
             var focusMode: MenuFocusMode {
-                return .none //underline(height: 3, color: colors[.bkRed]!, horizontalPadding: 10, verticalPadding: 0)
+                return .none //underline(height: 3, color: UIColor.red, horizontalPadding: 10, verticalPadding: 0)
             }
         }
         
         struct PagingMenuOptions: PagingMenuControllerCustomizable {
             let shopBuyVC = ShopBuyVC.instantiateFromStoryboard()
             let shopPreVC = ShopPreVC.instantiateFromStoryboard()
-//            let shopTweetVC = ShopTweetVC.instantiateFromStoryboard()
 
             var componentType: ComponentType {
                 return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [shopBuyVC, shopPreVC])
@@ -124,6 +120,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         self.shopBuyVC = option.shopBuyVC
         self.bakeTableView = option.shopBuyVC.bakeTableView
         self.classifyTableView = option.shopBuyVC.classifyTableView
+        self.bakeTableView.frame.size.height -= self.originCartBarY
+        self.classifyTableView.frame.size.height -= self.originCartBarY
         let pan = UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:)))
         self.shopBuyVC.bakeTableView.addGestureRecognizer(pan)
 
@@ -146,39 +144,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
 //        }
         
 
-        bgImage.sd_setImage(with: URL(string: avshop.bgImage!.url!))
-        bgImage.contentMode = .scaleAspectFill
-        bgImage.clipsToBounds = true
-        
-        hpImage.sd_setImage(with: URL(string: avshop.headphoto!.url!))
-        hpImage.contentMode = .scaleAspectFill
-        hpImage.clipsToBounds = true
-        hpImage.layer.cornerRadius = hpImage.frame.size.width / 2
-        hpImage.layer.masksToBounds = true
-        
-        cardBgImage.layer.cornerRadius = 10
-        cardBgImage.layer.masksToBounds = true
-        
-        cardBgImage.layer.shadowColor = UIColor.gray.cgColor
-        cardBgImage.layer.shadowOffset = CGSize(width: 0, height: 1)
-        cardBgImage.layer.shadowOpacity = 1
-        cardBgImage.layer.shadowRadius = 10
-        cardBgImage.clipsToBounds = false
-
-        shopNameLabel.text = avshop.name!
-        addressLabel.setTitle(" \(avshop.address!)", for: .normal)
-        commentNumberBtn.setTitle("\(423) 评论", for: .normal)
-        
-        let star = 4.4
-        starLabel.setTitle(String(format: "%.2f", star), for: .normal)
-        
-        let s = 1 - star / 5
-        let x = starsHover.frame.width * CGFloat(s)
-        // TODO: - stars
-        starsHover.frame.origin.x += x
-        starsHover.frame.size.width -= x
-        starsHover.layoutIfNeeded()
-        
+        self.shopInit()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -226,6 +192,66 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         return false
     }
     
+    func preInit() {
+        originCartBarY = cartBar.frame.origin.y
+        originShopY = broadcastLabel.frame.origin.y + 24
+        originCardY = shopCardView.frame.origin.y
+        originHeadphotoY = hpImage.frame.origin.y
+        originNameY = shopNameLabel.frame.origin.y
+        shopViewStartY = originShopY
+        shopView.frame.origin.y = originShopY
+        shopView.layoutIfNeeded()
+        bgVisualEffectView.effect = nil
+        cartView.frame.origin.y = self.view.frame.height
+        // cartBarHeight * ((1 - 0.2) / 2) is the difference value while animating the cart
+        // 'cause it is scaling and transforming position simultaneously
+        cartBarBlurView.frame.origin.y = self.view.frame.height + cartBarHeight * ((1 - 0.2) / 2)
+        cartBarBlurView.effect = UIBlurEffect(style: .dark)
+        cartBar.alpha = 0.4
+        cartBar.frame.origin.y = self.view.frame.height + cartBarHeight * ((1 - 0.2) / 2)
+        cartBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+        cartBarBlurView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+    }
+    
+    func shopInit() {
+        bgImage.sd_setImage(with: URL(string: avshop.bgImage!.url!))
+        bgImage.contentMode = .scaleAspectFill
+        bgImage.clipsToBounds = true
+        
+        hpImage.sd_setImage(with: URL(string: avshop.headphoto!.url!))
+        hpImage.contentMode = .scaleAspectFill
+        hpImage.clipsToBounds = true
+        hpImage.layer.cornerRadius = hpImage.frame.size.width / 2
+        hpImage.layer.masksToBounds = true
+        
+        cardBgImage.layer.cornerRadius = 10
+        cardBgImage.layer.masksToBounds = true
+        
+        cardBgImage.layer.shadowColor = UIColor.gray.cgColor
+        cardBgImage.layer.shadowOffset = CGSize(width: 0, height: 1)
+        cardBgImage.layer.shadowOpacity = 1
+        cardBgImage.layer.shadowRadius = 10
+        cardBgImage.clipsToBounds = false
+        
+        shopNameLabel.text = avshop.name!
+        addressLabel.setTitle(" \(avshop.address!)", for: .normal)
+        commentNumberBtn.setTitle("\(423) 评论", for: .normal)
+        
+        let broadcast = avshop.broadcast!
+        if broadcast == "-" {
+            broadcastLabel.text = broadcastRandom[Int.random(min: 0, max: broadcastRandom.count - 1)]
+        } else {
+            broadcastLabel.text = "公告：" + broadcast
+        }
+        
+        let star = 4.4
+        let width = stars.frame.width
+        let x = width * CGFloat(star / 5) + 0.452
+        starLabel.setTitle(String(format: "%.2f", star), for: .normal)
+        stars.contentMode = .scaleAspectFill
+        stars.image = stars.image!.cropTo(x: 0, y: 0, width: x * 3, height: stars.frame.height * 3, bounds: false)
+        stars.frame.size.width = x
+    }
     
     // MARK: - interactive animations
     func menuAnimateTransitionIfNeeded(state: MenuAniState, duration: TimeInterval) {
@@ -255,6 +281,14 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             let broadcastAnimator = self.broadcastAnimator(duration: duration, state: state)
             broadcastAnimator.startAnimation()
             runningMenuAnimators.append(broadcastAnimator)
+            
+            let cartBarAnimator = self.cartBarAnimator(duration: duration, state: state)
+            cartBarAnimator.startAnimation()
+            runningMenuAnimators.append(cartBarAnimator)
+            
+            let cartBarBlurAnimator = self.cartBarBlurAnimator(duration: duration, state: state)
+            cartBarBlurAnimator.startAnimation()
+            runningMenuAnimators.append(cartBarBlurAnimator)
             
             startMenuState = menuAniState
             switchMenuState()
@@ -304,7 +338,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             case .expanded:
                 self.bgVisualEffectView.effect = nil
             case .collapsed:
-                self.bgVisualEffectView.effect = UIBlurEffect(style: UIBlurEffectStyle.extraLight)
+                self.bgVisualEffectView.effect = UIBlurEffect(style: .extraLight)
             }
         })
         blurAnimator.addCompletion {
@@ -315,7 +349,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             if finalPosition == .start {
                 switch state {
                 case .expanded:
-                    self.bgVisualEffectView.effect = UIBlurEffect(style: UIBlurEffectStyle.extraLight)
+                    self.bgVisualEffectView.effect = UIBlurEffect(style: .extraLight)
                 case .collapsed:
                     self.bgVisualEffectView.effect = nil
                 }
@@ -329,10 +363,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             _ in
             switch state {
             case .expanded:
-                self.shopNameLabel.frame.origin.y = self.originNameY
+                self.shopNameLabel.frame.origin.y = self.originNameY - 4.1 / 2
                 self.shopNameLabel.transform = CGAffineTransform.identity // hide menu
             case .collapsed:
-                self.shopNameLabel.frame.origin.y = self.originNameY - self.nameLabelTransformY
+                self.shopNameLabel.frame.origin.y = self.originNameY - self.nameLabelTransformY + 4.1 / 2
                 self.shopNameLabel.transform = CGAffineTransform(scaleX: 1.2, y: 1.2) // show menu
             }
         }
@@ -427,7 +461,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                 self.broadcastLabel.transform = CGAffineTransform.identity
             case .collapsed:
                 self.broadcastLabel.alpha = 0 // show menu
-                self.broadcastLabel.transform = CGAffineTransform(translationX: 0, y: -self.originShopY / 1.42)
+                self.broadcastLabel.transform = CGAffineTransform(translationX: 0, y: -self.originShopY / 1.41)
             }
         }
         broadcastAnimator.addCompletion {
@@ -459,6 +493,84 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             self.shopViewStartY = self.shopView.frame.origin.y
         }
         return broadcastAnimator
+    }
+    
+    func cartBarAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
+        let cartBarAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1)
+        cartBarAnimator.addAnimations {
+            _ in
+            switch state {
+            case .expanded:
+                // hide menu
+                self.cartBar.alpha = 0.4
+                self.cartBar.frame.origin.y = self.view.frame.height + 20
+                self.cartBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+            case .collapsed:
+                // show menu
+                self.cartBar.alpha = 1
+                self.cartBar.frame.origin.y = self.originCartBarY + 20
+                self.cartBar.transform = CGAffineTransform.identity
+            }
+        }
+        cartBarAnimator.addCompletion {
+            finalPosition in
+            if let index = self.runningMenuAnimators.index(of: cartBarAnimator) {
+                self.runningMenuAnimators.remove(at: index)
+            }
+            if finalPosition == .start {
+                switch state {
+                case .expanded:
+                    // show menu
+                    self.cartBar.alpha = 1
+                    self.cartBar.frame.origin.y = self.originCartBarY
+                    self.cartBar.transform = CGAffineTransform.identity
+                case .collapsed:
+                    // hide menu
+                    self.cartBar.alpha = 0.4
+                    self.cartBar.frame.origin.y = self.view.frame.height
+                    self.cartBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+                }
+            }
+        }
+        return cartBarAnimator
+    }
+    
+    func cartBarBlurAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
+        let cartBarAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1)
+        cartBarAnimator.addAnimations {
+            _ in
+            switch state {
+            case .expanded:
+                // hide menu
+                self.cartBarBlurView.frame.origin.y = self.view.frame.height + self.cartBarHeight * ((1 - 0.2) / 2)
+                self.cartBarBlurView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+                self.cartBarBlurView.effect = nil
+            case .collapsed:
+                // show menu
+                self.cartBarBlurView.frame.origin.y = self.originCartBarY + self.cartBarHeight * ((1 - 0.2) / 2)
+                self.cartBarBlurView.transform = CGAffineTransform.identity
+                self.cartBarBlurView.effect = UIBlurEffect(style: .dark)
+            }
+        }
+        cartBarAnimator.addCompletion {
+            finalPosition in
+            if let index = self.runningMenuAnimators.index(of: cartBarAnimator) {
+                self.runningMenuAnimators.remove(at: index)
+            }
+            if finalPosition == .start {
+                switch state {
+                case .expanded:
+                    // show menu
+                    self.cartBarBlurView.frame.origin.y = self.originCartBarY
+                    self.cartBarBlurView.effect = UIBlurEffect(style: .dark)
+                case .collapsed:
+                    // hide menu
+                    self.cartBarBlurView.frame.origin.y = self.view.frame.height
+                    self.cartBarBlurView.effect = nil
+                }
+            }
+        }
+        return cartBarAnimator
     }
     
     func menuAnimateOrReverseRunningTransition(state: MenuAniState, duration: TimeInterval) {

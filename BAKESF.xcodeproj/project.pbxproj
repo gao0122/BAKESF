@@ -23,6 +23,8 @@
 		004318341F13F21900FD0227 /* ShopClassifyTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004318331F13F21900FD0227 /* ShopClassifyTableView.swift */; };
 		0044B0AC1ED17B3C003DE5AF /* HomeShopTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0044B0AB1ED17B3C003DE5AF /* HomeShopTableViewCell.swift */; };
 		00455A851F15D4F5009F440F /* AVShop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00455A841F15D4F5009F440F /* AVShop.swift */; };
+		00455A891F193079009F440F /* AVBake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00455A881F193078009F440F /* AVBake.swift */; };
+		00455A8B1F19E81D009F440F /* BakeInBagRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00455A8A1F19E81D009F440F /* BakeInBagRealm.swift */; };
 		0048FDA91EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDA81EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift */; };
 		0048FDAB1EEA725C002B49B6 /* ShopBuyBakeTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDAA1EEA725C002B49B6 /* ShopBuyBakeTableView.swift */; };
 		004BF0E01ED184CF00554A5E /* HomeShopTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004BF0DF1ED184CF00554A5E /* HomeShopTableView.swift */; };
@@ -77,6 +79,8 @@
 		004318331F13F21900FD0227 /* ShopClassifyTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopClassifyTableView.swift; sourceTree = "<group>"; };
 		0044B0AB1ED17B3C003DE5AF /* HomeShopTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeShopTableViewCell.swift; sourceTree = "<group>"; };
 		00455A841F15D4F5009F440F /* AVShop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVShop.swift; sourceTree = "<group>"; };
+		00455A881F193078009F440F /* AVBake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBake.swift; sourceTree = "<group>"; };
+		00455A8A1F19E81D009F440F /* BakeInBagRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakeInBagRealm.swift; sourceTree = "<group>"; };
 		0048FDA81EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBuyBakeTableCell.swift; sourceTree = "<group>"; };
 		0048FDAA1EEA725C002B49B6 /* ShopBuyBakeTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBuyBakeTableView.swift; sourceTree = "<group>"; };
 		004BF0DF1ED184CF00554A5E /* HomeShopTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeShopTableView.swift; sourceTree = "<group>"; };
@@ -140,6 +144,34 @@
 				001DB09C1F024CD100A09F32 /* CommunityVC.swift */,
 			);
 			name = CommunityVC;
+			sourceTree = "<group>";
+		};
+		00455A871F19305E009F440F /* AVObject */ = {
+			isa = PBXGroup;
+			children = (
+				00B4709A1F0404DD00725C95 /* AVBaker.swift */,
+				00455A841F15D4F5009F440F /* AVShop.swift */,
+				00455A881F193078009F440F /* AVBake.swift */,
+			);
+			name = AVObject;
+			sourceTree = "<group>";
+		};
+		00455A8C1F19E824009F440F /* RealmObject */ = {
+			isa = PBXGroup;
+			children = (
+				00E14EFE1ECC9587008197A3 /* UserRealm.swift */,
+				00455A8A1F19E81D009F440F /* BakeInBagRealm.swift */,
+			);
+			name = RealmObject;
+			sourceTree = "<group>";
+		};
+		00455A8D1F19E844009F440F /* VCTransition */ = {
+			isa = PBXGroup;
+			children = (
+				00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */,
+				00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */,
+			);
+			name = VCTransition;
 			sourceTree = "<group>";
 		};
 		006024F71EC97D9000FFB859 /* MeVC */ = {
@@ -266,11 +298,9 @@
 		00E14F001ECC958F008197A3 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				00E14EFE1ECC9587008197A3 /* UserRealm.swift */,
-				00B4709A1F0404DD00725C95 /* AVBaker.swift */,
-				00455A841F15D4F5009F440F /* AVShop.swift */,
-				00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */,
-				00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */,
+				00455A8C1F19E824009F440F /* RealmObject */,
+				00455A871F19305E009F440F /* AVObject */,
+				00455A8D1F19E844009F440F /* VCTransition */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -447,6 +477,7 @@
 				0044B0AC1ED17B3C003DE5AF /* HomeShopTableViewCell.swift in Sources */,
 				00D23B9A1F14AF66002E45B7 /* UIView+Extensions.swift in Sources */,
 				000D13781EFF862700A19D5A /* Constants.swift in Sources */,
+				00455A8B1F19E81D009F440F /* BakeInBagRealm.swift in Sources */,
 				00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */,
 				0034EE361EE9116B005300AE /* ShopBuyVC.swift in Sources */,
 				00020F861F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift in Sources */,
@@ -468,6 +499,7 @@
 				00B491A91EE4CFE1000C63EB /* ShopVC.swift in Sources */,
 				00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */,
 				00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */,
+				00455A891F193079009F440F /* AVBake.swift in Sources */,
 				00D23B9E1F14AF96002E45B7 /* Date+Extensions.swift in Sources */,
 				0048FDA91EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift in Sources */,
 				006024F21EC9738800FFB859 /* MeMasterVC.swift in Sources */,

@@ -18,8 +18,7 @@ let colors: [BKColor : UIColor] = [
     .red: UIColor(red: 255 / 255, green: 36 / 255, blue: 40 / 255, alpha: 1),
     .orange: UIColor(red: 255 / 255, green: 128 / 255, blue: 0, alpha: 1),
     .white: UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1),
-    .black: UIColor(red: 0.032, green: 0.032, blue: 0.032, alpha: 1),
-    .bkRed: UIColor(hex: 0xFF0000)
+    .black: UIColor(red: 0.032, green: 0.032, blue: 0.032, alpha: 1)
 ]
 
 enum LCKey {
@@ -33,3 +32,7 @@ let lcKey: [LCKey : String] = [
     .url: "url"
 ]
 
+let broadcastRandom: [String] = [
+    "烘焙师有点忙，没来得及写公告。",
+    "店小二有点懒，什么也没写。"
+]

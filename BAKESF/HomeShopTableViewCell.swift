@@ -15,7 +15,8 @@ class HomeShopTableViewCell: UITableViewCell {
     @IBOutlet weak var followBtn: UIButton!
     @IBOutlet weak var headphoto: UIImageView!
     @IBOutlet weak var commentsNumber: UIButton!
-    @IBOutlet weak var whiteFiveStars: UIImageView!
+    @IBOutlet weak var stars: UIImageView!
+    @IBOutlet weak var starsGray: UIImageView!
     
     var picker: UIImagePickerController = UIImagePickerController()
     var rootVC: UIViewController!

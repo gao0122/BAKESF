@@ -8,7 +8,6 @@
 
 import UIKit
 import QuartzCore
-import LeanCloud
 import AVOSCloud
 import AVOSCloudLiveQuery
 import SDWebImage
@@ -35,7 +34,6 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         super.viewDidLoad()
         
         tableView.addSubview(refresher)
-        
         
         loadShops({
             shops, error in
@@ -137,7 +135,14 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         cell.bgImage.sd_setImage(with: bgUrl)
         cell.bgImage.contentMode = .scaleAspectFill
         cell.bgImage.clipsToBounds = true
-                
+        
+        let width = cell.stars.frame.width
+        let star = 4.4
+        let x = width * CGFloat(star / 5)
+        cell.stars.contentMode = .scaleAspectFill
+        cell.stars.image = cell.stars.image!.cropTo(x: 0, y: 0, width: x * 3, height: cell.stars.frame.height * 3, bounds: false)
+        cell.stars.frame.size.width = x
+        
         return cell
     }
     

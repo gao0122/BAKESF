@@ -8,7 +8,6 @@
 
 import UIKit
 import PagingMenuController
-import LeanCloud
 import AVOSCloud
 import Crashlytics
 
@@ -46,12 +45,12 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         // page menu 
         struct MeMemory: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "回忆", selectedColor: colors[.bkRed]!))
+                return .text(title: MenuItemText(text: "回忆", selectedColor: UIColor.red))
             }
         }
         struct MeTweet: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "推文", selectedColor: colors[.bkRed]!))
+                return .text(title: MenuItemText(text: "推文", selectedColor: UIColor.red))
             }
         }
         
@@ -65,7 +64,7 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
             var animationDuration: TimeInterval
             
             var focusMode: MenuFocusMode {
-                return .none //underline(height: 3, color: colors[.bkRed]!, horizontalPadding: 10, verticalPadding: 0)
+                return .none //underline(height: 3, color: UIColor.red, horizontalPadding: 10, verticalPadding: 0)
             }
         }
         

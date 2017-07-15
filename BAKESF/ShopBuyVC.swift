@@ -12,37 +12,56 @@ import AVOSCloudLiveQuery
 
 class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate, AVLiveQueryDelegate {
 
-    @IBOutlet weak var tableviewContainer: UIView!
     @IBOutlet weak var classifyTableView: ShopClassifyTableView!
     @IBOutlet weak var bakeTableView: ShopBuyBakeTableView!
     
+    let cartBarHeight: CGFloat = 50
     var shopView: UIView!
     var originShopY: CGFloat!
-    var bake: [String: Any]!
-    var bakes: [String: Any]!
     var buyBake = [Int]()
-    
+    var avcategory: [String]!
     var avshop: AVShop!
-    
+    var avbakes: [AVBake]!
     var bakeLiveQuery: AVLiveQuery!
+    var tableFooterView = UIView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        classifyTableView.frame.size.height = tableviewContainer.frame.height
-        bakeTableView.frame.size.height = tableviewContainer.frame.height
-        
-        classifyTableView.isScrollEnabled = false
-        
-        bake = theShops["1"] as! [String : Any]
-        bakes = bake["bakes"] as! [String: Any]
+        avcategory = avshop.categories!
 
+        classifyTableView.isScrollEnabled = false
+        tableFooterView.frame.size.width = bakeTableView.frame.width
+        tableFooterView.frame.size.height = cartBarHeight
+        bakeTableView.tableFooterView = tableFooterView
+
+        let shopQuery = AVBake.query()
+        shopQuery.whereKey("Shop", equalTo: avshop)
+        let buyQuery = AVBake.query()
+        buyQuery.whereKey("stock", equalTo: 0) // only for buy
+        let bothQuery = AVBake.query()
+        bothQuery.whereKey("stock", equalTo: 2) // for buy or book
+        let orQuery = AVQuery.orQuery(withSubqueries: [buyQuery, bothQuery])
+        let query = AVQuery.andQuery(withSubqueries: [shopQuery, orQuery])
+        query.includeKey("image")
+        query.findObjectsInBackground({
+            objects, error in
+            if error == nil {
+                self.avbakes = objects as! [AVBake]
+                self.bakeTableView.reloadData()
+            } else {
+                printit(any: "shop buy vc \(error!.localizedDescription)")
+            }
+        })
+        
         realtimeCheckBake()
     }
 
     class func instantiateFromStoryboard() -> ShopBuyVC {
         return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! ShopBuyVC
     }
+    
+    
     
     
     // MARK: - TableView
@@ -62,23 +81,31 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         case 0:
             let cell = classifyTableView.dequeueReusableCell(withIdentifier: "shopClassifyTableCell", for: IndexPath(row: indexPath.row, section: indexPath.section)) as! ShopClassifyTableCell
             cell.selectionStyle = .none
-            cell.classLabel.text = "分类"
+            cell.classLabel.text = avcategory[indexPath.row]
             return cell
         case 1:
             let cell = bakeTableView.dequeueReusableCell(withIdentifier: "shopBuyBakeTableCell", for: IndexPath(row: indexPath.row, section: indexPath.section)) as! ShopBuyBakeTableCell
             cell.selectionStyle = .none
             
-            let bakee = bakes["\(buyBake[indexPath.row])"] as! [String: Any]
+            let bakee = avbakes[indexPath.row]
             
-            let bakeName = bakee["name"] as! String
-            let price = bakee["price"] as! Double
+            let bakeName = bakee.name!
+            let price = bakee.price!
             let left = bakee["amount"] as! Int
-            // let star = bakee["star"] as! Double
-            
-            cell.bakeImage.image = UIImage(named: bakeName)
+            // let star =
+
+            cell.bake = bakee
+            cell.bakeImage.contentMode = .scaleAspectFill
+            if bakee.image == nil {
+                printit(any: "\n\n\n\(bakee.name!)\n\n\n")
+            }
+            cell.bakeImage.sd_setImage(with: URL(string: bakee.image?.url ?? ""))
+            cell.bakeImage.clipsToBounds = true
+            cell.bakeImage.layer.cornerRadius = 3
             cell.nameLabel.text = bakeName
             cell.priceLabel.text = "¥\(price)"
             cell.leftLabel.text = "剩余 \(left)"
+            cell.oneMoreBtn.addTarget(self, action: #selector(ShopBuyVC.oneMorePressed(_:)), for: .touchUpInside)
             return cell
         default:
             return UITableViewCell()
@@ -89,19 +116,9 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         var count = 0
         switch tableView.tag {
         case 0:
-            count = 1
+            count = avcategory.count
         case 1:
-            count = bakes.count
-            // count the bakes whose amount is larger than 0
-            for bakee in bakes {
-                let bakeInfo = bakee.value as! [String: Any]
-                
-                if (bakeInfo["amount"] as! Int) <= 0 {
-                    count -= 1
-                } else {
-                    buyBake.append(Int(bakee.key)!)
-                }
-            }
+            count = avbakes == nil ? 0 : avbakes.count
         default:
             break
         }
@@ -126,6 +143,12 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         }
     }
     
+    func oneMorePressed(_ sender: UIButton) {
+        if let cell = sender.superview?.superview as? ShopBuyBakeTableCell {
+            printit(any: cell.bake.name)
+        }
+    }
+    
     
     // MARK: - Navigation
 
@@ -146,7 +169,6 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         bakeLiveQuery.subscribe(callback: {
             succeeded, error in
             if succeeded {
-                printit(any: "subscribed")
             } else {
                 // TODO: - handle error
                 printit(any: error.localizedDescription)
