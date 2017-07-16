@@ -136,11 +136,11 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         cell.bgImage.contentMode = .scaleAspectFill
         cell.bgImage.clipsToBounds = true
         
-        let width = cell.stars.frame.width
+        let width = cell.starsGray.frame.width
         let star: CGFloat = 4.4
         let x = starDiff(cellWidth: width, star: star)
         cell.stars.contentMode = .scaleAspectFill
-        cell.stars.image = cell.stars.image!.cropTo(x: 0, y: 0, width: x * 3, height: cell.stars.frame.height * 3, bounds: false)
+        cell.stars.image = UIImage(named: "five_stars")!.cropTo(x: 0, y: 0, width: x * 3, height: cell.stars.frame.height * 3, bounds: false)
         cell.stars.frame.size.width = x
         
         return cell
