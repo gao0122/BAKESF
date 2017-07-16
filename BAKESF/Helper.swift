@@ -43,6 +43,7 @@ func connectedToNetwork() -> Bool {
     return (isReachable && !needsConnection)
 }
 
+// random password generator
 func generateRandomPwd(length: Int = 14) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*()_+-="
     var pwd = "Bk"
@@ -53,6 +54,7 @@ func generateRandomPwd(length: Int = 14) -> String {
     return pwd
 }
 
+// MARK: - LeanCloud
 func hasAVBakerRegistered(withPhone phone: String) -> Bool {
     let query = AVBaker.query()
     query.whereKey(lcKey[.phone]!, equalTo: phone)
@@ -75,6 +77,14 @@ func retrieveFile(withURL url: String) -> AVFile? {
     query.whereKey(lcKey[.url]!, equalTo: url)
     let files = try! query.findFiles()
     return files.first as? AVFile
+}
+
+// calculate the stars difference
+// the width of one rating star in png is 18px, but the actual width of the star is only 16.3px
+func starDiff(cellWidth width: CGFloat, star: CGFloat) -> CGFloat {
+    let gap = (width - 5 * starWidth) / 4
+    let starInt = CGFloat(floorf(Float(star)))
+    return star * starWidth + gap * starInt
 }
 
 

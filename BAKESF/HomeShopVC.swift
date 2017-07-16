@@ -137,8 +137,8 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         cell.bgImage.clipsToBounds = true
         
         let width = cell.stars.frame.width
-        let star = 4.4
-        let x = width * CGFloat(star / 5)
+        let star: CGFloat = 4.4
+        let x = starDiff(cellWidth: width, star: star)
         cell.stars.contentMode = .scaleAspectFill
         cell.stars.image = cell.stars.image!.cropTo(x: 0, y: 0, width: x * 3, height: cell.stars.frame.height * 3, bounds: false)
         cell.stars.frame.size.width = x
@@ -148,6 +148,11 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return avshops.count
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let view = UIView()
+        return view
     }
     
     

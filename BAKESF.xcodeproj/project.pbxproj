@@ -40,6 +40,7 @@
 		00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00629C7D1EC80BBC00B78151 /* OrderVC.swift */; };
 		00629C811EC80BBC00B78151 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C7F1EC80BBC00B78151 /* Main.storyboard */; };
 		00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C841EC80BBC00B78151 /* LaunchScreen.storyboard */; };
+		006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006B2E511F1B514B00C10BB9 /* AVOrder.swift */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
 		00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */; };
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
@@ -100,6 +101,7 @@
 		00629C871EC80BBC00B78151 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00629C8D1EC8123E00B78151 /* BAKESF-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BAKESF-Bridging-Header.h"; sourceTree = "<group>"; };
 		00629C901EC8146900B78151 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/BAKESF-fjjjbtxahaznllbtrbwqrssaqyyd/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
+		006B2E511F1B514B00C10BB9 /* AVOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVOrder.swift; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
 		00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		00B4709A1F0404DD00725C95 /* AVBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBaker.swift; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				00B4709A1F0404DD00725C95 /* AVBaker.swift */,
 				00455A841F15D4F5009F440F /* AVShop.swift */,
 				00455A881F193078009F440F /* AVBake.swift */,
+				006B2E511F1B514B00C10BB9 /* AVOrder.swift */,
 			);
 			name = AVObject;
 			sourceTree = "<group>";
@@ -228,7 +231,7 @@
 				00B474E31ECD6A2D00ED1B7A /* Helpers */,
 				00E14F001ECC958F008197A3 /* Classes */,
 				006024F81EC98F3300FFB859 /* HomeVC */,
-				00B491AA1EE4CFEF000C63EB /* Shop */,
+				00B491AA1EE4CFEF000C63EB /* ShopVC */,
 				00E14EF71ECB03E1008197A3 /* OrderVC */,
 				001DB09E1F024CDB00A09F32 /* CommunityVC */,
 				006024F71EC97D9000FFB859 /* MeVC */,
@@ -252,7 +255,7 @@
 			name = Helpers;
 			sourceTree = "<group>";
 		};
-		00B491AA1EE4CFEF000C63EB /* Shop */ = {
+		00B491AA1EE4CFEF000C63EB /* ShopVC */ = {
 			isa = PBXGroup;
 			children = (
 				00B491A81EE4CFE1000C63EB /* ShopVC.swift */,
@@ -265,7 +268,7 @@
 				004318331F13F21900FD0227 /* ShopClassifyTableView.swift */,
 				004318311F13EF8E00FD0227 /* ShopClassifyTableCell.swift */,
 			);
-			name = Shop;
+			name = ShopVC;
 			sourceTree = "<group>";
 		};
 		00D23B941F14AF1B002E45B7 /* Extensions */ = {
@@ -278,9 +281,9 @@
 				00D23B951F14AF37002E45B7 /* String+Extensions.swift */,
 				00D23B9D1F14AF96002E45B7 /* Date+Extensions.swift */,
 				00D23B971F14AF4E002E45B7 /* Data+Extensions.swift */,
+				00D23B921F14AF04002E45B7 /* UIColor+Extensions.swift */,
 				00D23B9B1F14AF82002E45B7 /* UIViewController+Extensions.swift */,
 				00D23B991F14AF66002E45B7 /* UIView+Extensions.swift */,
-				00D23B921F14AF04002E45B7 /* UIColor+Extensions.swift */,
 				00D23B9F1F14AFD0002E45B7 /* UIImage+Extensions.swift */,
 			);
 			name = Extensions;
@@ -498,6 +501,7 @@
 				00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */,
 				00B491A91EE4CFE1000C63EB /* ShopVC.swift in Sources */,
 				00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */,
+				006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */,
 				00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */,
 				00455A891F193079009F440F /* AVBake.swift in Sources */,
 				00D23B9E1F14AF96002E45B7 /* Date+Extensions.swift in Sources */,

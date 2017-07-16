@@ -10,7 +10,8 @@ import UIKit
 
 extension UIView {
     
-    func notify(text: String, color: BKColor, duration: TimeInterval = 1.98) {
+    // notification animation
+    func notify(text: String, color: UIColor, duration: TimeInterval = 1.98) {
         if !notifying {
             notifying = true
             let notifyHeight: CGFloat = 64
@@ -21,10 +22,10 @@ extension UIView {
             label.font = UIFont.init(name: ".SFUIText-Light", size: 15)
             label.numberOfLines = 2
             label.text = "\n\(text)"
-            label.textColor = color == .white ? colors[.black] : colors[.white]
+            label.textColor = color == .white ? .bkBlack : .bkWhite
             label.textAlignment = .center
             label.alpha = 0.4
-            label.backgroundColor = colors[color]
+            label.backgroundColor = color
             self.addSubview(label)
             self.bringSubview(toFront: label)
             UIView.animate(withDuration: 0.22, delay: 0, options: [.curveEaseInOut], animations: {

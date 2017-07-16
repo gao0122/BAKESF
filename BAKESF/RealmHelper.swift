@@ -80,4 +80,12 @@ class RealmHelper {
         printit(any: "not saved?")
     }
     
+    // MARK: - Bake in Bag
+    static func logotCurrentUser(user: UserRealm) -> Void {
+        let realm = try! Realm()
+        try! realm.write {
+            user.current = false
+        }
+    }
+
 }

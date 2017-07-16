@@ -200,18 +200,18 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         loginBtn.layer.cornerRadius = 4
         loginBtn.layer.masksToBounds = true
         loginBtn.layer.borderWidth = 1
-        loginBtn.layer.borderColor = colors[BKColor.black]!.cgColor
+        loginBtn.layer.borderColor = UIColor.bkBlack.cgColor
         likeBtn.layer.cornerRadius = 4
         likeBtn.layer.masksToBounds = true
         likeBtn.layer.borderWidth = 1
-        likeBtn.layer.borderColor = colors[BKColor.black]!.cgColor
+        likeBtn.layer.borderColor = UIColor.bkBlack.cgColor
         editInfoBtn.layer.cornerRadius = 4
         editInfoBtn.layer.masksToBounds = true
         editInfoBtn.layer.borderWidth = 1
-        editInfoBtn.layer.borderColor = colors[BKColor.black]!.cgColor
+        editInfoBtn.layer.borderColor = UIColor.bkBlack.cgColor
         editBtnBg.layer.cornerRadius = editBtnBg.frame.width / 2
         editBtnBg.layer.masksToBounds = true
-        editBtnBg.layer.backgroundColor = colors[BKColor.white]!.cgColor
+        editBtnBg.layer.backgroundColor = UIColor.bkWhite.cgColor
         editBtnBg.alpha = 0.88
         view.bringSubview(toFront: editBtn)
     }
@@ -272,7 +272,7 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         let file = AVFile(data: data)
         let width = self.view.frame.width
         let progressView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 3))
-        progressView.backgroundColor = colors[.white]!
+        progressView.backgroundColor = .bkWhite
         self.view.addSubview(progressView)
         self.view.bringSubview(toFront: progressView)
         file.saveInBackground({

@@ -38,9 +38,12 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var cartFocusBgView: UIView!
     @IBOutlet weak var cartBarBlurView: UIVisualEffectView!
     @IBOutlet weak var checkBtn: UIButton!
+    @IBOutlet weak var totalAmountLabel: UILabel!
     @IBOutlet weak var distributionFeeLabel: UILabel!
     @IBOutlet weak var totalFeeLabel: UILabel!
-    @IBOutlet weak var totalAmountLabel: UILabel!
+    @IBOutlet weak var emptyBagLabel: UILabel!
+    @IBOutlet weak var rightLowestFeeLabel: UILabel!
+    @IBOutlet weak var rightDistributionFeeLabel: UILabel!
     
     private var shopBuyVC: ShopBuyVC!
     private var bakeTableView: ShopBuyBakeTableView!
@@ -50,7 +53,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     let topViewHeight: CGFloat = 66
     let menuAniDuration: TimeInterval = 0.48
-    let nameLabelTransformY: CGFloat = 172
+    let nameLabelTransformY: CGFloat = 173
     let cartBarHeight: CGFloat = 50
     var startTranslationY: CGFloat = 0
     var startMenuState: MenuAniState = .collapsed
@@ -112,6 +115,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         // setup shopBuyVC
+        option.shopBuyVC.shopVC = self
         option.shopBuyVC.shopView = self.shopView
         option.shopBuyVC.originShopY = self.originShopY
         option.shopBuyVC.avshop = self.avshop
@@ -122,8 +126,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         self.classifyTableView = option.shopBuyVC.classifyTableView
         self.bakeTableView.frame.size.height -= self.originCartBarY
         self.classifyTableView.frame.size.height -= self.originCartBarY
-        let pan = UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:)))
-        self.shopBuyVC.bakeTableView.addGestureRecognizer(pan)
+        self.shopBuyVC.bakeTableView.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
+        self.shopCardView.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
 
 //        pagingMenuController.onMove = {
 //            state in
@@ -159,7 +163,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
 
     }
 
-    
+    // learn more about the shop
     @IBAction func introBtnPressed(_ sender: Any) {
         
     }
@@ -194,7 +198,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     func preInit() {
         originCartBarY = cartBar.frame.origin.y
-        originShopY = broadcastLabel.frame.origin.y + 24
+        originShopY = broadcastLabel.frame.origin.y + 22
         originCardY = shopCardView.frame.origin.y
         originHeadphotoY = hpImage.frame.origin.y
         originNameY = shopNameLabel.frame.origin.y
@@ -211,6 +215,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         cartBar.frame.origin.y = self.view.frame.height + cartBarHeight * ((1 - 0.2) / 2)
         cartBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
         cartBarBlurView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+        distributionFeeLabel.alpha = 0
+        totalFeeLabel.alpha = 0
     }
     
     func shopInit() {
@@ -244,14 +250,16 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             broadcastLabel.text = "公告：" + broadcast
         }
         
-        let star = 4.4
         let width = stars.frame.width
-        let x = width * CGFloat(star / 5) + 0.452
+        let star: CGFloat = 4.4
+        let x = starDiff(cellWidth: width, star: star)
         starLabel.setTitle(String(format: "%.2f", star), for: .normal)
         stars.contentMode = .scaleAspectFill
         stars.image = stars.image!.cropTo(x: 0, y: 0, width: x * 3, height: stars.frame.height * 3, bounds: false)
         stars.frame.size.width = x
     }
+    
+
     
     // MARK: - interactive animations
     func menuAnimateTransitionIfNeeded(state: MenuAniState, duration: TimeInterval) {
@@ -363,11 +371,12 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             _ in
             switch state {
             case .expanded:
-                self.shopNameLabel.frame.origin.y = self.originNameY - 4.1 / 2
+                
+                self.shopNameLabel.frame.origin.y = self.originNameY - shopVCNameLabelHeight * ((1.12 - 1) / 2)
                 self.shopNameLabel.transform = CGAffineTransform.identity // hide menu
             case .collapsed:
-                self.shopNameLabel.frame.origin.y = self.originNameY - self.nameLabelTransformY + 4.1 / 2
-                self.shopNameLabel.transform = CGAffineTransform(scaleX: 1.2, y: 1.2) // show menu
+                self.shopNameLabel.frame.origin.y = self.originNameY - self.nameLabelTransformY + shopVCNameLabelHeight * ((1.12 - 1) / 2)
+                self.shopNameLabel.transform = CGAffineTransform(scaleX: 1.12, y: 1.12) // show menu
             }
         }
         titleAnimator.addCompletion {
@@ -379,7 +388,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                 switch state {
                 case .expanded:
                     self.shopNameLabel.frame.origin.y = self.originNameY - self.nameLabelTransformY
-                    self.shopNameLabel.transform = CGAffineTransform(scaleX: 1.2, y: 1.2) // show menu
+                    self.shopNameLabel.transform = CGAffineTransform(scaleX: 1.12, y: 1.12) // show menu
                 case .collapsed:
                     self.shopNameLabel.frame.origin.y = self.originNameY
                     self.shopNameLabel.transform = CGAffineTransform.identity // hide menu
@@ -479,18 +488,6 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                     self.broadcastLabel.transform = CGAffineTransform.identity
                 }
             }
-            
-            // MARK: - let TableView scroll enable or disabled
-            self.bakeTableView.isScrollEnabled = true
-            switch self.menuAniState {
-            case .expanded:
-                self.bakeTableView.shouldScroll = true
-                self.classifyTableView.isScrollEnabled = true
-            case .collapsed:
-                self.bakeTableView.shouldScroll = false
-                self.classifyTableView.isScrollEnabled = false
-            }
-            self.shopViewStartY = self.shopView.frame.origin.y
         }
         return broadcastAnimator
     }
@@ -569,6 +566,18 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                     self.cartBarBlurView.effect = nil
                 }
             }
+            
+            // MARK: - TableView scroll enable or disabled
+            self.bakeTableView.isScrollEnabled = true
+            switch self.menuAniState {
+            case .expanded:
+                self.bakeTableView.shouldScroll = true
+                self.classifyTableView.isUserInteractionEnabled = true
+            case .collapsed:
+                self.bakeTableView.shouldScroll = false
+                self.classifyTableView.isUserInteractionEnabled = false
+            }
+            self.shopViewStartY = self.shopView.frame.origin.y
         }
         return cartBarAnimator
     }
@@ -630,14 +639,14 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                             // starting to watch the menu, return the pan gesture
                             bakeTableView.shouldScroll = true
                             bakeTableView.isScrollEnabled = true
-                            classifyTableView.isScrollEnabled = true
+                            classifyTableView.isUserInteractionEnabled = true
                             return true
                         }
                     } else {
                         // start swipe up
                         bakeTableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
                         bakeTableView.isScrollEnabled = false
-                        classifyTableView.isScrollEnabled = false
+                        classifyTableView.isUserInteractionEnabled = false
                     }
                 }
             }
@@ -645,7 +654,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             if !swipeDown {
                 bakeTableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
                 bakeTableView.isScrollEnabled = false
-                classifyTableView.isScrollEnabled = false
+                classifyTableView.isUserInteractionEnabled = false
             }
         }
         return false

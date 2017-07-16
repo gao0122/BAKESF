@@ -25,6 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Fabric.with([Crashlytics.self, Answers.self])
         
+        self.window?.rootViewController?.tabBarController?.childViewControllers[2].removeFromParentViewController()
+        
         return true
     }
 
@@ -80,6 +82,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AVBaker.registerSubclass()
         AVShop.registerSubclass()
         AVBake.registerSubclass()
+        AVOrder.registerSubclass()
     }
 }
 

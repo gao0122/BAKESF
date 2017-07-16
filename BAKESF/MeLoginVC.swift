@@ -344,7 +344,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
             let file = AVFile(url: url)
             let width = self.view.frame.width
             let progressView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 3))
-            progressView.backgroundColor = colors[.red]!
+            progressView.backgroundColor = .bkRed
             self.view.addSubview(progressView)
             self.view.bringSubview(toFront: progressView)
             file.getDataInBackground({

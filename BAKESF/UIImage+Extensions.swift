@@ -26,6 +26,7 @@ extension UIImage {
         return UIImageJPEGRepresentation(self, 1) ?? UIImagePNGRepresentation(self)
     }
     
+    // crop image to specific 
     func cropTo(x: CGFloat = 0, y: CGFloat = 0, width: CGFloat, height: CGFloat, bounds: Bool = false) -> UIImage {
         let contextImage: UIImage = UIImage(cgImage: self.cgImage!)
         

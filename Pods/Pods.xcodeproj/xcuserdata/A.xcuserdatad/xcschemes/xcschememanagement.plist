@@ -19,16 +19,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Alamofire.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>LeanCloud.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>PagingMenuController.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -57,22 +47,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>0D2F3E0223D3E035B59D1B7532001048</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>0F0916EF6EF0CD3CB0D9332F26FE9CCC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>3E01143F3C6C5F4C651109AE4A7F4DAA</key>
+		<key>34063BADAE0226B6F59BC1F32D57F6EC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>47A8382D75D7F9582E450BF8EE6D8294</key>
+		<key>3BB974135E02A6AD0988567B9960A381</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>4C5D64EB6A8F4985DE34E32FE2036EA4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -82,17 +72,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>6F92EFADEFBE4B662F58D122DFCCBF99</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>7EE8D6A4BF814C31EE3DDBE4B01ADA53</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>88E9EC28B8B46C3631E6B242B50F4442</key>
+		<key>817A32716D3B77708A5156AAC564552D</key>
 		<dict>
 			<key>primary</key>
 			<true/>

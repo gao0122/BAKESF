@@ -16,7 +16,9 @@ class AVShop: AVObject, AVSubclassing {
     dynamic var bgImage: AVFile?
     dynamic var headphoto: AVFile?
     dynamic var broadcast: String?
-    dynamic var categories: [String]?
+    dynamic var tags: [String]?
+    var distributionFee: NSNumber?
+    var lowestFee: NSNumber?
     
     static func parseClassName() -> String {
         return "Shop"

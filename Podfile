@@ -24,10 +24,10 @@ target 'BAKESF' do
 
   # fabric 
   pod 'Fabric'
-  #pod 'Crashlytics'
+  pod 'Crashlytics'
 
   # leancloud
-  pod 'LeanCloud'
+  #pod 'LeanCloud'
 
   # avos
   pod 'AVOSCloud'
