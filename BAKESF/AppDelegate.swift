@@ -43,21 +43,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-        if let vc = window?.rootViewController?.childViewControllerForStatusBarStyle {
-            if let vc = vc as? UINavigationController {
-                if let vc = vc.childViewControllerForStatusBarStyle as? MeLoginVC {
-                    if vc.seconds > 0 {
-                        let query = AVBaker.query()
-                        query.whereKey(lcKey[.phone]!, equalTo: vc.phoneNum)
-                        query.getFirstObjectInBackground({
-                            object, error in
-                            if error == nil {
-                                let usr = object as! AVBaker
-                                vc.seconds = Date().seconds(fromDate: usr.msgSentDate!)
-                            }
-                        })
-                    }
-                }
+        
+        guard let vc = window?.rootViewController?.childViewControllerForStatusBarStyle as? UINavigationController else {
+            return
+        }
+        guard let loginVC = vc.childViewControllerForStatusBarStyle as? MeLoginVC, loginVC.seconds > 0 else {
+            return
+        }
+        let query = AVBaker.query()
+        query.whereKey(lcKey[.phone]!, equalTo: loginVC.phoneNum)
+        query.getFirstObjectInBackground { (obj:AVObject?, error:Error?) in
+            if let error = error {
+                print(error)
+            }else if let usr = obj as? AVBaker, let date = usr.msgSentDate {
+                loginVC.seconds = Date().seconds(fromDate: date)
             }
         }
     }
