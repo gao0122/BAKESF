@@ -262,6 +262,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         stars.image = stars.image!.cropTo(x: 0, y: 0, width: x * 3, height: stars.frame.height * 3, bounds: false)
         stars.frame.size.width = x
         
+        bagView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.handleBagBarTap(_:))))
     }
     
     // set state of outlets in shop bag view
@@ -323,10 +324,12 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         case .collapsed:
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: {
                 self.bagView.frame.origin.y = self.originShopY
+                self.bagFocusBgView.alpha = 0.4
             }, completion: nil)
         case .expanded:
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut], animations: {
                 self.bagView.frame.origin.y = self.view.frame.height
+                self.bagFocusBgView.alpha = 0
             }, completion: nil)
         }
     }
