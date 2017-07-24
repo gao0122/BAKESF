@@ -93,7 +93,7 @@ const NSInteger LCIMErrorCodeSessionTokenExpired = 4112;
             break;
             
             // AVIMOpType_Open = 1,
-            // 登陆
+            // 登录
         case AVIMOpType_Open:
             actionStr = @"open";
             break;
