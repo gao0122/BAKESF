@@ -16,7 +16,6 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
 
     @IBOutlet weak var tableView: HomeShopTableView!
     
-    var shops: [String: Any]!
     var avshops = [AVShop]()
     
     let sellersPerPage = 5
@@ -40,10 +39,10 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
             if error == nil {
                 self.avshops = shops!
                 self.tableView.reloadData()
+            } else {
+                // load failed 
             }
         })
-
-        self.shops = theShops
         
     }
     
@@ -85,7 +84,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     
     /// Loading all shops from LeanCloud
     ///
-    /// - Parameter completion: A compleion block executed after it loaded all shops
+    /// - Parameter completion: A compleion block executed after it loaded all shops.
     func loadShops(_ completion: @escaping ([AVShop]?, Error?) -> ()) {
         let sellersQuery = AVShop.query()
         sellersQuery.includeKey("Baker") // key code: including all data inside Baker table but not only a pointer
@@ -102,11 +101,6 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
             }
         })
     }
-    
-    func loadImages() {
-        
-    }
-    
     
 
     // MARK: - TableView
@@ -138,7 +132,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         
         let width = cell.starsGray.frame.width
         let star: CGFloat = 4.4
-        let x = starDiff(cellWidth: width, star: star)
+        let x = calStarsWidth(byStarWidth: width, stars: star)
         cell.stars.contentMode = .scaleAspectFill
         cell.stars.image = UIImage(named: "five_stars")!.cropTo(x: 0, y: 0, width: x * 3, height: cell.stars.frame.height * 3, bounds: false)
         cell.stars.frame.size.width = x
@@ -153,6 +147,10 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let view = UIView()
         return view
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 1
     }
     
     

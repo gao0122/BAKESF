@@ -10,15 +10,16 @@ import AVOSCloud
 
 class AVBake: AVObject, AVSubclassing {
     
-    dynamic var name: String?
-    dynamic var category: String?
-    dynamic var tag: String?
-    dynamic var Shop: AVShop?
-    dynamic var image: AVFile?
-    var stock: NSNumber? // 0, 1 or 2
-    var amount: NSNumber?
-    var price: NSNumber?
-    var priority: NSNumber?
+    @NSManaged var name: String?
+    @NSManaged var category: String?
+    @NSManaged var tag: String?
+    @NSManaged var Shop: AVShop?
+    @NSManaged var image: AVFile?
+    @NSManaged var stock: NSNumber? // 0, 1 or 2
+    @NSManaged var monthly: NSNumber?
+    @NSManaged var amount: NSNumber?
+    @NSManaged var price: NSNumber?
+    @NSManaged var priority: NSNumber?
     
     static func parseClassName() -> String {
         return "Bake"

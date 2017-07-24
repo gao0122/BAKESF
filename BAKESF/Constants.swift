@@ -28,3 +28,4 @@ let broadcastRandom: [String] = [
 // MARK: - CGFloat
 let starWidth: CGFloat = 16.3
 let shopVCNameLabelHeight: CGFloat = 21
+let bagBarHeight: CGFloat = 50

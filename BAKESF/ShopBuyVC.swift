@@ -16,14 +16,11 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     @IBOutlet weak var bakeTableView: ShopBuyBakeTableView!
     
     var shopVC: ShopVC!
-    let cartBarHeight: CGFloat = 50
-    var shopView: UIView!
-    var originShopY: CGFloat!
-    var buyBake = [Int]()
-    var avtag: [String]!
     var avshop: AVShop!
+    var avtag: [String]!
     var avbakes: [AVBake]!
     var avbakesTag = [String: [AVBake]]()
+    var avbakesSoldOut = [String: [AVBake]]()
     var bakeLiveQuery: AVLiveQuery!
     
     var tappedAtTagTableview = false
@@ -33,7 +30,6 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         
         avtag = avshop.tags!
         classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
-        classifyTableView.isUserInteractionEnabled = false
 
         let shopQuery = AVBake.query()
         shopQuery.whereKey("Shop", equalTo: avshop)
@@ -50,7 +46,6 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             if error == nil {
                 self.avbakes = objects as! [AVBake]
                 self.assignBakeTag()
-                self.bakeTableView.reloadData()
             } else {
                 printit(any: "shop buy vc \(error!.localizedDescription)")
             }
@@ -65,44 +60,117 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func assignBakeTag() {
+        // assign bakes in their tags and take "sold out" as a new array
         for bake in self.avbakes {
-            if let _ = self.avbakesTag[bake.tag!] {
-                self.avbakesTag[bake.tag!]!.append(bake)
+            let tag = bake.tag!
+            if bake.amount == 0 {
+                if let _ = self.avbakesSoldOut[tag] {
+                    self.avbakesSoldOut[tag]!.append(bake)
+                } else {
+                    self.avbakesSoldOut[tag] = [bake]
+                }
             } else {
-                self.avbakesTag[bake.tag!] = [bake]
+                if let _ = self.avbakesTag[tag] {
+                    self.avbakesTag[tag]!.append(bake)
+                } else {
+                    self.avbakesTag[tag] = [bake]
+                }
+            }
+        }
+        // append sold out bakes to the end of all bakes
+        for tag in avtag {
+            if let _ = avbakesTag[tag] {
+                avbakesTag[tag]!.append(contentsOf: avbakesSoldOut[tag] ?? [])
+            } else {
+                avbakesTag[tag] = avbakesSoldOut[tag]
+            }
+        }
+        self.bakeTableView.reloadData()
+    }
+    
+    // one more button pressed
+    func oneMoreBtnPressed(_ sender: UIButton) {
+        if shopVC.menuAniState == .collapsed { shopVC.animateMenu(state: shopVC.menuAniState) }
+        guard let cell = sender.superview?.superview as? ShopBuyBakeTableCell else { return }
+        oneMoreBake(cell)
+        shopVC.setShopBagState()
+    }
+    
+    func setShopCellFromNoneToOne(_ cell: ShopBuyBakeTableCell, amount: Int = 1) {
+        cell.amountLabel.isHidden = false
+        cell.minusOneBtn.isHidden = false
+        cell.amountLabel.text = "\(amount)"
+    }
+    
+    func addBakeToRealm(_ bake: AVBake, amount: Int = 1) {
+        let bakeRealm = BakeInBagRealm()
+        bakeRealm.id = bake.objectId!
+        bakeRealm.amount = amount
+        bakeRealm.price = bake.price as! Double
+        bakeRealm.name = bake.name!
+        bakeRealm.shopID = avshop.objectId!
+        RealmHelper.addOneBake(bakeRealm)
+    }
+    
+    func oneMoreBake(_ cell: ShopBuyBakeTableCell) {
+        if let bakeRealm = RealmHelper.retrieveOneBake(byID: cell.bake.objectId!) {
+            RealmHelper.addOneMoreBake(bakeRealm)
+            cell.amountLabel.text = "\(bakeRealm.amount)"
+        } else {
+            addBakeToRealm(cell.bake)
+            setShopCellFromNoneToOne(cell)
+            cell.amountLabel.text = "1"
+        }
+        shopVC.totalAmountLabel.text = "\(RealmHelper.retrieveBakesInBagCount())"
+    }
+    
+    // minus one button pressed
+    func minusOneBtnPressed(_ sender: UIButton) {
+        if shopVC.menuAniState == .collapsed { shopVC.animateMenu(state: shopVC.menuAniState) }
+        guard let cell = sender.superview?.superview as? ShopBuyBakeTableCell else { return }
+        minusOneBake(cell)
+        shopVC.setShopBagState()
+    }
+    
+    func minusOneBake(_ cell: ShopBuyBakeTableCell) {
+        if let bakeRealm = RealmHelper.retrieveOneBake(byID: cell.bake.objectId!) {
+            if RealmHelper.minueOneBake(bakeRealm) {
+                setShopCellToNone(cell)
+            } else {
+                cell.amountLabel.text = "\(bakeRealm.amount)"
             }
         }
     }
     
-    func oneMoreBtnPressed(_ sender: UIButton) {
-        guard let cell = sender.superview?.superview as? ShopBuyBakeTableCell else { return }
-        guard let amountLabelText = shopVC.totalAmountLabel.text else { return }
-        if amountLabelText == "" {
-            shopVC.totalAmountLabel.text = "1"
-            shopVC.checkBtn.setTitle("结算", for: .normal)
-            shopVC.checkBtn.backgroundColor = .appleGreen
-            shopVC.emptyBagLabel.alpha = 0
-            shopVC.rightLowestFeeLabel.alpha = 0
-            shopVC.rightDistributionFeeLabel.alpha = 0
-            shopVC.distributionFeeLabel.alpha = 1
-            shopVC.totalFeeLabel.alpha = 1
-        } else {
-            shopVC.totalAmountLabel.text = "\(Int(amountLabelText)! + 1)"
-        }
-        
+    func setShopCellToNone(_ cell: ShopBuyBakeTableCell) {
+        cell.amountLabel.isHidden = true
+        cell.minusOneBtn.isHidden = true
     }
-    
 
+    
     // MARK: - TableView
     func numberOfSections(in tableView: UITableView) -> Int {
         switch tableView.tag {
         case 0: // classify table
             return 1
         case 1: // bake table
-            return 1
+            return avtag.count
         default:
             return 1
         }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        var count = 0
+        switch tableView.tag {
+        case 0:
+            count = avtag.count
+        case 1:
+            count = avbakes == nil ? 0 : avbakesTag[avtag[section]]!.count
+        default:
+            break
+        }
+        return count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -118,41 +186,72 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             cell.classLabel.text = avtag[indexPath.row]
             return cell
         case 1:
+            let section = indexPath.section
             let cell = bakeTableView.dequeueReusableCell(withIdentifier: "shopBuyBakeTableCell", for: IndexPath(row: indexPath.row, section: indexPath.section)) as! ShopBuyBakeTableCell
             cell.selectionStyle = .none
             
-            let bakee = avbakes[indexPath.row]
+            let bakee = avbakesTag[avtag[section]]![indexPath.row]
             
             let bakeName = bakee.name!
             let price = bakee.price!
-            let left = bakee["amount"] as! Int
-            // let star =
+            let monthly = bakee.monthly as! Int
+            let amount = bakee.amount as! Int
+            let amountInBag = RealmHelper.retrieveOneBake(byID: bakee.objectId!)?.amount ?? 0
+            
+            if bakee.image == nil { printit(any: "\n\n\n\n\n\n\(bakee.name!)\n\n\n\n\n\n") }
 
             cell.bake = bakee
             cell.bakeImage.contentMode = .scaleAspectFill
-            if bakee.image == nil {
-                printit(any: "\n\n\n\n\n\n\(bakee.name!)\n\n\n\n\n\n")
-            }
             cell.bakeImage.sd_setImage(with: URL(string: bakee.image?.url ?? ""))
             cell.bakeImage.clipsToBounds = true
             cell.bakeImage.layer.cornerRadius = 3
             cell.nameLabel.text = bakeName
             cell.priceLabel.text = "¥\(price)"
-            cell.leftLabel.text = "剩余 \(left)"
-            cell.oneMoreBtn.addTarget(self, action: #selector(ShopBuyVC.oneMoreBtnPressed(_:)), for: .touchUpInside)
+            cell.monthlyLabel.text = "月售 \(monthly)"
+            cell.amountLabel.isHidden = false
+            cell.minusOneBtn.isHidden = false
+            cell.oneMoreBtn.isHidden = false
+            cell.soldOutLabel.isHidden = false
+            if amountInBag == 0 {
+                cell.amountLabel.isHidden = true
+                cell.minusOneBtn.isHidden = true
+            } else {
+                cell.amountLabel.text = "\(amountInBag)"
+            }
+            if amount == 0 {
+                cell.amountLabel.isHidden = true
+                cell.minusOneBtn.isHidden = true
+                cell.oneMoreBtn.isHidden = true
+                cell.soldOutLabel.isHidden = false
+            } else {
+                cell.oneMoreBtn.addTarget(self, action: #selector(ShopBuyVC.oneMoreBtnPressed(_:)), for: .touchUpInside)
+                cell.minusOneBtn.addTarget(self, action: #selector(ShopBuyVC.minusOneBtnPressed(_:)), for: .touchUpInside)
+                cell.soldOutLabel.isHidden = true
+            }
+
             return cell
         default:
             return UITableViewCell()
         }
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return tableView.tag == 1 ? avtag[section] : nil
+    }
+    
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch tableView.tag {
         case 1:
-            let tableFooterView = UIView()
-            tableFooterView.frame.size.width = bakeTableView.frame.width
-            tableFooterView.frame.size.height = cartBarHeight
-            return tableFooterView
+            if section == avtag.count - 1 {
+                let tableFooterView = UIView()
+                tableFooterView.frame.size.width = bakeTableView.frame.width
+                tableFooterView.frame.size.height = bagBarHeight
+                return tableFooterView
+            }
         default:
             break
         }
@@ -160,42 +259,18 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        switch tableView.tag {
-        case 1:
-            return cartBarHeight
-        default:
-            break
-        }
-        return 0
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var count = 0
-        switch tableView.tag {
-        case 0:
-            count = avtag.count
-        case 1:
-            count = avbakes == nil ? 0 : avbakes.count
-        default:
-            break
-        }
-        return count
+        return tableView.tag == 1 && section == avtag.count - 1 ? bagBarHeight : 0
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView.tag {
         case 0:
-            let cell = tableView.cellForRow(at: indexPath) as! ShopClassifyTableCell
-            let tag = cell.classLabel.text!
-            guard let tagIndex = avtag.index(of: tag) else { return }
-            var row = 0
-            for i in 0..<tagIndex {
-                row += avbakesTag[avtag[i]]?.count ?? 0
-            }
+            if shopVC.menuAniState == .collapsed { shopVC.animateMenu(state: shopVC.menuAniState) }
             tappedAtTagTableview = true
-            bakeTableView.selectRow(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .top)
+            bakeTableView.selectRow(at: IndexPath(row: 0, section: indexPath.row), animated: true, scrollPosition: .top)
         case 1:
             let cell = tableView.cellForRow(at: indexPath) as! ShopBuyBakeTableCell
+            // TODO: - bake selection
         default:
             break
         }
@@ -210,20 +285,18 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         if scrollView.contentOffset.y < 0 {
             scrollView.contentOffset = .zero
         } else {
-            scrollView.isScrollEnabled = true
+            bakeTableView.visibleCells.forEach { $0.isUserInteractionEnabled = true }
+            bakeTableView.isScrollEnabled = true
         }
         
         // determine category and bake
         if tappedAtTagTableview { return }
         guard let indexPath = bakeTableView.indexPathsForVisibleRows?.first else { return }
-        guard let cell = bakeTableView.cellForRow(at: indexPath) as? ShopBuyBakeTableCell else { return }
-        let tag = cell.bake.tag!
-        guard let tagIndex = avtag.index(of: tag) else { return }
-        classifyTableView.selectRow(at: IndexPath(row: tagIndex, section: 0), animated: true, scrollPosition: .none)
+        classifyTableView.selectRow(at: IndexPath(row: indexPath.section, section: 0), animated: true, scrollPosition: .none)
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        if shopView.frame.origin.y == originShopY {
+        if shopVC.shopView.frame.origin.y == shopVC.originShopY {
             bakeTableView.shouldScroll = false
         }
         if scrollView.contentOffset.y <= 0 {
@@ -257,6 +330,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         })
     }
     
+    // live queries
     func liveQuery(_ liveQuery: AVLiveQuery, objectDidCreate object: Any) {
         
     }

@@ -172,7 +172,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                                     canSendMsg = true
                                 } else {
                                     // notify how many seconds left
-                                    self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .orange)
+                                    self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .alertOrange)
                                     canSendMsg = false
                                 }
                             }
@@ -231,15 +231,15 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                 let errorMsg = error!.localizedDescription
                 print(errorMsg)
                 if errorMsg.contains("456") {
-                    self.view.notify(text: "请输入手机号码", color: .orange)
+                    self.view.notify(text: "请输入手机号码", color: .alertOrange)
                 } else if errorMsg.contains("457") {
-                    self.view.notify(text: "请输入有效的手机号码", color: .orange)
+                    self.view.notify(text: "请输入有效的手机号码", color: .alertOrange)
                 } else if errorMsg.contains("458") {
-                    self.view.notify(text: "发送失败，输入的手机号码在发送黑名单中", color: .red)
+                    self.view.notify(text: "发送失败，输入的手机号码在发送黑名单中", color: .alertRed)
                 } else if errorMsg.contains("459") {
-                    self.view.notify(text: "发送失败，不支持该地区发送短信", color: .red)
+                    self.view.notify(text: "发送失败，不支持该地区发送短信", color: .alertRed)
                 } else {
-                    self.view.notify(text: "发送失败", color: .red)
+                    self.view.notify(text: "发送失败", color: .alertRed)
                 }
             }
             self.loginState = .normal
@@ -284,16 +284,16 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                         }
                     } else {
                         // please input verification code
-                        self.view.notify(text: "请输入验证码", color: .orange)
+                        self.view.notify(text: "请输入验证码", color: .alertOrange)
                     }
                 }
             } else {
                 // please input verified phone number
-                self.view.notify(text: "请输入接受验证的手机号码", color: .orange)
+                self.view.notify(text: "请输入接受验证的手机号码", color: .alertOrange)
             }
         } else {
             // please input the right phone number
-            self.view.notify(text: "请输入手机号码", color: .orange)
+            self.view.notify(text: "请输入手机号码", color: .alertOrange)
         }
     }
     
@@ -305,9 +305,9 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
             } else {
                 let errorMsg = error!.localizedDescription
                 if errorMsg.contains("468") {
-                    self.view.notify(text: "验证码错误", color: .red)
+                    self.view.notify(text: "验证码错误", color: .alertRed)
                 } else if errorMsg.contains("467") {
-                    self.view.notify(text: "5分钟内校验错误超过3次，请稍后再试", color: .red)
+                    self.view.notify(text: "5分钟内校验错误超过3次，请稍后再试", color: .alertRed)
                 }
                 print(error!.localizedDescription)
             }
@@ -359,7 +359,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                     self.avbaker = baker
                     self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: self)
                 } else {
-                    self.view.notify(text: "登录失败", color: .red)
+                    self.view.notify(text: "登录失败", color: .alertRed)
                     printit(any: error!.localizedDescription)
                 }
                 progressView.removeFromSuperview()

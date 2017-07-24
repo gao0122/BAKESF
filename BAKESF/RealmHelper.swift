@@ -73,19 +73,84 @@ class RealmHelper {
     static func saveHeadphoto(user: UserRealm, data: Data, url: String) {
         let realm = try! Realm()
         try! realm.write {
-            printit(any: "saved image")
             user.headphoto = data
             user.headphotoURL = url
         }
-        printit(any: "not saved?")
     }
     
     // MARK: - Bake in Bag
-    static func logotCurrentUser(user: UserRealm) -> Void {
+    static func addOneBake(_ bake: BakeInBagRealm) -> Void {
         let realm = try! Realm()
         try! realm.write {
-            user.current = false
+            realm.add(bake)
         }
     }
+    
+    static func addOneMoreBake(_ bake: BakeInBagRealm) {
+        let realm = try! Realm()
+        try! realm.write {
+            bake.amount += 1
+        }
+    }
+    
+    static func minueOneBake(_ bake: BakeInBagRealm) -> Bool {
+        let zero = bake.amount == 1
+        let realm = try! Realm()
+        try! realm.write {
+            bake.amount -= 1
+            if bake.amount == 0 {
+                realm.delete(bake)
+            }
+        }
+        return zero
+    }
+    
+    static func setBakeAmount(_ bake: BakeInBagRealm, amount: Int) -> Bool {
+        let zero = amount == 0
+        let realm = try! Realm()
+        try! realm.write {
+            bake.amount = amount
+            if bake.amount == 0 {
+                realm.delete(bake)
+            }
+        }
+        return zero
+    }
+    
+    static func retrieveOneBake(byID id: String) -> BakeInBagRealm? {
+        let realm = try! Realm()
+        return realm.objects(BakeInBagRealm.self).filter("id = '\(id)'").first
+    }
+    
+    static func retrieveBakesInBag() -> Results<BakeInBagRealm> {
+        let realm = try! Realm()
+        return realm.objects(BakeInBagRealm.self)
+    }
 
+    static func retrieveBakesInBagCount(avshopID shopID: String? = nil) -> Int {
+        let realm = try! Realm()
+        let bakes = realm.objects(BakeInBagRealm.self)
+        var total = 0
+        for bake in bakes {
+            if shopID == bake.shopID || shopID == nil {
+                total += bake.amount
+            }
+        }
+        return total
+    }
+    
+    static func retrieveBakesInBagCost(avshopID shopID: String? = nil) -> Double {
+        let realm = try! Realm()
+        let bakes = realm.objects(BakeInBagRealm.self)
+        var total: Double = 0
+        for bake in bakes {
+            if shopID == bake.shopID || shopID == nil {
+                for _ in 0..<bake.amount {
+                    total += bake.price
+                }
+            }
+        }
+        return total
+    }
 }
+

@@ -286,15 +286,15 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
                     if succeeded {
                         self.headphoto.setImage(scaledImg, for: .normal)
                         self.deleteOriginHeadphoto(url: urlToDelete)
-                        self.view.notify(text: "修改成功", color: .green)
+                        self.view.notify(text: "修改成功", color: UIColor.alertGreen)
                     } else {
-                        self.view.notify(text: "上传失败", color: .red)
+                        self.view.notify(text: "上传失败", color: .alertRed)
                         Answers.logCustomEvent(withName: "上传头像失败", customAttributes: ["phone": self.user.phone, "error": error!.localizedDescription])
                         printit(any: error!.localizedDescription)
                     }
                 })
             } else {
-                self.view.notify(text: "上传失败", color: .red)
+                self.view.notify(text: "上传失败", color: .alertRed)
                 Answers.logCustomEvent(withName: "上传头像失败", customAttributes: ["phone": self.user.phone, "error": error!.localizedDescription])
                 printit(any: error!.localizedDescription)
             }

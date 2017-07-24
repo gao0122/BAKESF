@@ -10,13 +10,13 @@ import AVOSCloud
 
 class AVBaker: AVObject, AVSubclassing {
     
-    dynamic var mobilePhoneNumber: String?
-    dynamic var password: String?
-    dynamic var username: String?
-    dynamic var msgSentDate: Date?
-    dynamic var headphoto: String?
-    dynamic var gender: String?
-    dynamic var birthday: Date?
+    @NSManaged var mobilePhoneNumber: String?
+    @NSManaged var password: String?
+    @NSManaged var username: String?
+    @NSManaged var msgSentDate: Date?
+    @NSManaged var headphoto: String?
+    @NSManaged var gender: String?
+    @NSManaged var birthday: Date?
     
 
     static func parseClassName() -> String {

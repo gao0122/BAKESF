@@ -13,7 +13,7 @@ import AVOSCloudLiveQuery
 
 class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
-    enum MenuAniState {
+    enum AniState {
         case expanded
         case collapsed
     }
@@ -30,51 +30,124 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var starsGray: UIImageView!
     @IBOutlet weak var commentNumberBtn: UIButton!
     @IBOutlet weak var starLabel: UIButton!
-    @IBOutlet weak var shopView: UIView!
-    @IBOutlet weak var cartView: UIView!
     @IBOutlet weak var broadcastLabel: UILabel!
     @IBOutlet weak var shopCardView: UIView!
-    @IBOutlet weak var cartBar: UIView!
-    @IBOutlet weak var cartFocusBgView: UIView!
-    @IBOutlet weak var cartBarBlurView: UIVisualEffectView!
+    @IBOutlet weak var shopView: UIView!
+    @IBOutlet weak var bagView: UIView!
+    @IBOutlet weak var bagBar: UIView!
+    @IBOutlet weak var bagBarBlurView: UIVisualEffectView!
+    @IBOutlet weak var bagFocusBgView: UIView!
     @IBOutlet weak var checkBtn: UIButton!
     @IBOutlet weak var totalAmountLabel: UILabel!
-    @IBOutlet weak var distributionFeeLabel: UILabel!
+    @IBOutlet weak var deliveryFeeLabel: UILabel!
     @IBOutlet weak var totalFeeLabel: UILabel!
     @IBOutlet weak var emptyBagLabel: UILabel!
     @IBOutlet weak var rightLowestFeeLabel: UILabel!
-    @IBOutlet weak var rightDistributionFeeLabel: UILabel!
+    @IBOutlet weak var rightDeliveryFeeLabel: UILabel!
     
     private var shopBuyVC: ShopBuyVC!
-    private var bakeTableView: ShopBuyBakeTableView!
-    private var classifyTableView: ShopClassifyTableView!
+    private var shopPreVC: ShopPreVC!
+    private var shopBagVC: ShopBagEmbedVC!
     
     var avshop: AVShop!
     
     let topViewHeight: CGFloat = 66
     let menuAniDuration: TimeInterval = 0.48
     let nameLabelTransformY: CGFloat = 173
-    let cartBarHeight: CGFloat = 50
+    let bagBarHeight: CGFloat = 50
     var startTranslationY: CGFloat = 0
-    var startMenuState: MenuAniState = .collapsed
+    var startMenuState: AniState = .collapsed
     var addedPanRecognizer = false
     var originShopY: CGFloat!
     var originCardY: CGFloat!
     var originHeadphotoY: CGFloat!
     var originNameY: CGFloat!
     var shopViewStartY: CGFloat!
-    var originCartBarY: CGFloat!
+    var originBagBarY: CGFloat!
+    var originBagViewY: CGFloat!
     
-    var menuAniState: MenuAniState = .collapsed
+    var menuAniState: AniState = .collapsed
     var runningMenuAnimators = [UIViewPropertyAnimator]()
     var menuProgressWhenInterrupted = [CGFloat]()
+
+    var bagAniState: AniState = .collapsed
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        preInit()
+        setPageMenu()
+        shopInit()
+        setShopBagState()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+
+    }
+
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let id = segue.identifier {
+            switch id {
+            case "shopBuyMenuSegue":
+                if let vc = segue.destination as? ShopPagingVC {
+                    vc.view.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
+                }
+            case "shopBuyBagSegue":
+                if let vc = segue.destination as? ShopBagEmbedVC {
+                    self.shopBagVC = vc
+                }
+            default:
+                break
+            }
+        }
+    }
+    
+    override func unwind(for unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
         
-        self.preInit()
-        
-        // page menu
+    }
+    
+    @IBAction func screenEdgePanBackToHomeFromShop(_ sender: Any) {
+        self.performSegue(withIdentifier: "unwindToHomeFromShop", sender: sender)
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return false
+    }
+    
+    func preInit() {
+        originBagBarY = bagBar.frame.origin.y
+        originShopY = broadcastLabel.frame.origin.y + 22
+        originCardY = shopCardView.frame.origin.y
+        originHeadphotoY = hpImage.frame.origin.y
+        originNameY = shopNameLabel.frame.origin.y
+        originBagViewY = bagView.frame.origin.y
+        shopViewStartY = originShopY
+        shopView.frame.origin.y = originShopY
+        shopView.layoutIfNeeded()
+        bgVisualEffectView.effect = nil
+        bagView.frame.origin.y = self.view.frame.height
+        // bagBarHeight * ((1 - 0.2) / 2) is the difference value while animating the bag view
+        // 'cause it is scaling and transforming position simultaneously
+        bagBarBlurView.frame.origin.y = self.view.frame.height + bagBarHeight * ((1 - 0.2) / 2)
+        bagBar.alpha = 0.4
+        bagBar.frame.origin.y = self.view.frame.height + bagBarHeight * ((1 - 0.2) / 2)
+        bagBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+        bagBarBlurView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+        deliveryFeeLabel.alpha = 0
+        totalFeeLabel.alpha = 0
+    }
+    
+    // MARK: - Page Menu
+    func setPageMenu() {
         struct ShopBuy: MenuItemViewCustomizable {
             var displayMode: MenuItemDisplayMode {
                 return .text(title: MenuItemText(text: "橱窗现货", selectedColor: UIColor.red))
@@ -103,7 +176,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         struct PagingMenuOptions: PagingMenuControllerCustomizable {
             let shopBuyVC = ShopBuyVC.instantiateFromStoryboard()
             let shopPreVC = ShopPreVC.instantiateFromStoryboard()
-
+            
             var componentType: ComponentType {
                 return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [shopBuyVC, shopPreVC])
             }
@@ -116,109 +189,40 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         // setup shopBuyVC
         option.shopBuyVC.shopVC = self
-        option.shopBuyVC.shopView = self.shopView
-        option.shopBuyVC.originShopY = self.originShopY
+        option.shopPreVC.shopVC = self
         option.shopBuyVC.avshop = self.avshop
+        option.shopPreVC.avshop = self.avshop
         pagingMenuController.setup(option)
         
         self.shopBuyVC = option.shopBuyVC
-        self.bakeTableView = option.shopBuyVC.bakeTableView
-        self.classifyTableView = option.shopBuyVC.classifyTableView
-        self.bakeTableView.frame.size.height -= self.originCartBarY
-        self.classifyTableView.frame.size.height -= self.originCartBarY
+        self.shopPreVC = option.shopPreVC
+        self.shopBuyVC.bakeTableView.frame.size.height -= self.originBagBarY
+        self.shopPreVC.bakeTableView.frame.size.height -= self.originBagBarY
+        self.shopBuyVC.classifyTableView.frame.size.height -= self.originBagBarY
+        self.shopPreVC.classifyTableView.frame.size.height -= self.originBagBarY
         self.shopBuyVC.bakeTableView.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
+        self.shopPreVC.bakeTableView.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
         self.shopCardView.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
-
-//        pagingMenuController.onMove = {
-//            state in
-//            switch state {
-//            case let .willMoveController(menuController, previousMenuController):
-//                break
-//            case let .didMoveController(menuController, previousMenuController):
-//                break
-//            case let .willMoveItem(menuItemView, previousMenuItemView):
-//                break
-//            case let .didMoveItem(menuItemView, previousMenuItemView):
-//                break
-//            case .didScrollStart:
-//                break
-//            case .didScrollEnd:
-//                break
-//            }
-//        }
         
-
-        self.shopInit()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-
-    }
-
-    // learn more about the shop
-    @IBAction func introBtnPressed(_ sender: Any) {
-        
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let id = segue.identifier {
-            switch id {
-            case "shopBuyMenuSegue":
-                if let vc = segue.destination as? ShopPagingVC {
-                    vc.view.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
-                }
-            case "shopBuyCartSegue":
+        pagingMenuController.onMove = {
+            state in
+            switch state {
+            case let .willMoveController(menuController, previousMenuController):
                 break
-            default:
+            case let .didMoveController(menuController, previousMenuController):
+                break
+            case let .willMoveItem(menuItemView, previousMenuItemView):
+                break
+            case let .didMoveItem(menuItemView, previousMenuItemView):
+                break
+            case .didScrollStart:
+                break
+            case .didScrollEnd:
                 break
             }
         }
     }
-    
-    override func unwind(for unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
-        
-    }
-    
-    @IBAction func screenEdgePanBackToHomeFromShop(_ sender: Any) {
-        self.performSegue(withIdentifier: "unwindToHomeFromShop", sender: sender)
-        self.tabBarController?.tabBar.isHidden = false
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return false
-    }
-    
-    func preInit() {
-        originCartBarY = cartBar.frame.origin.y
-        originShopY = broadcastLabel.frame.origin.y + 22
-        originCardY = shopCardView.frame.origin.y
-        originHeadphotoY = hpImage.frame.origin.y
-        originNameY = shopNameLabel.frame.origin.y
-        shopViewStartY = originShopY
-        shopView.frame.origin.y = originShopY
-        shopView.layoutIfNeeded()
-        bgVisualEffectView.effect = nil
-        cartView.frame.origin.y = self.view.frame.height
-        // cartBarHeight * ((1 - 0.2) / 2) is the difference value while animating the cart
-        // 'cause it is scaling and transforming position simultaneously
-        cartBarBlurView.frame.origin.y = self.view.frame.height + cartBarHeight * ((1 - 0.2) / 2)
-        cartBarBlurView.effect = UIBlurEffect(style: .dark)
-        cartBar.alpha = 0.4
-        cartBar.frame.origin.y = self.view.frame.height + cartBarHeight * ((1 - 0.2) / 2)
-        cartBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
-        cartBarBlurView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
-        distributionFeeLabel.alpha = 0
-        totalFeeLabel.alpha = 0
-    }
-    
+
     func shopInit() {
         bgImage.sd_setImage(with: URL(string: avshop.bgImage!.url!))
         bgImage.contentMode = .scaleAspectFill
@@ -252,17 +256,119 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         
         let width = stars.frame.width
         let star: CGFloat = 4.4
-        let x = starDiff(cellWidth: width, star: star)
+        let x = calStarsWidth(byStarWidth: width, stars: star)
         starLabel.setTitle(String(format: "%.2f", star), for: .normal)
         stars.contentMode = .scaleAspectFill
         stars.image = stars.image!.cropTo(x: 0, y: 0, width: x * 3, height: stars.frame.height * 3, bounds: false)
         stars.frame.size.width = x
+        
+    }
+    
+    // set state of outlets in shop bag view
+    func setShopBagState() {
+        let shopID = avshop.objectId!
+        let lowest = avshop.lowestFee as! Int
+        let totalCost = RealmHelper.retrieveBakesInBagCost(avshopID: shopID)
+        let totalAmount = RealmHelper.retrieveBakesInBagCount(avshopID: shopID)
+        let shouldReset = totalCost == 0
+        let shouldSet = totalCost >= Double(lowest)
+        var rightLowestFeeText = shouldSet ? "" : "还差¥\(Double(lowest) - totalCost)起送"
+        rightLowestFeeText = shouldReset ? "¥\(lowest) 起送" : rightLowestFeeText
+        let deliveryFeeText = avshop.deliveryFee == 0 ? "免费配送" : "另需配送费¥\(avshop.deliveryFee!)"
+        self.totalAmountLabel.text = totalAmount == 0 ? "" : "\(totalAmount)"
+        self.checkBtn.setTitle(shouldSet ? "结算" : "", for: .normal)
+        self.checkBtn.setTitle(shouldReset ? "" : checkBtn.currentTitle!, for: .normal)
+        self.checkBtn.backgroundColor = shouldSet ? .appleGreen : .checkBtnGray
+        self.checkBtn.backgroundColor = shouldReset ? .checkBtnGray : checkBtn.backgroundColor!
+        self.emptyBagLabel.alpha = shouldSet ? 0 : 1
+        self.emptyBagLabel.alpha = shouldReset ? 1 : emptyBagLabel.alpha
+        self.emptyBagLabel.text = shouldSet ? "购物车空空的" : "¥\(totalCost)"
+        self.emptyBagLabel.text = shouldReset ? "购物车空空的" : emptyBagLabel.text!
+        self.rightLowestFeeLabel.text = rightLowestFeeText
+        self.rightDeliveryFeeLabel.text = deliveryFeeText
+        self.deliveryFeeLabel.text = deliveryFeeText
+        self.totalFeeLabel.text = "¥\(totalCost)"
+        self.rightLowestFeeLabel.alpha = shouldSet ? 0 : 1
+        self.rightLowestFeeLabel.alpha = shouldReset ? 1 : rightLowestFeeLabel.alpha
+        self.rightDeliveryFeeLabel.alpha = shouldSet ? 0 : 1
+        self.rightDeliveryFeeLabel.alpha = shouldReset ? 1 : rightDeliveryFeeLabel.alpha
+        self.deliveryFeeLabel.alpha = shouldSet ? 1 : 0
+        self.deliveryFeeLabel.alpha = shouldReset ? 0 : deliveryFeeLabel.alpha
+        self.totalFeeLabel.alpha = shouldSet ? 1 : 0
+        self.totalFeeLabel.alpha = shouldReset ? 0 : totalFeeLabel.alpha
+    }
+
+    func handleBagBarTap(_ sender: UITapGestureRecognizer) {
+        // TODO: - Show or hide shop bag
+        animateShop(bagAniState)
+    }
+    
+    // learn more about the shop
+    @IBAction func introBtnPressed(_ sender: Any) {
+        
+    }
+    
+    // learn more about the shop
+    @IBAction func checkBtnPressed(_ sender: Any) {
+        // TODO: - Check if bake in bag is sold out
     }
     
 
     
+    // MARK: - animation
+    // 
+    // shop bag animation
+    func animateShop(_ state: AniState) {
+        switch state {
+        case .collapsed:
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: {
+                self.bagView.frame.origin.y = self.originShopY
+            }, completion: nil)
+        case .expanded:
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut], animations: {
+                self.bagView.frame.origin.y = self.view.frame.height
+            }, completion: nil)
+        }
+    }
+    
+    // MARK: - shop menu animations
+    // animate the shop main menu view
+    func animateMenu(state: AniState) {
+        self.view.isUserInteractionEnabled = false
+        
+        let menuFrameAnimator = self.menuFrameAnimator(duration: menuAniDuration, state: state)
+        menuFrameAnimator.startAnimation()
+        
+        let blurAnimator = self.blurAnimator(duration: menuAniDuration, state: state)
+        blurAnimator.startAnimation()
+        
+        let nameLabelAnimator = self.nameLabelAnimator(duration: menuAniDuration, state: state)
+        nameLabelAnimator.startAnimation()
+        
+        let hpAnimator = self.headphotoAnimator(duration: menuAniDuration, state: state)
+        hpAnimator.startAnimation()
+        
+        let cardAnimator = self.cardAnimator(duration: menuAniDuration, state: state)
+        cardAnimator.startAnimation()
+        
+        let broadcastAnimator = self.broadcastAnimator(duration: menuAniDuration, state: state)
+        broadcastAnimator.startAnimation()
+        
+        let bagBarAnimator = self.bagBarAnimator(duration: menuAniDuration, state: state)
+        bagBarAnimator.startAnimation()
+        
+        let bagBarBlurAnimator = self.bagBarBlurAnimator(duration: menuAniDuration, state: state)
+        bagBarBlurAnimator.startAnimation()
+
+        switchMenuState()
+    }
+    
+    func animateMenu(_ sender: Any) {
+        self.animateMenu(self.menuAniState)
+    }
+    
     // MARK: - interactive animations
-    func menuAnimateTransitionIfNeeded(state: MenuAniState, duration: TimeInterval) {
+    func menuAnimateTransitionIfNeeded(state: AniState, duration: TimeInterval) {
         if runningMenuAnimators.isEmpty {
             shopViewStartY = shopView.frame.origin.y
             
@@ -290,13 +396,13 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             broadcastAnimator.startAnimation()
             runningMenuAnimators.append(broadcastAnimator)
             
-            let cartBarAnimator = self.cartBarAnimator(duration: duration, state: state)
-            cartBarAnimator.startAnimation()
-            runningMenuAnimators.append(cartBarAnimator)
+            let bagBarAnimator = self.bagBarAnimator(duration: duration, state: state)
+            bagBarAnimator.startAnimation()
+            runningMenuAnimators.append(bagBarAnimator)
             
-            let cartBarBlurAnimator = self.cartBarBlurAnimator(duration: duration, state: state)
-            cartBarBlurAnimator.startAnimation()
-            runningMenuAnimators.append(cartBarBlurAnimator)
+            let bagBarBlurAnimator = self.bagBarBlurAnimator(duration: duration, state: state)
+            bagBarBlurAnimator.startAnimation()
+            runningMenuAnimators.append(bagBarBlurAnimator)
             
             startMenuState = menuAniState
             switchMenuState()
@@ -304,7 +410,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     // animators
-    func menuFrameAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
+    func menuFrameAnimator(duration: TimeInterval, state: AniState) -> UIViewPropertyAnimator {
         let frameAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
             _ in
             switch state {
@@ -331,13 +437,13 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         return frameAnimator
     }
     
-    func blurAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
+    func blurAnimator(duration: TimeInterval, state: AniState) -> UIViewPropertyAnimator {
         let timing: UITimingCurveProvider
         switch state {
         case .expanded:
-            timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.1, y: 0.7), controlPoint2: CGPoint(x: 0.25, y: 0.9))
+            timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.4, y: 0.6), controlPoint2: CGPoint(x: 0.6, y: 0.8))
         case .collapsed:
-            timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.7, y: 0.1), controlPoint2: CGPoint(x: 0.9, y: 0.25))
+            timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.6, y: 0.4), controlPoint2: CGPoint(x: 0.8, y: 0.6))
         }
         let blurAnimator = UIViewPropertyAnimator(duration: duration, timingParameters: timing)
         blurAnimator.addAnimations({
@@ -366,7 +472,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         return blurAnimator
     }
     
-    func nameLabelAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
+    func nameLabelAnimator(duration: TimeInterval, state: AniState) -> UIViewPropertyAnimator {
         let titleAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
             _ in
             switch state {
@@ -398,7 +504,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         return titleAnimator
     }
     
-    func headphotoAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
+    func headphotoAnimator(duration: TimeInterval, state: AniState) -> UIViewPropertyAnimator {
         let headphotoAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
             _ in
             switch state {
@@ -429,7 +535,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         return headphotoAnimator
     }
     
-    func cardAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
+    func cardAnimator(duration: TimeInterval, state: AniState) -> UIViewPropertyAnimator {
         let cardAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
             _ in
             switch state {
@@ -460,7 +566,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         return cardAnimator
     }
     
-    func broadcastAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
+    func broadcastAnimator(duration: TimeInterval, state: AniState) -> UIViewPropertyAnimator {
         let broadcastAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1)
         broadcastAnimator.addAnimations {
             _ in
@@ -492,97 +598,105 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         return broadcastAnimator
     }
     
-    func cartBarAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
-        let cartBarAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1)
-        cartBarAnimator.addAnimations {
+    func bagBarAnimator(duration: TimeInterval, state: AniState) -> UIViewPropertyAnimator {
+        let bagBarAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1)
+        bagBarAnimator.addAnimations {
             _ in
             switch state {
             case .expanded:
                 // hide menu
-                self.cartBar.alpha = 0.4
-                self.cartBar.frame.origin.y = self.view.frame.height + 20
-                self.cartBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+                self.bagBar.alpha = 0.4
+                self.bagBar.frame.origin.y = self.view.frame.height + 20
+                self.bagBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
             case .collapsed:
                 // show menu
-                self.cartBar.alpha = 1
-                self.cartBar.frame.origin.y = self.originCartBarY + 20
-                self.cartBar.transform = CGAffineTransform.identity
+                self.bagBar.alpha = 1
+                self.bagBar.frame.origin.y = self.originBagBarY + 20
+                self.bagBar.transform = CGAffineTransform.identity
             }
         }
-        cartBarAnimator.addCompletion {
+        bagBarAnimator.addCompletion {
             finalPosition in
-            if let index = self.runningMenuAnimators.index(of: cartBarAnimator) {
+            if let index = self.runningMenuAnimators.index(of: bagBarAnimator) {
                 self.runningMenuAnimators.remove(at: index)
             }
             if finalPosition == .start {
                 switch state {
                 case .expanded:
                     // show menu
-                    self.cartBar.alpha = 1
-                    self.cartBar.frame.origin.y = self.originCartBarY
-                    self.cartBar.transform = CGAffineTransform.identity
+                    self.bagBar.alpha = 1
+                    self.bagBar.frame.origin.y = self.originBagBarY
+                    self.bagBar.transform = CGAffineTransform.identity
                 case .collapsed:
                     // hide menu
-                    self.cartBar.alpha = 0.4
-                    self.cartBar.frame.origin.y = self.view.frame.height
-                    self.cartBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+                    self.bagBar.alpha = 0.4
+                    self.bagBar.frame.origin.y = self.view.frame.height
+                    self.bagBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
                 }
             }
         }
-        return cartBarAnimator
+        return bagBarAnimator
     }
     
-    func cartBarBlurAnimator(duration: TimeInterval, state: MenuAniState) -> UIViewPropertyAnimator {
-        let cartBarAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1)
-        cartBarAnimator.addAnimations {
+    func bagBarBlurAnimator(duration: TimeInterval, state: AniState) -> UIViewPropertyAnimator {
+        let bagBarAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1)
+        bagBarAnimator.addAnimations {
             _ in
             switch state {
             case .expanded:
                 // hide menu
-                self.cartBarBlurView.frame.origin.y = self.view.frame.height + self.cartBarHeight * ((1 - 0.2) / 2)
-                self.cartBarBlurView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
-                self.cartBarBlurView.effect = nil
+                self.bagBarBlurView.frame.origin.y = self.view.frame.height + self.bagBarHeight * ((1 - 0.2) / 2)
+                self.bagBarBlurView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+                self.bagBarBlurView.effect = nil
             case .collapsed:
                 // show menu
-                self.cartBarBlurView.frame.origin.y = self.originCartBarY + self.cartBarHeight * ((1 - 0.2) / 2)
-                self.cartBarBlurView.transform = CGAffineTransform.identity
-                self.cartBarBlurView.effect = UIBlurEffect(style: .dark)
+                self.bagBarBlurView.frame.origin.y = self.originBagBarY + self.bagBarHeight * ((1 - 0.2) / 2)
+                self.bagBarBlurView.transform = CGAffineTransform.identity
+                self.bagBarBlurView.effect = UIBlurEffect(style: .dark)
             }
         }
-        cartBarAnimator.addCompletion {
+        bagBarAnimator.addCompletion {
             finalPosition in
-            if let index = self.runningMenuAnimators.index(of: cartBarAnimator) {
+            if let index = self.runningMenuAnimators.index(of: bagBarAnimator) {
                 self.runningMenuAnimators.remove(at: index)
             }
             if finalPosition == .start {
                 switch state {
                 case .expanded:
                     // show menu
-                    self.cartBarBlurView.frame.origin.y = self.originCartBarY
-                    self.cartBarBlurView.effect = UIBlurEffect(style: .dark)
+                    self.bagBarBlurView.frame.origin.y = self.originBagBarY
+                    self.bagBarBlurView.effect = UIBlurEffect(style: .dark)
                 case .collapsed:
                     // hide menu
-                    self.cartBarBlurView.frame.origin.y = self.view.frame.height
-                    self.cartBarBlurView.effect = nil
+                    self.bagBarBlurView.frame.origin.y = self.view.frame.height
+                    self.bagBarBlurView.effect = nil
                 }
             }
             
             // MARK: - TableView scroll enable or disabled
-            self.bakeTableView.isScrollEnabled = true
+            self.view.isUserInteractionEnabled = true
+            self.shopBuyVC.bakeTableView.visibleCells.forEach { $0.isUserInteractionEnabled = true }
+            self.shopBuyVC.bakeTableView.isScrollEnabled = true
+            self.shopPreVC.bakeTableView.visibleCells.forEach { $0.isUserInteractionEnabled = true }
+            self.shopPreVC.bakeTableView.isScrollEnabled = true
             switch self.menuAniState {
             case .expanded:
-                self.bakeTableView.shouldScroll = true
-                self.classifyTableView.isUserInteractionEnabled = true
+                self.shopBuyVC.bakeTableView.shouldScroll = true
+                self.shopBuyVC.classifyTableView.isScrollEnabled = true
+                self.shopPreVC.bakeTableView.shouldScroll = true
+                self.shopPreVC.classifyTableView.isScrollEnabled = true
             case .collapsed:
-                self.bakeTableView.shouldScroll = false
-                self.classifyTableView.isUserInteractionEnabled = false
+                self.shopBuyVC.bakeTableView.shouldScroll = false
+                self.shopBuyVC.classifyTableView.isScrollEnabled = false
+                self.shopPreVC.bakeTableView.shouldScroll = false
+                self.shopPreVC.classifyTableView.isScrollEnabled = false
             }
             self.shopViewStartY = self.shopView.frame.origin.y
         }
-        return cartBarAnimator
+        return bagBarAnimator
     }
     
-    func menuAnimateOrReverseRunningTransition(state: MenuAniState, duration: TimeInterval) {
+    func menuAnimateOrReverseRunningTransition(state: AniState, duration: TimeInterval) {
         if runningMenuAnimators.isEmpty {
             menuAnimateTransitionIfNeeded(state: state, duration: duration)
         } else {
@@ -628,43 +742,57 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     func shouldReturn(view: UIView, swipeDown: Bool) -> Bool {
         if view.classForCoder == ShopBuyBakeTableView.self {
-            if bakeTableView.contentOffset.y > 0 {
+            if shopBuyVC.bakeTableView.contentOffset.y > 0 || shopPreVC.bakeTableView.contentOffset.y > 0 {
                 // watching the menu, return the pan gesture
                 return true
-            } else if bakeTableView.contentOffset.y == 0 {
+            } else if shopBuyVC.bakeTableView.contentOffset.y == 0 && shopPreVC.bakeTableView.contentOffset.y == 0 {
                 if shopViewStartY == topViewHeight {
                     if swipeDown {
                         // start swipe down
                         if runningMenuAnimators.first?.fractionComplete == nil {
                             // starting to watch the menu, return the pan gesture
-                            bakeTableView.shouldScroll = true
-                            bakeTableView.isScrollEnabled = true
-                            classifyTableView.isUserInteractionEnabled = true
+                            shopBuyVC.bakeTableView.shouldScroll = true
+                            shopPreVC.bakeTableView.shouldScroll = true
+                            setTableViews(true)
                             return true
                         }
                     } else {
                         // start swipe up
-                        bakeTableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
-                        bakeTableView.isScrollEnabled = false
-                        classifyTableView.isUserInteractionEnabled = false
+                        setTableViewsAndReset()
                     }
                 }
             }
         } else {
             if !swipeDown {
-                bakeTableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
-                bakeTableView.isScrollEnabled = false
-                classifyTableView.isUserInteractionEnabled = false
+                setTableViewsAndReset()
             }
         }
         return false
     }
     
-    func menuStartInteractiveTransition(state: MenuAniState, duration: TimeInterval) {
+    // set table view should enable scroll or user interaction
+    func setTableViews(_ enabled: Bool) {
+        shopBuyVC.bakeTableView.visibleCells.forEach { $0.isUserInteractionEnabled = enabled }
+        shopBuyVC.bakeTableView.isScrollEnabled = enabled
+        shopBuyVC.classifyTableView.isScrollEnabled = enabled
+        shopPreVC.bakeTableView.visibleCells.forEach { $0.isUserInteractionEnabled = enabled }
+        shopPreVC.bakeTableView.isScrollEnabled = enabled
+        shopPreVC.classifyTableView.isScrollEnabled = enabled
+    }
+    
+    // set table views and reset the content offset to zero, reset the selection row to index 0.
+    func setTableViewsAndReset() {
+        setTableViews(false)
+        shopBuyVC.bakeTableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+        shopBuyVC.classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
+        shopPreVC.bakeTableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+        shopPreVC.classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
+    }
+    
+    func menuStartInteractiveTransition(state: AniState, duration: TimeInterval) {
         menuAnimateTransitionIfNeeded(state: state, duration: duration)
         runningMenuAnimators.forEach { $0.pauseAnimation() } // must pause first
         menuProgressWhenInterrupted = runningMenuAnimators.map { $0.fractionComplete }
-        
     }
     
     func computeFraction(velocity: CGPoint, ty: CGFloat, locationY: CGFloat) -> CGFloat {
@@ -726,5 +854,6 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         runningMenuAnimators.forEach { $0.continueAnimation(withTimingParameters: timing, durationFactor: 1) }
     }
 
+    
 }
 

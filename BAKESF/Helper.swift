@@ -10,7 +10,7 @@ import UIKit
 import SystemConfiguration
 import AVOSCloud
 
-func printit(any: Any) {
+func printit(_ any: Any) {
     print()
     print("------------------------------")
     print(any)
@@ -73,7 +73,7 @@ func retrieveBaker(withID id: String) -> AVBaker? {
 }
 
 func retrieveFile(withURL url: String) -> AVFile? {
-    let query = AVFileQuery(className: "_File")
+    let query = AVFile.query()
     query.whereKey(lcKey[.url]!, equalTo: url)
     let files = try! query.findFiles()
     return files.first as? AVFile
@@ -81,10 +81,10 @@ func retrieveFile(withURL url: String) -> AVFile? {
 
 // calculate the stars difference
 // the width of one rating star in png is 18px, but the actual width of the star is only 16.3px
-func starDiff(cellWidth width: CGFloat, star: CGFloat) -> CGFloat {
+func calStarsWidth(byStarWidth width: CGFloat, stars: CGFloat) -> CGFloat {
     let gap = (width - 5 * starWidth) / 4
-    let starInt = CGFloat(floorf(Float(star)))
-    return star * starWidth + gap * starInt
+    let starInt = CGFloat(floorf(Float(stars)))
+    return stars * starWidth + gap * starInt
 }
 
 
@@ -101,4 +101,5 @@ func helperBaker(phone: String) {
         }
     })
 }
+
 

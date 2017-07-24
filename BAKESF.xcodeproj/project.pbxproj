@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0000D8191F1F3DC100BB2B30 /* ShopPreBakeTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000D8181F1F3DC100BB2B30 /* ShopPreBakeTableView.swift */; };
+		0000D81B1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000D81A1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift */; };
 		00020F861F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */; };
 		00020F881F0C201E008ABFB1 /* MeInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F871F0C201E008ABFB1 /* MeInfoVC.swift */; };
 		00020F8D1F0E2D5D008ABFB1 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F891F0E2D5D008ABFB1 /* CGFloat+Extensions.swift */; };
@@ -46,6 +48,8 @@
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
 		00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */; };
 		00B491A91EE4CFE1000C63EB /* ShopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B491A81EE4CFE1000C63EB /* ShopVC.swift */; };
+		00CA4A7C1F1DFF9F00541A4C /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */; };
+		00CA4A7E1F1E093500541A4C /* ShopBagEmbedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */; };
 		00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D0AF991EE3C7F300B1F5A2 /* Helper.swift */; };
 		00D23B911F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D23B901F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift */; };
 		00D23B931F14AF04002E45B7 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D23B921F14AF04002E45B7 /* UIColor+Extensions.swift */; };
@@ -64,6 +68,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0000D8181F1F3DC100BB2B30 /* ShopPreBakeTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopPreBakeTableView.swift; sourceTree = "<group>"; };
+		0000D81A1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopPreBakeTableCell.swift; sourceTree = "<group>"; };
 		00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakesfTransitionAnimator.swift; sourceTree = "<group>"; };
 		00020F871F0C201E008ABFB1 /* MeInfoVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeInfoVC.swift; sourceTree = "<group>"; };
 		00020F891F0E2D5D008ABFB1 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
@@ -109,6 +115,8 @@
 		00B474DF1ECD656000ED1B7A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "Pods/../build/Debug-iphoneos/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
 		00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmHelper.swift; sourceTree = "<group>"; };
 		00B491A81EE4CFE1000C63EB /* ShopVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopVC.swift; sourceTree = "<group>"; };
+		00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
+		00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBagEmbedVC.swift; sourceTree = "<group>"; };
 		00D0AF991EE3C7F300B1F5A2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		00D23B901F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIPanDirectionGestureRecognizer.swift; sourceTree = "<group>"; };
 		00D23B921F14AF04002E45B7 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
@@ -250,7 +258,6 @@
 				000D13771EFF862700A19D5A /* Constants.swift */,
 				00D0AF991EE3C7F300B1F5A2 /* Helper.swift */,
 				00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */,
-				00D23B901F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -265,8 +272,11 @@
 				0034EE391EE91181005300AE /* ShopTweetVC.swift */,
 				0048FDAA1EEA725C002B49B6 /* ShopBuyBakeTableView.swift */,
 				0048FDA81EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift */,
+				0000D8181F1F3DC100BB2B30 /* ShopPreBakeTableView.swift */,
+				0000D81A1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift */,
 				004318331F13F21900FD0227 /* ShopClassifyTableView.swift */,
 				004318311F13EF8E00FD0227 /* ShopClassifyTableCell.swift */,
+				00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */,
 			);
 			name = ShopVC;
 			sourceTree = "<group>";
@@ -285,6 +295,7 @@
 				00D23B9B1F14AF82002E45B7 /* UIViewController+Extensions.swift */,
 				00D23B991F14AF66002E45B7 /* UIView+Extensions.swift */,
 				00D23B9F1F14AFD0002E45B7 /* UIImage+Extensions.swift */,
+				00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -304,6 +315,7 @@
 				00455A8C1F19E824009F440F /* RealmObject */,
 				00455A871F19305E009F440F /* AVObject */,
 				00455A8D1F19E844009F440F /* VCTransition */,
+				00D23B901F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -487,6 +499,7 @@
 				006024FE1EC9900F00FFB859 /* HomeShopVC.swift in Sources */,
 				0034EE381EE91176005300AE /* ShopPreVC.swift in Sources */,
 				004318321F13EF8E00FD0227 /* ShopClassifyTableCell.swift in Sources */,
+				0000D8191F1F3DC100BB2B30 /* ShopPreBakeTableView.swift in Sources */,
 				00020F8D1F0E2D5D008ABFB1 /* CGFloat+Extensions.swift in Sources */,
 				006024FA1EC98FCF00FFB859 /* HomeMasterVC.swift in Sources */,
 				0034EE3A1EE91182005300AE /* ShopTweetVC.swift in Sources */,
@@ -494,6 +507,7 @@
 				00D23B9C1F14AF82002E45B7 /* UIViewController+Extensions.swift in Sources */,
 				00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */,
 				00D23B961F14AF37002E45B7 /* String+Extensions.swift in Sources */,
+				00CA4A7C1F1DFF9F00541A4C /* UIDevice+Extensions.swift in Sources */,
 				009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */,
 				00020F8F1F0E2D5D008ABFB1 /* CGVector+Extensions.swift in Sources */,
 				0048FDAB1EEA725C002B49B6 /* ShopBuyBakeTableView.swift in Sources */,
@@ -512,12 +526,14 @@
 				00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */,
 				00D23BA01F14AFD0002E45B7 /* UIImage+Extensions.swift in Sources */,
 				001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */,
+				00CA4A7E1F1E093500541A4C /* ShopBagEmbedVC.swift in Sources */,
 				00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */,
 				00D23B911F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift in Sources */,
 				00D23B931F14AF04002E45B7 /* UIColor+Extensions.swift in Sources */,
 				00D23B981F14AF4E002E45B7 /* Data+Extensions.swift in Sources */,
 				006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */,
 				004BF0E01ED184CF00554A5E /* HomeShopTableView.swift in Sources */,
+				0000D81B1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

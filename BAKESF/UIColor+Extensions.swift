@@ -22,15 +22,15 @@ extension UIColor {
         return UIColor(hex: 0x008080)
     }
     
-    static var bkGreen: UIColor {
+    static var alertGreen: UIColor {
         return UIColor(red: 16 / 255, green: 206 / 255, blue: 105 / 255, alpha: 1)
     }
     
-    static var bkRed: UIColor {
+    static var alertRed: UIColor {
         return UIColor(red: 255 / 255, green: 36 / 255, blue: 40 / 255, alpha: 1)
     }
     
-    static var bkOrange: UIColor {
+    static var alertOrange: UIColor {
         return UIColor(red: 255 / 255, green: 128 / 255, blue: 0, alpha: 1)
     }
     
@@ -42,8 +42,15 @@ extension UIColor {
         return UIColor(red: 0.032, green: 0.032, blue: 0.032, alpha: 1)
     }
     
+    static var bkRed: UIColor {
+        return UIColor(hex: 0xE00028)
+    }
+    
     static var appleGreen: UIColor {
         return UIColor(hex: 0x4dd964)
     }
     
+    static var checkBtnGray: UIColor {
+        return UIColor(hex: 0x4C4C4C)
+    }
 }

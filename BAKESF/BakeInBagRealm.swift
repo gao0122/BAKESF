@@ -11,17 +11,10 @@ import RealmSwift
 class BakeInBagRealm: Object {
     
     dynamic var id: String = ""
-    
     dynamic var name: String = ""
-    dynamic var phone: String = ""
-    
-    dynamic var current = false
-    
-    dynamic var headphoto: Data?
-    dynamic var headphotoURL: String?
-    
-    let followers = List<UserRealm>()
-    let following = List<UserRealm>()
+    dynamic var amount: Int = 0
+    dynamic var price: Double = 0
+    dynamic var shopID: String = ""
     
     override static func primaryKey() -> String? {
         return "id"

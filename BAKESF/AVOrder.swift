@@ -10,7 +10,7 @@ import AVOSCloud
 
 class AVOrder: AVObject, AVSubclassing {
     
-    dynamic var Shop: AVShop?
+    @NSManaged var Shop: AVShop?
     
     static func parseClassName() -> String {
         return "Order"
