@@ -12,10 +12,16 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     @IBOutlet weak var tableView: UITableView!
     
+    var bakesInBag: [BakeInBagRealm]!
+    var bakesPreOrder: [BakePreOrderRealm]!
+    
+    var avshop: AVShop!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        bakesInBag = RealmHelper.retrieveBakesInBag().sorted(by: { _, _ in return true})
+        bakesPreOrder = RealmHelper.retrieveBakesPreOrder().sorted(by: { _, _ in return true})
     }
 
 
@@ -31,14 +37,72 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     // MARK: - TableView
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        let sec = determineSections(avshop)
+        let inBag = RealmHelper.retrieveBakesInBag().count
+        let preOrder = RealmHelper.retrieveBakesPreOrder().count
+        switch section {
+        case 0:
+            return sec % 2 == 1 ? preOrder : inBag
+        case 1:
+            return sec % 2 == 1 ? 0 : preOrder
+        default:
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopBagEmbedTableCell") as! ShopBagEmbedTableCell
+        let sec = determineSections(avshop)
+        switch indexPath.section {
+        case 0:
+            switch sec {
+            case 2, 4:
+                let bake = bakesInBag[indexPath.row]
+                cell.nameLabel.text = bake.name
+                cell.amountLabel.text = "\(bake.amount)"
+                let price = bake.price
+                if price == Double(Int(price)) {
+                    cell.priceLabel.text = "¥ \(Int(price))"
+                } else {
+                    cell.priceLabel.text = "¥ \(String(format: "%0.2f", price))"
+                }
+            case 3:
+                let bake = bakesPreOrder[indexPath.row]
+                cell.nameLabel.text = bake.name
+                cell.amountLabel.text = "\(bake.amount)"
+                let price = bake.price
+                if price == Double(Int(price)) {
+                    cell.priceLabel.text = "¥ \(Int(price))"
+                } else {
+                    cell.priceLabel.text = "¥ \(String(format: "%0.2f", price))"
+                }
+            default:
+                break
+            }
+        case 1:
+            switch sec {
+            case 4:
+                let bake = bakesPreOrder[indexPath.row]
+                cell.nameLabel.text = bake.name
+                cell.amountLabel.text = "\(bake.amount)"
+                let price = bake.price
+                if price == Double(Int(price)) {
+                    cell.priceLabel.text = "¥ \(Int(price))"
+                } else {
+                    cell.priceLabel.text = "¥ \(String(format: "%0.2f", price))"
+                }
+            default:
+                break
+            }
+        default:
+            break
+        }
+        return cell
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return determineSections(avshop) / 2
     }
+    
+    
 }

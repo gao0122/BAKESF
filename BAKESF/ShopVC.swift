@@ -103,6 +103,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             case "shopBuyBagSegue":
                 if let vc = segue.destination as? ShopBagEmbedVC {
                     self.shopBagVC = vc
+                    vc.avshop = self.avshop
                 }
             default:
                 break
@@ -262,7 +263,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         stars.image = stars.image!.cropTo(x: 0, y: 0, width: x * 3, height: stars.frame.height * 3, bounds: false)
         stars.frame.size.width = x
         
-        bagView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.handleBagBarTap(_:))))
+        bagBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.handleBagBarTap(_:))))
     }
     
     // set state of outlets in shop bag view
@@ -301,7 +302,15 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
 
     func handleBagBarTap(_ sender: UITapGestureRecognizer) {
         // TODO: - Show or hide shop bag
-        animateShop(bagAniState)
+        if determineSections(avshop) > 0 {
+            animateShop(bagAniState)
+        }
+    }
+    
+    func reloadShopBagEmbedTable() {
+        shopBagVC.bakesInBag = RealmHelper.retrieveBakesInBag().sorted(by: { _,_ in return true })
+        shopBagVC.bakesPreOrder = RealmHelper.retrieveBakesPreOrder().sorted(by: { _,_ in return true })
+        shopBagVC.tableView.reloadData()
     }
     
     // learn more about the shop
@@ -322,15 +331,22 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     func animateShop(_ state: AniState) {
         switch state {
         case .collapsed:
-            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: {
-                self.bagView.frame.origin.y = self.originShopY
-                self.bagFocusBgView.alpha = 0.4
-            }, completion: nil)
+            reloadShopBagEmbedTable()
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
+                self.bagView.frame.origin.y = self.originBagViewY
+                self.bagFocusBgView.alpha = 0.8
+            }, completion: {
+                finished in
+                self.bagAniState = .expanded
+            })
         case .expanded:
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut], animations: {
                 self.bagView.frame.origin.y = self.view.frame.height
                 self.bagFocusBgView.alpha = 0
-            }, completion: nil)
+            }, completion: {
+                finished in
+                self.bagAniState = .collapsed
+            })
         }
     }
     

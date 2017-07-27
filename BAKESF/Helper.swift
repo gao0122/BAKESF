@@ -88,6 +88,17 @@ func calStarsWidth(byStarWidth width: CGFloat, stars: CGFloat) -> CGFloat {
 }
 
 
+// return value which indicates that in bag or pre order
+func determineSections(_ avshop: AVShop) -> Int {
+    let bakeInBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count
+    let bakePreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count
+    if bakeInBag == 0 && bakePreOrder == 0 { return 0 }
+    else if bakeInBag > 0 && bakePreOrder == 0 { return 2 }
+    else if bakeInBag == 0 && bakePreOrder > 0 { return 3 }
+    else { return 4 }
+}
+
+
 // MARK: - just for copy and paste
 func helperBaker(phone: String) {
     let query = AVBaker.query()

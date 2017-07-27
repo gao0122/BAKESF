@@ -122,11 +122,15 @@ class RealmHelper {
         return realm.objects(BakeInBagRealm.self).filter("id = '\(id)'").first
     }
     
-    static func retrieveBakesInBag() -> Results<BakeInBagRealm> {
+    static func retrieveBakesInBag(avshopID shopID: String? = nil) -> Results<BakeInBagRealm> {
         let realm = try! Realm()
-        return realm.objects(BakeInBagRealm.self)
+        if let id = shopID {
+            return realm.objects(BakeInBagRealm.self).filter("shopID = '\(id)'")
+        } else {
+            return realm.objects(BakeInBagRealm.self)
+        }
     }
-
+    
     static func retrieveBakesInBagCount(avshopID shopID: String? = nil) -> Int {
         let realm = try! Realm()
         let bakes = realm.objects(BakeInBagRealm.self)
@@ -142,6 +146,41 @@ class RealmHelper {
     static func retrieveBakesInBagCost(avshopID shopID: String? = nil) -> Double {
         let realm = try! Realm()
         let bakes = realm.objects(BakeInBagRealm.self)
+        var total: Double = 0
+        for bake in bakes {
+            if shopID == bake.shopID || shopID == nil {
+                for _ in 0..<bake.amount {
+                    total += bake.price
+                }
+            }
+        }
+        return total
+    }
+    
+    static func retrieveBakesPreOrder(avshopID shopID: String? = nil) -> Results<BakePreOrderRealm> {
+        let realm = try! Realm()
+        if let id = shopID {
+            return realm.objects(BakePreOrderRealm.self).filter("shopID = '\(id)'")
+        } else {
+            return realm.objects(BakePreOrderRealm.self)
+        }
+    }
+    
+    static func retrieveBakesPreOrderCount(avshopID shopID: String? = nil) -> Int {
+        let realm = try! Realm()
+        let bakes = realm.objects(BakePreOrderRealm.self)
+        var total = 0
+        for bake in bakes {
+            if shopID == bake.shopID || shopID == nil {
+                total += bake.amount
+            }
+        }
+        return total
+    }
+    
+    static func retrieveBakesPreOrderCost(avshopID shopID: String? = nil) -> Double {
+        let realm = try! Realm()
+        let bakes = realm.objects(BakePreOrderRealm.self)
         var total: Double = 0
         for bake in bakes {
             if shopID == bake.shopID || shopID == nil {

@@ -43,11 +43,15 @@
 		00629C811EC80BBC00B78151 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C7F1EC80BBC00B78151 /* Main.storyboard */; };
 		00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C841EC80BBC00B78151 /* LaunchScreen.storyboard */; };
 		006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006B2E511F1B514B00C10BB9 /* AVOrder.swift */; };
+		00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
 		00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */; };
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
 		00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */; };
 		00B491A91EE4CFE1000C63EB /* ShopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B491A81EE4CFE1000C63EB /* ShopVC.swift */; };
+		00BF12651F28AE4400F67DF8 /* AVBakePre.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12641F28AE4400F67DF8 /* AVBakePre.swift */; };
+		00BF12671F28AF2400F67DF8 /* AVBakeIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12661F28AF2400F67DF8 /* AVBakeIn.swift */; };
+		00BF12691F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */; };
 		00CA4A7C1F1DFF9F00541A4C /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */; };
 		00CA4A7E1F1E093500541A4C /* ShopBagEmbedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */; };
 		00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D0AF991EE3C7F300B1F5A2 /* Helper.swift */; };
@@ -108,6 +112,7 @@
 		00629C8D1EC8123E00B78151 /* BAKESF-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BAKESF-Bridging-Header.h"; sourceTree = "<group>"; };
 		00629C901EC8146900B78151 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/BAKESF-fjjjbtxahaznllbtrbwqrssaqyyd/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		006B2E511F1B514B00C10BB9 /* AVOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVOrder.swift; sourceTree = "<group>"; };
+		00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakePreOrderRealm.swift; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
 		00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		00B4709A1F0404DD00725C95 /* AVBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBaker.swift; sourceTree = "<group>"; };
@@ -115,6 +120,9 @@
 		00B474DF1ECD656000ED1B7A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "Pods/../build/Debug-iphoneos/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
 		00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmHelper.swift; sourceTree = "<group>"; };
 		00B491A81EE4CFE1000C63EB /* ShopVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopVC.swift; sourceTree = "<group>"; };
+		00BF12641F28AE4400F67DF8 /* AVBakePre.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBakePre.swift; sourceTree = "<group>"; };
+		00BF12661F28AF2400F67DF8 /* AVBakeIn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBakeIn.swift; sourceTree = "<group>"; };
+		00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBagEmbedTableCell.swift; sourceTree = "<group>"; };
 		00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBagEmbedVC.swift; sourceTree = "<group>"; };
 		00D0AF991EE3C7F300B1F5A2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
@@ -162,6 +170,8 @@
 				00B4709A1F0404DD00725C95 /* AVBaker.swift */,
 				00455A841F15D4F5009F440F /* AVShop.swift */,
 				00455A881F193078009F440F /* AVBake.swift */,
+				00BF12661F28AF2400F67DF8 /* AVBakeIn.swift */,
+				00BF12641F28AE4400F67DF8 /* AVBakePre.swift */,
 				006B2E511F1B514B00C10BB9 /* AVOrder.swift */,
 			);
 			name = AVObject;
@@ -172,6 +182,7 @@
 			children = (
 				00E14EFE1ECC9587008197A3 /* UserRealm.swift */,
 				00455A8A1F19E81D009F440F /* BakeInBagRealm.swift */,
+				00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */,
 			);
 			name = RealmObject;
 			sourceTree = "<group>";
@@ -277,6 +288,7 @@
 				004318331F13F21900FD0227 /* ShopClassifyTableView.swift */,
 				004318311F13EF8E00FD0227 /* ShopClassifyTableCell.swift */,
 				00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */,
+				00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */,
 			);
 			name = ShopVC;
 			sourceTree = "<group>";
@@ -509,6 +521,7 @@
 				00D23B961F14AF37002E45B7 /* String+Extensions.swift in Sources */,
 				00CA4A7C1F1DFF9F00541A4C /* UIDevice+Extensions.swift in Sources */,
 				009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */,
+				00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */,
 				00020F8F1F0E2D5D008ABFB1 /* CGVector+Extensions.swift in Sources */,
 				0048FDAB1EEA725C002B49B6 /* ShopBuyBakeTableView.swift in Sources */,
 				00020F8E1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift in Sources */,
@@ -522,6 +535,7 @@
 				0048FDA91EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift in Sources */,
 				006024F21EC9738800FFB859 /* MeMasterVC.swift in Sources */,
 				00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */,
+				00BF12691F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift in Sources */,
 				00455A851F15D4F5009F440F /* AVShop.swift in Sources */,
 				00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */,
 				00D23BA01F14AFD0002E45B7 /* UIImage+Extensions.swift in Sources */,
@@ -530,6 +544,8 @@
 				00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */,
 				00D23B911F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift in Sources */,
 				00D23B931F14AF04002E45B7 /* UIColor+Extensions.swift in Sources */,
+				00BF12651F28AE4400F67DF8 /* AVBakePre.swift in Sources */,
+				00BF12671F28AF2400F67DF8 /* AVBakeIn.swift in Sources */,
 				00D23B981F14AF4E002E45B7 /* Data+Extensions.swift in Sources */,
 				006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */,
 				004BF0E01ED184CF00554A5E /* HomeShopTableView.swift in Sources */,
