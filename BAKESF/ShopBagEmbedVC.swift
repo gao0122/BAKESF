@@ -60,12 +60,15 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func oneMoreBtnPressed(_ sender: UIButton) {
         guard let cell = sender.superview?.superview as? ShopBagEmbedTableCell else { return }
         if let bake = cell.bakePre {
-            RealmHelper.addOneBake(bake)
-            cell.amountLabel.text = "\(bake.amount)"
+            RealmHelper.addOneMoreBake(bake)
+            let amount = bake.amount
+            cell.amountLabel.text = "\(amount)"
+            cell.priceLabel.text = "\((bake.price * Double(amount)).fixPriceTagFormat())"
         }
         if let bake = cell.bakeIn {
-            RealmHelper.addOneBake(bake)
-            cell.amountLabel.text = "\(bake.amount)"
+            let amount = bake.amount
+            RealmHelper.addOneMoreBake(bake)
+            cell.priceLabel.text = "\((bake.price * Double(amount)).fixPriceTagFormat())"
         }
         shopVC.setShopBagStateAndTables()
     }
