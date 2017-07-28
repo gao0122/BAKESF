@@ -15,7 +15,7 @@ class BakeInBagRealm: Object {
     dynamic var amount: Int = 0
     dynamic var price: Double = 0
     dynamic var shopID: String = ""
-    
+
     override static func primaryKey() -> String? {
         return "id"
     }

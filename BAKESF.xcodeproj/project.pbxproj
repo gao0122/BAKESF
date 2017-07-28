@@ -52,6 +52,8 @@
 		00BF12651F28AE4400F67DF8 /* AVBakePre.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12641F28AE4400F67DF8 /* AVBakePre.swift */; };
 		00BF12671F28AF2400F67DF8 /* AVBakeIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12661F28AF2400F67DF8 /* AVBakeIn.swift */; };
 		00BF12691F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */; };
+		00BF126B1F2B425000F67DF8 /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF126A1F2B425000F67DF8 /* Double+Extension.swift */; };
+		00BF126D1F2B7DAF00F67DF8 /* ShopCheckingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVC.swift */; };
 		00CA4A7C1F1DFF9F00541A4C /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */; };
 		00CA4A7E1F1E093500541A4C /* ShopBagEmbedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */; };
 		00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D0AF991EE3C7F300B1F5A2 /* Helper.swift */; };
@@ -123,6 +125,8 @@
 		00BF12641F28AE4400F67DF8 /* AVBakePre.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBakePre.swift; sourceTree = "<group>"; };
 		00BF12661F28AF2400F67DF8 /* AVBakeIn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBakeIn.swift; sourceTree = "<group>"; };
 		00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBagEmbedTableCell.swift; sourceTree = "<group>"; };
+		00BF126A1F2B425000F67DF8 /* Double+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
+		00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckingVC.swift; sourceTree = "<group>"; };
 		00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBagEmbedVC.swift; sourceTree = "<group>"; };
 		00D0AF991EE3C7F300B1F5A2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
@@ -281,6 +285,7 @@
 				0034EE351EE9116B005300AE /* ShopBuyVC.swift */,
 				0034EE371EE91176005300AE /* ShopPreVC.swift */,
 				0034EE391EE91181005300AE /* ShopTweetVC.swift */,
+				00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVC.swift */,
 				0048FDAA1EEA725C002B49B6 /* ShopBuyBakeTableView.swift */,
 				0048FDA81EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift */,
 				0000D8181F1F3DC100BB2B30 /* ShopPreBakeTableView.swift */,
@@ -301,6 +306,7 @@
 				00020F8B1F0E2D5D008ABFB1 /* CGVector+Extensions.swift */,
 				00020F8C1F0E2D5D008ABFB1 /* Int+Extensions.swift */,
 				00D23B951F14AF37002E45B7 /* String+Extensions.swift */,
+				00BF126A1F2B425000F67DF8 /* Double+Extension.swift */,
 				00D23B9D1F14AF96002E45B7 /* Date+Extensions.swift */,
 				00D23B971F14AF4E002E45B7 /* Data+Extensions.swift */,
 				00D23B921F14AF04002E45B7 /* UIColor+Extensions.swift */,
@@ -550,6 +556,8 @@
 				006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */,
 				004BF0E01ED184CF00554A5E /* HomeShopTableView.swift in Sources */,
 				0000D81B1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift in Sources */,
+				00BF126D1F2B7DAF00F67DF8 /* ShopCheckingVC.swift in Sources */,
+				00BF126B1F2B425000F67DF8 /* Double+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -105,7 +105,7 @@ class RealmHelper {
         return zero
     }
     
-    static func setBakeAmount(_ bake: BakeInBagRealm, amount: Int) -> Bool {
+    static func setBakeInBagAmount(_ bake: BakeInBagRealm, amount: Int) -> Bool {
         let zero = amount == 0
         let realm = try! Realm()
         try! realm.write {
@@ -117,7 +117,7 @@ class RealmHelper {
         return zero
     }
     
-    static func retrieveOneBake(byID id: String) -> BakeInBagRealm? {
+    static func retrieveOneBakeInBag(byID id: String) -> BakeInBagRealm? {
         let realm = try! Realm()
         return realm.objects(BakeInBagRealm.self).filter("id = '\(id)'").first
     }
@@ -157,6 +157,62 @@ class RealmHelper {
         return total
     }
     
+    static func deleteAllBakesInBag(byShopID shopID: String? = nil) {
+        let realm = try! Realm()
+        try! realm.write {
+            if let id = shopID {
+                realm.delete(realm.objects(BakeInBagRealm.self).filter("shopID = '\(id)'"))
+            } else {
+                realm.delete(realm.objects(BakeInBagRealm.self))
+            }
+        }
+    }
+
+    // MARK: - Bake pre order
+    static func addOneBake(_ bake: BakePreOrderRealm) -> Void {
+        let realm = try! Realm()
+        try! realm.write {
+            realm.add(bake)
+        }
+    }
+    
+    static func addOneMoreBake(_ bake: BakePreOrderRealm) {
+        let realm = try! Realm()
+        try! realm.write {
+            bake.amount += 1
+        }
+    }
+    
+    // returns true when the amount became zero.
+    static func minueOneBake(_ bake: BakePreOrderRealm) -> Bool {
+        let zero = bake.amount == 1
+        let realm = try! Realm()
+        try! realm.write {
+            bake.amount -= 1
+            if bake.amount == 0 {
+                realm.delete(bake)
+            }
+        }
+        return zero
+    }
+    
+    static func setBakePreOrderAmount(_ bake: BakePreOrderRealm, amount: Int) -> Bool {
+        let zero = amount == 0
+        let realm = try! Realm()
+        try! realm.write {
+            bake.amount = amount
+            if bake.amount == 0 {
+                realm.delete(bake)
+            }
+        }
+        return zero
+    }
+    
+    static func retrieveOneBakePreOrder(byID id: String) -> BakePreOrderRealm? {
+        let realm = try! Realm()
+        return realm.objects(BakePreOrderRealm.self).filter("id = '\(id)'").first
+    }
+    
     static func retrieveBakesPreOrder(avshopID shopID: String? = nil) -> Results<BakePreOrderRealm> {
         let realm = try! Realm()
         if let id = shopID {
@@ -190,6 +246,31 @@ class RealmHelper {
             }
         }
         return total
+    }
+    
+    static func deleteAllBakesPreOrder(byShopID shopID: String? = nil) {
+        let realm = try! Realm()
+        try! realm.write {
+            if let id = shopID {
+                realm.delete(realm.objects(BakePreOrderRealm.self).filter("shopID = '\(id)'"))
+            } else {
+                realm.delete(realm.objects(BakePreOrderRealm.self))
+            }
+        }
+    }
+    
+    
+    static func retrieveAllBakesCount(avshopID shopID: String? = nil) -> Int {
+        return retrieveBakesInBagCount(avshopID: shopID) + retrieveBakesPreOrderCount(avshopID: shopID)
+    }
+    
+    static func retrieveAllBakesCost(avshopID shopID: String? = nil) -> Double {
+        return retrieveBakesInBagCost(avshopID: shopID) + retrieveBakesPreOrderCost(avshopID: shopID)
+    }
+    
+    static func deleteAllBakes(byShopID shopID: String? = nil) {
+        deleteAllBakesInBag(byShopID: shopID)
+        deleteAllBakesPreOrder(byShopID: shopID)
     }
 }
 

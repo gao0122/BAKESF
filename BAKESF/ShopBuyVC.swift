@@ -113,7 +113,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func oneMoreBake(_ cell: ShopBuyBakeTableCell) {
-        if let bakeRealm = RealmHelper.retrieveOneBake(byID: cell.bake.objectId!) {
+        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(byID: cell.bake.objectId!) {
             RealmHelper.addOneMoreBake(bakeRealm)
             cell.amountLabel.text = "\(bakeRealm.amount)"
         } else {
@@ -121,7 +121,6 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             setShopCellFromNoneToOne(cell)
             cell.amountLabel.text = "1"
         }
-        shopVC.totalAmountLabel.text = "\(RealmHelper.retrieveBakesInBagCount())"
     }
     
     // minus one button pressed
@@ -133,7 +132,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func minusOneBake(_ cell: ShopBuyBakeTableCell) {
-        if let bakeRealm = RealmHelper.retrieveOneBake(byID: cell.bake.objectId!) {
+        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(byID: cell.bake.objectId!) {
             if RealmHelper.minueOneBake(bakeRealm) {
                 setShopCellToNone(cell)
             } else {
@@ -196,7 +195,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             let price = bakee.price!
             let monthly = bakee.monthly as! Int
             let amount = bakee.amount as! Int
-            let amountInBag = RealmHelper.retrieveOneBake(byID: bakee.objectId!)?.amount ?? 0
+            let amountInBag = RealmHelper.retrieveOneBakeInBag(byID: bakee.objectId!)?.amount ?? 0
             
             if bakee.image == nil { printit(any: "\n\n\n\n\n\n\(bakee.name!)\n\n\n\n\n\n") }
 

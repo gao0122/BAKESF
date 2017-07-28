@@ -16,5 +16,8 @@ class ShopBagEmbedTableCell: UITableViewCell {
     @IBOutlet weak var oneMoreBtn: UIButton!
     @IBOutlet weak var minusOneBtn: UIButton!
     
+    var bakeIn: BakeInBagRealm?
+    var bakePre: BakePreOrderRealm?
+
 }
 

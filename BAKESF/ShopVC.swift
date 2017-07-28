@@ -45,9 +45,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var rightLowestFeeLabel: UILabel!
     @IBOutlet weak var rightDeliveryFeeLabel: UILabel!
     
-    private var shopBuyVC: ShopBuyVC!
-    private var shopPreVC: ShopPreVC!
-    private var shopBagVC: ShopBagEmbedVC!
+    var shopBuyVC: ShopBuyVC!
+    var shopPreVC: ShopPreVC!
+    var shopBagVC: ShopBagEmbedVC!
+    var shopCheckingVC: ShopCheckingVC!
     
     var avshop: AVShop!
     
@@ -71,6 +72,11 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     var menuProgressWhenInterrupted = [CGFloat]()
 
     var bagAniState: AniState = .collapsed
+    
+    let shopBagVCHeaderColor: Int = 0xFAFAFA
+    
+    let alwaysShowBag = true
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,14 +103,16 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         if let id = segue.identifier {
             switch id {
             case "shopBuyMenuSegue":
-                if let vc = segue.destination as? ShopPagingVC {
-                    vc.view.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
-                }
+                guard let vc = segue.destination as? ShopPagingVC else { break }
+                vc.view.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
             case "shopBuyBagSegue":
-                if let vc = segue.destination as? ShopBagEmbedVC {
-                    self.shopBagVC = vc
-                    vc.avshop = self.avshop
-                }
+                guard let vc = segue.destination as? ShopBagEmbedVC else { break }
+                self.shopBagVC = vc
+                vc.shopVC = self
+                vc.avshop = self.avshop
+            case "showShopCheckingSegue":
+                guard let vc = segue.destination as? ShopCheckingVC else { break }
+                
             default:
                 break
             }
@@ -134,15 +142,17 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         shopViewStartY = originShopY
         shopView.frame.origin.y = originShopY
         shopView.layoutIfNeeded()
-        bgVisualEffectView.effect = nil
         bagView.frame.origin.y = self.view.frame.height
-        // bagBarHeight * ((1 - 0.2) / 2) is the difference value while animating the bag view
-        // 'cause it is scaling and transforming position simultaneously
-        bagBarBlurView.frame.origin.y = self.view.frame.height + bagBarHeight * ((1 - 0.2) / 2)
-        bagBar.alpha = 0.4
-        bagBar.frame.origin.y = self.view.frame.height + bagBarHeight * ((1 - 0.2) / 2)
-        bagBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
-        bagBarBlurView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+        bgVisualEffectView.effect = nil
+        if !alwaysShowBag {
+            // bagBarHeight * ((1 - 0.2) / 2) is the difference value while animating the bag view
+            // 'cause it is scaling and transforming position simultaneously
+            bagBarBlurView.frame.origin.y = self.view.frame.height + bagBarHeight * ((1 - 0.2) / 2)
+            bagBar.alpha = 0.4
+            bagBar.frame.origin.y = self.view.frame.height + bagBarHeight * ((1 - 0.2) / 2)
+            bagBar.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+            bagBarBlurView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
+        }
         deliveryFeeLabel.alpha = 0
         totalFeeLabel.alpha = 0
     }
@@ -252,7 +262,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         if broadcast == "-" {
             broadcastLabel.text = broadcastRandom[Int.random(min: 0, max: broadcastRandom.count - 1)]
         } else {
-            broadcastLabel.text = "公告：" + broadcast
+            broadcastLabel.text = "私房广播：" + broadcast
         }
         
         let width = stars.frame.width
@@ -264,53 +274,84 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         stars.frame.size.width = x
         
         bagBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.handleBagBarTap(_:))))
+        bagFocusBgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.handleBagBarTap(_:))))
     }
     
     // set state of outlets in shop bag view
     func setShopBagState() {
         let shopID = avshop.objectId!
-        let lowest = avshop.lowestFee as! Int
-        let totalCost = RealmHelper.retrieveBakesInBagCost(avshopID: shopID)
-        let totalAmount = RealmHelper.retrieveBakesInBagCount(avshopID: shopID)
+        let lowest = avshop.lowestFee as! Double
+        let deliveryFee = avshop.deliveryFee as! Double
+        let totalCost = RealmHelper.retrieveAllBakesCost(avshopID: shopID)
+        let totalAmount = RealmHelper.retrieveAllBakesCount(avshopID: shopID)
         let shouldReset = totalCost == 0
-        let shouldSet = totalCost >= Double(lowest)
-        var rightLowestFeeText = shouldSet ? "" : "还差¥\(Double(lowest) - totalCost)起送"
-        rightLowestFeeText = shouldReset ? "¥\(lowest) 起送" : rightLowestFeeText
-        let deliveryFeeText = avshop.deliveryFee == 0 ? "免费配送" : "另需配送费¥\(avshop.deliveryFee!)"
-        self.totalAmountLabel.text = totalAmount == 0 ? "" : "\(totalAmount)"
-        self.checkBtn.setTitle(shouldSet ? "结算" : "", for: .normal)
-        self.checkBtn.setTitle(shouldReset ? "" : checkBtn.currentTitle!, for: .normal)
-        self.checkBtn.backgroundColor = shouldSet ? .appleGreen : .checkBtnGray
-        self.checkBtn.backgroundColor = shouldReset ? .checkBtnGray : checkBtn.backgroundColor!
-        self.emptyBagLabel.alpha = shouldSet ? 0 : 1
-        self.emptyBagLabel.alpha = shouldReset ? 1 : emptyBagLabel.alpha
-        self.emptyBagLabel.text = shouldSet ? "购物车空空的" : "¥\(totalCost)"
-        self.emptyBagLabel.text = shouldReset ? "购物车空空的" : emptyBagLabel.text!
-        self.rightLowestFeeLabel.text = rightLowestFeeText
+        let shouldSet = totalCost >= lowest
+        let deliveryFeeText = deliveryFee == 0 ? "免费配送" : "另需配送费¥\(deliveryFee.fixPriceTagFormat())"
         self.rightDeliveryFeeLabel.text = deliveryFeeText
         self.deliveryFeeLabel.text = deliveryFeeText
-        self.totalFeeLabel.text = "¥\(totalCost)"
-        self.rightLowestFeeLabel.alpha = shouldSet ? 0 : 1
-        self.rightLowestFeeLabel.alpha = shouldReset ? 1 : rightLowestFeeLabel.alpha
-        self.rightDeliveryFeeLabel.alpha = shouldSet ? 0 : 1
-        self.rightDeliveryFeeLabel.alpha = shouldReset ? 1 : rightDeliveryFeeLabel.alpha
-        self.deliveryFeeLabel.alpha = shouldSet ? 1 : 0
-        self.deliveryFeeLabel.alpha = shouldReset ? 0 : deliveryFeeLabel.alpha
-        self.totalFeeLabel.alpha = shouldSet ? 1 : 0
-        self.totalFeeLabel.alpha = shouldReset ? 0 : totalFeeLabel.alpha
-    }
+        self.totalFeeLabel.text = "¥\(totalCost.fixPriceTagFormat())"
 
-    func handleBagBarTap(_ sender: UITapGestureRecognizer) {
-        // TODO: - Show or hide shop bag
-        if determineSections(avshop) > 0 {
-            animateShop(bagAniState)
+        if totalAmount == 0 {
+            self.totalAmountLabel.text = ""
+            self.animateShopIfNeeded()
+        } else {
+            self.totalAmountLabel.text = "\(totalAmount)"
+        }
+        
+        if shouldSet {
+            self.checkBtn.isUserInteractionEnabled = true
+            self.checkBtn.setTitle("结算", for: .normal)
+            self.checkBtn.backgroundColor = .appleGreen
+            self.emptyBagLabel.alpha = 0
+            self.emptyBagLabel.text = "购物车空空的"
+            self.rightLowestFeeLabel.text = ""
+            self.rightLowestFeeLabel.alpha = 0
+            self.rightDeliveryFeeLabel.alpha = 0
+            self.deliveryFeeLabel.alpha = 1
+            self.totalFeeLabel.alpha = 1
+        } else {
+            self.checkBtn.isUserInteractionEnabled = false
+            self.checkBtn.setTitle("", for: .normal)
+            self.checkBtn.backgroundColor = .checkBtnGray
+            self.emptyBagLabel.alpha = 1
+            self.emptyBagLabel.text = "¥\(totalCost.fixPriceTagFormat())"
+            self.rightLowestFeeLabel.text = "还差¥\((lowest - totalCost).fixPriceTagFormat())起送"
+            self.rightLowestFeeLabel.alpha = 1
+            self.rightDeliveryFeeLabel.alpha = 1
+            self.deliveryFeeLabel.alpha = 0
+            self.totalFeeLabel.alpha = 0
+        }
+        
+        if shouldReset {
+            self.checkBtn.isUserInteractionEnabled = false
+            self.checkBtn.setTitle("", for: .normal)
+            self.checkBtn.backgroundColor = .checkBtnGray
+            self.emptyBagLabel.alpha = 1
+            self.emptyBagLabel.text = "购物车空空的"
+            self.rightLowestFeeLabel.text = "¥\(lowest.fixPriceTagFormat()) 起送"
+            self.rightLowestFeeLabel.alpha = 1
+            self.rightDeliveryFeeLabel.alpha = 1
+            self.deliveryFeeLabel.alpha = 0
+            self.totalFeeLabel.alpha = 0
         }
     }
     
-    func reloadShopBagEmbedTable() {
-        shopBagVC.bakesInBag = RealmHelper.retrieveBakesInBag().sorted(by: { _,_ in return true })
-        shopBagVC.bakesPreOrder = RealmHelper.retrieveBakesPreOrder().sorted(by: { _,_ in return true })
-        shopBagVC.tableView.reloadData()
+    func setShopBagStateAndTables() {
+        setShopBagState()
+        shopBuyVC.bakeTableView.reloadData()
+        shopPreVC.bakeTableView.reloadData()
+    }
+
+    func animateShopIfNeeded() {
+        if bagAniState == .expanded {
+            animateShop(.expanded)
+        }
+    }
+    
+    func handleBagBarTap(_ sender: UITapGestureRecognizer) {
+        if determineSections(avshop) > 0 {
+            animateShop(bagAniState)
+        }
     }
     
     // learn more about the shop
@@ -318,10 +359,6 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
-    // learn more about the shop
-    @IBAction func checkBtnPressed(_ sender: Any) {
-        // TODO: - Check if bake in bag is sold out
-    }
     
 
     
@@ -331,10 +368,17 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     func animateShop(_ state: AniState) {
         switch state {
         case .collapsed:
-            reloadShopBagEmbedTable()
+            shopBagVC.reloadShopBagEmbedTable()
+            
+            // compute the height of table view according to the amount of bakes
+            let bakeCount = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count + RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count
+            let bakesHeight = CGFloat(bakeCount) * shopBagVC.cellHeight
+            let oy = view.frame.height - bagBarHeight - shopBagVC.tableView.frame.origin.y - bakesHeight
+            let y = oy < originBagViewY ? originBagViewY : oy
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
-                self.bagView.frame.origin.y = self.originBagViewY
-                self.bagFocusBgView.alpha = 0.8
+                self.bagView.frame.origin.y = y!
+                self.bagFocusBgView.alpha = 0.98
+                self.shopBagVC.view.backgroundColor = UIColor(hex: self.shopBagVCHeaderColor, alpha: 0.88)
             }, completion: {
                 finished in
                 self.bagAniState = .expanded
@@ -343,6 +387,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseOut], animations: {
                 self.bagView.frame.origin.y = self.view.frame.height
                 self.bagFocusBgView.alpha = 0
+                self.shopBagVC.view.backgroundColor = .white
             }, completion: {
                 finished in
                 self.bagAniState = .collapsed
@@ -373,11 +418,13 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         let broadcastAnimator = self.broadcastAnimator(duration: menuAniDuration, state: state)
         broadcastAnimator.startAnimation()
         
-        let bagBarAnimator = self.bagBarAnimator(duration: menuAniDuration, state: state)
-        bagBarAnimator.startAnimation()
+        if !alwaysShowBag {
+            let bagBarAnimator = self.bagBarAnimator(duration: menuAniDuration, state: state)
+            bagBarAnimator.startAnimation()
         
-        let bagBarBlurAnimator = self.bagBarBlurAnimator(duration: menuAniDuration, state: state)
-        bagBarBlurAnimator.startAnimation()
+            let bagBarBlurAnimator = self.bagBarBlurAnimator(duration: menuAniDuration, state: state)
+            bagBarBlurAnimator.startAnimation()
+        }
 
         switchMenuState()
     }
@@ -415,13 +462,15 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             broadcastAnimator.startAnimation()
             runningMenuAnimators.append(broadcastAnimator)
             
-            let bagBarAnimator = self.bagBarAnimator(duration: duration, state: state)
-            bagBarAnimator.startAnimation()
-            runningMenuAnimators.append(bagBarAnimator)
-            
-            let bagBarBlurAnimator = self.bagBarBlurAnimator(duration: duration, state: state)
-            bagBarBlurAnimator.startAnimation()
-            runningMenuAnimators.append(bagBarBlurAnimator)
+            if !alwaysShowBag {
+                let bagBarAnimator = self.bagBarAnimator(duration: duration, state: state)
+                bagBarAnimator.startAnimation()
+                runningMenuAnimators.append(bagBarAnimator)
+                
+                let bagBarBlurAnimator = self.bagBarBlurAnimator(duration: duration, state: state)
+                bagBarBlurAnimator.startAnimation()
+                runningMenuAnimators.append(bagBarBlurAnimator)
+            }
             
             startMenuState = menuAniState
             switchMenuState()
@@ -613,6 +662,26 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                     self.broadcastLabel.transform = CGAffineTransform.identity
                 }
             }
+            
+            // MARK: - TableView scroll enable or disabled
+            self.view.isUserInteractionEnabled = true
+            self.shopBuyVC.bakeTableView.visibleCells.forEach { $0.isUserInteractionEnabled = true }
+            self.shopBuyVC.bakeTableView.isScrollEnabled = true
+            self.shopPreVC.bakeTableView.visibleCells.forEach { $0.isUserInteractionEnabled = true }
+            self.shopPreVC.bakeTableView.isScrollEnabled = true
+            switch self.menuAniState {
+            case .expanded:
+                self.shopBuyVC.bakeTableView.shouldScroll = true
+                self.shopBuyVC.classifyTableView.isScrollEnabled = true
+                self.shopPreVC.bakeTableView.shouldScroll = true
+                self.shopPreVC.classifyTableView.isScrollEnabled = true
+            case .collapsed:
+                self.shopBuyVC.bakeTableView.shouldScroll = false
+                self.shopBuyVC.classifyTableView.isScrollEnabled = false
+                self.shopPreVC.bakeTableView.shouldScroll = false
+                self.shopPreVC.classifyTableView.isScrollEnabled = false
+            }
+            self.shopViewStartY = self.shopView.frame.origin.y
         }
         return broadcastAnimator
     }
@@ -691,26 +760,6 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                     self.bagBarBlurView.effect = nil
                 }
             }
-            
-            // MARK: - TableView scroll enable or disabled
-            self.view.isUserInteractionEnabled = true
-            self.shopBuyVC.bakeTableView.visibleCells.forEach { $0.isUserInteractionEnabled = true }
-            self.shopBuyVC.bakeTableView.isScrollEnabled = true
-            self.shopPreVC.bakeTableView.visibleCells.forEach { $0.isUserInteractionEnabled = true }
-            self.shopPreVC.bakeTableView.isScrollEnabled = true
-            switch self.menuAniState {
-            case .expanded:
-                self.shopBuyVC.bakeTableView.shouldScroll = true
-                self.shopBuyVC.classifyTableView.isScrollEnabled = true
-                self.shopPreVC.bakeTableView.shouldScroll = true
-                self.shopPreVC.classifyTableView.isScrollEnabled = true
-            case .collapsed:
-                self.shopBuyVC.bakeTableView.shouldScroll = false
-                self.shopBuyVC.classifyTableView.isScrollEnabled = false
-                self.shopPreVC.bakeTableView.shouldScroll = false
-                self.shopPreVC.classifyTableView.isScrollEnabled = false
-            }
-            self.shopViewStartY = self.shopView.frame.origin.y
         }
         return bagBarAnimator
     }
