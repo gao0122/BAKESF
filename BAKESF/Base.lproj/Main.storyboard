@@ -329,10 +329,10 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Back"/>
                                 <connections>
-                                    <segue destination="4g8-Xf-a8B" kind="unwind" unwindAction="unwindToMeSettingVCWithSegue:" id="Som-fb-HBM"/>
+                                    <segue destination="4g8-Xf-a8B" kind="unwind" identifier="unwindToMeSetting" unwindAction="unwindToMeSettingVCWithSegue:" id="Som-fb-HBM"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="验证码" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xLa-Kv-80i">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="验证码" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="xLa-Kv-80i">
                                 <rect key="frame" x="56" y="96" width="303" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <nil key="textColor"/>

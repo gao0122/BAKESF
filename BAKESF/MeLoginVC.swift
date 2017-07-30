@@ -314,16 +314,16 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     func commitSmsCode(code: String, sender: Any) {
         SMSSDK.commitVerificationCode(code, phoneNumber: self.phoneNum, zone: "86", result: {
             error in
-            if error == nil {
-                self.loginByMsg(sender)
-            } else {
-                let errorMsg = error!.localizedDescription
+            if let error = error {
+                let errorMsg = error.localizedDescription
                 if errorMsg.contains("468") {
                     self.view.notify(text: "验证码错误", color: .alertRed)
                 } else if errorMsg.contains("467") {
                     self.view.notify(text: "5分钟内校验错误超过3次，请稍后再试", color: .alertRed)
                 }
-                print(error!.localizedDescription)
+                print(error.localizedDescription)
+            } else {
+                self.loginByMsg(sender)
             }
             self.loginBtn.isEnabled = true
             self.loginState = .normal
