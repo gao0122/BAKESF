@@ -63,12 +63,12 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             RealmHelper.addOneMoreBake(bake)
             let amount = bake.amount
             cell.amountLabel.text = "\(amount)"
-            cell.priceLabel.text = "\((bake.price * Double(amount)).fixPriceTagFormat())"
+            cell.priceLabel.text = "¥ \((bake.price * Double(amount)).fixPriceTagFormat())"
         }
         if let bake = cell.bakeIn {
             let amount = bake.amount
             RealmHelper.addOneMoreBake(bake)
-            cell.priceLabel.text = "\((bake.price * Double(amount)).fixPriceTagFormat())"
+            cell.priceLabel.text = "¥ \((bake.price * Double(amount)).fixPriceTagFormat())"
         }
         shopVC.setShopBagStateAndTables()
     }
@@ -77,14 +77,22 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         guard let cell = sender.superview?.superview as? ShopBagEmbedTableCell else { return }
         if let bake = cell.bakePre {
             if RealmHelper.minueOneBake(bake) {
-                reloadShopBagEmbedTable()
+                if let indexPath = tableView.indexPath(for: cell) {
+                    tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.top)
+                } else {
+                    reloadShopBagEmbedTable()
+                }
             } else {
                 cell.amountLabel.text = "\(bake.amount)"
             }
         }
         if let bake = cell.bakeIn {
             if RealmHelper.minueOneBake(bake) {
-                reloadShopBagEmbedTable()
+                if let indexPath = tableView.indexPath(for: cell) {
+                    tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.top)
+                } else {
+                    reloadShopBagEmbedTable()
+                }
             } else {
                 cell.amountLabel.text = "\(bake.amount)"
             }

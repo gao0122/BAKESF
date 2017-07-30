@@ -8,32 +8,41 @@
 
 import UIKit
 
-class MeSettingVC: UIViewController, UIGestureRecognizerDelegate {
+class MeSettingVC: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource {
 
-    @IBOutlet weak var userNameBtn: UIButton!
-    @IBOutlet weak var logoutBtn: UIButton!
-    @IBOutlet var edgePanGesture: UIScreenEdgePanGestureRecognizer!
+    @IBOutlet weak var tableView: UITableView!
     
+    var settingPwdVC: MeSettingPwdVC!
+    
+    var edgePanGesture: UIScreenEdgePanGestureRecognizer!
+    
+    var avbaker: AVBaker!
     var user: UserRealm!
     var navigationDelegate: NavigationControllerDelegate?
     let edgePanGestrue = UIScreenEdgePanGestureRecognizer()
+    
+    var settingDict: [Int: [String]]!
+    
+    var seconds = 0
+    var totalSeconds = 42 + 3
+    var timer = Timer()
+    var timerState: TimerState = .inited
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        settingPwdVC = MeSettingPwdVC.instantiateFromStoryboard()
+        
         edgePanGestrue.edges = .left
         edgePanGestrue.addTarget(self, action: #selector(MeSettingVC.panGestureToMeFromSetting(_:)))
         view.addGestureRecognizer(edgePanGestrue)
         
-        //let users = RealmHelper.retrieveUsers()
-        
-        // Do any additional setup after loading the view.
         if let usr = RealmHelper.retrieveCurrentUser() {
             user = usr
-            userNameBtn.setTitle(usr.name, for: .normal)
-            logoutBtn.isEnabled = true
+            settingDict = settingDictLogin
         } else {
-            logoutBtn.isEnabled = false
+            settingDict = settingDictLogout
         }
     }
 
@@ -44,14 +53,84 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        guard let id = segue.identifier else { return }
+        switch id {
+        case "showSettingPwd":
+            let pwdVC = segue.destination as! MeSettingPwdVC
+            pwdVC.avbaker = self.avbaker
+        default:
+            break
+        }
     }
 
-    @IBAction func logoutBtnPressed(_ sender: Any) {
+    @IBAction func unwindToMeSettingVC(segue: UIStoryboardSegue) {
+        
+    }
+    
+
+    func logoutBtnPressed(_ sender: Any) {
         RealmHelper.logoutCurrentUser(user: user)
         performSegue(withIdentifier: "unwindToMeFromSetting", sender: sender)
     }
     
-    @IBAction func panGestureToMeFromSetting(_ sender: UIScreenEdgePanGestureRecognizer) {
+    func canGetMsg() -> Bool {
+        let sentLCDate = avbaker.msgSentDate
+        var canSendMsg = false
+        if sentLCDate == nil {
+            canSendMsg = true
+        } else {
+            let secs = Date().seconds(fromDate: sentLCDate!)
+            if secs > self.totalSeconds {
+                canSendMsg = true
+            } else {
+                // notify how many seconds left
+                self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .alertOrange)
+                canSendMsg = false
+            }
+        }
+        
+        return canSendMsg
+    }
+    
+    func sendMsg(phone: String) {
+        SMSSDK.getVerificationCode(by: SMSGetCodeMethodSMS, phoneNumber: phone, zone: "86", result: {
+            error in
+            if error == nil {
+                self.timerState = .rolling
+                self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateTimer(sender: )), userInfo: nil, repeats: true)
+                updateSentMsgDate(phone: phone)
+            } else {
+                let errorMsg = error!.localizedDescription
+                print(errorMsg)
+                if errorMsg.contains("456") {
+                    self.view.notify(text: "请输入手机号码", color: .alertOrange)
+                } else if errorMsg.contains("457") {
+                    self.view.notify(text: "请输入有效的手机号码", color: .alertOrange)
+                } else if errorMsg.contains("458") {
+                    self.view.notify(text: "发送失败，输入的手机号码在发送黑名单中", color: .alertRed)
+                } else if errorMsg.contains("459") {
+                    self.view.notify(text: "发送失败，不支持该地区发送短信", color: .alertRed)
+                } else {
+                    self.view.notify(text: "发送失败", color: .alertRed)
+                }
+            }
+        })
+    }
+    
+    func updateTimer(sender: UISegmentedControl) {
+        seconds += 1
+        
+        let timeLeft = totalSeconds - seconds
+        if timeLeft <= 0 {
+            timer.invalidate()
+            timerState = .done
+            timer = Timer()
+            seconds = 0
+        }
+    }
+    
+
+    func panGestureToMeFromSetting(_ sender: UIScreenEdgePanGestureRecognizer) {
         let translationX = sender.translation(in: view).x
         let translationBase: CGFloat = view.frame.width
         let translationAbs = translationX > 0 ? translationX : -translationX
@@ -77,4 +156,106 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+    
+    // MARK: - TableView
+    //
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return settingDict.count
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch section {
+        case 0:
+            return settingDict[section]!.count
+        case 1:
+            return settingDict[section]!.count
+        case 2:
+            return settingDict[section]!.count
+        case 3:
+            return settingDict[section]!.count
+        default:
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "meSettingTableCell") as! MeSettingTableCell
+        let sec = indexPath.section
+        let row = indexPath.row
+        cell.label.text = settingDict[sec]![row]
+        cell.rightLabel.alpha = 0
+        if user == nil {
+            
+        } else {
+            if sec == 0 && row == 0 {
+                cell.rightLabel.alpha = 1
+                cell.rightLabel.text = "\(user.name)"
+            }
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let sec = indexPath.section
+        let row = indexPath.row
+        switch sec {
+        case 0:
+            switch row {
+            case 0:
+                break
+            default:
+                break
+            }
+        case 1:
+            switch row {
+            case 0:
+                // change password
+                if canGetMsg() {
+                    sendMsg(phone: avbaker.mobilePhoneNumber!)
+                    performSegue(withIdentifier: "showSettingPwd", sender: self)
+                    //show(settingPwdVC, sender: self)
+                }
+            default:
+                break
+            }
+        case 2:
+            switch row {
+            case 0:
+                // logout
+                logoutBtnPressed(self)
+            default:
+                break
+            }
+        default:
+            break
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return section == settingDict.count - 1 ? 15 : 0
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 15
+    }
+    
+    func tableViewDeselection() {
+        if let index = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: index, animated: true)
+        }
+    }
+    
+
 }
+
+private let settingDictLogin: [Int: [String]] = [
+    0: ["用户名"],
+    1: ["修改密码"],
+    2: ["退出登录"]
+]
+
+private let settingDictLogout: [Int: [String]] = [
+    0: ["登录"]
+]
+

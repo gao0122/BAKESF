@@ -10,18 +10,18 @@ import UIKit
 import RealmSwift
 import AVOSCloud
 
-enum LoginState {
-    case normal, sending, loggingIn
-}
-
-enum TimerState {
-    case inited, rolling, done
-}
-
 let TEST = true
 
 class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate {
 
+    enum LoginMethod {
+        case pwd, msg
+    }
+    
+    enum LoginState {
+        case normal, sending, loggingIn
+    }
+    
     @IBOutlet weak var backToMeBtn: UIButton!
     @IBOutlet weak var phoneTextField: UITextField!
     @IBOutlet weak var msgOrPwdTextField: UITextField!
@@ -36,14 +36,15 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     
     var navigationDelegate: NavigationControllerDelegate?
     let edgePanGestrue = UIScreenEdgePanGestureRecognizer()
+    
     var users: Results<UserRealm>!
     let totalSeconds = 42 + 3
     var seconds = 0
     var timer = Timer()
-    var timerIsOn = false
     var hasSent = false
     var loginState: LoginState = .normal
     var timerState: TimerState = .inited
+    var loginMethod: LoginMethod = .msg
     var phoneNum = ""
     var userID = ""
     var msgOrPwdAnimating = false
@@ -104,7 +105,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     @IBAction func loginByMsgOrPwd(_ sender: Any) {
         if !msgOrPwdAnimating {
             msgOrPwdAnimating = true
-            if loginByMsgOrPwd.titleLabel!.text! == "使用密码登录" {
+            if loginMethod == .msg {
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
                     self.loginByMsgOrPwd.setTitle("验证码登录", for: .normal)
                     self.loginBtn.frame.origin = self.getMsgBtn.frame.origin
@@ -118,6 +119,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                     self.msgOrPwdTextField.keyboardType = UIKeyboardType.default
                     self.msgOrPwdTextField.text = ""
                     self.msgOrPwdTextField.isSecureTextEntry = true
+                    self.switchLoginMethod()
                 })
             } else {
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
@@ -133,9 +135,14 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                     self.msgOrPwdTextField.keyboardType = UIKeyboardType.numberPad
                     self.msgOrPwdTextField.text = ""
                     self.msgOrPwdTextField.isSecureTextEntry = false
+                    self.switchLoginMethod()
                 })
             }
         }
+    }
+    
+    func switchLoginMethod() {
+        self.loginMethod = self.loginMethod == .pwd ? .msg : .pwd
     }
     
     @IBAction func loginByWX(_ sender: Any) {
@@ -143,6 +150,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     }
     
     @IBAction func loginByWB(_ sender: Any) {
+        
     }
     
     @IBAction func getMsgPressed(_ sender: Any) {
@@ -217,7 +225,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
             self.msgOrPwdTextField.becomeFirstResponder()
             self.timerState = .rolling
             self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateTimer(sender: )), userInfo: nil, repeats: true)
-            self.updateSentMsgDate(phone: phone)
+            updateSentMsgDate(phone: phone)
             return
         }
         SMSSDK.getVerificationCode(by: SMSGetCodeMethodSMS, phoneNumber: phone, zone: "86", result: {
@@ -226,7 +234,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                 self.msgOrPwdTextField.becomeFirstResponder()
                 self.timerState = .rolling
                 self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateTimer(sender: )), userInfo: nil, repeats: true)
-                self.updateSentMsgDate(phone: phone)
+                updateSentMsgDate(phone: phone)
             } else {
                 let errorMsg = error!.localizedDescription
                 print(errorMsg)
@@ -246,23 +254,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         })
     }
     
-    func updateSentMsgDate(phone: String) {
-        let query = AVBaker.query()
-        query.whereKey(lcKey[.phone]!, equalTo: phone)
-        query.getFirstObjectInBackground({
-            object, error in
-            if error == nil {
-                let usr = object as! AVBaker
-                usr.msgSentDate = Date()
-                _ = usr.save()
-            } else {
-                // error
-            }
-        })
-    }
-    
     @IBAction func loginBtnPressed(_ sender: Any) {
-        let isMsgLogin = msgOrPwdTextField.placeholder! == "短信验证码"
         if self.phoneTextField.text!.characters.count > 0 {
             if self.phoneNum == phoneTextField.text {
                 if let code = msgOrPwdTextField.text {
@@ -271,7 +263,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                             self.loginBtn.isEnabled = false
                             self.loginState = .loggingIn
                             if TEST {
-                                if isMsgLogin {
+                                if loginMethod == .msg {
                                     self.loginByMsg(sender)
                                 } else {
                                     
@@ -279,7 +271,11 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                                 self.loginBtn.isEnabled = true
                                 self.loginState = .normal
                             } else {
-                                self.commitSmsCode(code: code, sender: sender)
+                                if loginMethod == .msg {
+                                    self.commitSmsCode(code: code, sender: sender)
+                                } else {
+                                    self.commitPassword(pwd: code)
+                                }
                             }
                         }
                     } else {
@@ -295,6 +291,24 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
             // please input the right phone number
             self.view.notify(text: "请输入手机号码", color: .alertOrange)
         }
+    }
+    
+    func commitPassword(pwd: String) {
+        let queryPhone = AVBaker.query()
+        queryPhone.whereKey(lcKey[.phone]!, equalTo: self.phoneNum)
+        let queryPwd = AVBaker.query()
+        queryPwd.whereKey(lcKey[.pwd]!, equalTo: pwd)
+        let query = AVQuery.andQuery(withSubqueries: [queryPhone, queryPwd])
+        query.findObjectsInBackground({
+            objects, error in
+            if error == nil {
+                if let baker = objects?.first as? AVBaker {
+                    self.avbaker = baker
+                    return
+                }
+            }
+            // TODO: Error handling
+        })
     }
     
     func commitSmsCode(code: String, sender: Any) {

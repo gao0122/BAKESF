@@ -17,8 +17,8 @@ class AVShop: AVObject, AVSubclassing {
     @NSManaged var headphoto: AVFile?
     @NSManaged var broadcast: String?
     @NSManaged var tags: [String]?
-    @NSManaged var deliveryFee: NSNumber?
-    @NSManaged var lowestFee: NSNumber?
+    @NSManaged var deliveryFee: NSNumber? // Double
+    @NSManaged var lowestFee: NSNumber? // Double
     
     static func parseClassName() -> String {
         return "Shop"

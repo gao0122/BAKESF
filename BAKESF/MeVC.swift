@@ -84,23 +84,23 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         pagingMenuController.setup(option)
         
-//        pagingMenuController.onMove = {
-//            state in
-//            switch state {
-//            case let .willMoveController(menuController, previousMenuController):
-//                break
-//            case let .didMoveController(menuController, previousMenuController):
-//                break
-//            case let .willMoveItem(menuItemView, previousMenuItemView):
-//                break
-//            case let .didMoveItem(menuItemView, previousMenuItemView):
-//                break
-//            case .didScrollStart:
-//                break
-//            case .didScrollEnd:
-//                break
-//            }
-//        }
+        pagingMenuController.onMove = {
+            state in
+            switch state {
+            case let .willMoveController(menuController, previousMenuController):
+                break
+            case let .didMoveController(menuController, previousMenuController):
+                break
+            case let .willMoveItem(menuItemView, previousMenuItemView):
+                break
+            case let .didMoveItem(menuItemView, previousMenuItemView):
+                break
+            case .didScrollStart:
+                break
+            case .didScrollEnd:
+                break
+            }
+        }
          */
 
     }
@@ -131,6 +131,9 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
                 sourceVC.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
             case "unwindToMeFromLogin":
                 userNameLabel.text = "欢迎 \(self.user.phone)"
+            case "showSetting":
+                guard let settingVC = segue.destination as? MeSettingVC else { break }
+                settingVC.avbaker = self.avbaker
             default:
                 break
             }

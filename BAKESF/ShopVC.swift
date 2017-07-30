@@ -300,7 +300,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         
         if shouldSet {
             self.checkBtn.isUserInteractionEnabled = true
-            self.checkBtn.setTitle("结算", for: .normal)
+            self.checkBtn.setTitle("选好了", for: .normal)
             self.checkBtn.backgroundColor = .appleGreen
             self.emptyBagLabel.alpha = 0
             self.emptyBagLabel.text = "购物车空空的"

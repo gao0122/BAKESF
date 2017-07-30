@@ -18,6 +18,12 @@ func printit(_ any: Any) {
 }
 
 
+enum TimerState {
+    case inited, rolling, done
+}
+
+
+
 // check if is connected to the network
 func connectedToNetwork() -> Bool {
     var zeroAddress = sockaddr_in()
@@ -78,6 +84,24 @@ func retrieveFile(withURL url: String) -> AVFile? {
     let files = try! query.findFiles()
     return files.first as? AVFile
 }
+
+// update sent message date
+func updateSentMsgDate(phone: String) {
+    let query = AVBaker.query()
+    query.whereKey(lcKey[.phone]!, equalTo: phone)
+    query.getFirstObjectInBackground({
+        object, error in
+        if error == nil {
+            let usr = object as! AVBaker
+            usr.msgSentDate = Date()
+            _ = usr.save()
+        } else {
+            // error
+        }
+    })
+}
+
+
 
 // calculate the stars difference
 // the width of one rating star in png is 18px, but the actual width of the star is only 16.3px
