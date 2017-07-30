@@ -23,10 +23,7 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate, UITableViewDel
     
     var settingDict: [Int: [String]]!
     
-    var seconds = 0
     var totalSeconds = 42 + 3
-    var timer = Timer()
-    var timerState: TimerState = .inited
 
 
     override func viewDidLoad() {
@@ -96,12 +93,11 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate, UITableViewDel
         SMSSDK.getVerificationCode(by: SMSGetCodeMethodSMS, phoneNumber: phone, zone: "86", result: {
             error in
             if error == nil {
-                self.timerState = .rolling
-                self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateTimer(sender: )), userInfo: nil, repeats: true)
                 updateSentMsgDate(phone: phone)
+                self.performSegue(withIdentifier: "showSettingPwd", sender: self)
             } else {
                 let errorMsg = error!.localizedDescription
-                print(errorMsg)
+                printit(errorMsg)
                 if errorMsg.contains("456") {
                     self.view.notify(text: "请输入手机号码", color: .alertOrange)
                 } else if errorMsg.contains("457") {
@@ -115,18 +111,6 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate, UITableViewDel
                 }
             }
         })
-    }
-    
-    func updateTimer(sender: UISegmentedControl) {
-        seconds += 1
-        
-        let timeLeft = totalSeconds - seconds
-        if timeLeft <= 0 {
-            timer.invalidate()
-            timerState = .done
-            timer = Timer()
-            seconds = 0
-        }
     }
     
 
@@ -212,8 +196,6 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate, UITableViewDel
                 // change password
                 if canGetMsg() {
                     sendMsg(phone: avbaker.mobilePhoneNumber!)
-                    performSegue(withIdentifier: "showSettingPwd", sender: self)
-                    //show(settingPwdVC, sender: self)
                 }
             default:
                 break
