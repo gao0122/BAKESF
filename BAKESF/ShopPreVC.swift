@@ -8,6 +8,7 @@
 
 import UIKit
 
+@available(iOS 10.0, *)
 class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var classifyTableView: ShopClassifyTableView!

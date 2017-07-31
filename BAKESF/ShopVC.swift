@@ -87,11 +87,9 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-
     }
     
     override func viewDidAppear(_ animated: Bool) {
-
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -112,7 +110,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                 vc.avshop = self.avshop
             case "showShopCheckingSegue":
                 guard let vc = segue.destination as? ShopCheckingVC else { break }
-                
+                vc.shopVC = self
+                vc.avshop = self.avshop
             default:
                 break
             }
