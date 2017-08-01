@@ -30,6 +30,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     @IBOutlet weak var loginByWX: UIButton!
     @IBOutlet weak var loginByWB: UIButton!
     @IBOutlet weak var loginByMsgOrPwd: UIButton!
+    @IBOutlet weak var loginInputView: UIView!
     
     var avbaker: AVBaker!
     var userRealm: UserRealm!
@@ -114,12 +115,15 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     
     // MARK: - TextField
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        // TODO :- all views move to up for 10px
-        
+        UIView.animate(withDuration: 0.32, animations: {
+            self.loginInputView.frame.origin.y = -44
+        })
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        
+        UIView.animate(withDuration: 0.32, animations: {
+            self.loginInputView.frame.origin.y = 0
+        })
     }
     
     @IBAction func loginByMsgOrPwd(_ sender: Any) {

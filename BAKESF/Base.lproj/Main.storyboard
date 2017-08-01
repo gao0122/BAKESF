@@ -83,45 +83,36 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RFb-7u-F90">
-                                <rect key="frame" x="14" y="27" width="12" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <accessibility key="accessibilityConfiguration" identifier="backFromLoginByMsgToMe"/>
-                                <state key="normal" image="back"/>
-                                <connections>
-                                    <action selector="backBtnPressed:" destination="D7x-gp-VRR" eventType="touchUpInside" id="spy-ka-fhI"/>
-                                </connections>
-                            </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jBo-fp-ei8">
-                                <rect key="frame" x="0.0" y="95" width="414" height="355"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="450"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="手机号码" minimumFontSize="12" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="MW7-bH-seY">
-                                        <rect key="frame" x="50" y="127" width="315" height="40"/>
+                                        <rect key="frame" x="50" y="222" width="315" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="textColor" red="0.098039217289999994" green="0.098039217289999994" blue="0.098039217289999994" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done"/>
                                     </textField>
                                     <view alpha="0.80000001192092896" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LRw-6J-Baz" userLabel="Line under Phone">
-                                        <rect key="frame" x="40" y="171" width="335" height="1"/>
+                                        <rect key="frame" x="40" y="266" width="335" height="1"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.8784313725490196" green="0.0" blue="0.15686274509803921" alpha="1" colorSpace="calibratedRGB"/>
                                     </view>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="短信验证码" minimumFontSize="12" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="AP2-iY-Boa">
-                                        <rect key="frame" x="50" y="178" width="315" height="40"/>
+                                        <rect key="frame" x="50" y="273" width="315" height="40"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="textColor" red="0.098039217289999994" green="0.098039217289999994" blue="0.098039217289999994" alpha="1" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done"/>
                                     </textField>
                                     <view alpha="0.80000001192092896" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Zl-U2-YSa" userLabel="Line under Msg or Pwd">
-                                        <rect key="frame" x="40" y="222" width="335" height="1"/>
+                                        <rect key="frame" x="40" y="317" width="335" height="1"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.8784313725490196" green="0.0" blue="0.15686274509803921" alpha="1" colorSpace="calibratedRGB"/>
                                     </view>
                                     <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ren-RA-Pnn">
-                                        <rect key="frame" x="40" y="267" width="158" height="36"/>
+                                        <rect key="frame" x="40" y="362" width="158" height="36"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.8784313725490196" green="0.0" blue="0.15686274509803921" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
                                         <accessibility key="accessibilityConfiguration" identifier="getCode"/>
@@ -134,7 +125,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wWt-7C-JWr">
-                                        <rect key="frame" x="217" y="267" width="158" height="36"/>
+                                        <rect key="frame" x="217" y="362" width="158" height="36"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.8784313725490196" green="0.0" blue="0.15686274509803921" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -146,7 +137,7 @@
                                         </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Logo 焙可私房" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="R0S-bc-W9w">
-                                        <rect key="frame" x="107" y="52" width="200" height="21"/>
+                                        <rect key="frame" x="107" y="147" width="200" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" red="0.8784313725490196" green="0.0" blue="0.15686274509803921" alpha="0.97999999999999998" colorSpace="calibratedRGB"/>
@@ -155,6 +146,15 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RFb-7u-F90">
+                                <rect key="frame" x="14" y="27" width="12" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" identifier="backFromLoginByMsgToMe"/>
+                                <state key="normal" image="back"/>
+                                <connections>
+                                    <action selector="backBtnPressed:" destination="D7x-gp-VRR" eventType="touchUpInside" id="spy-ka-fhI"/>
+                                </connections>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ls2-TV-KMq">
                                 <rect key="frame" x="36" y="630" width="111" height="42"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -199,6 +199,7 @@
                         <outlet property="loginByMsgOrPwd" destination="4c1-vn-gBV" id="Zke-h0-F8X"/>
                         <outlet property="loginByWB" destination="5O9-yx-fPb" id="eji-7a-ed0"/>
                         <outlet property="loginByWX" destination="Ls2-TV-KMq" id="8lo-TZ-eD6"/>
+                        <outlet property="loginInputView" destination="jBo-fp-ei8" id="zGa-P4-egc"/>
                         <outlet property="msgOrPwdTextField" destination="AP2-iY-Boa" id="hfE-5c-g81"/>
                         <outlet property="phoneTextField" destination="MW7-bH-seY" id="kAr-Es-Ys8"/>
                         <segue destination="gF9-0Z-pAj" kind="unwind" identifier="unwindToMeFromLogin" unwindAction="unwindToMeVCWithSegue:" id="lmS-ul-B2o"/>
