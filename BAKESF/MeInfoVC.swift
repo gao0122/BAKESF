@@ -16,9 +16,9 @@ class MeInfoVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        edgePanGestrue.edges = .left
-        edgePanGestrue.addTarget(self, action: #selector(MeSettingVC.panGestureToMeFromSetting(_:)))
-        view.addGestureRecognizer(edgePanGestrue)
+        //edgePanGestrue.edges = .left
+        //edgePanGestrue.addTarget(self, action: #selector(MeSettingVC.panGestureToMeFromSetting(_:)))
+        //view.addGestureRecognizer(edgePanGestrue)
         
     }
     

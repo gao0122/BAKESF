@@ -129,8 +129,8 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
                 let sourceVC = segue.source
                 sourceVC.navigationController?.interactivePopGestureRecognizer?.delegate = self
                 sourceVC.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
-            case "unwindToMeFromLogin":
-                userNameLabel.text = "欢迎 \(self.user.phone)"
+                guard let loginVC = segue.destination as? MeLoginVC else { break }
+                loginVC.showSegueID = id
             case "showSetting":
                 guard let settingVC = segue.destination as? MeSettingVC else { break }
                 settingVC.avbaker = self.avbaker

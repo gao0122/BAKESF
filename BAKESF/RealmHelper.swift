@@ -268,6 +268,24 @@ class RealmHelper {
         return retrieveBakesInBagCost(avshopID: shopID) + retrieveBakesPreOrderCost(avshopID: shopID)
     }
     
+    static func retrieveAllBakes(avshopID shopID: String? = nil) -> [Object] {
+        let realm = try! Realm()
+        if let id = shopID {
+            let preOrder = realm.objects(BakePreOrderRealm.self).filter("shopID = '\(id)'").sorted(by: { _, _ in return true })
+            let inBag = realm.objects(BakeInBagRealm.self).filter("shopID = '\(id)'").sorted(by: { _, _ in return true })
+            var bakes = [Object]()
+            preOrder.forEach({ bakes.append($0) })
+            inBag.forEach({ bakes.append($0) })
+            return bakes
+        } else {
+            let preOrder = realm.objects(BakePreOrderRealm.self).sorted(by: { _, _ in return true })
+            let inBag = realm.objects(BakeInBagRealm.self).sorted(by: { _, _ in return true })
+            var bakes = [Object]()
+            preOrder.forEach({ bakes.append($0) })
+            inBag.forEach({ bakes.append($0) })
+            return bakes
+        }
+    }
     static func deleteAllBakes(byShopID shopID: String? = nil) {
         deleteAllBakesInBag(byShopID: shopID)
         deleteAllBakesPreOrder(byShopID: shopID)

@@ -31,9 +31,9 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate, UITableViewDel
         
         settingPwdVC = MeSettingPwdVC.instantiateFromStoryboard()
         
-        edgePanGestrue.edges = .left
-        edgePanGestrue.addTarget(self, action: #selector(MeSettingVC.panGestureToMeFromSetting(_:)))
-        view.addGestureRecognizer(edgePanGestrue)
+        //edgePanGestrue.edges = .left
+        //edgePanGestrue.addTarget(self, action: #selector(MeSettingVC.panGestureToMeFromSetting(_:)))
+        //view.addGestureRecognizer(edgePanGestrue)
         
         if let usr = RealmHelper.retrieveCurrentUser() {
             user = usr

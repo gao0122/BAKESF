@@ -53,4 +53,8 @@ extension UIColor {
     static var checkBtnGray: UIColor {
         return UIColor(hex: 0x4C4C4C)
     }
+    
+    static var buttonBlue: UIColor {
+    return UIColor(hex: 0x007AFF)
+    }
 }

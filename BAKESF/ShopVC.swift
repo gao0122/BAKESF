@@ -51,6 +51,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     var shopCheckingVC: ShopCheckingVC!
     
     var avshop: AVShop!
+    var avbaker: AVBaker!
+    var userRealm: UserRealm!
     
     let topViewHeight: CGFloat = 66
     let menuAniDuration: TimeInterval = 0.48
@@ -81,6 +83,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         preInit()
+        checkAVBaker()
         setPageMenu()
         shopInit()
         setShopBagState()
@@ -154,6 +157,13 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         }
         deliveryFeeLabel.alpha = 0
         totalFeeLabel.alpha = 0
+    }
+    
+    func checkAVBaker() {
+        if let usr = RealmHelper.retrieveCurrentUser() {
+            userRealm = usr
+            avbaker = retrieveBaker(withID: usr.id)
+        }
     }
     
     // MARK: - Page Menu

@@ -21,6 +21,8 @@ class HomeVC: UIViewController, UISearchBarDelegate {
     private var followTableView: UITableView!
     
     var user: UserRealm!
+    var avbaker: AVBaker!
+    
     var searchBarWidth: CGFloat!
     var hasSetShopView = false
     
@@ -32,6 +34,7 @@ class HomeVC: UIViewController, UISearchBarDelegate {
         if let usr = RealmHelper.retrieveCurrentUser() {
             // has logged in
             self.user = usr
+            self.avbaker = retrieveBaker(withID: user.id)
         } else {
             // to login
         }

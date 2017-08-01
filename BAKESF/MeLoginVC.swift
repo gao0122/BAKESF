@@ -22,7 +22,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         case normal, sending, loggingIn
     }
     
-    @IBOutlet weak var backToMeBtn: UIButton!
+    @IBOutlet weak var backBtn: UIButton!
     @IBOutlet weak var phoneTextField: UITextField!
     @IBOutlet weak var msgOrPwdTextField: UITextField!
     @IBOutlet weak var getMsgBtn: UIButton!
@@ -51,15 +51,18 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     var btnWidth: CGFloat = 0
     var loginBtnX: CGFloat = 0
     
+    var showSegueID: String!
+    var unwindSegueID: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         msgOrPwdTextField.delegate = self
         phoneTextField.delegate = self
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
-        edgePanGestrue.edges = .left
-        edgePanGestrue.addTarget(self, action: #selector(MeLoginVC.screenEdgePanBackToMeFromLogin(_:)))
-        view.addGestureRecognizer(edgePanGestrue)
+        //edgePanGestrue.edges = .left
+        //edgePanGestrue.addTarget(self, action: #selector(MeLoginVC.screenEdgePanBackToMeFromLogin(_:)))
+        //view.addGestureRecognizer(edgePanGestrue)
         
         users = RealmHelper.retrieveUsers()
         
@@ -71,6 +74,15 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         
         btnWidth = loginBtn.frame.width
         loginBtnX = loginBtn.frame.origin.x
+        
+        switch showSegueID {
+        case "showLogin": // from me
+            unwindSegueID = "unwindToMeFromLogin"
+        case "showLoginFromShopChecking":
+            unwindSegueID = "unwindToShopCheckingFromLogin"
+        default:
+            break
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -87,15 +99,23 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
             case "unwindToMeFromLogin":
                 let meVC = segue.destination as! MeVC
                 meVC.avbaker = self.avbaker
+            case "unwindToShopCheckingFromLogin":
+                let shopCheckingVC = segue.destination as! ShopCheckingVC
+                shopCheckingVC.avbaker = self.avbaker
             default:
                 break
             }
         }
     }
     
+    @IBAction func backBtnPressed(_ sender: Any) {
+        performSegue(withIdentifier: unwindSegueID, sender: self)
+    }
+    
     // MARK: - TextField
     func textFieldDidBeginEditing(_ textField: UITextField) {
         // TODO :- all views move to up for 10px
+        
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
@@ -352,7 +372,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                     userRealm = RealmHelper.setCurrentUser(baker: baker, data: nil)
                 }
                 self.avbaker = baker
-                self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: self)
+                self.performSegue(withIdentifier: unwindSegueID, sender: self)
                 return
             }
             let file = AVFile(url: url)
@@ -371,7 +391,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                         self.userRealm = RealmHelper.setCurrentUser(baker: baker, data: data)
                     }
                     self.avbaker = baker
-                    self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: self)
+                    self.performSegue(withIdentifier: self.unwindSegueID, sender: self)
                 } else {
                     self.view.notify(text: "登录失败", color: .alertRed)
                     printit(any: error!.localizedDescription)
@@ -447,7 +467,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         case .began:
             navigationDelegate = self.navigationController?.delegate as? NavigationControllerDelegate
             navigationDelegate?.interactive = true
-            self.performSegue(withIdentifier: "unwindToMeFromLogin", sender: sender)
+            self.performSegue(withIdentifier: unwindSegueID, sender: sender)
         case .changed:
             navigationDelegate?.interactionController.update(percent)
         case .cancelled, .ended:
