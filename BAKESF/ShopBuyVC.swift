@@ -21,6 +21,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     var avbakes: [AVBake]!
     var avbakesTag = [String: [AVBake]]()
     var avbakesSoldOut = [String: [AVBake]]()
+    
     var bakeLiveQuery: AVLiveQuery!
     
     var tappedAtTagTableview = false
@@ -50,9 +51,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
                 printit(any: "shop buy vc \(error!.localizedDescription)")
             }
         })
-        
-        realtimeCheckBake()
-        
+                
     }
 
     class func instantiateFromStoryboard() -> ShopBuyVC {
