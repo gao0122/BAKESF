@@ -11,8 +11,15 @@ import RealmSwift
 
 class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    enum DeliveryTimeViewState {
+        case collapsed, expanded
+    }
+    
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var deliveryTimeView: UIView!
+    @IBOutlet weak var deliveryTimeViewCancelBtn: UIButton!
     
     
     var segmentedControl: UISegmentedControl!
@@ -25,12 +32,14 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var userRealm: UserRealm!
     
     var bakes: [Object]!
+    var deliveryTimeViewState: DeliveryTimeViewState = .collapsed
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         _ = checkCurrentUser()
         
+        deliveryTimeView.frame.origin.y = view.frame.height
         nameLabel.text = avshop.name!
         bakes = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
         
@@ -69,6 +78,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         tableView.reloadData()
     }
+    
+    @IBAction func deliveryTimeViewCancelBtnPressed(_ sender: UIButton) {
+        if deliveryTimeViewState == .expanded {
+            deliveryTimeSwitch()
+        }
+    }
+    
     
     // MARK: - TableView
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -214,7 +230,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             switch row {
             case 1:
                 // delivery time
-                break
+                deliveryTimeSwitch()
             case 2:
                 if userRealm == nil {
                     // login
@@ -251,6 +267,38 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         default:
             break
+        }
+    }
+    
+    func deliveryTimeSwitch(_ sender: UITapGestureRecognizer? = nil) {
+        switch deliveryTimeViewState {
+        case .collapsed:
+            deliveryTimeViewState = .expanded
+            let bgView = UIView(frame: UIScreen.main.bounds)
+            bgView.restorationIdentifier = "bgView"
+            bgView.alpha = 0
+            bgView.backgroundColor = UIColor(hex: 0x121212, alpha: 0.84)
+            bgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopCheckingVC.deliveryTimeSwitch(_:))))
+            view.addSubview(bgView)
+            view.bringSubview(toFront: deliveryTimeView)
+            UIView.animate(withDuration: 0.32, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: {
+                self.deliveryTimeView.frame.origin.y = self.view.frame.height - self.deliveryTimeView.frame.height
+                bgView.alpha = 1
+            }, completion: nil)
+        case .expanded:
+            deliveryTimeViewState = .collapsed
+            view.subviews.forEach({
+                if $0.restorationIdentifier == "bgView" {
+                    let bgView = $0
+                    UIView.animate(withDuration: 0.32, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: {
+                        self.deliveryTimeView.frame.origin.y = self.view.frame.height
+                        bgView.alpha = 0
+                    }, completion: {
+                        finished in
+                        bgView.removeFromSuperview()
+                    })
+                }
+            })
         }
     }
     
