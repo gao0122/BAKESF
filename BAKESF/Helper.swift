@@ -78,6 +78,11 @@ func retrieveBaker(withID id: String) -> AVBaker? {
     return query.getObjectWithId(id) as? AVBaker
 }
 
+func retrieveBaker(withID id: String, completion: @escaping (AVObject?, Error?) -> Void) {
+    let query = AVBaker.query()
+    query.getObjectInBackground(withId: id, block: completion)
+}
+
 func retrieveFile(withURL url: String) -> AVFile? {
     let query = AVFile.query()
     query.whereKey(lcKey[.url]!, equalTo: url)

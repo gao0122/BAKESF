@@ -8,6 +8,9 @@
 
 import UIKit
 
+
+// have fun. 
+
 class ShopCheckingVCPureCoding: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     let backBtn: UIButton = {
@@ -52,7 +55,7 @@ class ShopCheckingVCPureCoding: UIViewController, UITableViewDelegate, UITableVi
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!)
+        
     }
     
 

@@ -22,6 +22,7 @@
 		00264E6B1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */; };
 		00264E6D1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */; };
 		00264E6F1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */; };
+		002659A41F30BF0E0016A9F6 /* DeliveryAddressVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002659A31F30BF0E0016A9F6 /* DeliveryAddressVC.swift */; };
 		0034EE341EE7D59A005300AE /* ShopPagingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE331EE7D59A005300AE /* ShopPagingVC.swift */; };
 		0034EE361EE9116B005300AE /* ShopBuyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE351EE9116B005300AE /* ShopBuyVC.swift */; };
 		0034EE381EE91176005300AE /* ShopPreVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE371EE91176005300AE /* ShopPreVC.swift */; };
@@ -97,6 +98,7 @@
 		00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckAddressTableCell.swift; sourceTree = "<group>"; };
 		00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckDeliveryTimeTableCell.swift; sourceTree = "<group>"; };
 		00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckSegmentedControlTableCell.swift; sourceTree = "<group>"; };
+		002659A31F30BF0E0016A9F6 /* DeliveryAddressVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressVC.swift; sourceTree = "<group>"; };
 		0034EE331EE7D59A005300AE /* ShopPagingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopPagingVC.swift; sourceTree = "<group>"; };
 		0034EE351EE9116B005300AE /* ShopBuyVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBuyVC.swift; sourceTree = "<group>"; };
 		0034EE371EE91176005300AE /* ShopPreVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopPreVC.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 			children = (
 				00264E641F2F275700D83073 /* ShopCheckingVC.swift */,
 				00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */,
+				002659A31F30BF0E0016A9F6 /* DeliveryAddressVC.swift */,
 				00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */,
 				00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */,
 				00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */,
@@ -561,6 +564,7 @@
 				00D23B9A1F14AF66002E45B7 /* UIView+Extensions.swift in Sources */,
 				000D13781EFF862700A19D5A /* Constants.swift in Sources */,
 				00455A8B1F19E81D009F440F /* BakeInBagRealm.swift in Sources */,
+				002659A41F30BF0E0016A9F6 /* DeliveryAddressVC.swift in Sources */,
 				00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */,
 				0034EE361EE9116B005300AE /* ShopBuyVC.swift in Sources */,
 				00264E691F2F63A700D83073 /* ShopCheckBakeTableCell.swift in Sources */,

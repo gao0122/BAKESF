@@ -29,10 +29,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let usr = RealmHelper.retrieveCurrentUser() {
-            userRealm = usr
-            avbaker = retrieveBaker(withID: userRealm.id)
-        }
+        _ = checkCurrentUser()
         
         nameLabel.text = avshop.name!
         bakes = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
@@ -41,6 +38,21 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     override func viewWillAppear(_ animated: Bool) {
         tableViewDeselection()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if checkCurrentUser() {
+            self.tableView.reloadData()
+            retrieveBaker(withID: userRealm.id, completion: {
+                object, error in
+                if let baker = object as? AVBaker {
+                    self.avbaker = baker
+                    self.tableView.reloadData()
+                } else {
+                    // handle error
+                }
+            })
+        }
     }
     
     
@@ -316,6 +328,18 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
+    
+    func checkCurrentUser() -> Bool {
+        if let usr = RealmHelper.retrieveCurrentUser() {
+            userRealm = usr
+            avbaker = retrieveBaker(withID: userRealm.id)
+            return true
+        } else {
+            userRealm = nil
+            avbaker = nil
+            return false
+        }
+    }
 }
 
 private let tableSections: [Int: String] = [

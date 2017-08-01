@@ -110,7 +110,7 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
+        checkCurrentUser()
     }
     
     override func viewDidAppear(_ animated: Bool) {
