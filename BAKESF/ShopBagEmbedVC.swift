@@ -18,7 +18,10 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var shopVC: ShopVC!
     var avshop: AVShop!
     
+    var numOfSections: Int!
+    
     let cellHeight: CGFloat = 52
+    let headerHeight: CGFloat = 28
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,6 +71,7 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         if let bake = cell.bakeIn {
             let amount = bake.amount
             RealmHelper.addOneMoreBake(bake)
+            cell.amountLabel.text = "\(amount)"
             cell.priceLabel.text = "¥ \((bake.price * Double(amount)).fixPriceTagFormat())"
         }
         shopVC.setShopBagStateAndTables()
@@ -78,7 +82,16 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         if let bake = cell.bakePre {
             if RealmHelper.minueOneBake(bake) {
                 if let indexPath = tableView.indexPath(for: cell) {
-                    tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.top)
+                    tableView.beginUpdates()
+                    tableView.deleteRows(at: [indexPath], with: .top)
+                    if RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count == 0 {
+                        if tableView.numberOfSections == 2 {
+                            tableView.deleteSections([1], with: .top)
+                        } else {
+                            tableView.deleteSections([0], with: .top)
+                        }
+                    }
+                    tableView.endUpdates()
                 } else {
                     reloadShopBagEmbedTable()
                 }
@@ -89,7 +102,12 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         if let bake = cell.bakeIn {
             if RealmHelper.minueOneBake(bake) {
                 if let indexPath = tableView.indexPath(for: cell) {
-                    tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.top)
+                    tableView.beginUpdates()
+                    tableView.deleteRows(at: [indexPath], with: .top)
+                    if RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count == 0 {
+                        tableView.deleteSections([0], with: .top)
+                    }
+                    tableView.endUpdates()
                 } else {
                     reloadShopBagEmbedTable()
                 }
@@ -102,6 +120,10 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     // MARK: - TableView
+    //
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return determineSections(avshop) / 2
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sec = determineSections(avshop)
@@ -126,12 +148,14 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             case 2, 4:
                 let bake = bakesInBag[indexPath.row]
                 cell.bakeIn = bake
+                cell.bakePre = nil
                 cell.nameLabel.text = bake.name
                 cell.amountLabel.text = "\(bake.amount)"
                 cell.priceLabel.text = "¥ \(bake.price.fixPriceTagFormat())"
             case 3:
                 let bake = bakesPreOrder[indexPath.row]
                 cell.bakePre = bake
+                cell.bakeIn = nil
                 cell.nameLabel.text = bake.name
                 cell.amountLabel.text = "\(bake.amount)"
                 cell.priceLabel.text = "¥ \(bake.price.fixPriceTagFormat())"
@@ -143,6 +167,7 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             case 4:
                 let bake = bakesPreOrder[indexPath.row]
                 cell.bakePre = bake
+                cell.bakeIn = nil
                 cell.nameLabel.text = bake.name
                 cell.amountLabel.text = "\(bake.amount)"
                 let price = bake.price
@@ -160,8 +185,16 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return determineSections(avshop) / 2
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sec = determineSections(avshop)
+        switch section {
+        case 0:
+            return sec % 2 == 1 ? "预订" : "现货"
+        case 1:
+            return sec % 2 == 1 ? nil : "预订"
+        default:
+            return nil
+        }
     }
     
     

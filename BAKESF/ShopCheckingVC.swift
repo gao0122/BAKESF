@@ -169,12 +169,16 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 case bakes.count:
                     let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
                     guard let fee = avshop.deliveryFee as? Double else { break }
+                    cell.priceLabel.alpha = 1
+                    cell.nameLabel.alpha = 1
                     cell.amountLabel.alpha = 0
                     cell.nameLabel.text = "配送费"
                     cell.priceLabel.text = "¥ \(fee.fixPriceTagFormat())"
                     return cell
                 case bakes.count + 1:
                     let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
+                    cell.priceLabel.alpha = 1
+                    cell.nameLabel.alpha = 1
                     cell.amountLabel.alpha = 0
                     cell.nameLabel.text = "红包"
                     cell.priceLabel.text = "0个可用"
@@ -182,7 +186,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 case bakes.count + 2:
                     let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
                     let fee = RealmHelper.retrieveAllBakesCost()
+                    cell.priceLabel.alpha = 1
                     cell.nameLabel.alpha = 0
+                    cell.amountLabel.alpha = 1
                     cell.amountLabel.text = "总计"
                     cell.priceLabel.text = "¥ \(fee.fixPriceTagFormat())"
                     return cell

@@ -224,23 +224,24 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         self.shopPreVC.bakeTableView.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
         self.shopCardView.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
         
-        pagingMenuController.onMove = {
-            state in
-            switch state {
-            case let .willMoveController(menuController, previousMenuController):
-                break
-            case let .didMoveController(menuController, previousMenuController):
-                break
-            case let .willMoveItem(menuItemView, previousMenuItemView):
-                break
-            case let .didMoveItem(menuItemView, previousMenuItemView):
-                break
-            case .didScrollStart:
-                break
-            case .didScrollEnd:
-                break
-            }
-        }
+//        pagingMenuController.onMove = {
+//            state in
+//            switch state {
+//            case let .willMoveController(menuController, previousMenuController):
+//                break
+//            case let .didMoveController(menuController, previousMenuController):
+//                break
+//            case let .willMoveItem(menuItemView, previousMenuItemView):
+//                break
+//            case let .didMoveItem(menuItemView, previousMenuItemView):
+//                break
+//            case .didScrollStart:
+//                break
+//            case .didScrollEnd:
+//                break
+//            }
+//        }
+        
     }
 
     func shopInit() {
@@ -378,11 +379,13 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         switch state {
         case .collapsed:
             shopBagVC.reloadShopBagEmbedTable()
-            
+            shopBagVC.numOfSections = shopBagVC.tableView.numberOfSections
             // compute the height of table view according to the amount of bakes
             let bakeCount = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count + RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count
             let bakesHeight = CGFloat(bakeCount) * shopBagVC.cellHeight
-            let oy = view.frame.height - bagBarHeight - shopBagVC.tableView.frame.origin.y - bakesHeight
+            let sections = CGFloat(shopBagVC.tableView.numberOfSections)
+            let headerHeight = sections * shopBagVC.headerHeight
+            let oy = view.frame.height - bagBarHeight - shopBagVC.tableView.frame.origin.y - bakesHeight - headerHeight
             let y = oy < originBagViewY ? originBagViewY : oy
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
                 self.bagView.frame.origin.y = y!
@@ -819,10 +822,31 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     func shouldReturn(view: UIView, swipeDown: Bool) -> Bool {
         if view.classForCoder == ShopBuyBakeTableView.self {
-            if shopBuyVC.bakeTableView.contentOffset.y > 0 || shopPreVC.bakeTableView.contentOffset.y > 0 {
+            if shopBuyVC.bakeTableView.contentOffset.y > 0 {
                 // watching the menu, return the pan gesture
                 return true
-            } else if shopBuyVC.bakeTableView.contentOffset.y == 0 && shopPreVC.bakeTableView.contentOffset.y == 0 {
+            } else if shopBuyVC.bakeTableView.contentOffset.y == 0 {
+                if shopViewStartY == topViewHeight {
+                    if swipeDown {
+                        // start swipe down
+                        if runningMenuAnimators.first?.fractionComplete == nil {
+                            // starting to watch the menu, return the pan gesture
+                            shopBuyVC.bakeTableView.shouldScroll = true
+                            shopPreVC.bakeTableView.shouldScroll = true
+                            setTableViews(true)
+                            return true
+                        }
+                    } else {
+                        // start swipe up
+                        setTableViewsAndReset()
+                    }
+                }
+            }
+        } else if view.classForCoder == ShopPreBakeTableView.self {
+            if shopPreVC.bakeTableView.contentOffset.y > 0 {
+                // watching the menu, return the pan gesture
+                return true
+            } else if shopPreVC.bakeTableView.contentOffset.y == 0 {
                 if shopViewStartY == topViewHeight {
                     if swipeDown {
                         // start swipe down

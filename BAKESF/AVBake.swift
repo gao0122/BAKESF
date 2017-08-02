@@ -18,6 +18,7 @@ class AVBake: AVObject, AVSubclassing {
     @NSManaged var stock: NSNumber? // 0, 1 or 2
     @NSManaged var monthly: NSNumber?
     @NSManaged var amount: NSNumber?
+    @NSManaged var amountPreLimit: NSNumber? 
     @NSManaged var price: NSNumber?
     @NSManaged var priority: NSNumber?
     
