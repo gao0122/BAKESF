@@ -519,12 +519,12 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func blurAnimator(duration: TimeInterval, state: AniState) -> UIViewPropertyAnimator {
-        let timing: UITimingCurveProvider
+        var timing: UITimingCurveProvider
         switch state {
         case .expanded:
-            timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.4, y: 0.6), controlPoint2: CGPoint(x: 0.6, y: 0.8))
+            timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.4, y: 0.2), controlPoint2: CGPoint(x: 0.7, y: 0.05))
         case .collapsed:
-            timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.6, y: 0.4), controlPoint2: CGPoint(x: 0.8, y: 0.6))
+            timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.4, y: 0.8), controlPoint2: CGPoint(x: 0.7, y: 0.95))
         }
         let blurAnimator = UIViewPropertyAnimator(duration: duration, timingParameters: timing)
         blurAnimator.addAnimations({
@@ -964,9 +964,16 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     func menuContinueInteractiveTransition(cancel: Bool) {
         if cancel { menuAnimateOrReverseRunningTransition(state: menuAniState, duration: menuAniDuration) }
-        runningMenuAnimators.forEach { $0.continueAnimation(withTimingParameters: nil, durationFactor: 1) }
+        runningMenuAnimators.forEach {
+            if let _ = $0.timingParameters?.cubicTimingParameters {
+                // continue blur animator
+                let timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.4, y: 0.8), controlPoint2: CGPoint(x: 0.7, y: 0.95))
+                $0.continueAnimation(withTimingParameters: timing, durationFactor: 1)
+            } else {
+                $0.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+            }
+        }
     }
-
     
 }
 
