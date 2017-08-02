@@ -68,6 +68,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     var shopViewStartY: CGFloat!
     var originBagBarY: CGFloat!
     var originBagViewY: CGFloat!
+    var lastPanY: CGFloat!
     
     var menuAniState: AniState = .collapsed
     var runningMenuAnimators = [UIViewPropertyAnimator]()
@@ -780,7 +781,6 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         if runningMenuAnimators.isEmpty {
             menuAnimateTransitionIfNeeded(state: state, duration: duration)
         } else {
-            printit("\(runningMenuAnimators.first?.isReversed)")
             runningMenuAnimators.forEach { $0.isReversed = !$0.isReversed }
             switchMenuState()
         }
@@ -800,10 +800,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             startTranslationY = sender.location(in: self.view).y
             menuStartInteractiveTransition(state: menuAniState, duration: menuAniDuration)
         case .changed:
-            if sender.numberOfTouches == 0 { break }
-            let y = sender.location(ofTouch: 0, in: self.view).y
-            let ty = y - startTranslationY
-            let fraction = computeFraction(velocity: velocity, ty: ty, locationY: sender.location(ofTouch: 0, in: self.view).y)
+            let fraction = computeFraction(sender: sender, velocity: velocity)
             menuUpdateInteractiveTransition(fractionComplete: fraction)
         case .ended:
             let cancel: Bool
@@ -899,6 +896,19 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         menuProgressWhenInterrupted = runningMenuAnimators.map { $0.fractionComplete }
     }
     
+    func computeFraction(sender: UIPanGestureRecognizer, velocity: CGPoint) -> CGFloat {
+        let y: CGFloat
+        if sender.numberOfTouches == 0 {
+            y = lastPanY
+        } else {
+            y = sender.location(ofTouch: 0, in: self.view).y
+            lastPanY = y
+        }
+        let ty = y - startTranslationY
+        let fraction = computeFraction(velocity: velocity, ty: ty, locationY: y)
+        return fraction
+    }
+    
     func computeFraction(velocity: CGPoint, ty: CGFloat, locationY: CGFloat) -> CGFloat {
         var fraction: CGFloat = ty / (originShopY - topViewHeight)
         switch menuAniState {
@@ -953,11 +963,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func menuContinueInteractiveTransition(cancel: Bool) {
-        if cancel {
-            menuAnimateOrReverseRunningTransition(state: menuAniState, duration: menuAniDuration)
-        }
-        let timing = UISpringTimingParameters(dampingRatio: 1)
-        runningMenuAnimators.forEach { $0.continueAnimation(withTimingParameters: timing, durationFactor: 1) }
+        if cancel { menuAnimateOrReverseRunningTransition(state: menuAniState, duration: menuAniDuration) }
+        runningMenuAnimators.forEach { $0.continueAnimation(withTimingParameters: nil, durationFactor: 1) }
     }
 
     
