@@ -780,6 +780,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         if runningMenuAnimators.isEmpty {
             menuAnimateTransitionIfNeeded(state: state, duration: duration)
         } else {
+            printit("\(runningMenuAnimators.first?.isReversed)")
             runningMenuAnimators.forEach { $0.isReversed = !$0.isReversed }
             switchMenuState()
         }
@@ -821,6 +822,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func shouldReturn(view: UIView, swipeDown: Bool) -> Bool {
+        if startMenuState == .expanded && swipeDown && shopView.frame.origin.y == topViewHeight { return true }
+        if startMenuState == .collapsed && !swipeDown && shopView.frame.origin.y == originShopY { return true }
         if view.classForCoder == ShopBuyBakeTableView.self {
             if shopBuyVC.bakeTableView.contentOffset.y > 0 {
                 // watching the menu, return the pan gesture
@@ -935,9 +938,11 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             }
         }
         // if interrupted
-        if menuProgressWhenInterrupted.first! > 0 {
-            fraction = ty < 0 ? fraction : -fraction
-            fraction = startMenuState == .collapsed ? fraction : -fraction
+        if let frac = menuProgressWhenInterrupted.first {
+            if frac > 0 {
+                fraction = ty < 0 ? fraction : -fraction
+                fraction = startMenuState == .collapsed ? fraction : -fraction
+            }
         }
         return fraction
     }

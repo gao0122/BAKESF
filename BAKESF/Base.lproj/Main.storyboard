@@ -868,7 +868,7 @@
                                     <segue destination="Mhy-30-k4X" kind="unwind" identifier="unwindToHomeFromShop" unwindAction="unwindToHomeShopVCWithSegue:" id="71S-eN-0h3"/>
                                 </connections>
                             </button>
-                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ukQ-ua-M9u" userLabel="shopping">
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ukQ-ua-M9u" userLabel="Shop View">
                                 <rect key="frame" x="2" y="66" width="410" height="670"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <connections>
