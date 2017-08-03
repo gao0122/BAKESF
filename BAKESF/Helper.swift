@@ -121,10 +121,10 @@ func calStarsWidth(byStarWidth width: CGFloat, stars: CGFloat) -> CGFloat {
 func determineSections(_ avshop: AVShop) -> Int {
     let bakeInBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count
     let bakePreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count
-    if bakeInBag == 0 && bakePreOrder == 0 { return 0 }
-    else if bakeInBag > 0 && bakePreOrder == 0 { return 2 }
-    else if bakeInBag == 0 && bakePreOrder > 0 { return 3 }
-    else { return 4 }
+    if bakeInBag == 0 && bakePreOrder == 0 { return 0 }     // none
+    else if bakeInBag > 0 && bakePreOrder == 0 { return 2 } // only in bag
+    else if bakeInBag == 0 && bakePreOrder > 0 { return 3 } // only pre order
+    else { return 4 }                                       // both
 }
 
 

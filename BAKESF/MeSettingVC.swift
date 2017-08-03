@@ -8,18 +8,14 @@
 
 import UIKit
 
-class MeSettingVC: UIViewController, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource {
+class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
     
     var settingPwdVC: MeSettingPwdVC!
     
-    var edgePanGesture: UIScreenEdgePanGestureRecognizer!
-    
     var avbaker: AVBaker!
     var user: UserRealm!
-    var navigationDelegate: NavigationControllerDelegate?
-    let edgePanGestrue = UIScreenEdgePanGestureRecognizer()
     
     var settingDict: [Int: [String]]!
     
@@ -30,10 +26,6 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate, UITableViewDel
         super.viewDidLoad()
         
         settingPwdVC = MeSettingPwdVC.instantiateFromStoryboard()
-        
-        //edgePanGestrue.edges = .left
-        //edgePanGestrue.addTarget(self, action: #selector(MeSettingVC.panGestureToMeFromSetting(_:)))
-        //view.addGestureRecognizer(edgePanGestrue)
         
         if let usr = RealmHelper.retrieveCurrentUser() {
             user = usr
@@ -111,33 +103,6 @@ class MeSettingVC: UIViewController, UIGestureRecognizerDelegate, UITableViewDel
                 }
             }
         })
-    }
-    
-
-    func panGestureToMeFromSetting(_ sender: UIScreenEdgePanGestureRecognizer) {
-        let translationX = sender.translation(in: view).x
-        let translationBase: CGFloat = view.frame.width
-        let translationAbs = translationX > 0 ? translationX : -translationX
-        let percent = translationAbs > translationBase ? 1.0 : translationAbs / translationBase
-        
-        switch sender.state {
-        case .began:
-            navigationDelegate = self.navigationController?.delegate as? NavigationControllerDelegate
-            navigationDelegate?.interactive = true
-            self.performSegue(withIdentifier: "unwindToMeFromSetting", sender: sender)
-        case .changed:
-            navigationDelegate?.interactionController.update(percent)
-        case .cancelled, .ended:
-            // if the half of the view is dismissed or the x velocity is very large
-            if percent > 0.5 || sender.velocity(in: view!).x > 1000 {
-                navigationDelegate?.interactionController.finish()
-            } else {
-                navigationDelegate?.interactionController.cancel()
-            }
-            navigationDelegate?.interactive = false
-        default:
-            break
-        }
     }
     
     

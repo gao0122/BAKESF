@@ -12,7 +12,7 @@ import AVOSCloud
 
 let TEST = false
 
-class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate {
+class MeLoginVC: UIViewController, UITextFieldDelegate {
 
     enum LoginMethod {
         case pwd, msg
@@ -34,9 +34,6 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     
     var avbaker: AVBaker!
     var userRealm: UserRealm!
-    
-    var navigationDelegate: NavigationControllerDelegate?
-    let edgePanGestrue = UIScreenEdgePanGestureRecognizer()
     
     var users: Results<UserRealm>!
     let totalSeconds = 42 + 3
@@ -61,10 +58,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         msgOrPwdTextField.delegate = self
         phoneTextField.delegate = self
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
-        //edgePanGestrue.edges = .left
-        //edgePanGestrue.addTarget(self, action: #selector(MeLoginVC.screenEdgePanBackToMeFromLogin(_:)))
-        //view.addGestureRecognizer(edgePanGestrue)
-        
+
         users = RealmHelper.retrieveUsers()
         
         getMsgBtn.layer.cornerRadius = 2
@@ -90,9 +84,6 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         
     }
     
-    deinit {
-        edgePanGestrue.removeTarget(self, action: #selector(MeLoginVC.screenEdgePanBackToMeFromLogin(_:)))
-    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let id = segue.identifier {
@@ -470,32 +461,6 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
         timer = Timer()
         seconds = 0
         resetGetMsgBtn()
-    }
-    
-    func screenEdgePanBackToMeFromLogin(_ sender: UIScreenEdgePanGestureRecognizer) {
-        let translationX = sender.translation(in: view).x
-        let translationBase: CGFloat = view.frame.width
-        let translationAbs = translationX > 0 ? translationX : -translationX
-        let percent = translationAbs > translationBase ? 1.0 : translationAbs / translationBase
-        
-        switch sender.state {
-        case .began:
-            navigationDelegate = self.navigationController?.delegate as? NavigationControllerDelegate
-            navigationDelegate?.interactive = true
-            self.performSegue(withIdentifier: unwindSegueID, sender: sender)
-        case .changed:
-            navigationDelegate?.interactionController.update(percent)
-        case .cancelled, .ended:
-            // if the half of the view is dismissed or the x velocity is very large
-            if percent > 0.5 || sender.velocity(in: view!).x > 1000 {
-                navigationDelegate?.interactionController.finish()
-            } else {
-                navigationDelegate?.interactionController.cancel()
-            }
-            navigationDelegate?.interactive = false
-        default:
-            break
-        }
     }
     
 }

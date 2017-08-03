@@ -65,6 +65,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
+    @IBAction func checkOutBtnPressed(_ sender: Any) {
+        
+    }
     
     @IBAction func segmentedControlChanged(_ sender: Any) {
         switch segmentedControl.selectedSegmentIndex {
@@ -107,8 +110,68 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case 0:
             switch section {
             case 0:
-                return 3 // 现货或预订，配送时间，收货地址
+                // 现货或预订，配送时间，收货地址
+                let sections = determineSections(avshop)
+                if segmentedControl == nil { return 3 }
+                switch segmentedControl.selectedSegmentIndex {
+                case 0:
+                    switch sections {
+                    case 2, 4:
+                        return 3
+                    case 3:
+                        return 1
+                    default:
+                        break
+                    }
+                case 1:
+                    switch sections {
+                    case 2, 3:
+                        return 3
+                    case 4:
+                        return 5
+                    default:
+                        break
+                    }
+                case 2:
+                    switch sections {
+                    case 2:
+                        return 1
+                    case 3, 4:
+                        return 3
+                    default:
+                        break
+                    }
+                default:
+                    break
+                }
             case 1:
+                let sections = determineSections(avshop)
+                if segmentedControl == nil { return bakes.count + 3 }
+                switch segmentedControl.selectedSegmentIndex {
+                case 0:
+                    switch sections {
+                    case 3:
+                        return 1
+                    default:
+                        break
+                    }
+                case 1:
+                    switch sections {
+                    case 4:
+                        return bakes.count + 4
+                    default:
+                        break
+                    }
+                case 2:
+                    switch sections {
+                    case 2:
+                        return 1
+                    default:
+                        break
+                    }
+                default:
+                    break
+                }
                 return bakes.count + 3 // 配送费，红包，总计
             case 2:
                 return 3 // 支付方式，订单备注，发票
@@ -141,119 +204,74 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     return cell
                 case 1:
                     // delivery time
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableCell", for: indexPath) as! ShopCheckDeliveryTimeTableCell
-                    return cell
+                    return deliveryTimeCell(indexPath)
                 case 2:
                     // delivery address
                     if userRealm == nil {
-                        let cell = UITableViewCell()
-                        let label: UILabel = {
-                            let label = UILabel()
-                            label.frame = CGRect(x: (cell.frame.width - 300) / 2, y: (cell.frame.height - 24) / 2, width: 300, height: 24)
-                            label.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleLeftMargin, .flexibleWidth]
-                            label.text = "立即登录"
-                            label.textColor = .buttonBlue
-                            label.textAlignment = .center
-                            return label
-                        }()
-                        cell.addSubview(label)
-                        return cell
+                        return loginCell()
                     } else {
-                        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckAddressTableCell", for: indexPath) as! ShopCheckAddressTableCell
-                        return cell
+                        return deliveryAddressCell(indexPath)
+                    }
+                case 3:
+                    let sections = determineSections(avshop)
+                    switch segmentedControl.selectedSegmentIndex {
+                    case 1:
+                        switch sections {
+                        case 4:
+                            if userRealm != nil {
+                                // delivery time
+                                return deliveryTimeCell(indexPath, preOrder: true)
+                            }
+                        default:
+                            break
+                        }
+                    default:
+                        break
+                    }
+                case 4:
+                    let sections = determineSections(avshop)
+                    switch segmentedControl.selectedSegmentIndex {
+                    case 1:
+                        switch sections {
+                        case 4:
+                            if userRealm != nil {
+                                // delivery address
+                                return deliveryAddressCell(indexPath, preOrder: true)
+                            }
+                        default:
+                            break
+                        }
+                    default:
+                        break
                     }
                 default:
                     break
                 }
             case 1:
+                let sections = determineSections(avshop)
+                let sc = segmentedControl.selectedSegmentIndex
                 switch row {
                 case bakes.count:
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
-                    guard let fee = avshop.deliveryFee as? Double else { break }
-                    cell.priceLabel.alpha = 1
-                    cell.nameLabel.alpha = 1
-                    cell.amountLabel.alpha = 0
-                    cell.nameLabel.text = "配送费"
-                    cell.priceLabel.text = "¥ \(fee.fixPriceTagFormat())"
-                    return cell
+                    return deliveryFeeCell(indexPath)
                 case bakes.count + 1:
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
-                    cell.priceLabel.alpha = 1
-                    cell.nameLabel.alpha = 1
-                    cell.amountLabel.alpha = 0
-                    cell.nameLabel.text = "红包"
-                    cell.priceLabel.text = "0个可用"
-                    return cell
+                    if sections == 4 && sc == 1 {
+                        return deliveryFeeCell(indexPath, preOrder: true)
+                    } else {
+                        return redPacketCell(indexPath)
+                    }
                 case bakes.count + 2:
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
-                    guard var fee = avshop.deliveryFee as? Double else { break }
-                    switch segmentedControl.selectedSegmentIndex {
-                    case 0:
-                        fee += RealmHelper.retrieveBakesInBagCost(avshopID: avshop.objectId!)
-                    case 1:
-                        fee += RealmHelper.retrieveAllBakesCost(avshopID: avshop.objectId!)
-                    case 2:
-                        fee += RealmHelper.retrieveBakesPreOrderCost(avshopID: avshop.objectId!)
-                    default:
-                        break
+                    if sections == 4 && sc == 1 {
+                        return redPacketCell(indexPath)
+                    } else {
+                        return totalFeeCell(indexPath)
                     }
-                    cell.priceLabel.alpha = 1
-                    cell.nameLabel.alpha = 0
-                    cell.amountLabel.alpha = 1
-                    cell.amountLabel.text = "总计"
-                    cell.priceLabel.text = "¥ \(fee.fixPriceTagFormat())"
-                    return cell
+                case bakes.count + 3:
+                    return totalFeeCell(indexPath)
                 default:
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
-                    cell.amountLabel.alpha = 1
-                    cell.priceLabel.alpha = 1
-                    cell.nameLabel.alpha = 1
-                    switch segmentedControl.selectedSegmentIndex {
-                    case 0:
-                        guard let bake = bakes[row] as? BakeInBagRealm else { break }
-                        cell.nameLabel.text = bake.name
-                        cell.amountLabel.text = "×\(bake.amount)"
-                        cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
-                    case 1:
-                        if let bake = bakes[row] as? BakePreOrderRealm {
-                            cell.nameLabel.text = bake.name + "（预）"
-                            cell.amountLabel.text = "×\(bake.amount)"
-                            cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
-                        } else if let bake = bakes[row] as? BakeInBagRealm {
-                            cell.nameLabel.text = bake.name
-                            cell.amountLabel.text = "×\(bake.amount)"
-                            cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
-                        }
-                    case 2:
-                        guard let bake = bakes[row] as? BakePreOrderRealm else { break }
-                        cell.nameLabel.text = bake.name
-                        cell.amountLabel.text = "×\(bake.amount)"
-                        cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
-                    default:
-                        break
-                    }
-                    return cell
+                    return bakeItemCell(indexPath)
                 }
             case 2:
-                let cell = UITableViewCell()
-                let label: UILabel = {
-                    let label = UILabel()
-                    label.frame = CGRect(x: 15, y: 9, width: 250, height: 24)
-                    label.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleWidth]
-                    return label
-                }()
-                cell.addSubview(label)
-                switch row {
-                case 0:
-                    label.text = "支付方式"
-                case 1:
-                    label.text = "订单备注"
-                case 2:
-                    label.text = "发票"
-                default:
-                    break
-                }
-                return cell
+                return otherCell(indexPath)
             default:
                 break
             }
@@ -266,6 +284,143 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         return UITableViewCell()
     }
+    
+    // Table Cells
+    private func totalFeeCell(_ indexPath: IndexPath) -> ShopCheckBakeTableCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
+        // TODO: Delivery fee part
+        guard var fee = avshop.deliveryFee as? Double else { return cell }
+        let sections = determineSections(avshop)
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            fee += RealmHelper.retrieveBakesInBagCost(avshopID: avshop.objectId!)
+        case 1:
+            if sections == 4 { fee += fee } // TODO: in bag fee plus pre order fee
+            fee += RealmHelper.retrieveAllBakesCost(avshopID: avshop.objectId!)
+        case 2:
+            fee += RealmHelper.retrieveBakesPreOrderCost(avshopID: avshop.objectId!)
+        default:
+            break
+        }
+        cell.priceLabel.alpha = 1
+        cell.nameLabel.alpha = 0
+        cell.amountLabel.alpha = 1
+        cell.amountLabel.text = "总计"
+        cell.priceLabel.text = "¥ \(fee.fixPriceTagFormat())"
+        return cell
+    }
+    
+    private func redPacketCell(_ indexPath: IndexPath) -> ShopCheckBakeTableCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
+        cell.priceLabel.alpha = 1
+        cell.nameLabel.alpha = 1
+        cell.amountLabel.alpha = 0
+        cell.nameLabel.text = "红包"
+        cell.priceLabel.text = "0个可用"
+        return cell
+    }
+    
+    private func deliveryFeeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckBakeTableCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
+        guard let fee = avshop.deliveryFee as? Double else { return cell }
+        cell.priceLabel.alpha = 1
+        cell.nameLabel.alpha = 1
+        cell.amountLabel.alpha = 0
+        cell.nameLabel.text = "配送费" + (preOrder ? "（预）" : "")
+        cell.priceLabel.text = "¥ \(fee.fixPriceTagFormat())"
+        return cell
+    }
+    
+    private func bakeItemCell(_ indexPath: IndexPath) -> ShopCheckBakeTableCell {
+        let row = indexPath.row
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
+        cell.amountLabel.alpha = 1
+        cell.priceLabel.alpha = 1
+        cell.nameLabel.alpha = 1
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            guard let bake = bakes[row] as? BakeInBagRealm else { break }
+            cell.nameLabel.text = bake.name
+            cell.amountLabel.text = "×\(bake.amount)"
+            cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
+        case 1:
+            if let bake = bakes[row] as? BakePreOrderRealm {
+                cell.nameLabel.text = bake.name + "（预）"
+                cell.amountLabel.text = "×\(bake.amount)"
+                cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
+            } else if let bake = bakes[row] as? BakeInBagRealm {
+                cell.nameLabel.text = bake.name
+                cell.amountLabel.text = "×\(bake.amount)"
+                cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
+            }
+        case 2:
+            guard let bake = bakes[row] as? BakePreOrderRealm else { break }
+            cell.nameLabel.text = bake.name
+            cell.amountLabel.text = "×\(bake.amount)"
+            cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
+        default:
+            break
+        }
+        return cell
+    }
+    
+    private func otherCell(_ indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        let label: UILabel = {
+            let label = UILabel()
+            label.frame = CGRect(x: 15, y: 9, width: 250, height: 24)
+            label.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleWidth]
+            return label
+        }()
+        cell.addSubview(label)
+        switch indexPath.row {
+        case 0:
+            label.text = "支付方式"
+        case 1:
+            label.text = "订单备注"
+        case 2:
+            label.text = "发票"
+        default:
+            break
+        }
+        return cell
+    }
+    
+    private func loginCell() -> UITableViewCell {
+        let cell = UITableViewCell()
+        let label: UILabel = {
+            let label = UILabel()
+            label.frame = CGRect(x: (cell.frame.width - 300) / 2, y: (cell.frame.height - 24) / 2, width: 300, height: 24)
+            label.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleLeftMargin, .flexibleWidth]
+            label.text = "立即登录"
+            label.textColor = .buttonBlue
+            label.textAlignment = .center
+            return label
+        }()
+        cell.addSubview(label)
+        return cell
+    }
+    
+    private func deliveryTimeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckDeliveryTimeTableCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableCell", for: indexPath) as! ShopCheckDeliveryTimeTableCell
+        if preOrder {
+            if !cell.arrivalTime.text!.contains("（预）") {
+                cell.arrivalTime.text = cell.arrivalTime.text! + "（预）"
+            }
+        }
+        return cell
+    }
+    
+    private func deliveryAddressCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckAddressTableCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckAddressTableCell", for: indexPath) as! ShopCheckAddressTableCell
+        if preOrder {
+            if !cell.phoneLabel.text!.contains("（预）") {
+                cell.phoneLabel.text = cell.phoneLabel.text! + "（预）"
+            }
+        }
+        return cell
+    }
+    
     
     // Did Select Row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -368,6 +523,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case 0:
             switch row {
             case 2:
+                return 72
+            case 4:
                 return 72
             default:
                 break
