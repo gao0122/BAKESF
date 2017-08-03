@@ -39,6 +39,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         _ = checkCurrentUser()
         
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         deliveryTimeView.frame.origin.y = view.frame.height
         nameLabel.text = avshop.name!
         bakes = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
@@ -185,7 +186,17 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     return cell
                 case bakes.count + 2:
                     let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
-                    let fee = RealmHelper.retrieveAllBakesCost()
+                    guard var fee = avshop.deliveryFee as? Double else { break }
+                    switch segmentedControl.selectedSegmentIndex {
+                    case 0:
+                        fee += RealmHelper.retrieveBakesInBagCost(avshopID: avshop.objectId!)
+                    case 1:
+                        fee += RealmHelper.retrieveAllBakesCost(avshopID: avshop.objectId!)
+                    case 2:
+                        fee += RealmHelper.retrieveBakesPreOrderCost(avshopID: avshop.objectId!)
+                    default:
+                        break
+                    }
                     cell.priceLabel.alpha = 1
                     cell.nameLabel.alpha = 0
                     cell.amountLabel.alpha = 1
@@ -385,11 +396,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             break
         }
         return 44
-    }
-    
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if tableView.tag > 0 { return 0 }
-        return section == sectionCount - 1 ? 15 : 0
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

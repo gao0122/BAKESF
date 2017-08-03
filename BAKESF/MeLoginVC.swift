@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 import AVOSCloud
 
-let TEST = true
+let TEST = false
 
 class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate {
 
@@ -279,8 +279,9 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
     }
     
     @IBAction func loginBtnPressed(_ sender: Any) {
-        if self.phoneTextField.text!.characters.count > 0 {
-            if self.phoneNum == phoneTextField.text {
+        guard let phoneText = self.phoneTextField.text else { return }
+        if phoneText.characters.count > 0 {
+            if self.phoneNum == phoneText || self.loginMethod == .pwd {
                 if let code = msgOrPwdTextField.text {
                     if code.characters.count > 0 {
                         if self.loginState != .loggingIn {
@@ -288,18 +289,20 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                             self.loginState = .loggingIn
                             if TEST {
                                 if loginMethod == .msg {
-                                    self.loginByMsg(sender)
+                                    self.doLogin(sender)
                                 } else {
-                                    
+                                    self.phoneNum = phoneText
+                                    self.doLogin(sender)
                                 }
                                 self.loginBtn.isEnabled = true
                                 self.loginState = .normal
+                                return
+                            }
+                            if loginMethod == .msg {
+                                self.commitSmsCode(code: code, sender: sender)
                             } else {
-                                if loginMethod == .msg {
-                                    self.commitSmsCode(code: code, sender: sender)
-                                } else {
-                                    self.commitPassword(pwd: code)
-                                }
+                                self.phoneNum = phoneText
+                                self.commitPassword(pwd: code)
                             }
                         }
                     } else {
@@ -328,10 +331,16 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
             if error == nil {
                 if let baker = objects?.first as? AVBaker {
                     self.avbaker = baker
-                    return
+                    self.userID = baker.objectId!
+                    self.doLogin(self)
+                } else {
+                    self.view.notify(text: "手机号或密码错误", color: .alertRed)
                 }
+            } else {
+                self.view.notify(text: "手机号或密码错误", color: .alertRed)
             }
-            // TODO: Error handling
+            self.loginBtn.isEnabled = true
+            self.loginState = .normal
         })
     }
     
@@ -347,23 +356,25 @@ class MeLoginVC: UIViewController, UITextFieldDelegate, UIGestureRecognizerDeleg
                 }
                 print(error.localizedDescription)
             } else {
-                self.loginByMsg(sender)
+                self.doLogin(sender)
             }
             self.loginBtn.isEnabled = true
             self.loginState = .normal
         })
     }
     
-    func loginByMsg(_ sender: Any) {
+    func doLogin(_ sender: Any) {
         var isFirstLogin = false
-        let baker = retrieveBaker(withPhone: self.phoneNum)!
+        if avbaker == nil {
+            avbaker = retrieveBaker(withPhone: self.phoneNum)!
+        }
         if let usr = RealmHelper.retrieveUser(withID: self.userID) {
             userRealm = usr
             isFirstLogin = false
         } else {
             isFirstLogin = true
         }
-        self.retrieveHeadphotoAndSetUser(baker: baker, first: isFirstLogin)
+        self.retrieveHeadphotoAndSetUser(baker: avbaker, first: isFirstLogin)
         self.loginState = .normal
     }
     

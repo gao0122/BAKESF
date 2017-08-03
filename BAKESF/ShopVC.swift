@@ -966,7 +966,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         if cancel { menuAnimateOrReverseRunningTransition(state: menuAniState, duration: menuAniDuration) }
         runningMenuAnimators.forEach {
             if let _ = $0.timingParameters?.cubicTimingParameters {
-                // continue blur animator
+                // continue blur animator, blurview can not use dampingRatio timing mode
                 let timing = UICubicTimingParameters(controlPoint1: CGPoint(x: 0.4, y: 0.8), controlPoint2: CGPoint(x: 0.7, y: 0.95))
                 $0.continueAnimation(withTimingParameters: timing, durationFactor: 1)
             } else {
