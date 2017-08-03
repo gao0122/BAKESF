@@ -21,8 +21,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var deliveryTimeView: UIView!
     @IBOutlet weak var deliveryTimeViewCancelBtn: UIButton!
     
-    
     var segmentedControl: UISegmentedControl!
+    let deliveryAddressVC = DeliveryAddressVC()
     
     let sectionCount = 3
     
@@ -208,7 +208,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 case 2:
                     // delivery address
                     if userRealm == nil {
-                        return loginCell()
+                        return centerTextCell("立即登录", color: .buttonBlue)
                     } else {
                         return deliveryAddressCell(indexPath)
                     }
@@ -252,7 +252,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 let sc = segmentedControl.selectedSegmentIndex
                 switch row {
                 case bakes.count:
-                    return deliveryFeeCell(indexPath)
+                    if tableView.numberOfRows(inSection: section) == 1 {
+                        let cell = centerTextCell("袋子空空的", color: .bkBlack)
+                        cell.selectionStyle = .none
+                        return cell
+                    } else {
+                        return deliveryFeeCell(indexPath)
+                    }
                 case bakes.count + 1:
                     if sections == 4 && sc == 1 {
                         return deliveryFeeCell(indexPath, preOrder: true)
@@ -386,14 +392,14 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    private func loginCell() -> UITableViewCell {
+    private func centerTextCell(_ text: String, color: UIColor) -> UITableViewCell {
         let cell = UITableViewCell()
         let label: UILabel = {
             let label = UILabel()
             label.frame = CGRect(x: (cell.frame.width - 300) / 2, y: (cell.frame.height - 24) / 2, width: 300, height: 24)
             label.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleLeftMargin, .flexibleWidth]
-            label.text = "立即登录"
-            label.textColor = .buttonBlue
+            label.text = text
+            label.textColor = color
             label.textAlignment = .center
             return label
         }()
@@ -440,7 +446,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         performSegue(withIdentifier: "showLoginFromShopChecking", sender: self)
                     } else {
                         // delivery address
-                        
+                        show(deliveryAddressVC, sender: self)
                     }
                     break
                 default:

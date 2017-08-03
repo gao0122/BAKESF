@@ -18,8 +18,10 @@ class DeliveryAddressVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         
+        view = UIView(frame: UIScreen.main.bounds)
+        view.backgroundColor = .white
+        view.addSubview(tableView)
     }
 
     

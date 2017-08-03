@@ -116,13 +116,14 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                 guard let vc = segue.destination as? ShopCheckingVC else { break }
                 vc.shopVC = self
                 vc.avshop = self.avshop
+                self.animateShopIfNeeded()
             default:
                 break
             }
         }
     }
     
-    override func unwind(for unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
+    @IBAction func unwindToShopVC(segue: UIStoryboardSegue) {
         
     }
     

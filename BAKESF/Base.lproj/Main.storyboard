@@ -486,6 +486,9 @@
                                 <rect key="frame" x="20" y="27" width="15" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="back"/>
+                                <connections>
+                                    <segue destination="ccS-WK-PJc" kind="unwind" unwindAction="unwindToShopVCWithSegue:" id="uAV-vc-SEl"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="店名" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="YOK-b5-ZXh">
                                 <rect key="frame" x="107" y="29" width="201" height="22"/>
@@ -714,6 +717,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="h76-jW-DMG" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="ccS-WK-PJc" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="4305.7971014492759" y="-1722.554347826087"/>
         </scene>
