@@ -39,10 +39,10 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         _ = checkCurrentUser()
         
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         deliveryTimeView.frame.origin.y = view.frame.height
         nameLabel.text = avshop.name!
         bakes = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         
     }
 
