@@ -269,6 +269,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         case 1:
             let cell = tableView.cellForRow(at: indexPath) as! ShopBuyBakeTableCell
             // TODO: - bake selection
+            let avbake = cell.bake
+            _ = avbake?.amount
         default:
             break
         }

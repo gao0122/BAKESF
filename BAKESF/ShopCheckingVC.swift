@@ -41,8 +41,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         deliveryTimeView.frame.origin.y = view.frame.height
         nameLabel.text = avshop.name!
-        bakes = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
+        bakes = RealmHelper.retrieveAllBakes(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
+        
         
     }
 
@@ -65,6 +66,32 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
+    
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+        guard let id = segue.identifier else { return }
+        switch id {
+        case "showLoginFromShopChecking":
+            guard let loginVC = segue.destination as? MeLoginVC else { break }
+            loginVC.showSegueID = id
+        case "showDeliveryAddressFromShopCheckingVC":
+            guard let daVC = segue.destination as? DeliveryAddressVC else { break }
+            daVC.avbaker = self.avbaker
+            show(daVC, sender: self)
+        default:
+            break
+        }
+    }
+    
+    @IBAction func unwindToShopCheckingVC(segue: UIStoryboardSegue) {
+        
+    }
+    
+
     @IBAction func checkOutBtnPressed(_ sender: Any) {
         
     }
@@ -437,16 +464,18 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             switch section {
             case 0:
                 switch row {
-                case 1:
+                case 1, 3:
                     // delivery time
-                    deliveryTimeSwitch()
-                case 2:
+                    // TODO: - deliveryTimeSwitch(row)
+                    break
+                case 2, 4:
                     if userRealm == nil {
                         // login
                         performSegue(withIdentifier: "showLoginFromShopChecking", sender: self)
                     } else {
                         // delivery address
-                        show(deliveryAddressVC, sender: self)
+                        let segue = UIStoryboardSegue(identifier: "showDeliveryAddressFromShopCheckingVC", source: self, destination: deliveryAddressVC)
+                        prepare(for: segue, sender: self)
                     }
                     break
                 default:
@@ -486,7 +515,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
-    func deliveryTimeSwitch(_ sender: UITapGestureRecognizer? = nil) {
+    func deliveryTimeSwitch(_ row: Int? = nil) {
         switch deliveryTimeViewState {
         case .collapsed:
             deliveryTimeViewState = .expanded
@@ -494,7 +523,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             bgView.restorationIdentifier = "bgView"
             bgView.alpha = 0
             bgView.backgroundColor = UIColor(hex: 0x121212, alpha: 0.84)
-            bgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopCheckingVC.deliveryTimeSwitch(_:))))
+            bgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopCheckingVC.deliveryTimeSwitchSelector(_:))))
             view.addSubview(bgView)
             view.bringSubview(toFront: deliveryTimeView)
             UIView.animate(withDuration: 0.32, delay: 0, usingSpringWithDamping: 0.84, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: {
@@ -518,6 +547,10 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 }
             })
         }
+    }
+    
+    func deliveryTimeSwitchSelector(_ sender: UITapGestureRecognizer) {
+        deliveryTimeSwitch()
     }
     
     // Height for Row
@@ -573,27 +606,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
 
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        guard let id = segue.identifier else { return }
-        switch id {
-        case "showLoginFromShopChecking":
-            guard let loginVC = segue.destination as? MeLoginVC else { break }
-            loginVC.showSegueID = id
-            //loginVC.backToMeBtn.addTarget(self, action: #selector(ShopCheckingVC.unwindToShopCheckingVC(segue:)), for: .touchUpInside)
-        default:
-            break
-        }
-    }
-
-    @IBAction func unwindToShopCheckingVC(segue: UIStoryboardSegue) {
-        
-    }
-    
     
     func checkCurrentUser() -> Bool {
         if let usr = RealmHelper.retrieveCurrentUser() {

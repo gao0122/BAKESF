@@ -29,3 +29,11 @@ let broadcastRandom: [String] = [
 let starWidth: CGFloat = 16.3
 let shopVCNameLabelHeight: CGFloat = 21
 let bagBarHeight: CGFloat = 50
+
+let screenHeight: CGFloat = {
+    return UIScreen.main.bounds.height
+}()
+let screenWidth: CGFloat = {
+    return UIScreen.main.bounds.width
+}()
+

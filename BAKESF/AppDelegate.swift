@@ -26,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Fabric.with([Crashlytics.self, Answers.self])
         
         self.window?.rootViewController?.tabBarController?.childViewControllers[2].removeFromParentViewController()
+        self.window?.rootViewController?.view.isMultipleTouchEnabled = false
         
         return true
     }
@@ -84,6 +85,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AVOrder.registerSubclass()
         AVBakeIn.registerSubclass()
         AVBakePre.registerSubclass()
+        AVAddress.registerSubclass()
     }
 }
 

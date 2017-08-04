@@ -57,6 +57,7 @@
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
 		00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */; };
 		00B491A91EE4CFE1000C63EB /* ShopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B491A81EE4CFE1000C63EB /* ShopVC.swift */; };
+		00BDA2DB1F34900000923D9F /* AVAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BDA2DA1F34900000923D9F /* AVAddress.swift */; };
 		00BF12651F28AE4400F67DF8 /* AVBakePre.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12641F28AE4400F67DF8 /* AVBakePre.swift */; };
 		00BF12671F28AF2400F67DF8 /* AVBakeIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12661F28AF2400F67DF8 /* AVBakeIn.swift */; };
 		00BF12691F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */; };
@@ -139,6 +140,7 @@
 		00B474DF1ECD656000ED1B7A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "Pods/../build/Debug-iphoneos/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
 		00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmHelper.swift; sourceTree = "<group>"; };
 		00B491A81EE4CFE1000C63EB /* ShopVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopVC.swift; sourceTree = "<group>"; };
+		00BDA2DA1F34900000923D9F /* AVAddress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVAddress.swift; sourceTree = "<group>"; };
 		00BF12641F28AE4400F67DF8 /* AVBakePre.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBakePre.swift; sourceTree = "<group>"; };
 		00BF12661F28AF2400F67DF8 /* AVBakeIn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBakeIn.swift; sourceTree = "<group>"; };
 		00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBagEmbedTableCell.swift; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 				00BF12661F28AF2400F67DF8 /* AVBakeIn.swift */,
 				00BF12641F28AE4400F67DF8 /* AVBakePre.swift */,
 				006B2E511F1B514B00C10BB9 /* AVOrder.swift */,
+				00BDA2DA1F34900000923D9F /* AVAddress.swift */,
 			);
 			name = AVObject;
 			sourceTree = "<group>";
@@ -602,6 +605,7 @@
 				00BF12691F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift in Sources */,
 				00455A851F15D4F5009F440F /* AVShop.swift in Sources */,
 				00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */,
+				00BDA2DB1F34900000923D9F /* AVAddress.swift in Sources */,
 				00D23BA01F14AFD0002E45B7 /* UIImage+Extensions.swift in Sources */,
 				001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */,
 				00CA4A7E1F1E093500541A4C /* ShopBagEmbedVC.swift in Sources */,
