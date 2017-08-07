@@ -25,6 +25,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Fabric.with([Crashlytics.self, Answers.self])
         
+        AMapServices.shared().apiKey = "398b7e40adc487593fb0f36f00a9991e"
+        
+        // 社区版块 - 暂时隐藏
         self.window?.rootViewController?.tabBarController?.childViewControllers[2].removeFromParentViewController()
         self.window?.rootViewController?.view.isMultipleTouchEnabled = false
         

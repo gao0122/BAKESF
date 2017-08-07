@@ -248,6 +248,7 @@ class RealmHelper {
         return total
     }
     
+    // All Bakes
     static func deleteAllBakesPreOrder(byShopID shopID: String? = nil) {
         let realm = try! Realm()
         try! realm.write {
@@ -286,9 +287,52 @@ class RealmHelper {
             return bakes
         }
     }
+    
     static func deleteAllBakes(byShopID shopID: String? = nil) {
         deleteAllBakesInBag(byShopID: shopID)
         deleteAllBakesPreOrder(byShopID: shopID)
     }
+
+    
+    // MARK: - Location
+    static func addLocation(by regeocode: AMapReGeocode) -> LocationRealm {
+        if let location = retrieveLocation() {
+            let realm = try! Realm()
+            try! realm.write {
+                setLocation(location, by: regeocode)
+            }
+            return location
+        } else {
+            let location = LocationRealm()
+            setLocation(location, by: regeocode)
+            let realm = try! Realm()
+            try! realm.write {
+                realm.add(location)
+            }
+            return location
+        }
+    }
+    private static func setLocation(_ location: LocationRealm, by regeocode: AMapReGeocode) {
+        guard let ac = regeocode.addressComponent else { return }
+        location.formatted = regeocode.formattedAddress
+        location.citycode = ac.citycode!
+        location.province = ac.province!
+        location.city = ac.city!
+        location.district = ac.district!
+        location.township = ac.township!
+        location.adcode = ac.adcode!
+        guard let street = ac.streetNumber else { return }
+        location.streetName = street.street!
+        location.streetNumber = street.number!
+        guard let aoi = regeocode.aois.first else { return }
+        location.aoisname = aoi.name
+    }
+    
+    static func retrieveLocation() -> LocationRealm? {
+        let realm = try! Realm()
+        return realm.objects(LocationRealm.self).first
+    }
+    
+    
 }
 

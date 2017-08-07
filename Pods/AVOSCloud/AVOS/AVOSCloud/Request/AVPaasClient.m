@@ -87,8 +87,13 @@ NSString *const LCHeaderFieldNameProduction = @"X-LC-Prod";
             [command appendCommandLineArgument:[NSString stringWithFormat:@"--cookie \"%@=%@\"", [cookie name], [cookie value]]];
         }
     }
+
+    NSMutableDictionary<NSString *, NSString *> *headers = [[self allHTTPHeaderFields] mutableCopy];
+
+    /* Remove signature for security. */
+    [headers removeObjectForKey:@"X-LC-Sign"];
     
-    for (id field in [self allHTTPHeaderFields]) {
+    for (NSString * field in headers) {
         [command appendCommandLineArgument:[NSString stringWithFormat:@"-H %@", [NSString stringWithFormat:@"'%@: %@'", field, [[self valueForHTTPHeaderField:field] stringByReplacingOccurrencesOfString:@"\'" withString:@"\\\'"]]]];
     }
 
@@ -589,11 +594,25 @@ NSString *const LCHeaderFieldNameProduction = @"X-LC-Prod";
                success:(void (^)(NSHTTPURLResponse *response, id responseObject))successBlock
                failure:(void (^)(NSHTTPURLResponse *response, id responseObject, NSError *error))failureBlock
 {
+    [self performRequest:request
+                 success:successBlock
+                 failure:failureBlock
+                    wait:NO];
+}
+
+- (void)performRequest:(NSURLRequest *)request
+               success:(void (^)(NSHTTPURLResponse *response, id responseObject))successBlock
+               failure:(void (^)(NSHTTPURLResponse *response, id responseObject, NSError *error))failureBlock
+                  wait:(BOOL)wait
+{
+    dispatch_semaphore_t semaphore;
     NSString *path = request.URL.path;
     AVLoggerDebug(AVLoggerDomainNetwork, LC_REST_REQUEST_LOG_FORMAT, path, [request cURLCommand]);
 
     NSDate *operationEnqueueDate = [NSDate date];
 
+    if (wait)
+        semaphore = dispatch_semaphore_create(0);
     NSURLSessionDataTask *dataTask = [self.sessionManager dataTaskWithRequest:request completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         /* As Apple say:
          > Whenever you make an HTTP request,
@@ -645,11 +664,17 @@ NSString *const LCHeaderFieldNameProduction = @"X-LC-Prod";
                 [statistician addIncrementalAttribute:1 forKey:@"total"];
             }
         }
+
+        if (wait)
+            dispatch_semaphore_signal(semaphore);
     }];
 
     [self.requestTable setObject:dataTask forKey:request.URL.absoluteString];
 
     [dataTask resume];
+
+    if (wait)
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 }
 
 - (BOOL)validateStatusCode:(NSInteger)statusCode {

@@ -2,7 +2,7 @@
 //  DeliveryAddressVC.swift
 //  BAKESF
 //
-//  Created by 高宇超 on 8/1/17.
+//  Created by 高宇超 on 8/6/17.
 //  Copyright © 2017 Yuchao. All rights reserved.
 //
 
@@ -10,45 +10,21 @@ import UIKit
 
 class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-    let tableView: UITableView = {
-        let tv = UITableView()
-        tv.frame = CGRect(x: 0, y: 64, width: screenWidth, height: screenHeight - 64 - 50)
-        return tv
-    }()
-    
-    let newAddressBtn: UIButton = {
-        let button = UIButton()
-        button.frame = CGRect(x: 0, y: screenHeight - 50, width: screenWidth, height: 50)
-        button.backgroundColor = .appleGreen
-        button.setTitle("＋", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.titleLabel!.font = UIFont(name: "System", size: 32)
-        return button
-    }()
-    
-    let backBtn: UIButton = {
-        let button = UIButton()
-        button.frame = CGRect(x: 15, y: 25, width: 12, height: 20)
-        button.setImage(UIImage(named: "back"), for: .normal)
-        button.addTarget(self, action: #selector(backBtnPressed(_:)), for: .touchUpInside)
-        return button
-    }()
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var addAddressBtn: UIButton!
     
     
-    var avbaker: AVBaker!
+    var deliveryAddressEditingVC: DeliveryAddressEditingVC!
     var addresses: [AVAddress]!
-    
+    var shopCheckingVC: ShopCheckingVC!
+    var avbaker: AVBaker!
+    var selectedAddr: AVAddress!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view = UIView(frame: UIScreen.main.bounds)
-        view.backgroundColor = .white
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(DeliveryAddressTableCell.self, forCellReuseIdentifier: "deliveryAddressTableCell")
-        view.addSubviews([newAddressBtn, tableView, backBtn])
-        
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
+
         let query = AVAddress.query()
         query.includeKey("Baker")
         query.whereKey("Baker", equalTo: avbaker)
@@ -66,22 +42,45 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
                 }
             }
         })
+        
+        
     }
 
-    
+
+    class func instantiateFromStoryboard() -> DeliveryAddressVC {
+        return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! DeliveryAddressVC
+    }
+
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        guard let id = segue.identifier else { return }
+        switch id {
+        case "unwindToShopCheckingVCFromDeliveryAddress":
+            break
+        case "showDeliveryAddressEditingVCFromDAVC":
+            show(deliveryAddressEditingVC, sender: self)
+        default:
+            break
+        }
     }
 
-    func backBtnPressed(_ sender: Any) {
+    
+    @IBAction func unwindToDeliveryAddressVC(segue: UIStoryboardSegue) {
+        
+    }
+
+    @IBAction func addAddressBtnPressed(_ sender: Any) {
         
     }
     
+    
+    
     // MARK: - TableView
+    //
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -89,38 +88,66 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return addresses == nil ? 0 : addresses.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressTableCell", for: indexPath) as! DeliveryAddressTableCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressTableCell") as! DeliveryAddressTableViewCell
         let row = indexPath.row
-        cell.nameLabel.text = addresses[row].address!
+        let addr = addresses[row]
+        let addrAddr = addr.address!
+        let addrProv = addr.province!
+        let addrCity = addr.city!
+        let addrDistrict = addr.district!
+        let addrText = addrAddr + " " + addrProv + addrCity + addrDistrict
+        
+        // dynamic set the text, set number of lines
+        var labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
+        let charHeight = lroundf(Float(cell.addressLabel.font.lineHeight))
+        cell.addressLabel.text = addrAddr
+        if labelHeight / charHeight == 1 {
+            cell.addressLabel.text = addrText
+            labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
+            if labelHeight / charHeight > 1 {
+                cell.addressLabel.text = addrAddr + "\n" + addrProv + addrCity + addrDistrict
+            }
+        } else {
+            cell.addressLabel.text = addrText
+        }
+        
+        cell.nameLabel.text = addr.name!
+        cell.phoneLabel.text = addr.phone!
         cell.selectionStyle = .none
+        cell.address = addr
+        cell.editBtn.addTarget(self, action: #selector(editBtnPressed(sender:)), for: .touchUpInside)
         return cell
     }
     
+    func editBtnPressed(sender: UIButton) {
+        guard let cell = sender.superview?.superview as? DeliveryAddressTableViewCell else { return }
+        if deliveryAddressEditingVC == nil {
+            deliveryAddressEditingVC = DeliveryAddressEditingVC.instantiateFromStoryboard()
+        }
+        deliveryAddressEditingVC.address = cell.address
+        let segue = UIStoryboardSegue(identifier: "showDeliveryAddressEditingVCFromDAVC", source: self, destination: deliveryAddressEditingVC)
+        prepare(for: segue, sender: self)
+    }
+    
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        switch editingStyle {
+        case .delete:
+            break
+        default:
+            break
+        }
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
+        return UITableViewAutomaticDimension
     }
     
-    
-    class DeliveryAddressTableCell: UITableViewCell {
-        
-        let nameLabel: UILabel = {
-            let label = UILabel()
-            label.adjustsFontSizeToFitWidth = true
-            label.frame = CGRect(x: 20, y: 30, width: 200, height: 24)
-            label.autoresizingMask = [.flexibleWidth, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
-            return label
-        }()
-        
-        override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-            super.init(style: style, reuseIdentifier: reuseIdentifier)
-            addSubview(nameLabel)
-        }
-        
-        required init?(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
     }
+    
     
 }

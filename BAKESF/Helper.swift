@@ -128,18 +128,37 @@ func determineSections(_ avshop: AVShop) -> Int {
 }
 
 
-// MARK: - just for copy and paste
-func helperBaker(phone: String) {
-    let query = AVBaker.query()
-    query.whereKey(lcKey[.phone]!, equalTo: phone)
-    query.getFirstObjectInBackground({
-        object, error in
-        if error == nil {
-            
-        } else {
-            
-        }
-    })
+// MARK: - Location
+func cllocationToAMapGeoPoint(_ location: CLLocation) -> AMapGeoPoint {
+    return AMapGeoPoint.location(withLatitude: CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.longitude))
 }
+
+func print(regeocode: AMapReGeocode) {
+    let ac = regeocode.addressComponent!
+    printit("\(regeocode.formattedAddress!)")
+    printit("province\t\(ac.province!)")
+    printit("city\t\(ac.city!)")
+    printit("district\t\(ac.district!)")
+    printit("township\t\(ac.township!)")
+    printit("streetNumber.street\t\(ac.streetNumber.street!)")
+    printit("streetNumber.number\t\(ac.streetNumber.number!)")
+    printit("streetNumber.direction\t\(ac.streetNumber.direction!)")
+    for aoi in regeocode.aois {
+        printit("aois.name\t\(aoi.name!)")
+    }
+    printit("neighborhood\t\(ac.neighborhood!)")
+    printit("building\t\(ac.building!)")
+    printit("citycode\t\(ac.citycode!)")
+    for ri in regeocode.roadinters {
+        printit("ri\t\(ri.firstName!) \(ri.secondName!)")
+    }
+    for road in regeocode.roads {
+        printit("road\t\(road.name!)")
+    }
+    for ba in ac.businessAreas {
+        printit("businessAreas\t\(ba.name!)")
+    }
+}
+
 
 

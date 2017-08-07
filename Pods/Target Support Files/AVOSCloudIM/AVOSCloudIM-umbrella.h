@@ -29,6 +29,7 @@
 #import "AVIMMessage.h"
 #import "AVIMSignature.h"
 #import "AVIMAvailability.h"
+#import "AVIMOptions.h"
 #import "AVOSCloudIM.h"
 #import "AVIMUserOptions.h"
 

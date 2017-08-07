@@ -22,7 +22,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var deliveryTimeViewCancelBtn: UIButton!
     
     var segmentedControl: UISegmentedControl!
-    let deliveryAddressVC = DeliveryAddressVC()
+    let deliveryAddressVC: DeliveryAddressVC = {
+        return DeliveryAddressVC.instantiateFromStoryboard()
+    }()
     
     let sectionCount = 3
     
@@ -81,6 +83,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case "showDeliveryAddressFromShopCheckingVC":
             guard let daVC = segue.destination as? DeliveryAddressVC else { break }
             daVC.avbaker = self.avbaker
+            daVC.shopCheckingVC = self
             show(daVC, sender: self)
         default:
             break

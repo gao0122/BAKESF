@@ -36,6 +36,11 @@ target 'BAKESF' do
   # sdwebimage
   pod 'SDWebImage'
 
-end
+  # AMap = GAO DE
+  pod 'AMapSearch'
+  pod 'AMapLocation'
+  pod 'AMap3DMap'
 
+
+end
 

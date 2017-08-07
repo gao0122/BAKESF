@@ -22,7 +22,8 @@
 		00264E6B1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */; };
 		00264E6D1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */; };
 		00264E6F1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */; };
-		002659A41F30BF0E0016A9F6 /* DeliveryAddressVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002659A31F30BF0E0016A9F6 /* DeliveryAddressVC.swift */; };
+		002659A41F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002659A31F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift */; };
+		0028C46D1F383C13008A432C /* AMapLocationManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0028C46C1F383C13008A432C /* AMapLocationManager+Extensions.swift */; };
 		0034EE341EE7D59A005300AE /* ShopPagingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE331EE7D59A005300AE /* ShopPagingVC.swift */; };
 		0034EE361EE9116B005300AE /* ShopBuyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE351EE9116B005300AE /* ShopBuyVC.swift */; };
 		0034EE381EE91176005300AE /* ShopPreVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0034EE371EE91176005300AE /* ShopPreVC.swift */; };
@@ -48,10 +49,12 @@
 		00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00629C7D1EC80BBC00B78151 /* OrderVC.swift */; };
 		00629C811EC80BBC00B78151 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C7F1EC80BBC00B78151 /* Main.storyboard */; };
 		00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C841EC80BBC00B78151 /* LaunchScreen.storyboard */; };
+		006A3E1C1F38E4B100FE3064 /* Yuchaoooo.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 006A3E1B1F38E4B100FE3064 /* Yuchaoooo.gpx */; };
 		006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006B2E511F1B514B00C10BB9 /* AVOrder.swift */; };
 		00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */; };
 		008F0AEF1F2C87EA00700C0D /* MeSettingPwdVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */; };
 		008F0AF11F2CBD7100700C0D /* MeSettingNameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AF01F2CBD7100700C0D /* MeSettingNameVC.swift */; };
+		008F74171F38670700AFEC9E /* LocationRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F74161F38670700AFEC9E /* LocationRealm.swift */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
 		00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */; };
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
@@ -75,12 +78,15 @@
 		00D23B9C1F14AF82002E45B7 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D23B9B1F14AF82002E45B7 /* UIViewController+Extensions.swift */; };
 		00D23B9E1F14AF96002E45B7 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D23B9D1F14AF96002E45B7 /* Date+Extensions.swift */; };
 		00D23BA01F14AFD0002E45B7 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D23B9F1F14AFD0002E45B7 /* UIImage+Extensions.swift */; };
+		00D3AB641F36D47800A5E934 /* DeliveryAddressVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D3AB631F36D47800A5E934 /* DeliveryAddressVC.swift */; };
+		00D3AB661F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D3AB651F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift */; };
+		00D3AB681F370D1F00A5E934 /* DeliveryAddressEditingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D3AB671F370D1F00A5E934 /* DeliveryAddressEditingVC.swift */; };
 		00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 00E14EF51ECAE016008197A3 /* Assets.xcassets */; };
 		00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EF81ECB1866008197A3 /* MeVC.swift */; };
 		00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */; };
 		00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFE1ECC9587008197A3 /* UserRealm.swift */; };
 		00E9030F1F012C030064F078 /* MeSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E9030E1F012C030064F078 /* MeSettingVC.swift */; };
-		7C78423555574DE0438F2E2B /* Pods_BAKESF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E044B49E4EC9FEE17E3750AB /* Pods_BAKESF.framework */; };
+		7A39B2C152FC8E14A77AFBC0 /* Pods_BAKESF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 347DBBFADC15C16C10915F5A /* Pods_BAKESF.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -99,7 +105,8 @@
 		00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckAddressTableCell.swift; sourceTree = "<group>"; };
 		00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckDeliveryTimeTableCell.swift; sourceTree = "<group>"; };
 		00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckSegmentedControlTableCell.swift; sourceTree = "<group>"; };
-		002659A31F30BF0E0016A9F6 /* DeliveryAddressVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressVC.swift; sourceTree = "<group>"; };
+		002659A31F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressVCFoff.swift; sourceTree = "<group>"; };
+		0028C46C1F383C13008A432C /* AMapLocationManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AMapLocationManager+Extensions.swift"; sourceTree = "<group>"; };
 		0034EE331EE7D59A005300AE /* ShopPagingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopPagingVC.swift; sourceTree = "<group>"; };
 		0034EE351EE9116B005300AE /* ShopBuyVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBuyVC.swift; sourceTree = "<group>"; };
 		0034EE371EE91176005300AE /* ShopPreVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopPreVC.swift; sourceTree = "<group>"; };
@@ -129,10 +136,12 @@
 		00629C871EC80BBC00B78151 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00629C8D1EC8123E00B78151 /* BAKESF-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BAKESF-Bridging-Header.h"; sourceTree = "<group>"; };
 		00629C901EC8146900B78151 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/BAKESF-fjjjbtxahaznllbtrbwqrssaqyyd/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
+		006A3E1B1F38E4B100FE3064 /* Yuchaoooo.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Yuchaoooo.gpx; sourceTree = "<group>"; };
 		006B2E511F1B514B00C10BB9 /* AVOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVOrder.swift; sourceTree = "<group>"; };
 		00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakePreOrderRealm.swift; sourceTree = "<group>"; };
 		008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingPwdVC.swift; sourceTree = "<group>"; };
 		008F0AF01F2CBD7100700C0D /* MeSettingNameVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingNameVC.swift; sourceTree = "<group>"; };
+		008F74161F38670700AFEC9E /* LocationRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationRealm.swift; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
 		00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		00B4709A1F0404DD00725C95 /* AVBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBaker.swift; sourceTree = "<group>"; };
@@ -158,14 +167,18 @@
 		00D23B9B1F14AF82002E45B7 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		00D23B9D1F14AF96002E45B7 /* Date+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		00D23B9F1F14AFD0002E45B7 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
+		00D3AB631F36D47800A5E934 /* DeliveryAddressVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressVC.swift; sourceTree = "<group>"; };
+		00D3AB651F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressTableViewCell.swift; sourceTree = "<group>"; };
+		00D3AB671F370D1F00A5E934 /* DeliveryAddressEditingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressEditingVC.swift; sourceTree = "<group>"; };
+		00D3AB6B1F3754EE00A5E934 /* BAKESF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BAKESF.entitlements; sourceTree = "<group>"; };
 		00E14EF51ECAE016008197A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		00E14EF81ECB1866008197A3 /* MeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeVC.swift; sourceTree = "<group>"; };
 		00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeLoginVC.swift; sourceTree = "<group>"; };
 		00E14EFE1ECC9587008197A3 /* UserRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRealm.swift; sourceTree = "<group>"; };
 		00E9030E1F012C030064F078 /* MeSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingVC.swift; sourceTree = "<group>"; };
-		71DAA475814F006DBCEAEEAC /* Pods-BAKESF.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BAKESF.release.xcconfig"; path = "Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF.release.xcconfig"; sourceTree = "<group>"; };
-		A684E2CFBACBDC8710C974F1 /* Pods-BAKESF.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BAKESF.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF.debug.xcconfig"; sourceTree = "<group>"; };
-		E044B49E4EC9FEE17E3750AB /* Pods_BAKESF.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BAKESF.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		347DBBFADC15C16C10915F5A /* Pods_BAKESF.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BAKESF.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A81FAE95BB34EB6E0AC6AFE /* Pods-BAKESF.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BAKESF.release.xcconfig"; path = "Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF.release.xcconfig"; sourceTree = "<group>"; };
+		A3D3AE3254706DC34ED844A8 /* Pods-BAKESF.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BAKESF.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,7 +186,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C78423555574DE0438F2E2B /* Pods_BAKESF.framework in Frameworks */,
+				7A39B2C152FC8E14A77AFBC0 /* Pods_BAKESF.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,12 +218,15 @@
 			isa = PBXGroup;
 			children = (
 				00264E641F2F275700D83073 /* ShopCheckingVC.swift */,
-				00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */,
-				002659A31F30BF0E0016A9F6 /* DeliveryAddressVC.swift */,
+				00D3AB631F36D47800A5E934 /* DeliveryAddressVC.swift */,
+				00D3AB671F370D1F00A5E934 /* DeliveryAddressEditingVC.swift */,
+				00D3AB651F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift */,
 				00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */,
 				00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */,
 				00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */,
 				00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */,
+				00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */,
+				002659A31F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift */,
 			);
 			name = ShopCheckingVC;
 			sourceTree = "<group>";
@@ -235,6 +251,7 @@
 				00E14EFE1ECC9587008197A3 /* UserRealm.swift */,
 				00455A8A1F19E81D009F440F /* BakeInBagRealm.swift */,
 				00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */,
+				008F74161F38670700AFEC9E /* LocationRealm.swift */,
 			);
 			name = RealmObject;
 			sourceTree = "<group>";
@@ -281,11 +298,12 @@
 		00629C6D1EC80BBC00B78151 = {
 			isa = PBXGroup;
 			children = (
+				006A3E1B1F38E4B100FE3064 /* Yuchaoooo.gpx */,
 				00629C781EC80BBC00B78151 /* BAKESF */,
 				00629C771EC80BBC00B78151 /* Products */,
-				011A9034769B3CE574824EC3 /* Pods */,
 				BA9A938745FB83CEBCCFEA9C /* Frameworks */,
 				00629C8D1EC8123E00B78151 /* BAKESF-Bridging-Header.h */,
+				85C5049C783E7ED4DEAC7133 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -300,6 +318,7 @@
 		00629C781EC80BBC00B78151 /* BAKESF */ = {
 			isa = PBXGroup;
 			children = (
+				00D3AB6B1F3754EE00A5E934 /* BAKESF.entitlements */,
 				00629C791EC80BBC00B78151 /* AppDelegate.swift */,
 				00B474E31ECD6A2D00ED1B7A /* Helpers */,
 				00E14F001ECC958F008197A3 /* Classes */,
@@ -368,6 +387,7 @@
 				00D23B991F14AF66002E45B7 /* UIView+Extensions.swift */,
 				00D23B9F1F14AFD0002E45B7 /* UIImage+Extensions.swift */,
 				00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */,
+				0028C46C1F383C13008A432C /* AMapLocationManager+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -392,11 +412,11 @@
 			name = Classes;
 			sourceTree = "<group>";
 		};
-		011A9034769B3CE574824EC3 /* Pods */ = {
+		85C5049C783E7ED4DEAC7133 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				A684E2CFBACBDC8710C974F1 /* Pods-BAKESF.debug.xcconfig */,
-				71DAA475814F006DBCEAEEAC /* Pods-BAKESF.release.xcconfig */,
+				A3D3AE3254706DC34ED844A8 /* Pods-BAKESF.debug.xcconfig */,
+				5A81FAE95BB34EB6E0AC6AFE /* Pods-BAKESF.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -407,7 +427,7 @@
 				00B474DF1ECD656000ED1B7A /* RealmSwift.framework */,
 				00B474DD1ECD655C00ED1B7A /* Realm.framework */,
 				00629C901EC8146900B78151 /* Alamofire.framework */,
-				E044B49E4EC9FEE17E3750AB /* Pods_BAKESF.framework */,
+				347DBBFADC15C16C10915F5A /* Pods_BAKESF.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -419,13 +439,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00629C8A1EC80BBC00B78151 /* Build configuration list for PBXNativeTarget "BAKESF" */;
 			buildPhases = (
-				3DA80FFBFEA2C7902AF5CB7A /* [CP] Check Pods Manifest.lock */,
+				5ADF3822FC5842E19CAF8C5D /* [CP] Check Pods Manifest.lock */,
 				00629C721EC80BBC00B78151 /* Sources */,
 				00629C731EC80BBC00B78151 /* Frameworks */,
 				00629C741EC80BBC00B78151 /* Resources */,
-				32A12C5312D0D9EADB063726 /* [CP] Embed Pods Frameworks */,
-				341DC6A20EDE9E8E9E72D57E /* [CP] Copy Pods Resources */,
 				000D13791EFF99A200A19D5A /* Fabric */,
+				876E3B7CE960F5584E7C97C7 /* [CP] Embed Pods Frameworks */,
+				2EEC01E20D652F5D8A44DC59 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -451,6 +471,14 @@
 						DevelopmentTeam = Z27YUCTD32;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Maps.iOS = {
+								enabled = 0;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -477,6 +505,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				006A3E1C1F38E4B100FE3064 /* Yuchaoooo.gpx in Resources */,
 				00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */,
 				00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */,
 				00629C811EC80BBC00B78151 /* Main.storyboard in Resources */,
@@ -500,49 +529,70 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Fabric/run\" 6ed525405b1959fae4852dff3430290a0df718f8 6789b3ff23d692a1aab39d71ab1cf28f6363937f03edc161eb7f675b1a28211b";
 		};
-		32A12C5312D0D9EADB063726 /* [CP] Embed Pods Frameworks */ = {
+		2EEC01E20D652F5D8A44DC59 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		341DC6A20EDE9E8E9E72D57E /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF-resources.sh",
+				"${PODS_ROOT}/AMap3DMap/MAMapKit.framework/AMap.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3DA80FFBFEA2C7902AF5CB7A /* [CP] Check Pods Manifest.lock */ = {
+		5ADF3822FC5842E19CAF8C5D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BAKESF-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		876E3B7CE960F5584E7C97C7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AVOSCloud/AVOSCloud.framework",
+				"${BUILT_PRODUCTS_DIR}/AVOSCloudIM/AVOSCloudIM.framework",
+				"${BUILT_PRODUCTS_DIR}/AVOSCloudLiveQuery/AVOSCloudLiveQuery.framework",
+				"${BUILT_PRODUCTS_DIR}/PagingMenuController/PagingMenuController.framework",
+				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AVOSCloud.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AVOSCloudIM.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AVOSCloudLiveQuery.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PagingMenuController.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -562,12 +612,14 @@
 				008F0AF11F2CBD7100700C0D /* MeSettingNameVC.swift in Sources */,
 				006024FC1EC9900000FFB859 /* HomeFollowVC.swift in Sources */,
 				00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */,
+				00D3AB661F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift in Sources */,
+				0028C46D1F383C13008A432C /* AMapLocationManager+Extensions.swift in Sources */,
 				00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */,
 				0044B0AC1ED17B3C003DE5AF /* HomeShopTableViewCell.swift in Sources */,
 				00D23B9A1F14AF66002E45B7 /* UIView+Extensions.swift in Sources */,
 				000D13781EFF862700A19D5A /* Constants.swift in Sources */,
 				00455A8B1F19E81D009F440F /* BakeInBagRealm.swift in Sources */,
-				002659A41F30BF0E0016A9F6 /* DeliveryAddressVC.swift in Sources */,
+				002659A41F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift in Sources */,
 				00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */,
 				0034EE361EE9116B005300AE /* ShopBuyVC.swift in Sources */,
 				00264E691F2F63A700D83073 /* ShopCheckBakeTableCell.swift in Sources */,
@@ -577,8 +629,10 @@
 				004318321F13EF8E00FD0227 /* ShopClassifyTableCell.swift in Sources */,
 				0000D8191F1F3DC100BB2B30 /* ShopPreBakeTableView.swift in Sources */,
 				00020F8D1F0E2D5D008ABFB1 /* CGFloat+Extensions.swift in Sources */,
+				00D3AB641F36D47800A5E934 /* DeliveryAddressVC.swift in Sources */,
 				006024FA1EC98FCF00FFB859 /* HomeMasterVC.swift in Sources */,
 				0034EE3A1EE91182005300AE /* ShopTweetVC.swift in Sources */,
+				008F74171F38670700AFEC9E /* LocationRealm.swift in Sources */,
 				00020F881F0C201E008ABFB1 /* MeInfoVC.swift in Sources */,
 				00D23B9C1F14AF82002E45B7 /* UIViewController+Extensions.swift in Sources */,
 				00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */,
@@ -595,6 +649,7 @@
 				00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */,
 				00264E6F1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift in Sources */,
 				006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */,
+				00D3AB681F370D1F00A5E934 /* DeliveryAddressEditingVC.swift in Sources */,
 				00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */,
 				00455A891F193079009F440F /* AVBake.swift in Sources */,
 				00D23B9E1F14AF96002E45B7 /* Date+Extensions.swift in Sources */,
@@ -742,10 +797,11 @@
 		};
 		00629C8B1EC80BBC00B78151 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A684E2CFBACBDC8710C974F1 /* Pods-BAKESF.debug.xcconfig */;
+			baseConfigurationReference = A3D3AE3254706DC34ED844A8 /* Pods-BAKESF.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = BAKESF/BAKESF.entitlements;
 				DEVELOPMENT_TEAM = Z27YUCTD32;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -755,7 +811,7 @@
 				INFOPLIST_FILE = BAKESF/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.yuchao.BAKESF;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yuchao.bakesfapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "BAKESF-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -765,10 +821,11 @@
 		};
 		00629C8C1EC80BBC00B78151 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 71DAA475814F006DBCEAEEAC /* Pods-BAKESF.release.xcconfig */;
+			baseConfigurationReference = 5A81FAE95BB34EB6E0AC6AFE /* Pods-BAKESF.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = BAKESF/BAKESF.entitlements;
 				DEVELOPMENT_TEAM = Z27YUCTD32;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -778,7 +835,7 @@
 				INFOPLIST_FILE = BAKESF/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.yuchao.BAKESF;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yuchao.bakesfapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "BAKESF-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
