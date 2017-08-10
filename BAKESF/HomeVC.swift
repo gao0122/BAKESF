@@ -17,16 +17,32 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     @IBOutlet weak var locationBtn: UIButton!
     @IBOutlet weak var indicatorSuperView: UIView!
     @IBOutlet weak var indicatorView: UIActivityIndicatorView!
+    @IBOutlet weak var locateFailedView: UIView!
+    @IBOutlet weak var retryBtn: UIButton!
+    @IBOutlet weak var locateManuallyBtn: UIButton!
+    @IBOutlet weak var helperLabel: UILabel!
     
+    private var homeShopVC: HomeShopVC!
+    private var homeBakeVC: HomeBakeVC!
+    private var homeFollowVC: HomeFollowVC!
     private var sellerTableView: UITableView!
     private var bakeTableView: UITableView!
     private var followTableView: UITableView!
 
+    let bakeLocationRadius: CGFloat = 3000
+    
     var user: UserRealm!
     var avbaker: AVBaker!
-    
+    var selectedPOI: AMapPOI!
+    var pois = [AMapPOI]()
+    var poiChanged = false
+    var locateManuallyBtnPressed = false
+    var locationRealm: LocationRealm? = {
+        return RealmHelper.retrieveLocation()
+    }()
     var searchBarWidth: CGFloat!
     var hasSetShopView = false
+    
     
     private let mapSearch = AMapSearchAPI()!
     private let locationManager = AMapLocationManager()
@@ -39,26 +55,56 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         
         // page menu
         setPageMenu()
-        
+
         locateOnce()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if poiChanged && selectedPOI != nil {
+            if let locationRealm = locationRealm {
+                locateFailedView.isHidden = true
+                locationBtn.setTitle(locationRealm.city, for: .normal)
+                homeShopVC.refresher.beginRefreshing()
+            } else {
+                locateFailedView.isHidden = false
+            }
+        }
     }
     
     func preInit() {
         searchBarWidth = searchBar.frame.width
         mapSearch.delegate = self
+        locateFailedView.isHidden = true
         indicatorStartAni()
         checkCurrentUser()
+        retryBtn.layer.cornerRadius = 4
+        retryBtn.layer.borderWidth = 1
+        retryBtn.layer.borderColor = UIColor.bkRed.cgColor
+        retryBtn.setTitleColor(.bkRed, for: .normal)
+        locateManuallyBtn.layer.cornerRadius = 4
+        locateManuallyBtn.layer.borderWidth = 1
+        locateManuallyBtn.layer.borderColor = UIColor.bkRed.cgColor
+        locateManuallyBtn.setTitleColor(.bkRed, for: .normal)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let id = segue.identifier else { return }
+        switch id {
+        case "showDASelctionVCFromHomeVC":
+            guard let vc = segue.destination as? DeliveryAddressSelectionVC else { break }
+            vc.showSegueID = id
+            if locateManuallyBtnPressed {
+                locateManuallyBtnPressed = false
+                vc.showSegueID = id + "NaN"
+            }
+        default:
+            break
+        }
     }
     
     @IBAction func locationBtnPressed(_ sender: Any) {
-        locateOnce()
-        if let location = clLocation {
-            let request = AMapPOIAroundSearchRequest()
-            request.location = cllocationToAMapGeoPoint(location)
-            request.requireExtension = true
-            
-            mapSearch.aMapPOIAroundSearch(request)
-        }
+        // do nothing
     }
     
     func checkCurrentUser() -> Void {
@@ -80,26 +126,57 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         searchBarWidth = searchBar.frame.width
     }
     
+    @IBAction func relocateBtnPressed(_ sender: Any) {
+        indicatorStartAni()
+        locateOnce()
+    }
+    
+    @IBAction func locateManuallyBtnPressed(_ sender: Any) {
+        locateManuallyBtnPressed = true
+        performSegue(withIdentifier: "showDASelctionVCFromHomeVC", sender: sender)
+    }
+    
+    
+    func indicatorStartAni() {
+        indicatorView.startAnimating()
+        indicatorSuperView.isHidden = false
+    }
+    
+    func indicatorStopAni() {
+        indicatorView.stopAnimating()
+        indicatorSuperView.isHidden = true
+    }
+
+    func hideLocateFailedViewAndStopIndicator() {
+        locateFailedView.isHidden = true
+        indicatorStopAni()
+    }
+    
+    func showLocateFailedViewAndStopIndicator() {
+        locateFailedView.isHidden = false
+        indicatorStopAni()
+    }
+    
+    
     // MARK: - AMap
     func onPOISearchDone(_ request: AMapPOISearchBaseRequest!, response: AMapPOISearchResponse!) {
         if response.count == 0 { return }
-        for poi in response.pois {
-            //printit(poi.address)
-        }
+        //response.pois
     }
     
     func onReGeocodeSearchDone(_ request: AMapReGeocodeSearchRequest!, response: AMapReGeocodeSearchResponse!) {
         guard let regeocode = response.regeocode else {
-            
+            // TODO: - no results
+            self.showLocateFailedViewAndStopIndicator()
             return
         }
-        let location = RealmHelper.addLocation(by: regeocode)
-        updateLocationBtnAndSearchBar(by: location)
+        locationRealm = RealmHelper.addLocation(by: regeocode)
+        updateLocationBtnAndSearchBar(by: locationRealm!)
         print(regeocode: regeocode)
-        indicatorStopAni()
+        hideLocateFailedViewAndStopIndicator()
     }
     
-    func locateOnce() {
+    private func locateOnce() {
         locationManager.setLocationAccuracyHundredMeters()
         locationManager.requestLocation(withReGeocode: false, completionBlock: {
             [weak self] (location: CLLocation?, reGeocode: AMapLocationReGeocode?, error: Error?) in
@@ -119,6 +196,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
                 } else {
                     printit("没有错误：\(error.code) - \(error.localizedDescription)")
                 }
+                self?.showLocateFailedViewAndStopIndicator()
                 return
             }
             
@@ -138,15 +216,23 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         })
     }
     
-    func indicatorStartAni() {
-        indicatorView.startAnimating()
-        indicatorSuperView.isHidden = false
+    func aMapSearchRequest(_ request: Any!, didFailWithError error: Error!) {
+        showLocateFailedViewAndStopIndicator()
+        var text = "出错啦！"
+        if let error = error as NSError? {
+            switch error.code {
+            case 1802:
+                text = "网络似乎不是很稳。"
+            case 1806:
+                text = "似乎断网了。"
+            default:
+                break
+            }
+        }
+        helperLabel.text = text
     }
     
-    func indicatorStopAni() {
-        indicatorView.stopAnimating()
-        indicatorSuperView.isHidden = true
-    }
+    
     
     // MARK: - SearchBar
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
@@ -232,7 +318,12 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         pagingMenuController.setup(option)
+        // variable setup
         self.sellerTableView = option.homeShopVC.tableView
+        self.homeShopVC = option.homeShopVC
+        self.homeBakeVC = option.homeBakeVC
+        self.homeFollowVC = option.homeFollowVC
+        self.homeShopVC.homeVC = self
         
         pagingMenuController.onMove = {
             state in

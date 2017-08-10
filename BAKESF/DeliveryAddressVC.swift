@@ -18,7 +18,8 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     var addresses: [AVAddress]!
     var shopCheckingVC: ShopCheckingVC!
     var avbaker: AVBaker!
-    var selectedAddr: AVAddress!
+    var editingAddress: AVAddress!
+    var selectedAddress: AVAddress!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,8 +62,9 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         switch id {
         case "unwindToShopCheckingVCFromDeliveryAddress":
             break
-        case "showDeliveryAddressEditingVCFromDAVC":
-            show(deliveryAddressEditingVC, sender: self)
+        case "showDeliveryAddressEditingVCFromDAVC", "showDeliveryAddressEditingVCFromDAVCForAdding":
+            deliveryAddressEditingVC.avbaker = self.avbaker
+            show(deliveryAddressEditingVC, sender: sender)
         default:
             break
         }
@@ -74,7 +76,12 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }
 
     @IBAction func addAddressBtnPressed(_ sender: Any) {
-        
+        if deliveryAddressEditingVC == nil {
+            deliveryAddressEditingVC = DeliveryAddressEditingVC.instantiateFromStoryboard()
+        }
+        deliveryAddressEditingVC.address = nil
+        let segue = UIStoryboardSegue(identifier: "showDeliveryAddressEditingVCFromDAVCForAdding", source: self, destination: deliveryAddressEditingVC)
+        prepare(for: segue, sender: sender)
     }
     
     
@@ -93,10 +100,14 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressTableCell") as! DeliveryAddressTableViewCell
         let row = indexPath.row
         let addr = addresses[row]
-        let addrAddr = addr.address!
-        let addrProv = addr.province!
-        let addrCity = addr.city!
-        let addrDistrict = addr.district!
+        let township = addr.township ?? ""
+        let streetName = addr.streetName ?? ""
+        let streetNo = addr.streetNumber ?? ""
+        let aoiName = addr.aoiName ?? ""
+        let addrAddr = township + streetName + streetNo + aoiName
+        let addrProv = addr.province ?? ""
+        let addrCity = addr.city ?? ""
+        let addrDistrict = addr.district ?? ""
         let addrText = addrAddr + " " + addrProv + addrCity + addrDistrict
         
         // dynamic set the text, set number of lines
@@ -113,9 +124,8 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
             cell.addressLabel.text = addrText
         }
         
-        cell.nameLabel.text = addr.name!
-        cell.phoneLabel.text = addr.phone!
-        cell.selectionStyle = .none
+        cell.nameLabel.text = addr.name ?? ""
+        cell.phoneLabel.text = addr.phone ?? ""
         cell.address = addr
         cell.editBtn.addTarget(self, action: #selector(editBtnPressed(sender:)), for: .touchUpInside)
         return cell
@@ -128,7 +138,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         }
         deliveryAddressEditingVC.address = cell.address
         let segue = UIStoryboardSegue(identifier: "showDeliveryAddressEditingVCFromDAVC", source: self, destination: deliveryAddressEditingVC)
-        prepare(for: segue, sender: self)
+        prepare(for: segue, sender: sender)
     }
     
     

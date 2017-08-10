@@ -117,7 +117,7 @@ class DeliveryAddressVCFoff: UIViewController, UITableViewDelegate, UITableViewD
         let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressTableCell") as! DeliveryAddressTableCell
         let row = indexPath.row
         let addr = addresses[row]
-        cell.addressLabel.text = addr.province! + addr.city! + addr.district! + addr.address!
+        cell.addressLabel.text = addr.formatted!
         cell.nameLabel.text = addr.name!
         cell.phoneLabel.text = addr.phone!
         cell.selectionStyle = .none

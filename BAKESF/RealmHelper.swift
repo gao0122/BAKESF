@@ -314,7 +314,7 @@ class RealmHelper {
     }
     private static func setLocation(_ location: LocationRealm, by regeocode: AMapReGeocode) {
         guard let ac = regeocode.addressComponent else { return }
-        location.formatted = regeocode.formattedAddress
+        location.formatted = regeocode.formattedAddress!
         location.citycode = ac.citycode!
         location.province = ac.province!
         location.city = ac.city!
@@ -324,9 +324,13 @@ class RealmHelper {
         guard let street = ac.streetNumber else { return }
         location.streetName = street.street!
         location.streetNumber = street.number!
+        location.address = location.province + location.city + location.district + location.township + location.streetName + location.streetNumber
         guard let aoi = regeocode.aois.first else { return }
-        location.aoisname = aoi.name
+        location.aoiname = aoi.name
+        location.longitude = String(describing: aoi.location.longitude)
+        location.latitude = String(describing: aoi.location.latitude)
     }
+    
     
     static func retrieveLocation() -> LocationRealm? {
         let realm = try! Realm()

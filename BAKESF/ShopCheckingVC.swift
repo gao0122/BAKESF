@@ -32,6 +32,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var avshop: AVShop!
     var avbaker: AVBaker!
     var userRealm: UserRealm!
+    var address: AVAddress!
     
     var bakes: [Object]!
     var deliveryTimeViewState: DeliveryTimeViewState = .collapsed
@@ -449,11 +450,19 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     private func deliveryAddressCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckAddressTableCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckAddressTableCell", for: indexPath) as! ShopCheckAddressTableCell
-        if preOrder {
-            if !cell.phoneLabel.text!.contains("（预）") {
-                cell.phoneLabel.text = cell.phoneLabel.text! + "（预）"
+        if address == nil {
+            
+        } else {
+            cell.addressLabel.text = address.formatted
+            cell.phoneLabel.text = address.phone
+            if preOrder {
+                if !cell.phoneLabel.text!.contains("（预）") {
+                    cell.phoneLabel.text = cell.phoneLabel.text! + "（预）"
+                }
             }
         }
+        cell.nameLabel.sizeToFit()
+        cell.phoneLabel.sizeToFit()
         return cell
     }
     
@@ -564,10 +573,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         switch section {
         case 0:
             switch row {
-            case 2:
-                return 72
-            case 4:
-                return 72
+            case 2, 4:
+                return UITableViewAutomaticDimension
             default:
                 break
             }
@@ -595,6 +602,20 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             break
         }
         return 44
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch indexPath.section {
+        case 0:
+            switch indexPath.row {
+            case 2, 4:
+                return 72
+            default:
+                return 44
+            }
+        default:
+            return 44
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

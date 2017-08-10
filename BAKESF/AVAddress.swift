@@ -12,11 +12,17 @@ class AVAddress: AVObject, AVSubclassing {
     
     @NSManaged var Baker: AVBaker?
     @NSManaged var name: String?
-    @NSManaged var address: String?
     @NSManaged var phone: String?
-    @NSManaged var city: String?
+    @NSManaged var gender: String?
     @NSManaged var province: String?
+    @NSManaged var city: String?
     @NSManaged var district: String?
+    @NSManaged var township: String?
+    @NSManaged var streetName: String?
+    @NSManaged var streetNumber: String?
+    @NSManaged var aoiName: String?
+    @NSManaged var detailed: String?
+    @NSManaged var formatted: String?
     @NSManaged var label: String?
     
     

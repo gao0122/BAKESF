@@ -18,6 +18,7 @@ class LocationRealm: Object {
 //  }
     
     dynamic var formatted: String = ""
+    dynamic var address: String = ""
     dynamic var province: String = ""
     dynamic var city: String = ""
     dynamic var district: String = ""
@@ -25,8 +26,10 @@ class LocationRealm: Object {
     dynamic var township: String = ""
     dynamic var streetName: String = ""
     dynamic var streetNumber: String = ""
-    dynamic var aoisname: String = ""
+    dynamic var aoiname: String = ""
     dynamic var citycode: String = ""
     dynamic var adcode: String = ""
+    dynamic var longitude: String = ""
+    dynamic var latitude: String = ""
 
 }

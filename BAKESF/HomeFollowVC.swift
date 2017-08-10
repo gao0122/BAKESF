@@ -10,13 +10,16 @@ import UIKit
 
 class HomeFollowVC: UIViewController {
 
+    
+    var homeVC: HomeVC!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
     }
 
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -24,7 +27,7 @@ class HomeFollowVC: UIViewController {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
+    
     
     class func instantiateFromStoryboard() -> HomeFollowVC {
         return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! HomeFollowVC

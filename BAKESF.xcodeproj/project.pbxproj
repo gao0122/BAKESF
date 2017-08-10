@@ -50,6 +50,8 @@
 		00629C811EC80BBC00B78151 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C7F1EC80BBC00B78151 /* Main.storyboard */; };
 		00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C841EC80BBC00B78151 /* LaunchScreen.storyboard */; };
 		006A3E1C1F38E4B100FE3064 /* Yuchaoooo.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 006A3E1B1F38E4B100FE3064 /* Yuchaoooo.gpx */; };
+		006A3E1E1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A3E1D1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift */; };
+		006A3E201F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */; };
 		006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006B2E511F1B514B00C10BB9 /* AVOrder.swift */; };
 		00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */; };
 		008F0AEF1F2C87EA00700C0D /* MeSettingPwdVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */; };
@@ -137,6 +139,8 @@
 		00629C8D1EC8123E00B78151 /* BAKESF-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BAKESF-Bridging-Header.h"; sourceTree = "<group>"; };
 		00629C901EC8146900B78151 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/BAKESF-fjjjbtxahaznllbtrbwqrssaqyyd/Build/Products/Debug-iphonesimulator/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		006A3E1B1F38E4B100FE3064 /* Yuchaoooo.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Yuchaoooo.gpx; sourceTree = "<group>"; };
+		006A3E1D1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressSelectionVC.swift; sourceTree = "<group>"; };
+		006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressSelectionTableViewCell.swift; sourceTree = "<group>"; };
 		006B2E511F1B514B00C10BB9 /* AVOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVOrder.swift; sourceTree = "<group>"; };
 		00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakePreOrderRealm.swift; sourceTree = "<group>"; };
 		008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingPwdVC.swift; sourceTree = "<group>"; };
@@ -219,8 +223,10 @@
 			children = (
 				00264E641F2F275700D83073 /* ShopCheckingVC.swift */,
 				00D3AB631F36D47800A5E934 /* DeliveryAddressVC.swift */,
-				00D3AB671F370D1F00A5E934 /* DeliveryAddressEditingVC.swift */,
 				00D3AB651F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift */,
+				00D3AB671F370D1F00A5E934 /* DeliveryAddressEditingVC.swift */,
+				006A3E1D1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift */,
+				006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */,
 				00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */,
 				00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */,
 				00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */,
@@ -620,6 +626,7 @@
 				000D13781EFF862700A19D5A /* Constants.swift in Sources */,
 				00455A8B1F19E81D009F440F /* BakeInBagRealm.swift in Sources */,
 				002659A41F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift in Sources */,
+				006A3E201F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift in Sources */,
 				00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */,
 				0034EE361EE9116B005300AE /* ShopBuyVC.swift in Sources */,
 				00264E691F2F63A700D83073 /* ShopCheckBakeTableCell.swift in Sources */,
@@ -658,6 +665,7 @@
 				006024F21EC9738800FFB859 /* MeMasterVC.swift in Sources */,
 				00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */,
 				00BF12691F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift in Sources */,
+				006A3E1E1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift in Sources */,
 				00455A851F15D4F5009F440F /* AVShop.swift in Sources */,
 				00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */,
 				00BDA2DB1F34900000923D9F /* AVAddress.swift in Sources */,

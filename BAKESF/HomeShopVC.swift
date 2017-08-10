@@ -18,6 +18,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     
     var avshops = [AVShop]()
     
+    var homeVC: HomeVC!
     let sellersPerPage = 5
     var currentPage = 0
     

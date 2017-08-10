@@ -133,6 +133,10 @@ func cllocationToAMapGeoPoint(_ location: CLLocation) -> AMapGeoPoint {
     return AMapGeoPoint.location(withLatitude: CGFloat(location.coordinate.latitude), longitude: CGFloat(location.coordinate.longitude))
 }
 
+func amapGeoPointToCLLocation(_ location: AMapGeoPoint) -> CLLocation {
+    return CLLocation(latitude: CLLocationDegrees(location.latitude), longitude: CLLocationDegrees(location.longitude))
+}
+
 func print(regeocode: AMapReGeocode) {
     let ac = regeocode.addressComponent!
     printit("\(regeocode.formattedAddress!)")
@@ -158,6 +162,17 @@ func print(regeocode: AMapReGeocode) {
     for ba in ac.businessAreas {
         printit("businessAreas\t\(ba.name!)")
     }
+}
+
+func print(poi: AMapPOI) {
+    printit("\(poi.address!)")
+    printit("province\t\(poi.province!)")
+    printit("city\t\(poi.city!)")
+    printit("district\t\(poi.district!)")
+    printit("name\t\(poi.name!)")
+    printit("citycode\t\(poi.citycode!)")
+    printit("citycode\t\(1)")
+    printit("businessArea\t\(poi.businessArea!)")
 }
 
 
