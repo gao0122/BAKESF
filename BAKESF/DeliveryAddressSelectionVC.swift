@@ -12,7 +12,9 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
 
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var cityBtn: UIButton!
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableView: UITableView! // tag 0
+    @IBOutlet weak var cityTableView: UITableView! // tag 1
+    @IBOutlet weak var bakerDATableView: UITableView! // tag 2
     @IBOutlet weak var helperView: UIView!
     @IBOutlet weak var helperLabel: UILabel!
     @IBOutlet weak var cancelBtn: UIButton!
@@ -22,12 +24,33 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     @IBOutlet weak var currentCityLabel: UILabel!
     @IBOutlet weak var currentLocationView: UIView!
 
-    var citys = [Int: [String]]()
+    var citys: [String: [String]] = {
+        var res = [String: [String]]()
+        let path = Bundle.main.path(forResource: "citys", ofType: "plist")
+        let dict = NSDictionary(contentsOfFile: path!) as! [String: Any]
+        let keys = Array(dict.keys)
+        for kv in dict {
+            if let prov = kv.value as? [String: [String]] {
+                if res[kv.key] == nil {
+                    res[kv.key] = [String]()
+                }
+                res[kv.key]! = Array(prov.keys).sorted { $0 < $1 }
+            } else {
+                res[kv.key] = [kv.key]
+            }
+        }
+        return res
+    }()
+    var provs: [String]!
+    var addresses: [AVAddress]!
     var pois = [AMapPOI]()
     var showSegueID: String!
     var unwindSegueID: String!
-    var selectedPOI: AMapPOI!
+    var selectedPOI: AMapPOI?
     var fromCellSelection = false
+    var avbaker: AVBaker?
+    var shouldSearchAround = true
+    var currentReGeocode: AMapReGeocode?
 
     private let mapSearch = AMapSearchAPI()!
     private let locationManager = AMapLocationManager()
@@ -38,10 +61,12 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     private let noResultText = "没有结果\n\n换个地址试试吧~"
     private let searchingText = "正在搜索..."
     private let errorText = "出错啦！"
+    private let locatingText = "正在获取当前位置..."
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        provs = citys.keys.sorted(by: { $0 < $1 })
         switch showSegueID {
         case "showDeliveryAddressSelectionVCFromDAEditingVC":
             unwindSegueID = "unwindToDeliveryAddressEditingVCFromDASelectionVC"
@@ -50,39 +75,83 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         default:
             break
         }
-        updateCurrentLocationView()
         relocateBtn.layer.borderColor = relocateBtn.currentTitleColor.cgColor
         relocateBtn.layer.borderWidth = 1
         relocateBtn.layer.cornerRadius = 3
         
         mapSearch.delegate = self
         
-        citys[0] = ["正在定位中..."]
+        cityTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
+        bakerDATableView.estimatedRowHeight = 72
+        bakerDATableView.rowHeight = UITableViewAutomaticDimension
+        bakerDATableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         tableView.estimatedRowHeight = 56
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
-        helperView.isHidden = true
-        doPOISearch()
+        doPOIAroundSearch()
         currentLocationView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(currentLocationSelected(_:))))
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        updateCurrentLocationView()
+        cityTableView.isHidden = true
+        helperView.isHidden = true
+        if let avbaker = self.avbaker {
+            bakerDATableView.isHidden = false
+            let query = AVAddress.query()
+            query.includeKey("Baker")
+            query.whereKey("Baker", equalTo: avbaker)
+            query.findObjectsInBackground({
+                objects, error in
+                if let error = error {
+                    // TODO: - error handling
+                    printit("AVAddress error: \(error.localizedDescription)")
+                } else {
+                    if let addresses = objects as? [AVAddress] {
+                        self.addresses = addresses
+                        self.bakerDATableView.reloadData()
+                    } else {
+                        // TODO: - error handling
+                    }
+                }
+            })
+        } else {
+            bakerDATableView.isHidden = true
+        }
     }
     
     func currentLocationSelected(_ sender: Any) {
-        fromCellSelection = true
-        doReGeocode(with: amapGeoPointToCLLocation(selectedPOI.location))
+        if let regeocode = currentReGeocode {
+            unwindFromCellSelection(by: regeocode)
+        } else {
+            fromCellSelection = true
+            doReGeocode(with: CLLocation(latitude: CLLocationDegrees(locationRealm.latitude)!, longitude: CLLocationDegrees(locationRealm.longitude)!))
+        }
     }
     
-    func updateCurrentLocationView() {
+    func updateCurrentLocationView(by regeocode: AMapReGeocode? = nil) {
         if showSegueID == "showDASelctionVCFromHomeVCNaN" {
             currentCityLabel.text = "最近一次使用的地址："
         } else {
-            currentCityLabel.text = "当前地址："
+            currentCityLabel.text = "当前使用的地址："
         }
-        cityBtn.setTitle(locationRealm.city, for: .normal)
+        if let regeocode = regeocode {
+            cityBtn.setTitle(regeocode.addressComponent!.city, for: .normal)
+            currentAddressNameLabel.text = regeocode.pois.first?.name
+            currentAddressLabel.text = regeocode.pois.first?.address
+        } else {
+            cityBtn.setTitle(locationRealm.city, for: .normal)
+            currentAddressNameLabel.text = locationRealm.aoiname
+            currentAddressLabel.text = locationRealm.address
+        }
+        sizeToFitCityBtn()
+    }
+    
+    func sizeToFitCityBtn() {
         cityBtn.sizeToFit()
         searchBar.frame.origin.x = 24 + cityBtn.frame.width
         searchBar.frame.size.width = cancelBtn.frame.origin.x - searchBar.frame.origin.x
-        currentAddressNameLabel.text = locationRealm.aoiname
-        currentAddressLabel.text = locationRealm.address
     }
     
     class func instantiateFromStoryboard() -> DeliveryAddressSelectionVC {
@@ -90,12 +159,18 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
 
     @IBAction func relocateBtnPressed(_ sender: Any) {
-        showHelperView(with: searchingText)
+        shouldSearchAround = true
+        showHelperView(with: locatingText)
         locateOnce()
     }
     
     @IBAction func cityBtnPressed(_ sender: Any) {
-        
+        showCityTableView()
+    }
+    
+    func showCityTableView() {
+        cityTableView.isHidden = false
+        bakerDATableView.isHidden = true
     }
     
     func showHelperView(with text: String) {
@@ -113,7 +188,9 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         case "unwindToDeliveryAddressEditingVCFromDASelectionVC":
             guard let vc = segue.destination as? DeliveryAddressEditingVC else { break }
             vc.selectedPOI = self.selectedPOI
-            vc.addressSelectionBtn.setTitle(selectedPOI.address, for: .normal)
+            if let selectedPOI = self.selectedPOI {
+                vc.addressSelectionBtn.setTitle(selectedPOI.address, for: .normal)
+            }
         case "unwindToHomeVCFromDASelectionVC":
             if let vc = segue.destination as? HomeShopVC {
                 vc.homeVC.poiChanged = selectedPOI != vc.homeVC.selectedPOI
@@ -154,18 +231,27 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
     
     func onReGeocodeSearchDone(_ request: AMapReGeocodeSearchRequest!, response: AMapReGeocodeSearchResponse!) {
+        self.helperView.isHidden = true
         guard let regeocode = response.regeocode else {
             // TODO: - no results
-            self.helperView.isHidden = true
+            
             return
         }
-        self.locationRealm = RealmHelper.addLocation(by: regeocode)
-        self.updateCurrentLocationView()
+        currentReGeocode = regeocode
         if fromCellSelection {
-            self.performSegue(withIdentifier: unwindSegueID, sender: self)
+            unwindFromCellSelection(by: regeocode)
+        } else {
+            self.showHelperView(with: searchingText)
+            self.updateCurrentLocationView(by: regeocode)
+            self.doPOIAroundSearch(by: regeocode)
         }
     }
     
+    func unwindFromCellSelection(by regeocode: AMapReGeocode) {
+        self.locationRealm = RealmHelper.addLocation(by: regeocode, poi: selectedPOI)
+        self.updateCurrentLocationView()
+        self.performSegue(withIdentifier: unwindSegueID, sender: self)
+    }
     
     private func locateOnce() {
         locationManager.setLocationAccuracyHundredMeters()
@@ -212,18 +298,34 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         mapSearch.aMapReGoecodeSearch(request)
     }
     
-    private func doPOISearch() {
+    private func doPOIAroundSearch(by regeocode: AMapReGeocode? = nil) {
         let request = AMapPOIAroundSearchRequest()
-        request.location = AMapGeoPoint.location(withLatitude: CGFloat(Double(locationRealm.latitude)!), longitude: CGFloat(Double(locationRealm.longitude)!))
+        if let location = regeocode?.pois.first?.location {
+            request.location = location
+        } else {
+            request.location = AMapGeoPoint.location(withLatitude: CGFloat(Double(locationRealm.latitude)!), longitude: CGFloat(Double(locationRealm.longitude)!))
+        }
         request.requireExtension = true
         request.keywords = searchBar.text!
-
+        
         mapSearch.cancelAllRequests()
         mapSearch.aMapPOIAroundSearch(request)
         
         showHelperView(with: searchingText)
     }
-
+    
+    private func doPOIKeywordSearch() {
+        let request = AMapPOIKeywordsSearchRequest()
+        request.requireExtension = true
+        request.keywords = searchBar.text!
+        request.city = cityBtn.title(for: .normal)
+        
+        mapSearch.cancelAllRequests()
+        mapSearch.aMapPOIKeywordsSearch(request)
+        
+        showHelperView(with: searchingText)
+    }
+    
     
     // MARK: - TableView
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -231,7 +333,9 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         case 0:
             return 1
         case 1:
-            return citys.count
+            return provs.count
+        case 2:
+            return 1
         default:
             return 0
         }
@@ -242,7 +346,9 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         case 0:
             return pois.count
         case 1:
-            return citys[section]!.count
+            return citys[provs[section]]!.count
+        case 2:
+            return addresses == nil ? 0 : addresses.count
         default:
             return 0
         }
@@ -260,7 +366,20 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             return cell
         case 1:
             let section = indexPath.section
-            return UITableViewCell()
+            let cell = UITableViewCell()
+            cell.textLabel?.text = citys[provs[section]]![row].removeNumbers()
+            return cell
+        case 2:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressTableViewCell", for: indexPath) as! DeliveryAddressTableViewCell
+            let addr = addresses[row]
+            let aoi = addr.aoiName ?? ""
+            let detailed = addr.detailed ?? ""
+            let address = addr.address ?? ""
+            cell.address = addr
+            cell.addressLabel.text = aoi + detailed + " " + address
+            cell.nameLabel.text = addr.name
+            cell.phoneLabel.text = addr.phone
+            return cell
         default:
             return UITableViewCell()
         }
@@ -272,12 +391,29 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             guard let cell = tableView.cellForRow(at: indexPath) as? DeliveryAddressSelectionTableViewCell else { break }
             selectedPOI = cell.poi
             fromCellSelection = true
-            doReGeocode(with: amapGeoPointToCLLocation(selectedPOI.location))
+            shouldSearchAround = true
+            doReGeocode(with: amapGeoPointToCLLocation(selectedPOI!.location))
         case 1:
-            break
+            guard let cell = tableView.cellForRow(at: indexPath) else { break }
+            guard let city = cell.textLabel?.text else { break }
+            cityBtn.setTitle(city, for: .normal)
+            sizeToFitCityBtn()
+            shouldSearchAround = false
+            cityTableView.isHidden = true
+            doPOIKeywordSearch()
+            tableView.deselectRow(at: indexPath, animated: true)
+        case 2:
+            guard let cell = tableView.cellForRow(at: indexPath) as? DeliveryAddressTableViewCell else { break }
+            cityBtn.setTitle(cell.address.city, for: .normal)
+            selectedPOI = nil
+            performSegue(withIdentifier: unwindSegueID, sender: self)
         default:
             break
         }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return tableView.tag == 1 ? provs[section].removeNumbers() : nil
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -290,7 +426,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        doPOISearch()
+        shouldSearchAround ? doPOIAroundSearch() : doPOIKeywordSearch()
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {

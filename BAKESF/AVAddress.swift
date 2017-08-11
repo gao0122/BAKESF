@@ -11,19 +11,21 @@ import AVOSCloud
 class AVAddress: AVObject, AVSubclassing {
     
     @NSManaged var Baker: AVBaker?
-    @NSManaged var name: String?
+    @NSManaged var name: String? // user name
     @NSManaged var phone: String?
     @NSManaged var gender: String?
     @NSManaged var province: String?
     @NSManaged var city: String?
     @NSManaged var district: String?
     @NSManaged var township: String?
+    @NSManaged var street: String? // for only updated from poi address
     @NSManaged var streetName: String?
     @NSManaged var streetNumber: String?
-    @NSManaged var aoiName: String?
-    @NSManaged var detailed: String?
-    @NSManaged var formatted: String?
-    @NSManaged var label: String?
+    @NSManaged var aoiName: String? // main address name
+    @NSManaged var detailed: String? // input by user, eg. room number
+    @NSManaged var formatted: String? // full address
+    @NSManaged var address: String? // from province to street number
+    @NSManaged var label: String? // tag
     
     
     static func parseClassName() -> String {

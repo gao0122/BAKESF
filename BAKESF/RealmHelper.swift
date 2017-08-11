@@ -295,16 +295,16 @@ class RealmHelper {
 
     
     // MARK: - Location
-    static func addLocation(by regeocode: AMapReGeocode) -> LocationRealm {
+    static func addLocation(by regeocode: AMapReGeocode, poi: AMapPOI? = nil) -> LocationRealm {
         if let location = retrieveLocation() {
             let realm = try! Realm()
             try! realm.write {
-                setLocation(location, by: regeocode)
+                setLocation(location, by: regeocode, poi: poi)
             }
             return location
         } else {
             let location = LocationRealm()
-            setLocation(location, by: regeocode)
+            setLocation(location, by: regeocode, poi: poi)
             let realm = try! Realm()
             try! realm.write {
                 realm.add(location)
@@ -312,7 +312,7 @@ class RealmHelper {
             return location
         }
     }
-    private static func setLocation(_ location: LocationRealm, by regeocode: AMapReGeocode) {
+    private static func setLocation(_ location: LocationRealm, by regeocode: AMapReGeocode, poi: AMapPOI? = nil) {
         guard let ac = regeocode.addressComponent else { return }
         location.formatted = regeocode.formattedAddress!
         location.citycode = ac.citycode!
@@ -324,11 +324,21 @@ class RealmHelper {
         guard let street = ac.streetNumber else { return }
         location.streetName = street.street!
         location.streetNumber = street.number!
-        location.address = location.province + location.city + location.district + location.township + location.streetName + location.streetNumber
-        guard let aoi = regeocode.aois.first else { return }
-        location.aoiname = aoi.name
-        location.longitude = String(describing: aoi.location.longitude)
-        location.latitude = String(describing: aoi.location.latitude)
+        let addressText = location.province + location.city + location.district + location.township
+        if let poi = poi {
+            location.aoiname = poi.name
+            location.longitude = String(describing: poi.location.longitude)
+            location.latitude = String(describing: poi.location.latitude)
+            location.street = poi.address
+            location.address = addressText + poi.address
+        } else {
+            guard let aoi = regeocode.aois.first else { return }
+            location.aoiname = aoi.name
+            location.longitude = String(describing: aoi.location.longitude)
+            location.latitude = String(describing: aoi.location.latitude)
+            location.street = nil
+            location.address = addressText + location.streetName + location.streetNumber
+        }
     }
     
     

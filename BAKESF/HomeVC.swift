@@ -33,7 +33,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     
     var user: UserRealm!
     var avbaker: AVBaker!
-    var selectedPOI: AMapPOI!
+    var selectedPOI: AMapPOI?
     var pois = [AMapPOI]()
     var poiChanged = false
     var locateManuallyBtnPressed = false
@@ -64,10 +64,16 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         if poiChanged && selectedPOI != nil {
             if let locationRealm = locationRealm {
                 locateFailedView.isHidden = true
-                locationBtn.setTitle(locationRealm.city, for: .normal)
+                updateLocationBtnAndSearchBar(by: locationRealm.city)
                 homeShopVC.refresher.beginRefreshing()
             } else {
                 locateFailedView.isHidden = false
+            }
+        } else if selectedPOI == nil {
+            if let locationRealm = locationRealm {
+                locateFailedView.isHidden = true
+                updateLocationBtnAndSearchBar(by: locationRealm.city)
+                homeShopVC.refresher.beginRefreshing()
             }
         }
     }
@@ -97,6 +103,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
             if locateManuallyBtnPressed {
                 locateManuallyBtnPressed = false
                 vc.showSegueID = id + "NaN"
+                vc.avbaker = self.avbaker
             }
         default:
             break
@@ -117,8 +124,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         }
     }
 
-    func updateLocationBtnAndSearchBar(by location: LocationRealm) {
-        locationBtn.setTitle(location.city, for: .normal)
+    func updateLocationBtnAndSearchBar(by city: String) {
+        locationBtn.setTitle(city, for: .normal)
         locationBtn.sizeToFit()
         locationBtn.frame.size.width += 8
         locationBtn.frame.origin.x = screenWidth - 12 - locationBtn.frame.width
@@ -171,7 +178,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
             return
         }
         locationRealm = RealmHelper.addLocation(by: regeocode)
-        updateLocationBtnAndSearchBar(by: locationRealm!)
+        updateLocationBtnAndSearchBar(by: locationRealm!.city)
         print(regeocode: regeocode)
         hideLocateFailedViewAndStopIndicator()
     }

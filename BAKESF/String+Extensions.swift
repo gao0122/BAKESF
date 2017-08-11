@@ -24,5 +24,9 @@ extension String {
         }
         return str
     }
+    
+    func removeNumbers() -> String {
+        return self.components(separatedBy: .decimalDigits).joined()
+    }
 }
 

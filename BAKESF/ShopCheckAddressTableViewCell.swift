@@ -1,5 +1,5 @@
 //
-//  ShopCheckAddressTableCell.swift
+//  ShopCheckAddressTableViewCell.swift
 //  BAKESF
 //
 //  Created by 高宇超 on 7/31/17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ShopCheckAddressTableCell: UITableViewCell {
+class ShopCheckAddressTableViewCell: UITableViewCell {
     
     @IBOutlet weak var phoneLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!

@@ -34,7 +34,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         super.viewDidLoad()
         
         tableView.addSubview(refresher)
-        
+
         loadShops({
             shops, error in
             if error == nil {
@@ -70,14 +70,13 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     func sellerRefresh(_ sender: UIRefreshControl) {
         loadShops({
             shops, error in
+            self.refresher.endRefreshing()
             if error == nil {
                 // refreshed
                 self.avshops = shops!
                 self.tableView.reloadData()
-                self.refresher.endRefreshing()
             } else {
                 // failed
-                self.refresher.endRefreshing()
             }
         })
     }
@@ -152,6 +151,12 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 1
+    }
+        
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if refresher.isRefreshing {
+            refresher.endRefreshing()
+        }
     }
     
     

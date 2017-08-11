@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ShopCheckDeliveryTimeTableCell: UITableViewCell {
+class ShopCheckDeliveryTimeTableViewCell: UITableViewCell {
     
     @IBOutlet weak var deliveryTime: UILabel!
     @IBOutlet weak var arrivalTime: UILabel!

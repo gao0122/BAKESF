@@ -230,7 +230,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 switch row {
                 case 0:
                     // segmented control
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckSegmentedControlTableCell", for: indexPath) as! ShopCheckSegmentedControlTableCell
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckSegmentedControlTableViewCell", for: indexPath) as! ShopCheckSegmentedControlTableViewCell
                     self.segmentedControl = cell.segmentedControl
                     return cell
                 case 1:
@@ -323,8 +323,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     // Table Cells
-    private func totalFeeCell(_ indexPath: IndexPath) -> ShopCheckBakeTableCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
+    private func totalFeeCell(_ indexPath: IndexPath) -> ShopCheckBakeTableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableViewCell", for: indexPath) as! ShopCheckBakeTableViewCell
         // TODO: Delivery fee part
         guard var fee = avshop.deliveryFee as? Double else { return cell }
         let sections = determineSections(avshop)
@@ -347,8 +347,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    private func redPacketCell(_ indexPath: IndexPath) -> ShopCheckBakeTableCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
+    private func redPacketCell(_ indexPath: IndexPath) -> ShopCheckBakeTableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableViewCell", for: indexPath) as! ShopCheckBakeTableViewCell
         cell.priceLabel.alpha = 1
         cell.nameLabel.alpha = 1
         cell.amountLabel.alpha = 0
@@ -357,8 +357,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    private func deliveryFeeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckBakeTableCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
+    private func deliveryFeeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckBakeTableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableViewCell", for: indexPath) as! ShopCheckBakeTableViewCell
         guard let fee = avshop.deliveryFee as? Double else { return cell }
         cell.priceLabel.alpha = 1
         cell.nameLabel.alpha = 1
@@ -368,9 +368,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    private func bakeItemCell(_ indexPath: IndexPath) -> ShopCheckBakeTableCell {
+    private func bakeItemCell(_ indexPath: IndexPath) -> ShopCheckBakeTableViewCell {
         let row = indexPath.row
-        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableCell", for: indexPath) as! ShopCheckBakeTableCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableViewCell", for: indexPath) as! ShopCheckBakeTableViewCell
         cell.amountLabel.alpha = 1
         cell.priceLabel.alpha = 1
         cell.nameLabel.alpha = 1
@@ -438,8 +438,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    private func deliveryTimeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckDeliveryTimeTableCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableCell", for: indexPath) as! ShopCheckDeliveryTimeTableCell
+    private func deliveryTimeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckDeliveryTimeTableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableViewCell", for: indexPath) as! ShopCheckDeliveryTimeTableViewCell
         if preOrder {
             if !cell.arrivalTime.text!.contains("（预）") {
                 cell.arrivalTime.text = cell.arrivalTime.text! + "（预）"
@@ -448,8 +448,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    private func deliveryAddressCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckAddressTableCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckAddressTableCell", for: indexPath) as! ShopCheckAddressTableCell
+    private func deliveryAddressCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckAddressTableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckAddressTableViewCell", for: indexPath) as! ShopCheckAddressTableViewCell
         if address == nil {
             
         } else {

@@ -97,7 +97,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressTableCell") as! DeliveryAddressTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressTableViewCell") as! DeliveryAddressTableViewCell
         let row = indexPath.row
         let addr = addresses[row]
         let township = addr.township ?? ""

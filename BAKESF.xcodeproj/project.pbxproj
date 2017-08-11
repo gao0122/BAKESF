@@ -19,7 +19,7 @@
 		001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001DB09C1F024CD100A09F32 /* CommunityVC.swift */; };
 		00264E651F2F275700D83073 /* ShopCheckingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E641F2F275700D83073 /* ShopCheckingVC.swift */; };
 		00264E691F2F63A700D83073 /* ShopCheckBakeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */; };
-		00264E6B1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */; };
+		00264E6B1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift */; };
 		00264E6D1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */; };
 		00264E6F1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */; };
 		002659A41F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002659A31F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift */; };
@@ -52,6 +52,7 @@
 		006A3E1C1F38E4B100FE3064 /* Yuchaoooo.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 006A3E1B1F38E4B100FE3064 /* Yuchaoooo.gpx */; };
 		006A3E1E1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A3E1D1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift */; };
 		006A3E201F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */; };
+		006A3E221F3D8AAF00FE3064 /* citys.plist in Resources */ = {isa = PBXBuildFile; fileRef = 006A3E211F3D8AAF00FE3064 /* citys.plist */; };
 		006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006B2E511F1B514B00C10BB9 /* AVOrder.swift */; };
 		00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */; };
 		008F0AEF1F2C87EA00700C0D /* MeSettingPwdVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */; };
@@ -104,7 +105,7 @@
 		001DB09C1F024CD100A09F32 /* CommunityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityVC.swift; sourceTree = "<group>"; };
 		00264E641F2F275700D83073 /* ShopCheckingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckingVC.swift; sourceTree = "<group>"; };
 		00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckBakeTableCell.swift; sourceTree = "<group>"; };
-		00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckAddressTableCell.swift; sourceTree = "<group>"; };
+		00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckAddressTableViewCell.swift; sourceTree = "<group>"; };
 		00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckDeliveryTimeTableCell.swift; sourceTree = "<group>"; };
 		00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckSegmentedControlTableCell.swift; sourceTree = "<group>"; };
 		002659A31F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressVCFoff.swift; sourceTree = "<group>"; };
@@ -141,6 +142,7 @@
 		006A3E1B1F38E4B100FE3064 /* Yuchaoooo.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Yuchaoooo.gpx; sourceTree = "<group>"; };
 		006A3E1D1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressSelectionVC.swift; sourceTree = "<group>"; };
 		006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressSelectionTableViewCell.swift; sourceTree = "<group>"; };
+		006A3E211F3D8AAF00FE3064 /* citys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = citys.plist; sourceTree = "<group>"; };
 		006B2E511F1B514B00C10BB9 /* AVOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVOrder.swift; sourceTree = "<group>"; };
 		00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakePreOrderRealm.swift; sourceTree = "<group>"; };
 		008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingPwdVC.swift; sourceTree = "<group>"; };
@@ -229,7 +231,7 @@
 				006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */,
 				00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */,
 				00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */,
-				00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift */,
+				00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift */,
 				00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */,
 				00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */,
 				002659A31F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift */,
@@ -353,6 +355,7 @@
 		00B474E31ECD6A2D00ED1B7A /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				006A3E211F3D8AAF00FE3064 /* citys.plist */,
 				00D23B941F14AF1B002E45B7 /* Extensions */,
 				000D13771EFF862700A19D5A /* Constants.swift */,
 				00D0AF991EE3C7F300B1F5A2 /* Helper.swift */,
@@ -511,6 +514,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				006A3E221F3D8AAF00FE3064 /* citys.plist in Resources */,
 				006A3E1C1F38E4B100FE3064 /* Yuchaoooo.gpx in Resources */,
 				00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */,
 				00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */,
@@ -614,7 +618,7 @@
 				006024F41EC973D600FFB859 /* MeMemoryVC.swift in Sources */,
 				0034EE341EE7D59A005300AE /* ShopPagingVC.swift in Sources */,
 				004318341F13F21900FD0227 /* ShopClassifyTableView.swift in Sources */,
-				00264E6B1F2F63DE00D83073 /* ShopCheckAddressTableCell.swift in Sources */,
+				00264E6B1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift in Sources */,
 				008F0AF11F2CBD7100700C0D /* MeSettingNameVC.swift in Sources */,
 				006024FC1EC9900000FFB859 /* HomeFollowVC.swift in Sources */,
 				00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */,

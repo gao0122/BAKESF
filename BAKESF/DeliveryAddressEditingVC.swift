@@ -22,7 +22,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
     var avbaker: AVBaker!
     var address: AVAddress?
     var daSelectionVC: DeliveryAddressSelectionVC!
-    var selectedPOI: AMapPOI!
+    var selectedPOI: AMapPOI?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,7 +97,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func okayBtnPressed(_ sender: Any) {
-        printit(selectedPOI.formattedDescription()!)
+        printit(selectedPOI!.formattedDescription()!)
         guard let address = address else {
             // notify: - 保存失败
             return

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ShopCheckSegmentedControlTableCell: UITableViewCell {
+class ShopCheckSegmentedControlTableViewCell: UITableViewCell {
     
     @IBOutlet weak var segmentedControl: UISegmentedControl!
 
