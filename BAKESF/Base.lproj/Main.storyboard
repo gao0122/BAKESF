@@ -618,7 +618,7 @@
                                             <outlet property="segmentedControl" destination="AP5-Eq-EBE" id="MZy-te-XjZ"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="shopCheckBakeTableViewCell" rowHeight="51" id="8mh-Sb-hO7" customClass="ShopCheckBakeTableViewCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="shopCheckBakeTableViewCell" rowHeight="51" id="8mh-Sb-hO7" customClass="ShopCheckBakeTableViewCell" customModule="BAKESF" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="188" width="414" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="8mh-Sb-hO7" id="PQj-m9-q3w">
