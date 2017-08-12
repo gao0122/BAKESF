@@ -341,6 +341,41 @@ class RealmHelper {
         }
     }
     
+    static func addLocation(by avaddress: AVAddress) -> LocationRealm {
+        if let location = retrieveLocation() {
+            let realm = try! Realm()
+            try! realm.write {
+                setLocation(location, by: avaddress)
+            }
+            return location
+        } else {
+            let location = LocationRealm()
+            setLocation(location, by: avaddress)
+            let realm = try! Realm()
+            try! realm.write {
+                realm.add(location)
+            }
+            return location
+        }
+    }
+    private static func setLocation(_ location: LocationRealm, by avaddress: AVAddress) {
+        location.formatted = avaddress.formatted ?? ""
+        location.citycode = avaddress.citycode ?? ""
+        location.province = avaddress.province ?? ""
+        location.city = avaddress.city ?? ""
+        location.district = avaddress.district ?? ""
+        location.township = avaddress.township ?? ""
+        location.adcode = ""
+        location.streetName = avaddress.streetName ?? ""
+        location.streetNumber = avaddress.streetNumber ?? ""
+        let addressText = location.province + location.city + location.district + location.township
+        location.aoiname = avaddress.aoiName ?? ""
+        location.longitude = String(describing: avaddress.longitude)
+        location.latitude = String(describing: avaddress.latitude)
+        location.street = avaddress.street
+        if location.street == "" { location.street = nil }
+        location.address = addressText + location.streetName + location.streetNumber
+    }
     
     static func retrieveLocation() -> LocationRealm? {
         let realm = try! Realm()

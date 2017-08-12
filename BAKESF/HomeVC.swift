@@ -32,7 +32,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     let bakeLocationRadius: CGFloat = 3000
     
     var user: UserRealm!
-    var avbaker: AVBaker!
+    var avbaker: AVBaker?
     var selectedPOI: AMapPOI?
     var pois = [AMapPOI]()
     var poiChanged = false
@@ -40,6 +40,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     var locationRealm: LocationRealm? = {
         return RealmHelper.retrieveLocation()
     }()
+    var locatedOnce = false
     var searchBarWidth: CGFloat!
     var hasSetShopView = false
     
@@ -61,6 +62,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        checkCurrentUser()
         if poiChanged && selectedPOI != nil {
             if let locationRealm = locationRealm {
                 locateFailedView.isHidden = true
@@ -83,7 +85,6 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         mapSearch.delegate = self
         locateFailedView.isHidden = true
         indicatorStartAni()
-        checkCurrentUser()
         retryBtn.layer.cornerRadius = 4
         retryBtn.layer.borderWidth = 1
         retryBtn.layer.borderColor = UIColor.bkRed.cgColor
@@ -100,10 +101,10 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         case "showDASelctionVCFromHomeVC":
             guard let vc = segue.destination as? DeliveryAddressSelectionVC else { break }
             vc.showSegueID = id
+            vc.avbaker = self.avbaker
             if locateManuallyBtnPressed {
                 locateManuallyBtnPressed = false
                 vc.showSegueID = id + "NaN"
-                vc.avbaker = self.avbaker
             }
         default:
             break
@@ -114,16 +115,6 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         // do nothing
     }
     
-    func checkCurrentUser() -> Void {
-        if let usr = RealmHelper.retrieveCurrentUser() {
-            // has logged in
-            self.user = usr
-            self.avbaker = retrieveBaker(withID: user.id)
-        } else {
-            // to login
-        }
-    }
-
     func updateLocationBtnAndSearchBar(by city: String) {
         locationBtn.setTitle(city, for: .normal)
         locationBtn.sizeToFit()
@@ -177,10 +168,15 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
             self.showLocateFailedViewAndStopIndicator()
             return
         }
+        locatedOnce = true
         locationRealm = RealmHelper.addLocation(by: regeocode)
         updateLocationBtnAndSearchBar(by: locationRealm!.city)
-        print(regeocode: regeocode)
-        hideLocateFailedViewAndStopIndicator()
+        if let _ = avbaker {
+            hideLocateFailedViewAndStopIndicator()
+        } else if user == nil {
+            hideLocateFailedViewAndStopIndicator()
+        }
+        
     }
     
     private func locateOnce() {
@@ -349,6 +345,37 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
                 break
             case .didScrollEnd:
                 break
+            }
+        }
+    }
+    
+    
+    func checkCurrentUser() {
+        if let usr = RealmHelper.retrieveCurrentUser() {
+            if let _ = avbaker {
+                // logged in
+            } else {
+                retrieveBaker(withID: usr.id, completion: {
+                    object, error in
+                    if let error = error {
+                        printit("Retrieve Baker Error: \(error.localizedDescription)")
+                        self.helperLabel.text = "登录失败。"
+                        if self.locatedOnce && self.indicatorView.isAnimating {
+                            self.showLocateFailedViewAndStopIndicator()
+                        }
+                    } else {
+                        if let baker = object as? AVBaker {
+                            self.avbaker = baker
+                            if self.locatedOnce && self.indicatorView.isAnimating {
+                                self.hideLocateFailedViewAndStopIndicator()
+                            }
+                        } else {
+                            if self.locatedOnce && self.indicatorView.isAnimating {
+                                self.showLocateFailedViewAndStopIndicator()
+                            }
+                        }
+                    }
+                })
             }
         }
     }

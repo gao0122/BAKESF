@@ -47,6 +47,9 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        
+    }
 
     class func instantiateFromStoryboard() -> DeliveryAddressVC {
         return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! DeliveryAddressVC

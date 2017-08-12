@@ -1,5 +1,5 @@
 //
-//  BakesfTransitionAnimator.swift
+//  FancyTransitionAnimator.swift
 //  BAKESF
 //
 //  Created by 高宇超 on 7/4/17.
@@ -8,21 +8,21 @@
 
 import UIKit
 
-enum SDETransitionType{
+enum SDETransitionType {
     case navigationTransition(UINavigationControllerOperation)
     case tabTransition(TabOperationDirection)
     case modalTransition(ModalOperation)
 }
 
-enum TabOperationDirection{
+enum TabOperationDirection {
     case left, right
 }
 
-enum ModalOperation{
+enum ModalOperation {
     case presentation, dismissal
 }
 
-class BakesfTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+class FancyTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
     private var transitionType: SDETransitionType
     

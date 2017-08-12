@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 import AVOSCloud
 
-let TEST = false
+let TEST = true
 
 class MeLoginVC: UIViewController, UITextFieldDelegate {
 
@@ -251,6 +251,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                 self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateTimer(sender: )), userInfo: nil, repeats: true)
                 updateSentMsgDate(phone: phone)
             } else {
+                self.resetGetMsgBtn()
                 let errorMsg = error!.localizedDescription
                 print(errorMsg)
                 if errorMsg.contains("456") {

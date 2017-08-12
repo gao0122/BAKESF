@@ -16,6 +16,7 @@ class AVAddress: AVObject, AVSubclassing {
     @NSManaged var gender: String?
     @NSManaged var province: String?
     @NSManaged var city: String?
+    @NSManaged var citycode: String?
     @NSManaged var district: String?
     @NSManaged var township: String?
     @NSManaged var street: String? // for only updated from poi address
@@ -25,8 +26,10 @@ class AVAddress: AVObject, AVSubclassing {
     @NSManaged var detailed: String? // input by user, eg. room number
     @NSManaged var formatted: String? // full address
     @NSManaged var address: String? // from province to street number
+    @NSManaged var longitude: String?
+    @NSManaged var latitude: String? 
     @NSManaged var label: String? // tag
-    
+    @NSManaged var recentlyUsed: Bool
     
     static func parseClassName() -> String {
         return "Address"

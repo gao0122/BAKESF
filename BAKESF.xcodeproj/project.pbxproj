@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0000D8191F1F3DC100BB2B30 /* ShopPreBakeTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000D8181F1F3DC100BB2B30 /* ShopPreBakeTableView.swift */; };
 		0000D81B1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0000D81A1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift */; };
-		00020F861F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */; };
+		00020F861F0BCDC5008ABFB1 /* FancyTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F851F0BCDC5008ABFB1 /* FancyTransitionAnimator.swift */; };
 		00020F881F0C201E008ABFB1 /* MeInfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F871F0C201E008ABFB1 /* MeInfoVC.swift */; };
 		00020F8D1F0E2D5D008ABFB1 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F891F0E2D5D008ABFB1 /* CGFloat+Extensions.swift */; };
 		00020F8E1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F8A1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift */; };
@@ -59,7 +59,7 @@
 		008F0AF11F2CBD7100700C0D /* MeSettingNameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AF01F2CBD7100700C0D /* MeSettingNameVC.swift */; };
 		008F74171F38670700AFEC9E /* LocationRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F74161F38670700AFEC9E /* LocationRealm.swift */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
-		00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */; };
+		00A716E61F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */; };
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
 		00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */; };
 		00B491A91EE4CFE1000C63EB /* ShopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B491A81EE4CFE1000C63EB /* ShopVC.swift */; };
@@ -95,7 +95,7 @@
 /* Begin PBXFileReference section */
 		0000D8181F1F3DC100BB2B30 /* ShopPreBakeTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopPreBakeTableView.swift; sourceTree = "<group>"; };
 		0000D81A1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopPreBakeTableCell.swift; sourceTree = "<group>"; };
-		00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakesfTransitionAnimator.swift; sourceTree = "<group>"; };
+		00020F851F0BCDC5008ABFB1 /* FancyTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FancyTransitionAnimator.swift; sourceTree = "<group>"; };
 		00020F871F0C201E008ABFB1 /* MeInfoVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeInfoVC.swift; sourceTree = "<group>"; };
 		00020F891F0E2D5D008ABFB1 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		00020F8A1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
@@ -149,7 +149,7 @@
 		008F0AF01F2CBD7100700C0D /* MeSettingNameVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingNameVC.swift; sourceTree = "<group>"; };
 		008F74161F38670700AFEC9E /* LocationRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationRealm.swift; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
-		00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationControllerDelegate.swift; sourceTree = "<group>"; };
+		00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FancyNavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		00B4709A1F0404DD00725C95 /* AVBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBaker.swift; sourceTree = "<group>"; };
 		00B474DD1ECD655C00ED1B7A /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/../build/Debug-iphoneos/Realm/Realm.framework"; sourceTree = "<group>"; };
 		00B474DF1ECD656000ED1B7A /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = "Pods/../build/Debug-iphoneos/RealmSwift/RealmSwift.framework"; sourceTree = "<group>"; };
@@ -267,8 +267,8 @@
 		00455A8D1F19E844009F440F /* VCTransition */ = {
 			isa = PBXGroup;
 			children = (
-				00A716E51F0BCA0300A8FF78 /* NavigationControllerDelegate.swift */,
-				00020F851F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift */,
+				00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */,
+				00020F851F0BCDC5008ABFB1 /* FancyTransitionAnimator.swift */,
 			);
 			name = VCTransition;
 			sourceTree = "<group>";
@@ -634,7 +634,7 @@
 				00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */,
 				0034EE361EE9116B005300AE /* ShopBuyVC.swift in Sources */,
 				00264E691F2F63A700D83073 /* ShopCheckBakeTableCell.swift in Sources */,
-				00020F861F0BCDC5008ABFB1 /* BakesfTransitionAnimator.swift in Sources */,
+				00020F861F0BCDC5008ABFB1 /* FancyTransitionAnimator.swift in Sources */,
 				006024FE1EC9900F00FFB859 /* HomeShopVC.swift in Sources */,
 				0034EE381EE91176005300AE /* ShopPreVC.swift in Sources */,
 				004318321F13EF8E00FD0227 /* ShopClassifyTableCell.swift in Sources */,
@@ -671,7 +671,7 @@
 				00BF12691F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift in Sources */,
 				006A3E1E1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift in Sources */,
 				00455A851F15D4F5009F440F /* AVShop.swift in Sources */,
-				00A716E61F0BCA0300A8FF78 /* NavigationControllerDelegate.swift in Sources */,
+				00A716E61F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift in Sources */,
 				00BDA2DB1F34900000923D9F /* AVAddress.swift in Sources */,
 				00D23BA01F14AFD0002E45B7 /* UIImage+Extensions.swift in Sources */,
 				001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */,

@@ -54,8 +54,8 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
 
     private let mapSearch = AMapSearchAPI()!
     private let locationManager = AMapLocationManager()
-    private var locationRealm: LocationRealm = {
-        return RealmHelper.retrieveLocation()!
+    private var locationRealm: LocationRealm? = {
+        return RealmHelper.retrieveLocation()
     }()
     
     private let noResultText = "没有结果\n\n换个地址试试吧~"
@@ -82,7 +82,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         mapSearch.delegate = self
         
         cityTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
-        bakerDATableView.estimatedRowHeight = 72
+        bakerDATableView.estimatedRowHeight = 64
         bakerDATableView.rowHeight = UITableViewAutomaticDimension
         bakerDATableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         tableView.estimatedRowHeight = 56
@@ -126,7 +126,11 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             unwindFromCellSelection(by: regeocode)
         } else {
             fromCellSelection = true
-            doReGeocode(with: CLLocation(latitude: CLLocationDegrees(locationRealm.latitude)!, longitude: CLLocationDegrees(locationRealm.longitude)!))
+            if let location = locationRealm {
+                doReGeocode(with: CLLocation(latitude: CLLocationDegrees(location.latitude)!, longitude: CLLocationDegrees(location.longitude)!))
+            } else {
+                showHelperView(with: errorText)
+            }
         }
     }
     
@@ -141,9 +145,15 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             currentAddressNameLabel.text = regeocode.pois.first?.name
             currentAddressLabel.text = regeocode.pois.first?.address
         } else {
-            cityBtn.setTitle(locationRealm.city, for: .normal)
-            currentAddressNameLabel.text = locationRealm.aoiname
-            currentAddressLabel.text = locationRealm.address
+            if let location = locationRealm {
+                cityBtn.setTitle(location.city, for: .normal)
+                currentAddressNameLabel.text = location.aoiname
+                currentAddressLabel.text = location.address
+            } else {
+                cityBtn.setTitle("火星", for: .normal)
+                currentAddressNameLabel.text = ""
+                currentAddressLabel.text = ""
+            }
         }
         sizeToFitCityBtn()
     }
@@ -303,7 +313,9 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         if let location = regeocode?.pois.first?.location {
             request.location = location
         } else {
-            request.location = AMapGeoPoint.location(withLatitude: CGFloat(Double(locationRealm.latitude)!), longitude: CGFloat(Double(locationRealm.longitude)!))
+            if let location = locationRealm {
+                request.location = AMapGeoPoint.location(withLatitude: CGFloat(Double(location.latitude)!), longitude: CGFloat(Double(location.longitude)!))
+            }
         }
         request.requireExtension = true
         request.keywords = searchBar.text!
@@ -406,6 +418,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             guard let cell = tableView.cellForRow(at: indexPath) as? DeliveryAddressTableViewCell else { break }
             cityBtn.setTitle(cell.address.city, for: .normal)
             selectedPOI = nil
+            locationRealm = RealmHelper.addLocation(by: cell.address)
             performSegue(withIdentifier: unwindSegueID, sender: self)
         default:
             break

@@ -206,17 +206,3 @@ private let settingDictLogout: [Int: [String]] = [
     0: ["登录"]
 ]
 
-/*
- <key>NSAllowsArbitraryLoadsInWebContent</key>
- <true/>
- <key>NSExceptionDomains</key>
- <dict>
- <key>clouddn.com</key>
- <dict>
- <key>NSIncludesSubdomains</key>
- <true/>
- <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
- <true/>
- </dict>
- </dict>
- */

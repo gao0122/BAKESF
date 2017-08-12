@@ -11,7 +11,7 @@ import PagingMenuController
 import AVOSCloud
 import Crashlytics
 
-class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet weak var loginBtn: UIButton!
     @IBOutlet weak var userNameLabel: UILabel!
@@ -126,9 +126,6 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
         if let id = segue.identifier {
             switch id {
             case "showLogin":
-                let sourceVC = segue.source
-                sourceVC.navigationController?.interactivePopGestureRecognizer?.delegate = self
-                sourceVC.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
                 guard let loginVC = segue.destination as? MeLoginVC else { break }
                 loginVC.showSegueID = id
             case "showSetting":
@@ -312,11 +309,8 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
 
     func checkCurrentUser() {
         if let usr = RealmHelper.retrieveCurrentUser() {
+            setupViewsAfterChecking(loggedin: true)
             user = usr
-            editBtn.isHidden = false
-            editBtnBg.isHidden = false
-            editInfoBtn.isHidden = false
-            loginBtn.isHidden = true
             userNameLabel.text = "\(usr.name)"
             avbaker = retrieveBaker(withID: usr.id)
             if let data = usr.headphoto {
@@ -329,12 +323,16 @@ class MeVC: UIViewController, UIGestureRecognizerDelegate, UIImagePickerControll
     }
     
     func setupLogout() {
-        editBtn.isHidden = true
-        editBtnBg.isHidden = true
-        editInfoBtn.isHidden = true
-        loginBtn.isHidden = false
+        setupViewsAfterChecking(loggedin: false)
         userNameLabel.text = "个人主页"
         headphoto.setImage(UIImage(named: "巧克力布丁")!, for: .normal)
+    }
+    
+    func setupViewsAfterChecking(loggedin: Bool) {
+        editBtn.isHidden = !loggedin
+        editBtnBg.isHidden = !loggedin
+        editInfoBtn.isHidden = !loggedin
+        loginBtn.isHidden = loggedin
     }
     
     

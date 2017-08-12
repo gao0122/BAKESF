@@ -106,6 +106,18 @@ func updateSentMsgDate(phone: String) {
     })
 }
 
+func retrieveRecentlyAddress(by baker: AVBaker, completion: @escaping ([AVObject]?, Error?) -> Void) {
+    let q1 = AVAddress.query()
+    q1.whereKey("recentlyUsed", equalTo: true)
+    let q2 = AVAddress.query()
+    q2.whereKey("Baker", equalTo: baker)
+    let query = AVQuery.andQuery(withSubqueries: [q1, q2])
+    query.includeKey("Baker")
+    query.findObjectsInBackground({
+        objects, error in
+        completion(objects as? [AVObject], error)
+    })
+}
 
 
 // calculate the stars difference

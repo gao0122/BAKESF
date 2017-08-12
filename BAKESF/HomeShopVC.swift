@@ -35,16 +35,6 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         
         tableView.addSubview(refresher)
 
-        loadShops({
-            shops, error in
-            if error == nil {
-                self.avshops = shops!
-                self.tableView.reloadData()
-            } else {
-                // load failed 
-            }
-        })
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -53,6 +43,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     
     override func viewDidAppear(_ animated: Bool) {
         self.tabBarController?.tabBar.isHidden = false
+        self.loadShops()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -65,6 +56,18 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     
     class func instantiateFromStoryboard() -> HomeShopVC {
         return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! HomeShopVC
+    }
+    
+    func loadShops() {
+        loadShops({
+            shops, error in
+            if error == nil {
+                self.avshops = shops!
+                self.tableView.reloadData()
+            } else {
+                // load failed
+            }
+        })
     }
     
     func sellerRefresh(_ sender: UIRefreshControl) {

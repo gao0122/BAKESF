@@ -32,7 +32,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var avshop: AVShop!
     var avbaker: AVBaker!
     var userRealm: UserRealm!
-    var address: AVAddress!
+    var address: AVAddress?
     
     var bakes: [Object]!
     var deliveryTimeViewState: DeliveryTimeViewState = .collapsed
@@ -47,7 +47,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         bakes = RealmHelper.retrieveAllBakes(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         
-        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -61,7 +60,20 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 object, error in
                 if let baker = object as? AVBaker {
                     self.avbaker = baker
-                    self.tableView.reloadData()
+                    retrieveRecentlyAddress(by: baker, completion: {
+                        objects, error in
+                        if let error = error {
+                            self.address = nil
+                            printit("Retrieve address error: \(error.localizedDescription)")
+                        } else {
+                            if let address = objects?.first as? AVAddress {
+                                self.address = address
+                            } else {
+                                self.address = nil
+                            }
+                        }
+                        self.tableView.reloadData()
+                    })
                 } else {
                     // handle error
                 }
@@ -241,7 +253,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     if userRealm == nil {
                         return centerTextCell("立即登录", color: .buttonBlue)
                     } else {
-                        return deliveryAddressCell(indexPath)
+                        if let address = address {
+                            return deliveryAddressCell(with: address, indexPath)
+                        } else {
+                            return noDeliveryAddressCell(indexPath)
+                        }
                     }
                 case 3:
                     let sections = determineSections(avshop)
@@ -266,8 +282,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         switch sections {
                         case 4:
                             if userRealm != nil {
-                                // delivery address
-                                return deliveryAddressCell(indexPath, preOrder: true)
+                                if let address = address {
+                                    return deliveryAddressCell(with: address, indexPath, preOrder: true)
+                                } else {
+                                    return noDeliveryAddressCell(indexPath)
+                                }
                             }
                         default:
                             break
@@ -448,21 +467,24 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    private func deliveryAddressCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckAddressTableViewCell {
+    private func deliveryAddressCell(with address: AVAddress, _ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckAddressTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckAddressTableViewCell", for: indexPath) as! ShopCheckAddressTableViewCell
-        if address == nil {
-            
-        } else {
-            cell.addressLabel.text = address.formatted
-            cell.phoneLabel.text = address.phone
-            if preOrder {
-                if !cell.phoneLabel.text!.contains("（预）") {
-                    cell.phoneLabel.text = cell.phoneLabel.text! + "（预）"
-                }
+        cell.addressLabel.text = address.formatted
+        cell.phoneLabel.text = address.phone
+        if preOrder {
+            if !cell.phoneLabel.text!.contains("（预）") {
+                cell.phoneLabel.text = cell.phoneLabel.text! + "（预）"
             }
         }
         cell.nameLabel.sizeToFit()
         cell.phoneLabel.sizeToFit()
+        return cell
+    }
+    
+    private func noDeliveryAddressCell(_ indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        cell.textLabel?.center = cell.center
+        cell.textLabel?.text = "选择收货地址 >"
         return cell
     }
     
