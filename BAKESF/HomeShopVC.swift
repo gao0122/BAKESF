@@ -42,12 +42,10 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = false
         self.loadShops()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = true
     }
     
     override func viewDidDisappear(_ animated: Bool) {
