@@ -17,32 +17,36 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     var deliveryAddressEditingVC: DeliveryAddressEditingVC!
     var addresses: [AVAddress]!
     var shopCheckingVC: ShopCheckingVC!
-    var avbaker: AVBaker!
-    var editingAddress: AVAddress!
-    var selectedAddress: AVAddress!
+    var avbaker: AVBaker?
+    var editingAddress: AVAddress?
+    var selectedAddress: AVAddress?
+    
+    var hasSelectedCell = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
 
-        let query = AVAddress.query()
-        query.includeKey("Baker")
-        query.whereKey("Baker", equalTo: avbaker)
-        query.findObjectsInBackground({
-            objects, error in
-            if let error = error {
-                // TODO: - error handling
-                printit(error.localizedDescription)
-            } else {
-                if let addresses = objects as? [AVAddress] {
-                    self.addresses = addresses
-                    self.tableView.reloadData()
-                } else {
+        if let avbaker = self.avbaker {
+            let query = AVAddress.query()
+            query.includeKey("Baker")
+            query.whereKey("Baker", equalTo: avbaker)
+            query.findObjectsInBackground({
+                objects, error in
+                if let error = error {
                     // TODO: - error handling
+                    printit(error.localizedDescription)
+                } else {
+                    if let addresses = objects as? [AVAddress] {
+                        self.addresses = addresses
+                        self.tableView.reloadData()
+                    } else {
+                        // TODO: - error handling
+                    }
                 }
-            }
-        })
+            })
+        }
         
         
     }
@@ -64,7 +68,11 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         guard let id = segue.identifier else { return }
         switch id {
         case "unwindToShopCheckingVCFromDeliveryAddress":
-            break
+            guard let vc = segue.destination as? ShopCheckingVC else { break }
+            if hasSelectedCell {
+                hasSelectedCell = false
+                vc.address = selectedAddress
+            }
         case "showDeliveryAddressEditingVCFromDAVC", "showDeliveryAddressEditingVCFromDAVCForAdding":
             deliveryAddressEditingVC.avbaker = self.avbaker
             show(deliveryAddressEditingVC, sender: sender)
@@ -144,6 +152,13 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         prepare(for: segue, sender: sender)
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let row = indexPath.row
+        let address = addresses[row]
+        selectedAddress = address
+        hasSelectedCell = true
+        performSegue(withIdentifier: "unwindToShopCheckingVCFromDeliveryAddress", sender: tableView)
+    }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {

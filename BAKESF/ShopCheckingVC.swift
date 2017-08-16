@@ -256,7 +256,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         if let address = address {
                             return deliveryAddressCell(with: address, indexPath)
                         } else {
-                            return noDeliveryAddressCell(indexPath)
+                            return centerTextCell("选择收货地址", color: .buttonBlue)
                         }
                     }
                 case 3:
@@ -285,7 +285,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                                 if let address = address {
                                     return deliveryAddressCell(with: address, indexPath, preOrder: true)
                                 } else {
-                                    return noDeliveryAddressCell(indexPath)
+                                    return centerTextCell("选择收货地址", color: .buttonBlue)
                                 }
                             }
                         default:
@@ -478,13 +478,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         cell.nameLabel.sizeToFit()
         cell.phoneLabel.sizeToFit()
-        return cell
-    }
-    
-    private func noDeliveryAddressCell(_ indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.center = cell.center
-        cell.textLabel?.text = "选择收货地址 >"
         return cell
     }
     

@@ -52,7 +52,7 @@
 		006A3E1C1F38E4B100FE3064 /* Yuchaoooo.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 006A3E1B1F38E4B100FE3064 /* Yuchaoooo.gpx */; };
 		006A3E1E1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A3E1D1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift */; };
 		006A3E201F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */; };
-		006A3E221F3D8AAF00FE3064 /* citys.plist in Resources */ = {isa = PBXBuildFile; fileRef = 006A3E211F3D8AAF00FE3064 /* citys.plist */; };
+		006A3E221F3D8AAF00FE3064 /* cities.plist in Resources */ = {isa = PBXBuildFile; fileRef = 006A3E211F3D8AAF00FE3064 /* cities.plist */; };
 		006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006B2E511F1B514B00C10BB9 /* AVOrder.swift */; };
 		00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */; };
 		008F0AEF1F2C87EA00700C0D /* MeSettingPwdVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */; };
@@ -142,7 +142,7 @@
 		006A3E1B1F38E4B100FE3064 /* Yuchaoooo.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Yuchaoooo.gpx; sourceTree = "<group>"; };
 		006A3E1D1F39AA2900FE3064 /* DeliveryAddressSelectionVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressSelectionVC.swift; sourceTree = "<group>"; };
 		006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressSelectionTableViewCell.swift; sourceTree = "<group>"; };
-		006A3E211F3D8AAF00FE3064 /* citys.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = citys.plist; sourceTree = "<group>"; };
+		006A3E211F3D8AAF00FE3064 /* cities.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = cities.plist; sourceTree = "<group>"; };
 		006B2E511F1B514B00C10BB9 /* AVOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVOrder.swift; sourceTree = "<group>"; };
 		00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakePreOrderRealm.swift; sourceTree = "<group>"; };
 		008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingPwdVC.swift; sourceTree = "<group>"; };
@@ -355,7 +355,7 @@
 		00B474E31ECD6A2D00ED1B7A /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				006A3E211F3D8AAF00FE3064 /* citys.plist */,
+				006A3E211F3D8AAF00FE3064 /* cities.plist */,
 				00D23B941F14AF1B002E45B7 /* Extensions */,
 				000D13771EFF862700A19D5A /* Constants.swift */,
 				00D0AF991EE3C7F300B1F5A2 /* Helper.swift */,
@@ -514,7 +514,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				006A3E221F3D8AAF00FE3064 /* citys.plist in Resources */,
+				006A3E221F3D8AAF00FE3064 /* cities.plist in Resources */,
 				006A3E1C1F38E4B100FE3064 /* Yuchaoooo.gpx in Resources */,
 				00629C861EC80BBC00B78151 /* LaunchScreen.storyboard in Resources */,
 				00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */,

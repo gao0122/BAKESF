@@ -62,6 +62,15 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        if animated {
+            if let tabBarController = self.tabBarController {
+                tabBarController.tabBar.isHidden = false
+                UIView.animate(withDuration: 0.2, animations: {
+                    tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
+                })
+            }
+        }
+
         checkCurrentUser()
         if poiChanged && selectedPOI != nil {
             if let locationRealm = locationRealm {
@@ -78,6 +87,12 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
                 homeShopVC.refresher.beginRefreshing()
             }
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if !animated { return }
+        self.tabBarController?.tabBar.isHidden = true
+        self.tabBarController?.tabBar.frame.origin.y = screenHeight
     }
     
     func preInit() {

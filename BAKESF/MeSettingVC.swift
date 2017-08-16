@@ -33,6 +33,12 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
         } else {
             settingDict = settingDictLogout
         }
+        
+
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
     }
 
 

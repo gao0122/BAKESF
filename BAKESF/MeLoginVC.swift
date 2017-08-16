@@ -81,7 +81,12 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     
@@ -138,7 +143,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                 })
             } else {
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
-                    self.loginByMsgOrPwd.setTitle("使用密码登录", for: .normal)
+                    self.loginByMsgOrPwd.setTitle("密码登录", for: .normal)
                     self.loginBtn.frame.origin.x = self.loginBtnX
                     self.loginBtn.frame.size.width = self.btnWidth
                     self.getMsgBtn.frame.size.width = self.btnWidth

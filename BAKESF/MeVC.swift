@@ -14,8 +14,6 @@ import Crashlytics
 class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet weak var loginBtn: UIButton!
-    @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet weak var bgImageView: UIImageView!
     @IBOutlet weak var editBtn: UIButton!
     @IBOutlet weak var headphoto: UIButton!
     @IBOutlet weak var settingBtn: UIButton!
@@ -38,6 +36,8 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         
         vcInit()
         
+        navigationController?.navigationBar.barTintColor = .bkRed
+        navigationController?.navigationBar.tintColor = .white
         
         
         
@@ -114,11 +114,18 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = false
+        if !animated { return }
+        guard let tabBarController = self.tabBarController else { return }
+        tabBarController.tabBar.isHidden = false
+        UIView.animate(withDuration: 0.2, animations: {
+            tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
+        })
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        if !animated { return }
         self.tabBarController?.tabBar.isHidden = true
+        self.tabBarController?.tabBar.frame.origin.y = screenHeight
     }
     
     // MARK: - Navigation
@@ -311,7 +318,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         if let usr = RealmHelper.retrieveCurrentUser() {
             setupViewsAfterChecking(loggedin: true)
             user = usr
-            userNameLabel.text = "\(usr.name)"
+            navigationController?.title = "\(usr.name)"
             avbaker = retrieveBaker(withID: usr.id)
             if let data = usr.headphoto {
                 let img = UIImage(data: data)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
@@ -324,7 +331,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     
     func setupLogout() {
         setupViewsAfterChecking(loggedin: false)
-        userNameLabel.text = "个人主页"
+        navigationController?.title = "个人主页"
         headphoto.setImage(UIImage(named: "巧克力布丁")!, for: .normal)
     }
     

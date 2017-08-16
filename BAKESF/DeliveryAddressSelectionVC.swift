@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, AMapSearchDelegate {
+class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, AMapSearchDelegate {
 
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var cityBtn: UIButton!
@@ -19,14 +19,16 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     @IBOutlet weak var helperLabel: UILabel!
     @IBOutlet weak var cancelBtn: UIButton!
     @IBOutlet weak var relocateBtn: UIButton!
-    @IBOutlet weak var currentAddressNameLabel: UILabel!
-    @IBOutlet weak var currentAddressLabel: UILabel!
+    @IBOutlet weak var okayBtn: UIButton!
+    @IBOutlet weak var currentAddressNameTextField: UITextField!
+    @IBOutlet weak var currentAddressTextField: UITextField!
     @IBOutlet weak var currentCityLabel: UILabel!
     @IBOutlet weak var currentLocationView: UIView!
 
-    var citys: [String: [String]] = {
+    var cities: [String: [String]] = {
+        // retrieve city info from cities.plist
         var res = [String: [String]]()
-        let path = Bundle.main.path(forResource: "citys", ofType: "plist")
+        let path = Bundle.main.path(forResource: "cities", ofType: "plist")
         let dict = NSDictionary(contentsOfFile: path!) as! [String: Any]
         let keys = Array(dict.keys)
         for kv in dict {
@@ -66,11 +68,20 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        provs = citys.keys.sorted(by: { $0 < $1 })
+        okayBtn.isHidden = true
+        relocateBtn.frame.origin.x = okayBtn.frame.origin.x - 16
+        currentAddressTextField.isUserInteractionEnabled = false
+        currentAddressNameTextField.isUserInteractionEnabled = false
+        
+        provs = cities.keys.sorted(by: { $0 < $1 })
         switch showSegueID {
         case "showDeliveryAddressSelectionVCFromDAEditingVC":
+            //currentAddressTextField.isUserInteractionEnabled = true
+            //currentAddressNameTextField.isUserInteractionEnabled = true
             unwindSegueID = "unwindToDeliveryAddressEditingVCFromDASelectionVC"
         case "showDASelctionVCFromHomeVC", "showDASelctionVCFromHomeVCNaN":
+            currentAddressTextField.isUserInteractionEnabled = false
+            currentAddressNameTextField.isUserInteractionEnabled = false
             unwindSegueID = "unwindToHomeVCFromDASelectionVC"
         default:
             break
@@ -142,17 +153,17 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         }
         if let regeocode = regeocode {
             cityBtn.setTitle(regeocode.addressComponent!.city, for: .normal)
-            currentAddressNameLabel.text = regeocode.pois.first?.name
-            currentAddressLabel.text = regeocode.pois.first?.address
+            currentAddressNameTextField.text = regeocode.pois.first?.name
+            currentAddressTextField.text = regeocode.pois.first?.address
         } else {
             if let location = locationRealm {
                 cityBtn.setTitle(location.city, for: .normal)
-                currentAddressNameLabel.text = location.aoiname
-                currentAddressLabel.text = location.address
+                currentAddressNameTextField.text = location.aoiname
+                currentAddressTextField.text = location.address
             } else {
                 cityBtn.setTitle("火星", for: .normal)
-                currentAddressNameLabel.text = ""
-                currentAddressLabel.text = ""
+                currentAddressNameTextField.text = ""
+                currentAddressTextField.text = ""
             }
         }
         sizeToFitCityBtn()
@@ -181,6 +192,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     func showCityTableView() {
         cityTableView.isHidden = false
         bakerDATableView.isHidden = true
+        helperView.isHidden = true
     }
     
     func showHelperView(with text: String) {
@@ -358,7 +370,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         case 0:
             return pois.count
         case 1:
-            return citys[provs[section]]!.count
+            return cities[provs[section]]!.count
         case 2:
             return addresses == nil ? 0 : addresses.count
         default:
@@ -379,7 +391,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         case 1:
             let section = indexPath.section
             let cell = UITableViewCell()
-            cell.textLabel?.text = citys[provs[section]]![row].removeNumbers()
+            cell.textLabel?.text = cities[provs[section]]![row].removeNumbers()
             return cell
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressTableViewCell", for: indexPath) as! DeliveryAddressTableViewCell

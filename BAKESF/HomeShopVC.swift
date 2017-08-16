@@ -34,7 +34,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         super.viewDidLoad()
         
         tableView.addSubview(refresher)
-
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 50))
     }
     
     override func viewWillAppear(_ animated: Bool) {
