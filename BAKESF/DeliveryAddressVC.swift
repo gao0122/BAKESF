@@ -32,6 +32,14 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         self.title = "选择收货地址"
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
 
+        
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
         if let avbaker = self.avbaker {
             let query = AVAddress.query()
             query.includeKey("Baker")
@@ -53,12 +61,6 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
                 }
             })
         }
-        
-        
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        
     }
 
     class func instantiateFromStoryboard() -> DeliveryAddressVC {

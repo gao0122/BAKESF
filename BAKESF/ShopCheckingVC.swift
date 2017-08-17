@@ -66,7 +66,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        navigationController?.setNavigationBarHidden(false, animated: animated)
         if checkCurrentUser() {
             tableView.reloadData()
             retrieveBaker(withID: userRealm.id, completion: {

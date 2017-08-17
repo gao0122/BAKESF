@@ -137,6 +137,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
     
     func currentLocationSelected(_ sender: Any) {
+        if showSegueID == "showDeliveryAddressSelectionVCFromDAEditingVC" { return }
         if let regeocode = currentReGeocode {
             unwindFromCellSelection(by: regeocode)
         } else {
