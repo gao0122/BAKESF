@@ -28,5 +28,9 @@ extension String {
     func removeNumbers() -> String {
         return self.components(separatedBy: .decimalDigits).joined()
     }
+    
+    func removeSpaces() -> String {
+        return self.components(separatedBy: .whitespaces).joined()
+    }
 }
 

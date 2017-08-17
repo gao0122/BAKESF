@@ -32,5 +32,6 @@ class LocationRealm: Object {
     dynamic var adcode: String = ""
     dynamic var longitude: String = ""
     dynamic var latitude: String = ""
+    dynamic var detailed: String = "" // input by user
 
 }

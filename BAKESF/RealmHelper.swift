@@ -359,6 +359,7 @@ class RealmHelper {
         }
     }
     private static func setLocation(_ location: LocationRealm, by avaddress: AVAddress) {
+        location.detailed = avaddress.detailed ?? ""
         location.formatted = avaddress.formatted ?? ""
         location.citycode = avaddress.citycode ?? ""
         location.province = avaddress.province ?? ""
@@ -370,8 +371,8 @@ class RealmHelper {
         location.streetNumber = avaddress.streetNumber ?? ""
         let addressText = location.province + location.city + location.district + location.township
         location.aoiname = avaddress.aoiName ?? ""
-        location.longitude = String(describing: avaddress.longitude)
-        location.latitude = String(describing: avaddress.latitude)
+        location.longitude = String(describing: avaddress.longitude!)
+        location.latitude = String(describing: avaddress.latitude!)
         location.street = avaddress.street
         if location.street == "" { location.street = nil }
         location.address = addressText + location.streetName + location.streetNumber

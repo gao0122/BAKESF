@@ -11,7 +11,7 @@ import UIKit
 extension UIView {
     
     // notification animation
-    func notify(text: String, color: UIColor, duration: TimeInterval = 1.98) {
+    func notify(text: String, color: UIColor, duration: TimeInterval = 1.98, nav: UINavigationBar?) {
         if !notifying {
             notifying = true
             let notifyHeight: CGFloat = 64
@@ -21,9 +21,9 @@ extension UIView {
             label.frame.origin = CGPoint(x: 0, y: -notifyHeight)
             label.font = UIFont.init(name: ".SFUIText-Light", size: 15)
             label.numberOfLines = 2
-            label.text = "\n\(text)"
+            label.text = "\n    \(text)"
             label.textColor = color == .white ? .bkBlack : .bkWhite
-            label.textAlignment = .center
+            label.textAlignment = .left
             label.alpha = 0.4
             label.backgroundColor = color
             self.addSubview(label)
@@ -31,13 +31,16 @@ extension UIView {
             UIView.animate(withDuration: 0.22, delay: 0, options: [.curveEaseInOut], animations: {
                 label.frame.origin.y = 0
                 label.alpha = 1
+                nav?.alpha = 0
             }, completion: {
                 finished in
                 UIView.animate(withDuration: 0.18, delay: duration, options: [.curveEaseInOut], animations: {
                     label.frame.origin.y = -notifyHeight
                     label.alpha = 0.4
+                    nav?.alpha = 1
                 }, completion: {
                     finished in
+                    nav?.alpha = 1
                     label.removeFromSuperview()
                     notifying = false
                 })

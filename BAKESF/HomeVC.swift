@@ -61,14 +61,20 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
-        if animated {
-            if let tabBarController = self.tabBarController {
-                tabBarController.tabBar.isHidden = false
-                UIView.animate(withDuration: 0.2, animations: {
-                    tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
-                })
-            }
+        if let tabBarController = self.tabBarController {
+            tabBarController.tabBar.isHidden = false
+            let duration: TimeInterval = animated ? 0.17 : 0
+            UIView.animate(withDuration: duration, animations: {
+                tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
+            }, completion: {
+                _ in
+                tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
+            })
         }
 
         checkCurrentUser()
@@ -90,7 +96,6 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if !animated { return }
         self.tabBarController?.tabBar.isHidden = true
         self.tabBarController?.tabBar.frame.origin.y = screenHeight
     }
@@ -300,15 +305,10 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
                 return .text(title: MenuItemText(text: "食野", selectedColor: UIColor.red))
             }
         }
-        struct HomeFollow: MenuItemViewCustomizable {
-            var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "收藏", selectedColor: UIColor.red))
-            }
-        }
         
         struct MenuOptions: MenuViewCustomizable {
             var itemsOptions: [MenuItemViewCustomizable] {
-                return [HomeShop(), HomeBake(), HomeFollow()]
+                return [HomeShop(), HomeBake()]
             }
             
             var scroll: MenuScrollingMode
@@ -323,10 +323,9 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         struct PagingMenuOptions: PagingMenuControllerCustomizable {
             let homeShopVC = HomeShopVC.instantiateFromStoryboard()
             let homeBakeVC = HomeBakeVC.instantiateFromStoryboard()
-            let homeFollowVC = HomeFollowVC.instantiateFromStoryboard()
             
             var componentType: ComponentType {
-                return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [homeShopVC, homeBakeVC, homeFollowVC])
+                return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [homeShopVC, homeBakeVC])
             }
             
             var defaultPage: Int
@@ -340,7 +339,6 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         self.sellerTableView = option.homeShopVC.tableView
         self.homeShopVC = option.homeShopVC
         self.homeBakeVC = option.homeBakeVC
-        self.homeFollowVC = option.homeFollowVC
         self.homeShopVC.homeVC = self
         
         pagingMenuController.onMove = {
@@ -349,9 +347,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
             case let .willMoveController(menuController, previousMenuController):
                 break
             case let .didMoveController(menuController, previousMenuController):
-                if let _ = menuController as? HomeFollowVC {
-                    self.tabBarController?.tabBar.isHidden = false
-                }
+                break
             case let .willMoveItem(menuItemView, previousMenuItemView):
                 break
             case let .didMoveItem(menuItemView, previousMenuItemView):

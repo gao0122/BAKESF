@@ -20,12 +20,16 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     var avbaker: AVBaker?
     var editingAddress: AVAddress?
     var selectedAddress: AVAddress?
+    var currentAddress: AVAddress?
     
     var hasSelectedCell = false
+    
+    let errorText = "操作失败，请检查网络连接。"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        self.title = "选择收货地址"
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
 
         if let avbaker = self.avbaker {
@@ -37,12 +41,14 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
                 if let error = error {
                     // TODO: - error handling
                     printit(error.localizedDescription)
+                    self.view.notify(text: "网络似乎出了点问题...", color: .alertRed, nav: self.navigationController?.navigationBar)
                 } else {
                     if let addresses = objects as? [AVAddress] {
                         self.addresses = addresses
                         self.tableView.reloadData()
                     } else {
                         // TODO: - error handling
+                        self.view.notify(text: "发生未知错误，请尝试刷新。", color: .alertRed, nav: self.navigationController?.navigationBar)
                     }
                 }
             })
@@ -71,7 +77,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
             guard let vc = segue.destination as? ShopCheckingVC else { break }
             if hasSelectedCell {
                 hasSelectedCell = false
-                vc.address = selectedAddress
+                vc.avaddress = selectedAddress
             }
         case "showDeliveryAddressEditingVCFromDAVC", "showDeliveryAddressEditingVCFromDAVCForAdding":
             deliveryAddressEditingVC.avbaker = self.avbaker
@@ -115,21 +121,22 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         let streetName = addr.streetName ?? ""
         let streetNo = addr.streetNumber ?? ""
         let aoiName = addr.aoiName ?? ""
+        let addrDetailed = addr.detailed ?? ""
         let addrAddr = township + streetName + streetNo + aoiName
         let addrProv = addr.province ?? ""
         let addrCity = addr.city ?? ""
         let addrDistrict = addr.district ?? ""
-        let addrText = addrAddr + " " + addrProv + addrCity + addrDistrict
+        let addrText = addrAddr + addrDetailed + " " + addrProv + addrCity + addrDistrict
         
         // dynamic set the text, set number of lines
+        cell.addressLabel.text = addrAddr
         var labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
         let charHeight = lroundf(Float(cell.addressLabel.font.lineHeight))
-        cell.addressLabel.text = addrAddr
         if labelHeight / charHeight == 1 {
             cell.addressLabel.text = addrText
             labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
             if labelHeight / charHeight > 1 {
-                cell.addressLabel.text = addrAddr + "\n" + addrProv + addrCity + addrDistrict
+                cell.addressLabel.text = addrAddr + addrDetailed + "\n" + addrProv + addrCity + addrDistrict
             }
         } else {
             cell.addressLabel.text = addrText
@@ -157,7 +164,37 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         let address = addresses[row]
         selectedAddress = address
         hasSelectedCell = true
-        performSegue(withIdentifier: "unwindToShopCheckingVCFromDeliveryAddress", sender: tableView)
+        if let lastAddress = shopCheckingVC.avaddress {
+            lastAddress.recentlyUsed = false
+            lastAddress.saveInBackground({
+                succeeded, error in
+                if succeeded {
+                    address.recentlyUsed = true
+                    address.saveInBackground({
+                        succeeded, error in
+                        tableView.deselectRow(at: indexPath, animated: true)
+                        if succeeded {
+                            self.performSegue(withIdentifier: "unwindToShopCheckingVCFromDeliveryAddress", sender: tableView)
+                        } else {
+                            self.view.notify(text: self.errorText, color: .alertRed, nav: self.navigationController?.navigationBar)
+                        }
+                    })
+                } else {
+                    self.view.notify(text: self.errorText, color: .alertRed, nav: self.navigationController?.navigationBar)
+                }
+            })
+        } else {
+            address.recentlyUsed = true
+            address.saveInBackground({
+                succeeded, error in
+                tableView.deselectRow(at: indexPath, animated: true)
+                if succeeded {
+                    self.performSegue(withIdentifier: "unwindToShopCheckingVCFromDeliveryAddress", sender: tableView)
+                } else {
+                    self.view.notify(text: self.errorText, color: .alertRed, nav: self.navigationController?.navigationBar)
+                }
+            })
+        }
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {

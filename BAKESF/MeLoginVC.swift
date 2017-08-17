@@ -71,7 +71,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         loginBtnX = loginBtn.frame.origin.x
         
         switch showSegueID {
-        case "showLogin": // from me
+        case "showLogin": // from mevc
             unwindSegueID = "unwindToMeFromLogin"
         case "showLoginFromShopChecking":
             unwindSegueID = "unwindToShopCheckingFromLogin"
@@ -81,12 +81,25 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.setNavigationBarHidden(true, animated: animated)
-        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        switch showSegueID {
+        case "showLogin", "showLoginFromShopChecking": // from mevc
+            navigationController?.setNavigationBarHidden(true, animated: animated)
+        default:
+            break
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        navigationController?.setNavigationBarHidden(false, animated: animated)
+        switch showSegueID {
+        case "showLogin", "showLoginFromShopChecking": // from mevc
+            navigationController?.setNavigationBarHidden(false, animated: animated)
+        default:
+            break
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        
     }
     
     
@@ -200,7 +213,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                                     canSendMsg = true
                                 } else {
                                     // notify how many seconds left
-                                    self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .alertOrange)
+                                    self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .alertOrange, nav: self.navigationController?.navigationBar)
                                     canSendMsg = false
                                 }
                             }
@@ -260,15 +273,15 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                 let errorMsg = error!.localizedDescription
                 print(errorMsg)
                 if errorMsg.contains("456") {
-                    self.view.notify(text: "请输入手机号码", color: .alertOrange)
+                    self.view.notify(text: "请输入手机号码", color: .alertOrange, nav: self.navigationController?.navigationBar)
                 } else if errorMsg.contains("457") {
-                    self.view.notify(text: "请输入有效的手机号码", color: .alertOrange)
+                    self.view.notify(text: "请输入有效的手机号码", color: .alertOrange, nav: self.navigationController?.navigationBar)
                 } else if errorMsg.contains("458") {
-                    self.view.notify(text: "发送失败，输入的手机号码在发送黑名单中", color: .alertRed)
+                    self.view.notify(text: "发送失败，输入的手机号码在发送黑名单中", color: .alertRed, nav: self.navigationController?.navigationBar)
                 } else if errorMsg.contains("459") {
-                    self.view.notify(text: "发送失败，不支持该地区发送短信", color: .alertRed)
+                    self.view.notify(text: "发送失败，不支持该地区发送短信", color: .alertRed, nav: self.navigationController?.navigationBar)
                 } else {
-                    self.view.notify(text: "发送失败", color: .alertRed)
+                    self.view.notify(text: "发送失败", color: .alertRed, nav: self.navigationController?.navigationBar)
                 }
             }
             self.loginState = .normal
@@ -304,16 +317,16 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                         }
                     } else {
                         // please input verification code
-                        self.view.notify(text: "请输入验证码", color: .alertOrange)
+                        self.view.notify(text: "请输入验证码", color: .alertOrange, nav: self.navigationController?.navigationBar)
                     }
                 }
             } else {
                 // please input verified phone number
-                self.view.notify(text: "请输入接受验证的手机号码", color: .alertOrange)
+                self.view.notify(text: "请输入接受验证的手机号码", color: .alertOrange, nav: self.navigationController?.navigationBar)
             }
         } else {
             // please input the right phone number
-            self.view.notify(text: "请输入手机号码", color: .alertOrange)
+            self.view.notify(text: "请输入手机号码", color: .alertOrange, nav: self.navigationController?.navigationBar)
         }
     }
     
@@ -331,10 +344,10 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                     self.userID = baker.objectId!
                     self.doLogin(self)
                 } else {
-                    self.view.notify(text: "手机号或密码错误", color: .alertRed)
+                    self.view.notify(text: "手机号或密码错误", color: .alertRed, nav: self.navigationController?.navigationBar)
                 }
             } else {
-                self.view.notify(text: "手机号或密码错误", color: .alertRed)
+                self.view.notify(text: "手机号或密码错误", color: .alertRed, nav: self.navigationController?.navigationBar)
             }
             self.loginBtn.isEnabled = true
             self.loginState = .normal
@@ -347,9 +360,9 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
             if let error = error {
                 let errorMsg = error.localizedDescription
                 if errorMsg.contains("468") {
-                    self.view.notify(text: "验证码错误", color: .alertRed)
+                    self.view.notify(text: "验证码错误", color: .alertRed, nav: self.navigationController?.navigationBar)
                 } else if errorMsg.contains("467") {
-                    self.view.notify(text: "5分钟内校验错误超过3次，请稍后再试", color: .alertRed)
+                    self.view.notify(text: "5分钟内校验错误超过3次，请稍后再试", color: .alertRed, nav: self.navigationController?.navigationBar)
                 }
                 print(error.localizedDescription)
             } else {
@@ -405,7 +418,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                     self.avbaker = baker
                     self.performSegue(withIdentifier: self.unwindSegueID, sender: self)
                 } else {
-                    self.view.notify(text: "登录失败", color: .alertRed)
+                    self.view.notify(text: "登录失败", color: .alertRed, nav: self.navigationController?.navigationBar)
                     printit(any: error!.localizedDescription)
                 }
                 progressView.removeFromSuperview()

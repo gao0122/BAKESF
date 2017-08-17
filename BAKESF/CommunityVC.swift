@@ -17,11 +17,20 @@ class CommunityVC: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = false
+        guard let tabBarController = self.tabBarController else { return }
+        tabBarController.tabBar.isHidden = false
+        let duration: TimeInterval = animated ? 0.17 : 0
+        UIView.animate(withDuration: duration, animations: {
+            tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
+        }, completion: {
+            _ in
+            tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
+        })
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         self.tabBarController?.tabBar.isHidden = true
+        self.tabBarController?.tabBar.frame.origin.y = screenHeight
     }
     
     

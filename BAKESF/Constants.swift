@@ -37,3 +37,4 @@ let screenWidth: CGFloat = {
     return UIScreen.main.bounds.width
 }()
 
+let starHeightInHomeVC: CGFloat = 18

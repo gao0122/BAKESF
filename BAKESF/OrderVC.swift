@@ -16,21 +16,27 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        navigationController?.navigationBar.barTintColor = .bkRed
+        navigationController?.navigationBar.barStyle = .black
+        navigationController?.navigationBar.tintColor = .white
+
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
     }
 
 
     override func viewDidAppear(_ animated: Bool) {
-        if !animated { return }
         guard let tabBarController = self.tabBarController else { return }
         tabBarController.tabBar.isHidden = false
-        UIView.animate(withDuration: 0.2, animations: {
+        let duration: TimeInterval = animated ? 0.17 : 0
+        UIView.animate(withDuration: duration, animations: {
+            tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
+        }, completion: {
+            _ in
             tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
         })
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if !animated { return }
         self.tabBarController?.tabBar.isHidden = true
         self.tabBarController?.tabBar.frame.origin.y = screenHeight
     }

@@ -22,6 +22,12 @@ enum TimerState {
     case inited, rolling, done
 }
 
+// navigation controller 
+func setBackItemTitle(with title: String = "", for navigationItem: UINavigationItem) {
+    let backItem = UIBarButtonItem()
+    backItem.title = title
+    navigationItem.backBarButtonItem = backItem
+}
 
 
 // check if is connected to the network
@@ -147,6 +153,22 @@ func cllocationToAMapGeoPoint(_ location: CLLocation) -> AMapGeoPoint {
 
 func amapGeoPointToCLLocation(_ location: AMapGeoPoint) -> CLLocation {
     return CLLocation(latitude: CLLocationDegrees(location.latitude), longitude: CLLocationDegrees(location.longitude))
+}
+
+func saveAVAddress(for address: AVAddress, from locationRealm: LocationRealm) {
+    address.province = locationRealm.province
+    address.city = locationRealm.city
+    address.citycode = locationRealm.citycode
+    address.district = locationRealm.district
+    address.township = locationRealm.township
+    address.street = locationRealm.street
+    address.streetName = locationRealm.streetName
+    address.streetNumber = locationRealm.streetNumber
+    address.aoiName = locationRealm.aoiname
+    address.formatted = locationRealm.formatted
+    address.address = locationRealm.address
+    address.longitude = locationRealm.longitude
+    address.latitude = locationRealm.latitude
 }
 
 func print(regeocode: AMapReGeocode) {

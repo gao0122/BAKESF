@@ -104,10 +104,14 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        updateCurrentLocationView()
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(true, animated: true)
         cityTableView.isHidden = true
         helperView.isHidden = true
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        updateCurrentLocationView()
         if let avbaker = self.avbaker {
             bakerDATableView.isHidden = false
             let query = AVAddress.query()
@@ -158,7 +162,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         } else {
             if let location = locationRealm {
                 cityBtn.setTitle(location.city, for: .normal)
-                currentAddressNameTextField.text = location.aoiname
+                currentAddressNameTextField.text = location.aoiname + location.detailed
                 currentAddressTextField.text = location.address
             } else {
                 cityBtn.setTitle("火星", for: .normal)
@@ -208,11 +212,9 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         guard let id = segue.identifier else { return }
         switch id {
         case "unwindToDeliveryAddressEditingVCFromDASelectionVC":
+            navigationController?.setNavigationBarHidden(false, animated: true)
             guard let vc = segue.destination as? DeliveryAddressEditingVC else { break }
             vc.selectedPOI = self.selectedPOI
-            if let selectedPOI = self.selectedPOI {
-                vc.addressSelectionBtn.setTitle(selectedPOI.address, for: .normal)
-            }
         case "unwindToHomeVCFromDASelectionVC":
             if let vc = segue.destination as? HomeShopVC {
                 vc.homeVC.poiChanged = selectedPOI != vc.homeVC.selectedPOI
@@ -321,6 +323,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
     
     private func doPOIAroundSearch(by regeocode: AMapReGeocode? = nil) {
+        bakerDATableView.isHidden = true
         let request = AMapPOIAroundSearchRequest()
         if let location = regeocode?.pois.first?.location {
             request.location = location
@@ -339,6 +342,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
     
     private func doPOIKeywordSearch() {
+        bakerDATableView.isHidden = true
         let request = AMapPOIKeywordsSearchRequest()
         request.requireExtension = true
         request.keywords = searchBar.text!
@@ -396,11 +400,32 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressTableViewCell", for: indexPath) as! DeliveryAddressTableViewCell
             let addr = addresses[row]
-            let aoi = addr.aoiName ?? ""
-            let detailed = addr.detailed ?? ""
-            let address = addr.address ?? ""
+            let township = addr.township ?? ""
+            let streetName = addr.streetName ?? ""
+            let streetNo = addr.streetNumber ?? ""
+            let aoiName = addr.aoiName ?? ""
+            let addrDetailed = addr.detailed ?? ""
+            let addrAddr = township + streetName + streetNo + aoiName
+            let addrProv = addr.province ?? ""
+            let addrCity = addr.city ?? ""
+            let addrDistrict = addr.district ?? ""
+            let addrText = addrAddr + addrDetailed + " " + addrProv + addrCity + addrDistrict
+            
+            // dynamic set the text, set number of lines
+            cell.addressLabel.text = addrAddr
+            var labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
+            let charHeight = lroundf(Float(cell.addressLabel.font.lineHeight))
+            if labelHeight / charHeight == 1 {
+                cell.addressLabel.text = addrText
+                labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
+                if labelHeight / charHeight > 1 {
+                    cell.addressLabel.text = addrAddr + addrDetailed + "\n" + addrProv + addrCity + addrDistrict
+                }
+            } else {
+                cell.addressLabel.text = addrText
+            }
+            
             cell.address = addr
-            cell.addressLabel.text = aoi + detailed + " " + address
             cell.nameLabel.text = addr.name
             cell.phoneLabel.text = addr.phone
             return cell

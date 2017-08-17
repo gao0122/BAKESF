@@ -79,7 +79,7 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
                 canSendMsg = true
             } else {
                 // notify how many seconds left
-                self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .alertOrange)
+                self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .alertOrange, nav: self.navigationController?.navigationBar)
                 canSendMsg = false
             }
         }
@@ -97,15 +97,15 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
                 let errorMsg = error!.localizedDescription
                 printit(errorMsg)
                 if errorMsg.contains("456") {
-                    self.view.notify(text: "请输入手机号码", color: .alertOrange)
+                    self.view.notify(text: "请输入手机号码", color: .alertOrange, nav: self.navigationController?.navigationBar)
                 } else if errorMsg.contains("457") {
-                    self.view.notify(text: "请输入有效的手机号码", color: .alertOrange)
+                    self.view.notify(text: "请输入有效的手机号码", color: .alertOrange, nav: self.navigationController?.navigationBar)
                 } else if errorMsg.contains("458") {
-                    self.view.notify(text: "发送失败，输入的手机号码在发送黑名单中", color: .alertRed)
+                    self.view.notify(text: "发送失败，输入的手机号码在发送黑名单中", color: .alertRed, nav: self.navigationController?.navigationBar)
                 } else if errorMsg.contains("459") {
-                    self.view.notify(text: "发送失败，不支持该地区发送短信", color: .alertRed)
+                    self.view.notify(text: "发送失败，不支持该地区发送短信", color: .alertRed, nav: self.navigationController?.navigationBar)
                 } else {
-                    self.view.notify(text: "发送失败", color: .alertRed)
+                    self.view.notify(text: "发送失败", color: .alertRed, nav: self.navigationController?.navigationBar)
                 }
             }
         })

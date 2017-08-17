@@ -91,6 +91,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -102,6 +103,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
 
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        setBackItemTitle(for: navigationItem)
         if let id = segue.identifier {
             switch id {
             case "shopBuyMenuSegue":
@@ -116,6 +118,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                 guard let vc = segue.destination as? ShopCheckingVC else { break }
                 vc.shopVC = self
                 vc.avshop = self.avshop
+                navigationController?.navigationBar.barTintColor = .bkRed
+                navigationController?.navigationBar.tintColor = .white
                 self.animateShopIfNeeded()
             default:
                 break
@@ -127,16 +131,14 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
-    @IBAction func screenEdgePanBackToHomeFromShop(_ sender: Any) {
-        self.performSegue(withIdentifier: "unwindToHomeFromShop", sender: sender)
-        self.tabBarController?.tabBar.isHidden = false
-    }
-    
     override var prefersStatusBarHidden: Bool {
         return false
     }
     
     func preInit() {
+        navigationController?.navigationBar.barTintColor = .bkRed
+        navigationController?.navigationBar.barStyle = .black
+        navigationController?.navigationBar.tintColor = .white
         originBagBarY = bagBar.frame.origin.y
         originShopY = broadcastLabel.frame.origin.y + 22
         originCardY = shopCardView.frame.origin.y

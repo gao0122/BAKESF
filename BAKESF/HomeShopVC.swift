@@ -33,6 +33,10 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationController?.navigationBar.barTintColor = .bkRed
+        navigationController?.navigationBar.barStyle = .black
+        navigationController?.navigationBar.tintColor = .white
+
         tableView.addSubview(refresher)
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 50))
     }
@@ -128,10 +132,14 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         cell.headphoto.layer.masksToBounds = true
 
         cell.bgImage.sd_setImage(with: bgUrl)
+        cell.bgImage.frame.origin = CGPoint(x: 0, y: 0)
         cell.bgImage.contentMode = .scaleAspectFill
         cell.bgImage.clipsToBounds = true
         
-        let width = cell.starsGray.frame.width
+        let starsSize = CGSize(width: starHeightInHomeVC * 5, height: starHeightInHomeVC)
+        cell.stars.frame.size = starsSize
+        cell.starsGray.frame = cell.stars.frame
+        let width = starHeightInHomeVC * 5
         let star: CGFloat = 4.4
         let x = calStarsWidth(byStarWidth: width, stars: star)
         cell.stars.contentMode = .scaleAspectFill

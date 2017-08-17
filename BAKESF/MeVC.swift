@@ -11,7 +11,7 @@ import PagingMenuController
 import AVOSCloud
 import Crashlytics
 
-class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
     @IBOutlet weak var loginBtn: UIButton!
     @IBOutlet weak var editBtn: UIButton!
@@ -107,6 +107,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
 
     override func viewDidDisappear(_ animated: Bool) {
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        self.title = "个人主页"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -114,16 +115,18 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if !animated { return }
         guard let tabBarController = self.tabBarController else { return }
         tabBarController.tabBar.isHidden = false
-        UIView.animate(withDuration: 0.2, animations: {
+        let duration: TimeInterval = animated ? 0.17 : 0
+        UIView.animate(withDuration: duration, animations: {
+            tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
+        }, completion: {
+            _ in
             tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
         })
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if !animated { return }
         self.tabBarController?.tabBar.isHidden = true
         self.tabBarController?.tabBar.frame.origin.y = screenHeight
     }
@@ -133,9 +136,14 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         if let id = segue.identifier {
             switch id {
             case "showLogin":
+                let sourceVC = segue.source
+                sourceVC.navigationController?.interactivePopGestureRecognizer?.delegate = self
+                sourceVC.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+
                 guard let loginVC = segue.destination as? MeLoginVC else { break }
                 loginVC.showSegueID = id
             case "showSetting":
+                setBackItemTitle(for: navigationItem)
                 guard let settingVC = segue.destination as? MeSettingVC else { break }
                 settingVC.avbaker = self.avbaker
             default:
@@ -293,15 +301,15 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
                     if succeeded {
                         self.headphoto.setImage(scaledImg, for: .normal)
                         self.deleteOriginHeadphoto(url: urlToDelete)
-                        self.view.notify(text: "修改成功", color: UIColor.alertGreen)
+                        self.view.notify(text: "修改成功", color: UIColor.alertGreen, nav: self.navigationController?.navigationBar)
                     } else {
-                        self.view.notify(text: "上传失败", color: .alertRed)
+                        self.view.notify(text: "上传失败", color: .alertRed, nav: self.navigationController?.navigationBar)
                         Answers.logCustomEvent(withName: "上传头像失败", customAttributes: ["phone": self.user.phone, "error": error!.localizedDescription])
                         printit(any: error!.localizedDescription)
                     }
                 })
             } else {
-                self.view.notify(text: "上传失败", color: .alertRed)
+                self.view.notify(text: "上传失败", color: .alertRed, nav: self.navigationController?.navigationBar)
                 Answers.logCustomEvent(withName: "上传头像失败", customAttributes: ["phone": self.user.phone, "error": error!.localizedDescription])
                 printit(any: error!.localizedDescription)
             }
@@ -318,7 +326,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         if let usr = RealmHelper.retrieveCurrentUser() {
             setupViewsAfterChecking(loggedin: true)
             user = usr
-            navigationController?.title = "\(usr.name)"
+            self.title = "\(usr.name)"
             avbaker = retrieveBaker(withID: usr.id)
             if let data = usr.headphoto {
                 let img = UIImage(data: data)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)

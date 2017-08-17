@@ -24,7 +24,7 @@ class MeSettingPwdVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.notify(text: "验证码已发送到尾号 \(avbaker.mobilePhoneNumber!.substring(from: 7, to: 11)) 的手机", color: .alertGreen)
+        self.view.notify(text: "验证码已发送到尾号 \(avbaker.mobilePhoneNumber!.substring(from: 7, to: 11)) 的手机", color: .alertGreen, nav: self.navigationController?.navigationBar)
         
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 4
@@ -48,9 +48,9 @@ class MeSettingPwdVC: UIViewController {
                 if let error = error {
                     let errorMsg = error.localizedDescription
                     if errorMsg.contains("468") {
-                        self.view.notify(text: "验证码错误", color: .alertRed)
+                        self.view.notify(text: "验证码错误", color: .alertRed, nav: self.navigationController?.navigationBar)
                     } else if errorMsg.contains("467") {
-                        self.view.notify(text: "5分钟内校验错误超过3次，请稍后再试", color: .alertRed)
+                        self.view.notify(text: "5分钟内校验错误超过3次，请稍后再试", color: .alertRed, nav: self.navigationController?.navigationBar)
                     }
                 } else {
                     self.switchState()
@@ -63,7 +63,7 @@ class MeSettingPwdVC: UIViewController {
                 self.avbaker.saveInBackground({
                     succeeded, error in
                     if succeeded {
-                        self.view.window?.rootViewController?.view.notify(text: "修改成功", color: .alertGreen)
+                        self.view.window?.rootViewController?.view.notify(text: "修改成功", color: .alertGreen, nav: self.navigationController?.navigationBar)
                         self.performSegue(withIdentifier: "unwindToMeSetting", sender: self)
                     }
                 })

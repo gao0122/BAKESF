@@ -55,6 +55,15 @@ extension UIColor {
     }
     
     static var buttonBlue: UIColor {
-    return UIColor(hex: 0x007AFF)
+        return UIColor(hex: 0x007AFF)
     }
+    
+    static var buttonGreen: UIColor {
+        return UIColor(hex: 0x2F967A)
+    }
+    
+    static var textGray: UIColor {
+        return UIColor(hex: 0x787878)
+    }
+    
 }

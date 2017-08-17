@@ -17,9 +17,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var deliveryTimeView: UIView!
     @IBOutlet weak var deliveryTimeViewCancelBtn: UIButton!
+    @IBOutlet weak var deliveryTimeDateTableView: UITableView!
+    @IBOutlet weak var deliveryTimeTableView: UITableView!
+    @IBOutlet weak var checkoutBtn: UIButton!
     
     var segmentedControl: UISegmentedControl!
     let deliveryAddressVC: DeliveryAddressVC = {
@@ -32,30 +34,41 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var avshop: AVShop!
     var avbaker: AVBaker!
     var userRealm: UserRealm!
-    var address: AVAddress?
+    var avaddress: AVAddress?
+    var avordr: AVOrder?
     
     var bakes: [Object]!
     var deliveryTimeViewState: DeliveryTimeViewState = .collapsed
+    
+    let checkoutBtnText = "支付全部"
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         _ = checkCurrentUser()
         
+        self.title = avshop.name!
+        navigationController?.navigationBar.barTintColor = .bkRed
+        navigationController?.navigationBar.barStyle = .black
+        navigationController?.navigationBar.tintColor = .white
+        checkoutBtn.titleLabel?.adjustsFontSizeToFitWidth = true
+        checkoutBtn.titleLabel?.minimumScaleFactor = 0.5
+
         deliveryTimeView.frame.origin.y = view.frame.height
-        nameLabel.text = avshop.name!
         bakes = RealmHelper.retrieveAllBakes(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(false, animated: animated)
         tableViewDeselection()
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(false, animated: animated)
         if checkCurrentUser() {
-            self.tableView.reloadData()
+            tableView.reloadData()
             retrieveBaker(withID: userRealm.id, completion: {
                 object, error in
                 if let baker = object as? AVBaker {
@@ -63,13 +76,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     retrieveRecentlyAddress(by: baker, completion: {
                         objects, error in
                         if let error = error {
-                            self.address = nil
+                            self.avaddress = nil
                             printit("Retrieve address error: \(error.localizedDescription)")
                         } else {
                             if let address = objects?.first as? AVAddress {
-                                self.address = address
+                                self.avaddress = address
                             } else {
-                                self.address = nil
+                                self.avaddress = nil
                             }
                         }
                         self.tableView.reloadData()
@@ -86,8 +99,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        setBackItemTitle(for: navigationItem)
         guard let id = segue.identifier else { return }
         switch id {
         case "showLoginFromShopChecking":
@@ -253,7 +265,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     if userRealm == nil {
                         return centerTextCell("立即登录", color: .buttonBlue)
                     } else {
-                        if let address = address {
+                        if let address = avaddress {
                             return deliveryAddressCell(with: address, indexPath)
                         } else {
                             return centerTextCell("选择收货地址", color: .buttonBlue)
@@ -282,7 +294,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         switch sections {
                         case 4:
                             if userRealm != nil {
-                                if let address = address {
+                                if let address = avaddress {
                                     return deliveryAddressCell(with: address, indexPath, preOrder: true)
                                 } else {
                                     return centerTextCell("选择收货地址", color: .buttonBlue)
@@ -362,7 +374,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.nameLabel.alpha = 0
         cell.amountLabel.alpha = 1
         cell.amountLabel.text = "总计"
-        cell.priceLabel.text = "¥ \(fee.fixPriceTagFormat())"
+        let price = fee.fixPriceTagFormat()
+        cell.priceLabel.text = "¥ \(price)"
+        checkoutBtn.setTitle(checkoutBtnText + " ¥\(price)", for: .normal)
         return cell
     }
     
@@ -459,6 +473,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     private func deliveryTimeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckDeliveryTimeTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableViewCell", for: indexPath) as! ShopCheckDeliveryTimeTableViewCell
+        cell.arrivalTime.alpha = 0
         if preOrder {
             if !cell.arrivalTime.text!.contains("（预）") {
                 cell.arrivalTime.text = cell.arrivalTime.text! + "（预）"
@@ -467,10 +482,37 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    private func deliveryAddressCell(with address: AVAddress, _ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckAddressTableViewCell {
+    private func deliveryAddressCell(with addr: AVAddress, _ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckAddressTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckAddressTableViewCell", for: indexPath) as! ShopCheckAddressTableViewCell
-        cell.addressLabel.text = address.formatted
-        cell.phoneLabel.text = address.phone
+        
+        let township = addr.township ?? ""
+        let streetName = addr.streetName ?? ""
+        let streetNo = addr.streetNumber ?? ""
+        let aoiName = addr.aoiName ?? ""
+        let addrDetailed = addr.detailed ?? ""
+        let addrAddr = township + streetName + streetNo + aoiName
+        let addrProv = addr.province ?? ""
+        let addrCity = addr.city ?? ""
+        let addrDistrict = addr.district ?? ""
+        let addrText = addrAddr + addrDetailed + " " + addrProv + addrCity + addrDistrict
+
+        cell.phoneLabel.text = addr.phone
+        cell.nameLabel.text = addr.name
+        
+        // dynamic set the text, set number of lines
+        cell.addressLabel.text = addrAddr
+        var labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
+        let charHeight = lroundf(Float(cell.addressLabel.font.lineHeight))
+        if labelHeight / charHeight == 1 {
+            cell.addressLabel.text = addrText
+            labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
+            if labelHeight / charHeight > 1 {
+                cell.addressLabel.text = addrAddr + addrDetailed + "\n" + addrProv + addrCity + addrDistrict
+            }
+        } else {
+            cell.addressLabel.text = addrText
+        }
+
         if preOrder {
             if !cell.phoneLabel.text!.contains("（预）") {
                 cell.phoneLabel.text = cell.phoneLabel.text! + "（预）"
@@ -491,10 +533,14 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             switch section {
             case 0:
                 switch row {
-                case 1, 3:
+                case 1:
                     // delivery time
-                    // TODO: - deliveryTimeSwitch(row)
-                    break
+                    if segmentedControl.selectedSegmentIndex == 2 {
+                        deliveryTimeSwitch(row)
+                    }
+                case 3:
+                    // delivery time
+                     deliveryTimeSwitch(row)
                 case 2, 4:
                     if userRealm == nil {
                         // login
@@ -504,7 +550,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         let segue = UIStoryboardSegue(identifier: "showDeliveryAddressFromShopCheckingVC", source: self, destination: deliveryAddressVC)
                         prepare(for: segue, sender: self)
                     }
-                    break
                 default:
                     break
                 }
@@ -624,7 +669,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case 0:
             switch indexPath.row {
             case 2, 4:
-                return 72
+                return UITableViewAutomaticDimension
             default:
                 return 44
             }
