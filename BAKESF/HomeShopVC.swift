@@ -92,7 +92,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     /// - Parameter completion: A compleion block executed after it loaded all shops.
     func loadShops(_ completion: @escaping ([AVShop]?, Error?) -> ()) {
         let sellersQuery = AVShop.query()
-        sellersQuery.includeKey("Baker") // key code: including all data inside Baker table but not only a pointer
+        sellersQuery.includeKey("baker") // key code: including all data inside Baker table but not only a pointer
         sellersQuery.includeKey("bgImage")
         sellersQuery.includeKey("headphoto")
         sellersQuery.limit = sellersPerPage

@@ -22,6 +22,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
     var address: AVAddress?
     var daSelectionVC: DeliveryAddressSelectionVC!
     var selectedPOI: AMapPOI?
+    var recentlyAddress: AVAddress?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,21 +30,20 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
         daSelectionVC = DeliveryAddressSelectionVC.instantiateFromStoryboard()
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(_:))))
 
-        
     }
 
     override func viewWillAppear(_ animated: Bool) {
         if let selectedPOI = selectedPOI {
             if let _ = self.address {
-                navigationController?.title = "编辑地址"
+                self.title = "编辑地址"
             } else {
-                navigationController?.title = "新增地址"
+                self.title = "新增地址"
             }
             addressSelectionBtn.setTitle(selectedPOI.address + selectedPOI.name, for: .normal)
             detailAddressTextField.becomeFirstResponder()
         } else {
             if let address = self.address {
-                navigationController?.title = "编辑地址"
+                self.title = "编辑地址"
                 nameTextField.text = address.name
                 if let gender = address.gender {
                     if gender.characters.count > 0 {
@@ -60,7 +60,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
                 addressSelectionBtn.titleLabel?.minimumScaleFactor = 0.4
                 detailAddressTextField.text = address.detailed
             } else {
-                navigationController?.title = "新增地址"
+                self.title = "新增地址"
                 nameTextField.text = ""
                 genderBtn.setTitle("帅哥/靓女", for: .normal)
                 phoneTextField.text = ""
@@ -145,22 +145,28 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
         }
         address.name = name
         address.phone = phone
-        address.gender = genderBtn.title(for: .normal)
+        var gender = genderBtn.title(for: .normal)
+        if gender == "帅哥/靓女" {
+            gender = "不告诉你"
+        }
+        address.gender = gender
         address.detailed = detailAddressTextField.text
         if let _ = selectedPOI {
             if let locationRealm = RealmHelper.retrieveLocation() {
                 saveAVAddress(for: address, from: locationRealm)
-                address.recentlyUsed = true
-                address.Baker = avbaker
+                address.recentlyUsed = false
+                address.baker = avbaker
                 self.address = address
                 self.address?.saveInBackground({
                     succeeded, error in
                     if succeeded {
                         self.navigationController?.popViewController(animated: true)
+                    } else {
+                        self.view.notify(text: "网络似乎出现了问题呢。", color: .bkRed, nav: self.navigationController?.navigationBar)
                     }
                 })
             } else {
-                view.notify(text: "请重新选择收货地址。", color: .bkRed, nav: navigationController?.navigationBar)
+                self.view.notify(text: "请重新选择收货地址。", color: .bkRed, nav: self.navigationController?.navigationBar)
                 return
             }
         } else if self.address != nil {
@@ -172,7 +178,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
                 }
             })
         } else {
-            view.notify(text: "最后一步，填写收货地址~", color: .bkRed, nav: navigationController?.navigationBar)
+            self.view.notify(text: "最后一步，填写收货地址~", color: .bkRed, nav: self.navigationController?.navigationBar)
             return
         }
 

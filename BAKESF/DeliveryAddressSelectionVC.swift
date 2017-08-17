@@ -115,8 +115,8 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         if let avbaker = self.avbaker {
             bakerDATableView.isHidden = false
             let query = AVAddress.query()
-            query.includeKey("Baker")
-            query.whereKey("Baker", equalTo: avbaker)
+            query.includeKey("baker")
+            query.whereKey("baker", equalTo: avbaker)
             query.findObjectsInBackground({
                 objects, error in
                 if let error = error {

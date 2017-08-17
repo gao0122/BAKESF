@@ -10,8 +10,8 @@ import AVOSCloud
 
 class AVBakeIn: AVObject, AVSubclassing {
     
-    @NSManaged var Bake: AVBake?
-    @NSManaged var Order: AVOrder?
+    @NSManaged var bake: AVBake?
+    @NSManaged var order: AVOrder?
     @NSManaged var amount: NSNumber?
     
     static func parseClassName() -> String {

@@ -10,7 +10,7 @@ import AVOSCloud
 
 class AVAddress: AVObject, AVSubclassing {
     
-    @NSManaged var Baker: AVBaker?
+    @NSManaged var baker: AVBaker?
     @NSManaged var name: String? // user name
     @NSManaged var phone: String?
     @NSManaged var gender: String?

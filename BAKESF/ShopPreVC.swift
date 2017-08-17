@@ -30,7 +30,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
 
         let shopQuery = AVBake.query()
-        shopQuery.whereKey("Shop", equalTo: avshop)
+        shopQuery.whereKey("shop", equalTo: avshop)
         let buyQuery = AVBake.query()
         buyQuery.whereKey("stock", equalTo: 1) // only for buy
         let bothQuery = AVBake.query()

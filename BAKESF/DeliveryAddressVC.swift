@@ -20,7 +20,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     var avbaker: AVBaker?
     var editingAddress: AVAddress?
     var selectedAddress: AVAddress?
-    var currentAddress: AVAddress?
+    var currentAddress: AVAddress? // shopCheckingVC.avaddress
     
     var hasSelectedCell = false
     
@@ -42,8 +42,9 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     override func viewDidAppear(_ animated: Bool) {
         if let avbaker = self.avbaker {
             let query = AVAddress.query()
-            query.includeKey("Baker")
-            query.whereKey("Baker", equalTo: avbaker)
+            query.includeKey("baker")
+            query.whereKey("baker", equalTo: avbaker)
+            query.addDescendingOrder("recentlyUsed")
             query.findObjectsInBackground({
                 objects, error in
                 if let error = error {
@@ -82,6 +83,8 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
                 vc.avaddress = selectedAddress
             }
         case "showDeliveryAddressEditingVCFromDAVC", "showDeliveryAddressEditingVCFromDAVCForAdding":
+            setBackItemTitle(for: navigationItem)
+            deliveryAddressEditingVC.recentlyAddress = self.currentAddress
             deliveryAddressEditingVC.avbaker = self.avbaker
             show(deliveryAddressEditingVC, sender: sender)
         default:
@@ -166,9 +169,9 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         let address = addresses[row]
         selectedAddress = address
         hasSelectedCell = true
-        if let lastAddress = shopCheckingVC.avaddress {
-            lastAddress.recentlyUsed = false
-            lastAddress.saveInBackground({
+        if let _ = currentAddress {
+            currentAddress!.recentlyUsed = false
+            currentAddress!.saveInBackground({
                 succeeded, error in
                 if succeeded {
                     address.recentlyUsed = true
@@ -182,6 +185,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
                         }
                     })
                 } else {
+                    tableView.deselectRow(at: indexPath, animated: true)
                     self.view.notify(text: self.errorText, color: .alertRed, nav: self.navigationController?.navigationBar)
                 }
             })

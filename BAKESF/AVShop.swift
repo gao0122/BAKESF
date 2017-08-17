@@ -10,7 +10,7 @@ import AVOSCloud
 
 class AVShop: AVObject, AVSubclassing {
     
-    @NSManaged var Baker: AVBaker?
+    @NSManaged var baker: AVBaker?
     @NSManaged var name: String?
     @NSManaged var address: String?
     @NSManaged var bgImage: AVFile?

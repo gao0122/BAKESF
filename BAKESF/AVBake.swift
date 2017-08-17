@@ -13,7 +13,7 @@ class AVBake: AVObject, AVSubclassing {
     @NSManaged var name: String?
     @NSManaged var category: String?
     @NSManaged var tag: String?
-    @NSManaged var Shop: AVShop?
+    @NSManaged var shop: AVShop?
     @NSManaged var image: AVFile?
     @NSManaged var stock: NSNumber? // 0, 1 or 2
     @NSManaged var monthly: NSNumber?

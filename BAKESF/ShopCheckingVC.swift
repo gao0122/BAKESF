@@ -108,6 +108,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             guard let daVC = segue.destination as? DeliveryAddressVC else { break }
             daVC.avbaker = self.avbaker
             daVC.shopCheckingVC = self
+            daVC.currentAddress = self.avaddress
             show(daVC, sender: self)
         default:
             break
