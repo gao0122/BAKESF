@@ -39,6 +39,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
             } else {
                 self.title = "新增地址"
             }
+            addressSelectionBtn.setTitleColor(.bkBlack, for: .normal)
             addressSelectionBtn.setTitle(selectedPOI.address + selectedPOI.name, for: .normal)
             detailAddressTextField.becomeFirstResponder()
         } else {
