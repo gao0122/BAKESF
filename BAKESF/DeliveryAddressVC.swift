@@ -36,6 +36,8 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         self.title = "选择收货地址"
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
 
+        view.bringSubview(toFront: indicatorSuperView)
+        view.bringSubview(toFront: loadFailedView)
         hideLoadFailedView()
         tryOneMoreTimeBtn.layer.borderWidth = 1
         tryOneMoreTimeBtn.layer.cornerRadius = 4
@@ -179,11 +181,11 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         
         // dynamic set the text, set number of lines
         cell.addressLabel.text = addrAddr + addrDetailed
-        var labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
+        var labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: screenWidth - 15 * 2, height: CGFloat.infinity)).height))
         let charHeight = lroundf(Float(cell.addressLabel.font.lineHeight))
         if labelHeight / charHeight == 1 {
             cell.addressLabel.text = addrText
-            labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
+            labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: screenWidth - 15 * 2, height: CGFloat.infinity)).height))
             if labelHeight / charHeight > 1 {
                 cell.addressLabel.text = addrAddr + addrDetailed + "\n" + addrProv + addrCity + addrDistrict
             }
