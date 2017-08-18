@@ -33,5 +33,6 @@ class LocationRealm: Object {
     dynamic var longitude: String = ""
     dynamic var latitude: String = ""
     dynamic var detailed: String = "" // input by user
+    dynamic var tag: Int = 0 // different kinds of address
 
 }

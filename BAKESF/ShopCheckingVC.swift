@@ -27,6 +27,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     let deliveryAddressVC: DeliveryAddressVC = {
         return DeliveryAddressVC.instantiateFromStoryboard()
     }()
+    var redPacketVC: RedPacketVC!
     
     let sectionCount = 3
     
@@ -35,7 +36,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var avbaker: AVBaker!
     var userRealm: UserRealm!
     var avaddress: AVAddress?
-    var avordr: AVOrder?
+    var avorder: AVOrder?
     
     var bakes: [Object]!
     var deliveryTimeViewState: DeliveryTimeViewState = .collapsed
@@ -110,6 +111,10 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             daVC.shopCheckingVC = self
             daVC.currentAddress = self.avaddress
             show(daVC, sender: self)
+        case "showRedPacketVCFromShopCheckingVC":
+            guard let vc = segue.destination as? RedPacketVC else { break }
+            vc.baker = self.avbaker
+            show(vc, sender: sender)
         default:
             break
         }
@@ -151,13 +156,12 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case 0:
             return sectionCount
         case 1:
-            break
+            return 1
         case 2:
-            break
+            return 1
         default:
-            break
+            return 0
         }
-        return 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -263,12 +267,12 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 case 2:
                     // delivery address
                     if userRealm == nil {
-                        return centerTextCell("立即登录", color: .buttonBlue)
+                        return UITableViewCell.centerTextCell(with: "立即登录", in: .buttonBlue)
                     } else {
                         if let address = avaddress {
                             return deliveryAddressCell(with: address, indexPath)
                         } else {
-                            return centerTextCell("选择收货地址", color: .buttonBlue)
+                            return UITableViewCell.centerTextCell(with: "选择收货地址", in: .buttonBlue)
                         }
                     }
                 case 3:
@@ -297,7 +301,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                                 if let address = avaddress {
                                     return deliveryAddressCell(with: address, indexPath, preOrder: true)
                                 } else {
-                                    return centerTextCell("选择收货地址", color: .buttonBlue)
+                                    return UITableViewCell.centerTextCell(with: "选择收货地址", in: .buttonBlue)
                                 }
                             }
                         default:
@@ -315,7 +319,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 switch row {
                 case bakes.count:
                     if tableView.numberOfRows(inSection: section) == 1 {
-                        let cell = centerTextCell("袋子空空的", color: .bkBlack)
+                        let cell = UITableViewCell.centerTextCell(with: "袋子空空的", in: .bkBlack)
                         cell.selectionStyle = .none
                         return cell
                     } else {
@@ -365,6 +369,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case 1:
             if sections == 4 { fee += fee } // TODO: in bag fee plus pre order fee
             fee += RealmHelper.retrieveAllBakesCost(avshopID: avshop.objectId!)
+            checkoutBtn.setTitle(checkoutBtnText + " ¥\(fee.fixPriceTagFormat())", for: .normal)
         case 2:
             fee += RealmHelper.retrieveBakesPreOrderCost(avshopID: avshop.objectId!)
         default:
@@ -376,12 +381,12 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.amountLabel.text = "总计"
         let price = fee.fixPriceTagFormat()
         cell.priceLabel.text = "¥ \(price)"
-        checkoutBtn.setTitle(checkoutBtnText + " ¥\(price)", for: .normal)
         return cell
     }
     
     private func redPacketCell(_ indexPath: IndexPath) -> ShopCheckBakeTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableViewCell", for: indexPath) as! ShopCheckBakeTableViewCell
+        cell.selectionStyle = .default
         cell.priceLabel.alpha = 1
         cell.nameLabel.alpha = 1
         cell.amountLabel.alpha = 0
@@ -455,22 +460,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         return cell
     }
-    
-    private func centerTextCell(_ text: String, color: UIColor) -> UITableViewCell {
-        let cell = UITableViewCell()
-        let label: UILabel = {
-            let label = UILabel()
-            label.frame = CGRect(x: (cell.frame.width - 300) / 2, y: (cell.frame.height - 24) / 2, width: 300, height: 24)
-            label.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin, .flexibleBottomMargin, .flexibleLeftMargin, .flexibleWidth]
-            label.text = text
-            label.textColor = color
-            label.textAlignment = .center
-            return label
-        }()
-        cell.addSubview(label)
-        return cell
-    }
-    
+        
     private func deliveryTimeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckDeliveryTimeTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableViewCell", for: indexPath) as! ShopCheckDeliveryTimeTableViewCell
         cell.arrivalTime.alpha = 0
@@ -500,7 +490,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.nameLabel.text = addr.name
         
         // dynamic set the text, set number of lines
-        cell.addressLabel.text = addrAddr
+        cell.addressLabel.text = addrAddr + addrDetailed
         var labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
         let charHeight = lroundf(Float(cell.addressLabel.font.lineHeight))
         if labelHeight / charHeight == 1 {
@@ -547,6 +537,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         performSegue(withIdentifier: "showLoginFromShopChecking", sender: self)
                     } else {
                         // delivery address
+                        deliveryAddressVC.isPreOrder = row == 4 // TODOHERE
                         let segue = UIStoryboardSegue(identifier: "showDeliveryAddressFromShopCheckingVC", source: self, destination: deliveryAddressVC)
                         prepare(for: segue, sender: self)
                     }
@@ -557,7 +548,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 switch row {
                 case bakes.count + 1:
                     // red packet
-                    break
+                    if redPacketVC == nil {
+                        redPacketVC = RedPacketVC.instantiateFromStoryboard()
+                    }
+                    let segue = UIStoryboardSegue(identifier: "showRedPacketVCFromShopCheckingVC", source: self, destination: redPacketVC)
+                    prepare(for: segue, sender: self)
                 default:
                     break
                 }

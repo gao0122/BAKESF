@@ -53,12 +53,11 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     var avbaker: AVBaker?
     var shouldSearchAround = true
     var currentReGeocode: AMapReGeocode?
+    var tag: Int = 0
 
     private let mapSearch = AMapSearchAPI()!
     private let locationManager = AMapLocationManager()
-    private var locationRealm: LocationRealm? = {
-        return RealmHelper.retrieveLocation()
-    }()
+    private var locationRealm: LocationRealm?
     
     private let noResultText = "没有结果\n\n换个地址试试吧~"
     private let searchingText = "正在搜索..."
@@ -79,13 +78,17 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             //currentAddressTextField.isUserInteractionEnabled = true
             //currentAddressNameTextField.isUserInteractionEnabled = true
             unwindSegueID = "unwindToDeliveryAddressEditingVCFromDASelectionVC"
+            tag = 1
         case "showDASelctionVCFromHomeVC", "showDASelctionVCFromHomeVCNaN":
             currentAddressTextField.isUserInteractionEnabled = false
             currentAddressNameTextField.isUserInteractionEnabled = false
             unwindSegueID = "unwindToHomeVCFromDASelectionVC"
+            tag = 0
         default:
             break
         }
+        locationRealm = RealmHelper.retrieveLocation(by: tag)
+
         relocateBtn.layer.borderColor = relocateBtn.currentTitleColor.cgColor
         relocateBtn.layer.borderWidth = 1
         relocateBtn.layer.cornerRadius = 3
@@ -273,7 +276,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
     
     func unwindFromCellSelection(by regeocode: AMapReGeocode) {
-        self.locationRealm = RealmHelper.addLocation(by: regeocode, poi: selectedPOI)
+        self.locationRealm = RealmHelper.addLocation(by: regeocode, poi: selectedPOI, for: tag)
         self.updateCurrentLocationView()
         self.performSegue(withIdentifier: unwindSegueID, sender: self)
     }
@@ -413,7 +416,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             let addrText = addrAddr + addrDetailed + " " + addrProv + addrCity + addrDistrict
             
             // dynamic set the text, set number of lines
-            cell.addressLabel.text = addrAddr
+            cell.addressLabel.text = addrAddr + addrDetailed
             var labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
             let charHeight = lroundf(Float(cell.addressLabel.font.lineHeight))
             if labelHeight / charHeight == 1 {
@@ -456,7 +459,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             guard let cell = tableView.cellForRow(at: indexPath) as? DeliveryAddressTableViewCell else { break }
             cityBtn.setTitle(cell.address.city, for: .normal)
             selectedPOI = nil
-            locationRealm = RealmHelper.addLocation(by: cell.address)
+            locationRealm = RealmHelper.addLocation(by: cell.address, for: tag)
             performSegue(withIdentifier: unwindSegueID, sender: self)
         default:
             break

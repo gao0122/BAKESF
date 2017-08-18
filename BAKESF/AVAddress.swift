@@ -30,6 +30,7 @@ class AVAddress: AVObject, AVSubclassing {
     @NSManaged var latitude: String? 
     @NSManaged var label: String? // tag
     @NSManaged var recentlyUsed: Bool
+    @NSManaged var isForPreOrder: Bool
     
     static func parseClassName() -> String {
         return "Address"

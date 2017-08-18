@@ -13,7 +13,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var addAddressBtn: UIButton!
     
-    
+    var isPreOrder: Bool = false
     var deliveryAddressEditingVC: DeliveryAddressEditingVC!
     var addresses: [AVAddress]!
     var shopCheckingVC: ShopCheckingVC!
@@ -134,7 +134,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         let addrText = addrAddr + addrDetailed + " " + addrProv + addrCity + addrDistrict
         
         // dynamic set the text, set number of lines
-        cell.addressLabel.text = addrAddr
+        cell.addressLabel.text = addrAddr + addrDetailed
         var labelHeight = lroundf(Float(cell.addressLabel.sizeThatFits(CGSize(width: cell.addressLabel.frame.width, height: CGFloat.infinity)).height))
         let charHeight = lroundf(Float(cell.addressLabel.font.lineHeight))
         if labelHeight / charHeight == 1 {
@@ -206,6 +206,21 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
         case .delete:
+            let row = indexPath.row
+            tableView.beginUpdates()
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            let address = addresses.remove(at: row)
+            tableView.endUpdates()
+            address.deleteInBackground({
+                succeeded, error in
+                if succeeded {
+                    self.view.notify(text: "删除成功。", color: .alertRed, nav: self.navigationController?.navigationBar)
+                } else {
+                    self.view.notify(text: self.errorText, color: .alertRed, nav: self.navigationController?.navigationBar)
+                    tableView.reloadData()
+                }
+            })
+        case .insert:
             break
         default:
             break

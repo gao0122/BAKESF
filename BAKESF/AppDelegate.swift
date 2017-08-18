@@ -89,6 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AVBakeIn.registerSubclass()
         AVBakePre.registerSubclass()
         AVAddress.registerSubclass()
+        AVRedPacket.registerSubclass()
     }
 }
 

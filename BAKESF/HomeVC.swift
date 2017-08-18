@@ -38,7 +38,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     var poiChanged = false
     var locateManuallyBtnPressed = false
     var locationRealm: LocationRealm? = {
-        return RealmHelper.retrieveLocation()
+        return RealmHelper.retrieveLocation(by: 0)
     }()
     var locatedOnce = false
     var searchBarWidth: CGFloat!
@@ -189,7 +189,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
             return
         }
         locatedOnce = true
-        locationRealm = RealmHelper.addLocation(by: regeocode)
+        locationRealm = RealmHelper.addLocation(by: regeocode, for: 0)
         updateLocationBtnAndSearchBar(by: locationRealm!.city)
         if let _ = avbaker {
             hideLocateFailedViewAndStopIndicator()

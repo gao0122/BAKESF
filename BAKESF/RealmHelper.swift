@@ -295,8 +295,8 @@ class RealmHelper {
 
     
     // MARK: - Location
-    static func addLocation(by regeocode: AMapReGeocode, poi: AMapPOI? = nil) -> LocationRealm {
-        if let location = retrieveLocation() {
+    static func addLocation(by regeocode: AMapReGeocode, poi: AMapPOI? = nil, for tag: Int) -> LocationRealm {
+        if let location = retrieveLocation(by: tag) {
             let realm = try! Realm()
             try! realm.write {
                 setLocation(location, by: regeocode, poi: poi)
@@ -341,8 +341,8 @@ class RealmHelper {
         }
     }
     
-    static func addLocation(by avaddress: AVAddress) -> LocationRealm {
-        if let location = retrieveLocation() {
+    static func addLocation(by avaddress: AVAddress, for tag: Int) -> LocationRealm {
+        if let location = retrieveLocation(by: tag) {
             let realm = try! Realm()
             try! realm.write {
                 setLocation(location, by: avaddress)
@@ -378,11 +378,17 @@ class RealmHelper {
         location.address = addressText + location.streetName + location.streetNumber
     }
     
-    static func retrieveLocation() -> LocationRealm? {
+    static func retrieveLocation(by tag: Int) -> LocationRealm? {
         let realm = try! Realm()
-        return realm.objects(LocationRealm.self).first
+        return realm.objects(LocationRealm.self).filter("tag = \(tag)").first
     }
     
+    static func deleteLocation(by tag: Int) {
+        let realm = try! Realm()
+        if let location = retrieveLocation(by: tag) {
+            realm.delete(location)
+        }
+    }
     
 }
 

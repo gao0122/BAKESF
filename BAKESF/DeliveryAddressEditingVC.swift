@@ -153,7 +153,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
         address.gender = gender
         address.detailed = detailAddressTextField.text
         if let _ = selectedPOI {
-            if let locationRealm = RealmHelper.retrieveLocation() {
+            if let locationRealm = RealmHelper.retrieveLocation(by: 1) {
                 saveAVAddress(for: address, from: locationRealm)
                 address.recentlyUsed = false
                 address.baker = avbaker
