@@ -12,8 +12,11 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var addAddressBtn: UIButton!
+    @IBOutlet weak var indicatorSuperView: UIView!
+    @IBOutlet weak var indicatorView: UIActivityIndicatorView!
+    @IBOutlet weak var tryOneMoreTimeBtn: UIButton!
+    @IBOutlet weak var loadFailedView: UIView!
     
-    var isPreOrder: Bool = false
     var deliveryAddressEditingVC: DeliveryAddressEditingVC!
     var addresses: [AVAddress]!
     var shopCheckingVC: ShopCheckingVC!
@@ -23,6 +26,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     var currentAddress: AVAddress? // shopCheckingVC.avaddress
     
     var hasSelectedCell = false
+    var isPreOrder = false
     
     let errorText = "操作失败，请检查网络连接。"
 
@@ -32,6 +36,12 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         self.title = "选择收货地址"
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
 
+        hideLoadFailedView()
+        tryOneMoreTimeBtn.layer.borderWidth = 1
+        tryOneMoreTimeBtn.layer.cornerRadius = 4
+        tryOneMoreTimeBtn.layer.borderColor = UIColor.bkRed.cgColor
+        tryOneMoreTimeBtn.setTitleColor(.bkRed, for: .normal)
+        startIndicatorViewAni()
         
     }
 
@@ -40,6 +50,10 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        loadAVAddresses()
+    }
+
+    func loadAVAddresses() {
         if let avbaker = self.avbaker {
             let query = AVAddress.query()
             query.includeKey("baker")
@@ -51,23 +65,53 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
                     // TODO: - error handling
                     printit(error.localizedDescription)
                     self.view.notify(text: "网络似乎出了点问题...", color: .alertRed, nav: self.navigationController?.navigationBar)
+                    self.showLoadFailedView()
                 } else {
                     if let addresses = objects as? [AVAddress] {
                         self.addresses = addresses
                         self.tableView.reloadData()
+                        self.stopIndicatorViewAni()
                     } else {
                         // TODO: - error handling
                         self.view.notify(text: "发生未知错误，请尝试刷新。", color: .alertRed, nav: self.navigationController?.navigationBar)
+                        self.showLoadFailedView()
                     }
                 }
             })
         }
     }
-
+    
     class func instantiateFromStoryboard() -> DeliveryAddressVC {
         return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! DeliveryAddressVC
     }
 
+    func stopIndicatorViewAni() {
+        indicatorSuperView.isHidden = true
+        indicatorView.stopAnimating()
+        view.isUserInteractionEnabled = true
+    }
+    
+    func startIndicatorViewAni() {
+        indicatorSuperView.isHidden = false
+        indicatorView.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+    
+    func showLoadFailedView() {
+        loadFailedView.isHidden = false
+    }
+    
+    func hideLoadFailedView() {
+        loadFailedView.isHidden = true
+    }
+    
+    @IBAction func tryOneMoreTimeBtnPressed(_ sender: Any) {
+        loadAVAddresses()
+        hideLoadFailedView()
+        startIndicatorViewAni()
+    }
+    
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

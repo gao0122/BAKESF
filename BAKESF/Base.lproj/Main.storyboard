@@ -834,20 +834,51 @@
                                     <action selector="addAddressBtnPressed:" destination="bY0-pA-rgl" eventType="touchUpInside" id="ia1-w6-aZj"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="选择收货地址" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.40000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="kNO-rb-vvn">
-                                <rect key="frame" x="124" y="29" width="167" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LEY-gv-k6m">
+                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Oqg-F8-wTM">
+                                        <rect key="frame" x="197" y="226" width="20" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Shp-07-KQR">
+                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cys-nV-Azh">
+                                        <rect key="frame" x="157" y="433" width="100" height="42"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <state key="normal" title="再试一次"/>
+                                        <connections>
+                                            <action selector="tryOneMoreTimeBtnPressed:" destination="bY0-pA-rgl" eventType="touchUpInside" id="deE-w7-4bI"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="加载失败" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JNJ-1C-bPU">
+                                        <rect key="frame" x="170" y="174" width="74" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="18"/>
+                                        <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="addAddressBtn" destination="2iT-m6-Wa5" id="96B-Ah-UmE"/>
+                        <outlet property="indicatorSuperView" destination="LEY-gv-k6m" id="SmE-fj-yNb"/>
+                        <outlet property="indicatorView" destination="Oqg-F8-wTM" id="lBv-8H-eYR"/>
+                        <outlet property="loadFailedView" destination="Shp-07-KQR" id="zWz-YD-Fcp"/>
                         <outlet property="tableView" destination="45n-Xp-mYz" id="61r-Uy-1Vk"/>
+                        <outlet property="tryOneMoreTimeBtn" destination="cys-nV-Azh" id="epu-H6-MB8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kbl-mH-Ty3" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1472,7 +1503,7 @@
                                 </connections>
                             </button>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ukQ-ua-M9u" userLabel="Shop View">
-                                <rect key="frame" x="2" y="66" width="410" height="670"/>
+                                <rect key="frame" x="2" y="64" width="412" height="672"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <connections>
                                     <segue destination="9Bi-5Y-ITQ" kind="embed" identifier="shopBuyMenuSegue" id="BmW-d3-Mxf"/>
@@ -1563,6 +1594,40 @@
                                     </label>
                                 </subviews>
                             </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UCA-bG-LRO">
+                                <rect key="frame" x="0.0" y="372" width="414" height="364"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="9Wo-pr-CBz">
+                                        <rect key="frame" x="197" y="150" width="20" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YnJ-hH-gZG">
+                                <rect key="frame" x="0.0" y="372" width="414" height="364"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oB2-js-0wy">
+                                        <rect key="frame" x="157" y="205" width="100" height="42"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <state key="normal" title="再试一次"/>
+                                        <connections>
+                                            <action selector="tryOneMoreTimeBtnPressed:" destination="s06-tB-2Dw" eventType="touchUpInside" id="dYf-iH-iS9"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="加载失败" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8a9-kw-iwO">
+                                        <rect key="frame" x="165" y="117" width="84" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                        <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
@@ -1585,7 +1650,10 @@
                         <outlet property="deliveryFeeLabel" destination="cCI-fM-Ym6" id="11Y-EI-cFi"/>
                         <outlet property="emptyBagLabel" destination="S0n-mU-3rz" id="Wt2-dy-d0K"/>
                         <outlet property="hpImage" destination="yVi-ZT-iZh" id="amC-AN-DEN"/>
+                        <outlet property="indicatorSuperView" destination="UCA-bG-LRO" id="00Y-Fr-dIa"/>
+                        <outlet property="indicatorView" destination="9Wo-pr-CBz" id="AQA-UO-tiG"/>
                         <outlet property="introBtn" destination="HVX-yt-pke" id="gns-5i-CoP"/>
+                        <outlet property="loadFailedView" destination="YnJ-hH-gZG" id="uUi-GM-4Os"/>
                         <outlet property="rightDeliveryFeeLabel" destination="83R-Z1-fe1" id="nwN-Uc-cCI"/>
                         <outlet property="rightLowestFeeLabel" destination="Bq2-0W-G7e" id="fdS-1U-o6h"/>
                         <outlet property="shopCardView" destination="Onp-sy-hes" id="VyA-hJ-qrA"/>
@@ -1596,6 +1664,7 @@
                         <outlet property="starsGray" destination="57D-Tp-coC" id="uGX-HU-ISb"/>
                         <outlet property="totalAmountLabel" destination="gbO-ie-7hd" id="Hrp-Ne-qmy"/>
                         <outlet property="totalFeeLabel" destination="6qq-tK-pIx" id="W4T-7D-5em"/>
+                        <outlet property="tryOneMoreTimeBtn" destination="oB2-js-0wy" id="yoG-QJ-3PZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qys-Hp-ca2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1612,9 +1681,10 @@
                         <viewControllerLayoutGuide type="bottom" id="xfi-hh-0g7"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="3YY-Ad-Knv">
-                        <rect key="frame" x="0.0" y="0.0" width="410" height="670"/>
+                        <rect key="frame" x="0.0" y="0.0" width="412" height="672"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MWy-1Z-Msx" userLabel="First Responder" sceneMemberID="firstResponder"/>

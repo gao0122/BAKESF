@@ -537,7 +537,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         performSegue(withIdentifier: "showLoginFromShopChecking", sender: self)
                     } else {
                         // delivery address
-                        deliveryAddressVC.isPreOrder = row == 4 // TODOHERE
+                        deliveryAddressVC.isPreOrder = row == 4 
                         let segue = UIStoryboardSegue(identifier: "showDeliveryAddressFromShopCheckingVC", source: self, destination: deliveryAddressVC)
                         prepare(for: segue, sender: self)
                     }

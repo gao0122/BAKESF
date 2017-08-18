@@ -13,11 +13,19 @@ enum PanDirection {
     case horizontal
 }
 
+enum PanDirectionD {
+    case leftOrUp
+    case rightOrDown
+    case all
+}
+
 class UIPanDirectionGestureRecognizer: UIPanGestureRecognizer {
     let direction: PanDirection
+    let pdd: PanDirectionD
     
-    init(direction: PanDirection, target: AnyObject, action: Selector) {
+    init(direction: PanDirection, pdd: PanDirectionD = .all, target: AnyObject, action: Selector) {
         self.direction = direction
+        self.pdd = pdd
         super.init(target: target, action: action)
     }
 
@@ -28,11 +36,31 @@ class UIPanDirectionGestureRecognizer: UIPanGestureRecognizer {
             switch direction {
             case .horizontal where fabs(v.y) > fabs(v.x):
                 state = .cancelled
+            case .horizontal where fabs(v.y) < fabs(v.x):
+                switch pdd {
+                case .leftOrUp where v.x > 0:
+                    state = .cancelled
+                case .rightOrDown where v.x < 0:
+                    state = .cancelled
+                default:
+                    break
+                }
             case .vertical where fabs(v.x) > fabs(v.y):
                 state = .cancelled
+            case .vertical where fabs(v.x) < fabs(v.y):
+                switch pdd {
+                case .leftOrUp where v.y > 0:
+                    state = .cancelled
+                case .rightOrDown where v.y < 0:
+                    state = .cancelled
+                default:
+                    break
+                }
             default:
                 break
             }
         }
     }
+    
+    
 }

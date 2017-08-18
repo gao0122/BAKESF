@@ -232,12 +232,12 @@
 			isa = PBXGroup;
 			children = (
 				00264E641F2F275700D83073 /* ShopCheckingVC.swift */,
-				009BA0141F469D5E00C7ABF7 /* RedPacketVC */,
-				009BA0151F469DD200C7ABF7 /* DeliveryAddressVC */,
 				00264E6E1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift */,
 				00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */,
 				00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift */,
 				00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */,
+				009BA0141F469D5E00C7ABF7 /* RedPacketVC */,
+				009BA0151F469DD200C7ABF7 /* DeliveryAddressVC */,
 				00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */,
 				002659A31F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift */,
 			);

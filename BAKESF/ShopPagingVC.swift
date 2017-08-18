@@ -11,6 +11,7 @@ import PagingMenuController
 
 class ShopPagingVC: PagingMenuController {
 
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

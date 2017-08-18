@@ -31,7 +31,12 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         
         avtag = avshop.tags!
         classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
-
+        
+        loadAVBakes()
+        
+    }
+    
+    func loadAVBakes() {
         let shopQuery = AVBake.query()
         shopQuery.whereKey("shop", equalTo: avshop)
         let buyQuery = AVBake.query()
@@ -47,11 +52,14 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             if error == nil {
                 self.avbakes = objects as! [AVBake]
                 self.assignBakeTag()
+                if self.shopVC.shopPreVC.avbakes != nil {
+                    self.shopVC.stopIndicatorViewAni()
+                }
             } else {
+                self.shopVC.showLoadFailedView()
                 printit(any: "shop buy vc \(error!.localizedDescription)")
             }
         })
-                
     }
 
     class func instantiateFromStoryboard() -> ShopBuyVC {
@@ -85,6 +93,11 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             }
         }
         self.bakeTableView.reloadData()
+    }
+    
+    func swipeBack(_ sender: Any) {
+        shopVC.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        shopVC.navigationController?.popViewController(animated: true)
     }
     
     // one more button pressed

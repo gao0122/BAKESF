@@ -29,6 +29,11 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         avtag = avshop.tags!
         classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
 
+        loadAVBakes()
+
+    }
+    
+    func loadAVBakes() {
         let shopQuery = AVBake.query()
         shopQuery.whereKey("shop", equalTo: avshop)
         let buyQuery = AVBake.query()
@@ -44,11 +49,14 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             if error == nil {
                 self.avbakes = objects as! [AVBake]
                 self.assignBakeTag()
+                if self.shopVC.shopBuyVC.avbakes != nil {
+                    self.shopVC.stopIndicatorViewAni()
+                }
             } else {
+                self.shopVC.showLoadFailedView()
                 printit(any: "shop buy vc \(error!.localizedDescription)")
             }
         })
-
     }
 
     class func instantiateFromStoryboard() -> ShopPreVC {

@@ -44,6 +44,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var emptyBagLabel: UILabel!
     @IBOutlet weak var rightLowestFeeLabel: UILabel!
     @IBOutlet weak var rightDeliveryFeeLabel: UILabel!
+    @IBOutlet weak var indicatorSuperView: UIView!
+    @IBOutlet weak var indicatorView: UIActivityIndicatorView!
+    @IBOutlet weak var loadFailedView: UIView!
+    @IBOutlet weak var tryOneMoreTimeBtn: UIButton!
     
     var shopBuyVC: ShopBuyVC!
     var shopPreVC: ShopPreVC!
@@ -51,10 +55,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     var shopCheckingVC: ShopCheckingVC!
     
     var avshop: AVShop!
-    var avbaker: AVBaker!
+    var avbaker: AVBaker?
     var userRealm: UserRealm!
     
-    let topViewHeight: CGFloat = 66
+    let topViewHeight: CGFloat = 64
     let menuAniDuration: TimeInterval = 0.48
     let nameLabelTransformY: CGFloat = 173
     let bagBarHeight: CGFloat = 50
@@ -136,6 +140,12 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func preInit() {
+        hideLoadFailedView()
+        tryOneMoreTimeBtn.layer.borderWidth = 1
+        tryOneMoreTimeBtn.layer.cornerRadius = 4
+        tryOneMoreTimeBtn.layer.borderColor = UIColor.bkRed.cgColor
+        tryOneMoreTimeBtn.setTitleColor(.bkRed, for: .normal)
+        startIndicatorViewAni()
         navigationController?.navigationBar.barTintColor = .bkRed
         navigationController?.navigationBar.barStyle = .black
         navigationController?.navigationBar.tintColor = .white
@@ -166,7 +176,9 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     func checkAVBaker() {
         if let usr = RealmHelper.retrieveCurrentUser() {
             userRealm = usr
-            avbaker = retrieveBaker(withID: usr.id)
+            if avbaker?.objectId != usr.id {
+                avbaker = retrieveBaker(withID: usr.id)
+            }
         }
     }
     
@@ -209,7 +221,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             var isScrollEnabled: Bool
         }
         
-        let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
+        let pagingMenuController = self.childViewControllers.first! as! ShopPagingVC
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         // setup shopBuyVC
         option.shopBuyVC.shopVC = self
@@ -373,8 +385,33 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
+    func stopIndicatorViewAni() {
+        indicatorSuperView.isHidden = true
+        indicatorView.stopAnimating()
+        view.isUserInteractionEnabled = true
+    }
     
+    func startIndicatorViewAni() {
+        indicatorSuperView.isHidden = false
+        indicatorView.startAnimating()
+        view.isUserInteractionEnabled = false
+    }
+    
+    func showLoadFailedView() {
+        loadFailedView.isHidden = false
+    }
+    
+    func hideLoadFailedView() {
+        loadFailedView.isHidden = true
+    }
 
+    @IBAction func tryOneMoreTimeBtnPressed(_ sender: Any) {
+        shopBuyVC.loadAVBakes()
+        shopPreVC.loadAVBakes()
+        hideLoadFailedView()
+        startIndicatorViewAni()
+    }
+    
     
     // MARK: - animation
     // 
