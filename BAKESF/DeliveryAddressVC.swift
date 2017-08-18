@@ -258,7 +258,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
             address.deleteInBackground({
                 succeeded, error in
                 if succeeded {
-                    self.view.notify(text: "删除成功。", color: .alertRed, nav: self.navigationController?.navigationBar)
+                    self.view.notify(text: "删除成功。", color: .alertGreen, nav: self.navigationController?.navigationBar)
                 } else {
                     self.view.notify(text: self.errorText, color: .alertRed, nav: self.navigationController?.navigationBar)
                     tableView.reloadData()

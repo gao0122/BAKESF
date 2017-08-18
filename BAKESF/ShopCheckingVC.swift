@@ -465,9 +465,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableViewCell", for: indexPath) as! ShopCheckDeliveryTimeTableViewCell
         cell.arrivalTime.alpha = 0
         if preOrder {
-            if !cell.arrivalTime.text!.contains("（预）") {
-                cell.arrivalTime.text = cell.arrivalTime.text! + "（预）"
-            }
+            let date = Date()
+            let calendar = Calendar.current
+            let cs = calendar.dateComponents([.month, .day, .hour, .minute], from: date)
+            let csNext = calendar.dateComponents([.month, .day, .hour, .minute], from: date.addingTimeInterval(TimeInterval(60 * 60 * 24)))
+            cell.arrivalTime.alpha = 1
+            cell.arrivalTime.text = "预约 \(cs.hour!):\(cs.minute!) 送达"
+            cell.deliveryTime.text = "明天(\(csNext.month!).\(csNext.day!))"
         }
         return cell
     }
