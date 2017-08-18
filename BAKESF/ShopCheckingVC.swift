@@ -501,6 +501,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             cell.arrivalTime.alpha = 1
             cell.arrivalTime.text = "预约 \(cs.hour!):\(cs.minute!) 送达"
             cell.deliveryTime.text = "明天(\(csNext.month!).\(csNext.day!))"
+        } else {
+            cell.deliveryTime.text = "立即配送"
         }
         return cell
     }
