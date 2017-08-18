@@ -277,7 +277,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     return cell
                 case 1:
                     // delivery time
-                    if determineSections(avshop) == 3 && segmentedControl.selectedSegmentIndex == 1 {
+                    if determineSections(avshop) == 3 && segmentedControl.selectedSegmentIndex == 1 || segmentedControl.selectedSegmentIndex == 2 {
                         return deliveryTimeCell(indexPath, preOrder: true)
                     } else {
                         return deliveryTimeCell(indexPath)
