@@ -270,7 +270,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     return cell
                 case 1:
                     // delivery time
-                    if determineSections(avshop) == 3 {
+                    if determineSections(avshop) == 3 && segmentedControl.selectedSegmentIndex == 1 {
                         return deliveryTimeCell(indexPath, preOrder: true)
                     } else {
                         return deliveryTimeCell(indexPath)
@@ -563,7 +563,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         performSegue(withIdentifier: "showLoginFromShopChecking", sender: self)
                     } else {
                         // delivery address
-                        deliveryAddressVC.isPreOrder = row == 4 
+                        deliveryAddressVC.isPreOrder = row == 4
+                        deliveryAddressVC.isPreOrder = determineSections(avshop) == 3 && segmentedControl.selectedSegmentIndex == 1
                         let segue = UIStoryboardSegue(identifier: "showDeliveryAddressFromShopCheckingVC", source: self, destination: deliveryAddressVC)
                         prepare(for: segue, sender: self)
                     }
@@ -571,8 +572,10 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     break
                 }
             case 1:
+                let secs = determineSections(avshop) / 4
+                let rows = segmentedControl.selectedSegmentIndex == 1 ? secs + 1 : 1
                 switch row {
-                case bakes.count + 1:
+                case bakes.count + rows:
                     // red packet
                     if redPacketVC == nil {
                         redPacketVC = RedPacketVC.instantiateFromStoryboard()
