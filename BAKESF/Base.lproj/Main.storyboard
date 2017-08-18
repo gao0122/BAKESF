@@ -871,9 +871,11 @@
                         <outlet property="loadFailedView" destination="Shp-07-KQR" id="zWz-YD-Fcp"/>
                         <outlet property="tableView" destination="45n-Xp-mYz" id="61r-Uy-1Vk"/>
                         <outlet property="tryOneMoreTimeBtn" destination="cys-nV-Azh" id="epu-H6-MB8"/>
+                        <segue destination="Dc0-6j-nET" kind="unwind" identifier="unwindToShopCheckingVCFromDeliveryAddress" unwindAction="unwindToShopCheckingVCWithSegue:" id="g3b-hL-jmW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kbl-mH-Ty3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="Dc0-6j-nET" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="6045" y="-3138"/>
         </scene>
