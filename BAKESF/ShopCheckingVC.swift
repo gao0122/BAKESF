@@ -63,8 +63,10 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.setNavigationBarHidden(false, animated: animated)
+        super.viewWillAppear(animated)
+        view.isUserInteractionEnabled = true
         tableViewDeselection()
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -72,6 +74,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             tableView.reloadData()
             retrieveBaker(withID: userRealm.id, completion: {
                 object, error in
+                self.navigationController?.setNavigationBarHidden(false, animated: false)
                 if let baker = object as? AVBaker {
                     self.avbaker = baker
                     retrieveRecentlyAddress(by: baker, completion: {
@@ -99,6 +102,10 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 }
             })
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
     }
     
     

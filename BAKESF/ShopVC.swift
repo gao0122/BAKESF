@@ -95,14 +95,14 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewDidAppear(_ animated: Bool) {
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-
+    override func viewDidDisappear(_ animated: Bool) {
     }
 
     
