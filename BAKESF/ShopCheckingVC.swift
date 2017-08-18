@@ -36,6 +36,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var avbaker: AVBaker!
     var userRealm: UserRealm!
     var avaddress: AVAddress?
+    var avaddressPreOrder: AVAddress?
     var avorder: AVOrder?
     
     var bakes: [Object]!
@@ -79,8 +80,14 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                             self.avaddress = nil
                             printit("Retrieve address error: \(error.localizedDescription)")
                         } else {
-                            if let address = objects?.first as? AVAddress {
-                                self.avaddress = address
+                            if let addresses = objects as? [AVAddress] {
+                                for address in addresses {
+                                    if address.isForPreOrder {
+                                        self.avaddressPreOrder = address
+                                    } else {
+                                        self.avaddress = address
+                                    }
+                                }
                             } else {
                                 self.avaddress = nil
                             }
@@ -263,16 +270,31 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     return cell
                 case 1:
                     // delivery time
-                    return deliveryTimeCell(indexPath)
+                    if determineSections(avshop) == 3 {
+                        return deliveryTimeCell(indexPath, preOrder: true)
+                    } else {
+                        return deliveryTimeCell(indexPath)
+                    }
                 case 2:
                     // delivery address
                     if userRealm == nil {
                         return UITableViewCell.centerTextCell(with: "立即登录", in: .buttonBlue)
                     } else {
-                        if let address = avaddress {
+                        var addr: AVAddress? = avaddress
+                        var text = "选择收货地址"
+                        if segmentedControl.selectedSegmentIndex == 1 {
+                            if determineSections(avshop) % 2 == 1 {
+                                addr = avaddressPreOrder
+                                text = "选择预约收货地址"
+                            }
+                        } else if segmentedControl.selectedSegmentIndex == 2 {
+                            addr = avaddressPreOrder
+                            text = "选择预约收货地址"
+                        }
+                        if let address = addr {
                             return deliveryAddressCell(with: address, indexPath)
                         } else {
-                            return UITableViewCell.centerTextCell(with: "选择收货地址", in: .buttonBlue)
+                            return UITableViewCell.centerTextCell(with: text, in: .buttonBlue)
                         }
                     }
                 case 3:
@@ -298,10 +320,10 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         switch sections {
                         case 4:
                             if userRealm != nil {
-                                if let address = avaddress {
+                                if let address = avaddressPreOrder {
                                     return deliveryAddressCell(with: address, indexPath, preOrder: true)
                                 } else {
-                                    return UITableViewCell.centerTextCell(with: "选择收货地址", in: .buttonBlue)
+                                    return UITableViewCell.centerTextCell(with: "选择预约收货地址", in: .buttonBlue)
                                 }
                             }
                         default:

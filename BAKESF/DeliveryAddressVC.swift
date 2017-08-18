@@ -218,6 +218,11 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
             currentAddress!.saveInBackground({
                 succeeded, error in
                 if succeeded {
+                    if self.isPreOrder {
+                        address.isForPreOrder = true
+                    } else {
+                        address.isForPreOrder = false
+                    }
                     address.recentlyUsed = true
                     address.saveInBackground({
                         succeeded, error in
