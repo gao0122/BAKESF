@@ -213,16 +213,17 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         let address = addresses[row]
         selectedAddress = address
         hasSelectedCell = true
-        if let _ = currentAddress {
-            currentAddress!.recentlyUsed = false
-            currentAddress!.saveInBackground({
+        var editingAddress = currentAddress
+        if isPreOrder {
+            editingAddress = shopCheckingVC.avaddressPreOrder
+        }
+        if let editingAddress = editingAddress {
+            editingAddress.recentlyUsed = false
+            editingAddress.isForPreOrder = false
+            editingAddress.saveInBackground({
                 succeeded, error in
                 if succeeded {
-                    if self.isPreOrder {
-                        address.isForPreOrder = true
-                    } else {
-                        address.isForPreOrder = false
-                    }
+                    address.isForPreOrder = self.isPreOrder
                     address.recentlyUsed = true
                     address.saveInBackground({
                         succeeded, error in
@@ -239,6 +240,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
                 }
             })
         } else {
+            address.isForPreOrder = self.isPreOrder
             address.recentlyUsed = true
             address.saveInBackground({
                 succeeded, error in
