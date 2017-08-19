@@ -43,8 +43,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var deliveryTimeViewState: DeliveryTimeViewState = .collapsed
     var deliveryDatecs = [DateComponents]()
     var deliveryDates = [String]()
+    var deliveryTimecs = [DateComponents]()
     var deliveryTimes = [String]()
-    var selectedTime: DateComponents = DateComponents()
+    var selectedTime: DateComponents?
     
     let checkoutBtnText = "支付全部"
     
@@ -78,7 +79,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override func viewDidAppear(_ animated: Bool) {
         if checkCurrentUser() {
-            tableView.reloadData()
+            //tableView.reloadData()
             retrieveBaker(withID: userRealm.id, completion: {
                 object, error in
                 self.navigationController?.setNavigationBarHidden(false, animated: false)
@@ -88,18 +89,23 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         objects, error in
                         if let error = error {
                             self.avaddress = nil
+                            self.avaddressPreOrder = nil
                             printit("Retrieve address error: \(error.localizedDescription)")
                         } else {
                             if let addresses = objects as? [AVAddress] {
+                                self.avaddressPreOrder = nil
+                                self.avaddress = nil
                                 for address in addresses {
                                     if address.isForPreOrder {
                                         self.avaddressPreOrder = address
-                                    } else {
+                                    }
+                                    if address.isForRightNow {
                                         self.avaddress = address
                                     }
                                 }
                             } else {
                                 self.avaddress = nil
+                                self.avaddressPreOrder = nil
                             }
                         }
                         self.tableView.reloadData()
@@ -145,10 +151,19 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
-
     @IBAction func checkOutBtnPressed(_ sender: Any) {
-        
+        alertOkayOrNot(okTitle: "支付", notTitle: "取消", msg: "确认支付吗？", okAct: {
+            _ in
+            let order = AVOrder()
+            if var preOrderDate = self.selectedTime?.date {
+                printit(preOrderDate)
+            } else {
+                
+            }
+            //order.deliveryTime = self.selectedTime?.date
+        }, notAct: { _ in })
     }
+    
     
     @IBAction func segmentedControlChanged(_ sender: Any) {
         switch segmentedControl.selectedSegmentIndex {
@@ -285,7 +300,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 case 1:
                     // delivery time
                     if determineSections(avshop) == 3 && segmentedControl.selectedSegmentIndex == 1 || segmentedControl.selectedSegmentIndex == 2 {
-                        return deliveryTimeCell(indexPath, preOrder: true)
+                        if selectedTime == nil {
+                            return UITableViewCell.centerTextCell(with: "选择预约收货时间", in: .buttonBlue)
+                        } else {
+                            return deliveryTimeCell(indexPath, preOrder: true)
+                        }
                     } else {
                         return deliveryTimeCell(indexPath)
                     }
@@ -319,7 +338,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         case 4:
                             if userRealm != nil {
                                 // delivery time
-                                return deliveryTimeCell(indexPath, preOrder: true)
+                                if selectedTime == nil {
+                                    return UITableViewCell.centerTextCell(with: "选择预约收货时间", in: .buttonBlue)
+                                } else {
+                                    return deliveryTimeCell(indexPath, preOrder: true)
+                                }
                             }
                         default:
                             break
@@ -398,13 +421,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryTimeViewCell", for: indexPath) as! DeliveryTimeViewCell
             let text = deliveryTimes[row]
             cell.deliveryTimeLabel.text = text
-            if cell.components == nil && text.contains("12") && deliveryTimeDateTableView.indexPathForSelectedRow?.row == 0 {
-                cell.selectedIcon.isHidden = false
-            } else if cell.components != nil && cell.components == selectedTime {
-                cell.selectedIcon.isHidden = false
-            } else {
-                cell.selectedIcon.isHidden = true
-            }
+            cell.components = deliveryTimecs[row]
+            cell.selectedIcon.isHidden = cell.components != selectedTime || selectedTime == nil
             return cell
         default:
             break
@@ -520,14 +538,16 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableViewCell", for: indexPath) as! ShopCheckDeliveryTimeTableViewCell
         cell.arrivalTime.alpha = 0
         if preOrder {
-            let date = Date()
-            let calendar = Calendar.current
-            let csNext = calendar.dateComponents([.month, .day, .hour, .minute], from: date.addingTimeInterval(TimeInterval(60 * 60 * 24)))
             cell.arrivalTime.alpha = 1
-            let mins = selectedTime.minute ?? 0
-            let minsText = mins < 10 ? "0\(mins)" : "\(mins)"
-            cell.arrivalTime.text = "预约 \(selectedTime.hour ?? 12):\(minsText) 前送达"
-            cell.deliveryTime.text = "明天(\(csNext.month!).\(csNext.day!))"
+            if let selectedTime = selectedTime {
+                let mins = selectedTime.minute!
+                let minsText = mins < 10 ? "0\(mins)" : "\(mins)"
+                cell.arrivalTime.text = "预约 \(selectedTime.hour!):\(minsText) 前送达"
+                cell.deliveryTime.text = "\(selectedTime.month!).\(selectedTime.day!)"
+                cell.deliveryTime.textColor = .black
+                cell.deliveryTime.sizeToFit()
+                cell.arrivalTime.frame.origin.x = cell.deliveryTime.frame.origin.x + cell.deliveryTime.frame.width + 10
+            }
         } else {
             cell.deliveryTime.text = "立即配送"
         }
@@ -566,8 +586,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
 
         if preOrder {
-            if !cell.phoneLabel.text!.contains("（预）") {
-                cell.phoneLabel.text = cell.phoneLabel.text! + "（预）"
+            if !cell.phoneLabel.text!.contains("(预)") {
+                cell.phoneLabel.text = cell.phoneLabel.text! + " (预)"
             }
         }
         cell.nameLabel.sizeToFit()
@@ -599,8 +619,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         performSegue(withIdentifier: "showLoginFromShopChecking", sender: self)
                     } else {
                         // delivery address
-                        deliveryAddressVC.isPreOrder = row == 4
-                        deliveryAddressVC.isPreOrder = determineSections(avshop) == 3 && segmentedControl.selectedSegmentIndex == 1
+                        let isPreOrder = determineSections(avshop) == 3 && segmentedControl.selectedSegmentIndex == 1
+                        deliveryAddressVC.isPreOrder = row == 4 || isPreOrder
                         let segue = UIStoryboardSegue(identifier: "showDeliveryAddressFromShopCheckingVC", source: self, destination: deliveryAddressVC)
                         prepare(for: segue, sender: self)
                     }
@@ -641,7 +661,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case 1:
             let cell = tableView.cellForRow(at: indexPath) as! DeliveryTimeDateViewCell
             if let cs = cell.components {
-                resetDeliveryTimes(by: cs, for: cell)
+                resetDeliveryTimes(by: cs)
+                deliveryTimeTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
             }
         case 2:
             let cell = tableView.cellForRow(at: indexPath) as! DeliveryTimeViewCell
@@ -654,9 +675,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
-    func resetDeliveryTimes(by cs: DateComponents, for cell: DeliveryTimeDateViewCell?) {
+    func resetDeliveryTimes(by cs: DateComponents) {
         let date = Date()
-        let currCs = Calendar.current.dateComponents([.month, .day, .hour, .minute, .weekday], from: date)
+        let currCs = getDeliveryDateComponents(from: date)
         var startHour = 0
         if cs.month == currCs.month && cs.day == currCs.day {
             let hour = currCs.hour!
@@ -665,17 +686,16 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             startHour = 9
         }
         deliveryTimes.removeAll()
+        deliveryTimecs.removeAll()
         for i in startHour...19 {
             let timeText = "\(i):00"
-            if let cell = cell {
-                var components = Calendar.current.dateComponents([.month, .day, .hour, .minute, .weekday], from: date)
-                components.weekday = cs.weekday
-                components.month = cs.month
-                components.day = cs.day
-                components.hour = i
-                components.minute = 0
-                cell.components = components
-            }
+            var components = getDeliveryDateComponents(from: date)
+            components.weekday = cs.weekday
+            components.month = cs.month
+            components.day = cs.day
+            components.hour = i
+            components.minute = 0
+            deliveryTimecs.append(components)
             deliveryTimes.append(timeText)
         }
         deliveryTimeTableView.reloadData()
@@ -686,10 +706,10 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case .collapsed:
             deliveryTimeViewState = .expanded
             let date = Date()
-            let calendar = Calendar.current
             let days = avshop.deliveryPreOrderDays as! Int
+            deliveryDates.removeAll()
             if days == 0 {
-                let cs = calendar.dateComponents([.month, .day, .hour, .minute, .weekday], from: date)
+                let cs = getDeliveryDateComponents(from: date)
                 if cs.hour! >= 12 {
                     view.notify(text: "暂不接受预订哦。", color: .alertOrange, nav: navigationController?.navigationBar)
                     return
@@ -699,9 +719,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     deliveryDates.append(dateText)
                 }
             }
-            deliveryDates.removeAll()
             for i in 1...days {
-                let cs = calendar.dateComponents([.month, .day, .hour, .minute, .weekday], from: date.addingTimeInterval(TimeInterval(i * 60 * 60 * 24)))
+                let dateToBeAdd = date.addingTimeInterval(TimeInterval(i * 60 * 60 * 24))
+                let cs = getDeliveryDateComponents(from: dateToBeAdd)
                 var dateText = "\(weekdays[cs.weekday!]) \(cs.month!).\(cs.day!)"
                 if i == 1 {
                     dateText += "(明天)"
@@ -711,7 +731,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
             deliveryTimeDateTableView.reloadData()
             deliveryTimeDateTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
-            resetDeliveryTimes(by: deliveryDatecs[0], for: nil)
+            resetDeliveryTimes(by: deliveryDatecs[0])
             deliveryTimeTableView.reloadData()
             let bgView = UIView(frame: UIScreen.main.bounds)
             bgView.restorationIdentifier = "bgView"
@@ -727,11 +747,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             }, completion: nil)
         case .expanded:
             deliveryTimeViewState = .collapsed
+            tableView.reloadData()
             view.subviews.forEach({
                 if $0.restorationIdentifier == "bgView" {
                     let bgView = $0
                     UIView.animate(withDuration: 0.48, delay: 0, usingSpringWithDamping: 0.84, initialSpringVelocity: 0, options: [.curveEaseOut], animations: {
                         self.deliveryTimeView.frame.origin.y = self.view.frame.height
+                        self.deliveryTimeView.alpha = 0.4
                         bgView.alpha = 0
                     }, completion: {
                         finished in

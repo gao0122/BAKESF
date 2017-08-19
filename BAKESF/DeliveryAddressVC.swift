@@ -220,12 +220,21 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
             editingAddress = shopCheckingVC.avaddressPreOrder
         }
         if let editingAddress = editingAddress {
-            editingAddress.recentlyUsed = false
-            editingAddress.isForPreOrder = false
+            if isPreOrder {
+                editingAddress.isForPreOrder = false
+                editingAddress.recentlyUsed = editingAddress.isForRightNow
+            } else {
+                editingAddress.isForRightNow = false
+                editingAddress.recentlyUsed = editingAddress.isForPreOrder
+            }
             editingAddress.saveInBackground({
                 succeeded, error in
                 if succeeded {
-                    address.isForPreOrder = self.isPreOrder
+                    if self.isPreOrder {
+                        address.isForPreOrder = true
+                    } else {
+                        address.isForRightNow = true
+                    }
                     address.recentlyUsed = true
                     address.saveInBackground({
                         succeeded, error in
@@ -242,7 +251,11 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
                 }
             })
         } else {
-            address.isForPreOrder = self.isPreOrder
+            if self.isPreOrder {
+                address.isForPreOrder = true
+            } else {
+                address.isForRightNow = true
+            }
             address.recentlyUsed = true
             address.saveInBackground({
                 succeeded, error in
