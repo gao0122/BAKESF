@@ -142,10 +142,14 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
 
                 guard let loginVC = segue.destination as? MeLoginVC else { break }
                 loginVC.showSegueID = id
-            case "showSetting":
+            case "showSettingFromMeVC":
                 setBackItemTitle(for: navigationItem)
                 guard let settingVC = segue.destination as? MeSettingVC else { break }
                 settingVC.avbaker = self.avbaker
+            case "showInfoFromMeVC":
+                setBackItemTitle(for: navigationItem)
+                guard let infoVC = segue.destination as? MeInfoVC else { break }
+                infoVC.avbaker = self.avbaker
             default:
                 break
             }

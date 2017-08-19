@@ -281,8 +281,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         cardBgImage.clipsToBounds = false
         
         shopNameLabel.text = avshop.name!
-        addressLabel.setTitle(" \(avshop.address!)", for: .normal)
-        commentNumberBtn.setTitle("\(423) 评论", for: .normal)
+        //addressLabel.setTitle(" \(avshop.address!.formatted!)", for: .normal)
+        commentNumberBtn.setTitle("\(423) 评论", for: .normal) // TODO: - comments
         
         let broadcast = avshop.broadcast!
         if broadcast == "-" {

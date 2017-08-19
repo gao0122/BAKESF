@@ -62,6 +62,8 @@
 		009BA0171F46C61B00C7ABF7 /* RedPacketTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0161F46C61B00C7ABF7 /* RedPacketTableViewCell.swift */; };
 		009BA0191F46C67100C7ABF7 /* AVRedPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0181F46C67100C7ABF7 /* AVRedPacket.swift */; };
 		009BA01B1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA01A1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift */; };
+		009BA01D1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA01C1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift */; };
+		009BA01F1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
 		00A716E61F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */; };
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
@@ -156,6 +158,8 @@
 		009BA0161F46C61B00C7ABF7 /* RedPacketTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedPacketTableViewCell.swift; sourceTree = "<group>"; };
 		009BA0181F46C67100C7ABF7 /* AVRedPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVRedPacket.swift; sourceTree = "<group>"; };
 		009BA01A1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Extensions.swift"; sourceTree = "<group>"; };
+		009BA01C1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryTimeViewCell.swift; sourceTree = "<group>"; };
+		009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryTimeDateViewCell.swift; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
 		00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FancyNavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		00B4709A1F0404DD00725C95 /* AVBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBaker.swift; sourceTree = "<group>"; };
@@ -236,8 +240,11 @@
 				00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */,
 				00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift */,
 				00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */,
+				009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */,
+				009BA01C1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift */,
 				009BA0141F469D5E00C7ABF7 /* RedPacketVC */,
 				009BA0151F469DD200C7ABF7 /* DeliveryAddressVC */,
+				00264E661F2F637500D83073 /* BakeTableViewAndCell */,
 				00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */,
 				002659A31F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift */,
 			);
@@ -399,10 +406,9 @@
 				0034EE351EE9116B005300AE /* ShopBuyVC.swift */,
 				0034EE371EE91176005300AE /* ShopPreVC.swift */,
 				0034EE391EE91181005300AE /* ShopTweetVC.swift */,
-				00264E671F2F639200D83073 /* ShopCheckingVC */,
-				00264E661F2F637500D83073 /* BakeTableViewAndCell */,
 				00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */,
 				00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */,
+				00264E671F2F639200D83073 /* ShopCheckingVC */,
 			);
 			name = ShopVC;
 			sourceTree = "<group>";
@@ -693,6 +699,7 @@
 				00D3AB681F370D1F00A5E934 /* DeliveryAddressEditingVC.swift in Sources */,
 				00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */,
 				00455A891F193079009F440F /* AVBake.swift in Sources */,
+				009BA01F1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift in Sources */,
 				00D23B9E1F14AF96002E45B7 /* Date+Extensions.swift in Sources */,
 				008F0AEF1F2C87EA00700C0D /* MeSettingPwdVC.swift in Sources */,
 				0048FDA91EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift in Sources */,
@@ -711,6 +718,7 @@
 				00D23B931F14AF04002E45B7 /* UIColor+Extensions.swift in Sources */,
 				00BF12651F28AE4400F67DF8 /* AVBakePre.swift in Sources */,
 				00BF12671F28AF2400F67DF8 /* AVBakeIn.swift in Sources */,
+				009BA01D1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift in Sources */,
 				009BA01B1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift in Sources */,
 				00D23B981F14AF4E002E45B7 /* Data+Extensions.swift in Sources */,
 				009BA0131F469D5800C7ABF7 /* RedPacketVC.swift in Sources */,

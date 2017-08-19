@@ -11,6 +11,8 @@ import UIKit
 class MeInfoVC: UIViewController {
 
 
+    var avbaker: AVBaker?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

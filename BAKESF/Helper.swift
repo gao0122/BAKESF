@@ -24,6 +24,15 @@ enum TimerState {
 
 // navigation controller 
 func setBackItemTitle(with title: String = "", for navigationItem: UINavigationItem) {
+    if navigationItem.backBarButtonItem == nil {
+        setBackItemTitle(title, for: navigationItem)
+    } else if let title = navigationItem.backBarButtonItem!.title {
+        if title != "" {
+            setBackItemTitle(title, for: navigationItem)
+        }
+    }
+}
+func setBackItemTitle(_ title: String, for navigationItem: UINavigationItem ) {
     let backItem = UIBarButtonItem()
     backItem.title = title
     navigationItem.backBarButtonItem = backItem

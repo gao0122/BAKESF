@@ -66,15 +66,11 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         guard let cell = sender.superview?.superview as? ShopBagEmbedTableCell else { return }
         if let bake = cell.bakePre {
             RealmHelper.addOneMoreBake(bake)
-            let amount = bake.amount
-            cell.amountLabel.text = "\(amount)"
-            cell.priceLabel.text = "¥ \((bake.price * Double(amount)).fixPriceTagFormat())"
+            setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
         }
         if let bake = cell.bakeIn {
-            let amount = bake.amount
             RealmHelper.addOneMoreBake(bake)
-            cell.amountLabel.text = "\(amount)"
-            cell.priceLabel.text = "¥ \((bake.price * Double(amount)).fixPriceTagFormat())"
+            setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
         }
         shopVC.setShopBagStateAndTables()
     }
@@ -98,7 +94,7 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     reloadShopBagEmbedTable()
                 }
             } else {
-                cell.amountLabel.text = "\(bake.amount)"
+                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
             }
         }
         if let bake = cell.bakeIn {
@@ -114,12 +110,16 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     reloadShopBagEmbedTable()
                 }
             } else {
-                cell.amountLabel.text = "\(bake.amount)"
+                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
             }
         }
         shopVC.setShopBagStateAndTables()
     }
     
+    func setCellAmountPriceLabel(for cell: ShopBagEmbedTableCell, with amount: Int, price: Double) {
+        cell.amountLabel.text = "\(amount)"
+        cell.priceLabel.text = "¥ \((price * Double(amount)).fixPriceTagFormat())"
+    }
     
     // MARK: - TableView
     //
@@ -152,15 +152,13 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 cell.bakeIn = bake
                 cell.bakePre = nil
                 cell.nameLabel.text = bake.name
-                cell.amountLabel.text = "\(bake.amount)"
-                cell.priceLabel.text = "¥ \(bake.price.fixPriceTagFormat())"
+                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
             case 3:
                 let bake = bakesPreOrder[indexPath.row]
                 cell.bakePre = bake
                 cell.bakeIn = nil
                 cell.nameLabel.text = bake.name
-                cell.amountLabel.text = "\(bake.amount)"
-                cell.priceLabel.text = "¥ \(bake.price.fixPriceTagFormat())"
+                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
             default:
                 break
             }
@@ -171,13 +169,7 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 cell.bakePre = bake
                 cell.bakeIn = nil
                 cell.nameLabel.text = bake.name
-                cell.amountLabel.text = "\(bake.amount)"
-                let price = bake.price
-                if price == Double(Int(price)) {
-                    cell.priceLabel.text = "¥ \(Int(price))"
-                } else {
-                    cell.priceLabel.text = "¥ \(String(format: "%0.2f", price))"
-                }
+                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
             default:
                 break
             }
