@@ -669,15 +669,15 @@
                                         </connections>
                                     </button>
                                     <tableView clipsSubviews="YES" tag="1" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="c91-Kh-kJV">
-                                        <rect key="frame" x="0.0" y="0.0" width="144" height="250"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="250"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.93725490196078431" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="deliveryTimeDateViewCell" id="Ytq-QD-MDT" customClass="DeliveryTimeDateViewCell" customModule="BAKESF" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="28" width="144" height="44"/>
+                                                <rect key="frame" x="0.0" y="28" width="128" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ytq-QD-MDT" id="axa-cj-w98">
-                                                    <rect key="frame" x="0.0" y="0.0" width="144" height="43.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="128" height="43.666666666666664"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                 </tableViewCellContentView>
                                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -689,15 +689,15 @@
                                         </connections>
                                     </tableView>
                                     <tableView clipsSubviews="YES" tag="2" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Izi-hX-uEP">
-                                        <rect key="frame" x="144" y="0.0" width="270" height="250"/>
+                                        <rect key="frame" x="128" y="0.0" width="286" height="250"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="deliveryTimeViewCell" id="yR3-Ij-ilJ" customClass="DeliveryTimeViewCell" customModule="BAKESF" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="28" width="270" height="44"/>
+                                                <rect key="frame" x="0.0" y="28" width="286" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yR3-Ij-ilJ" id="tpT-gn-Tnr">
-                                                    <rect key="frame" x="0.0" y="0.0" width="270" height="43.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="286" height="43.666666666666664"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="9:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M0I-f7-bnp">
@@ -715,7 +715,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="✔️" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3z3-Pp-5e3">
-                                                            <rect key="frame" x="220" y="11.5" width="42" height="20"/>
+                                                            <rect key="frame" x="236" y="11.5" width="42" height="20"/>
                                                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                             <color key="tintColor" red="0.0" green="0.50196081400000003" blue="0.25098040700000002" alpha="1" colorSpace="calibratedRGB"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>

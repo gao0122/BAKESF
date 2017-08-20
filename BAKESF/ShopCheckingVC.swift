@@ -449,7 +449,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             cell.backgroundColor = UIColor(hex: 0xEFEFEF)
             cell.layer.cornerRadius = 2
             cell.textLabel?.text = deliveryDates[row]
-            cell.textLabel?.adjustsFontSizeToFitWidth = true
+            cell.textLabel?.numberOfLines = 0
             cell.components = deliveryDatecs[row]
             return cell
         case 2:
@@ -753,7 +753,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     view.notify(text: "暂不接受预订哦。", color: .alertOrange, nav: navigationController?.navigationBar)
                     return
                 } else {
-                    let dateText = "\(weekdays[cs.weekday!]) \(cs.month!).\(cs.day!)(今天)"
+                    let dateText = "\(weekdays[cs.weekday!]) \(cs.month!).\(cs.day!) (今天)"
                     deliveryDatecs.append(cs)
                     deliveryDates.append(dateText)
                 }
@@ -763,7 +763,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 let cs = getDeliveryDateComponents(from: dateToBeAdd)
                 var dateText = "\(weekdays[cs.weekday!]) \(cs.month!).\(cs.day!)"
                 if i == 1 {
-                    dateText += "(明天)"
+                    dateText += " (明天)"
                 }
                 deliveryDatecs.append(cs)
                 deliveryDates.append(dateText)
@@ -810,37 +810,43 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // Height for Row
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if tableView.tag > 0 { return 44 }
-        let section = indexPath.section
-        let row = indexPath.row
-        switch section {
+        switch tableView.tag {
         case 0:
-            switch row {
-            case 2, 4:
-                return UITableViewAutomaticDimension
+            let section = indexPath.section
+            let row = indexPath.row
+            switch section {
+            case 0:
+                switch row {
+                case 2, 4:
+                    return UITableViewAutomaticDimension
+                default:
+                    break
+                }
+            case 1:
+                switch row {
+                case bakes.count + 1:
+                    break
+                case bakes.count + 2:
+                    break
+                default:
+                    return 42
+                }
+            case 2:
+                switch row {
+                case 0:
+                    break
+                case 1:
+                    break
+                case 2:
+                    break
+                default:
+                    break
+                }
             default:
                 break
             }
         case 1:
-            switch row {
-            case bakes.count + 1:
-                break
-            case bakes.count + 2:
-                break
-            default:
-                return 42
-            }
-        case 2:
-            switch row {
-            case 0:
-                break
-            case 1:
-                break
-            case 2:
-                break
-            default:
-                break
-            }
+            return UITableViewAutomaticDimension
         default:
             break
         }
@@ -848,11 +854,16 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch indexPath.section {
+        switch tableView.tag {
         case 0:
-            switch indexPath.row {
-            case 2, 4:
-                return UITableViewAutomaticDimension
+            switch indexPath.section {
+            case 0:
+                switch indexPath.row {
+                case 2, 4:
+                    return UITableViewAutomaticDimension
+                default:
+                    return 44
+                }
             default:
                 return 44
             }
