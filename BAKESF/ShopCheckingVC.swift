@@ -159,6 +159,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             guard let vc = segue.destination as? RedPacketVC else { break }
             vc.baker = self.avbaker
             show(vc, sender: sender)
+        case "showCheckOutFromShopCheckingVC":
+            guard let vc = segue.destination as? OrderCheckOutVC else { break }
+            vc.title = "下单成功"
+            vc.avbaker = self.avbaker
+            vc.avshop = self.avshop
         default:
             break
         }
@@ -169,8 +174,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @IBAction func checkOutBtnPressed(_ sender: Any) {
-        let secs = determineSections(avshop)
-        makePayment(secs)
+        makePayment(determineSections(avshop))
     }
     
     func makePayment(_ secs: Int) {
@@ -186,18 +190,42 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             default:
                 break
             }
-            let order = AVOrder()
-            if let preOrderDate = self.selectedTime?.date {
-                printit(preOrderDate)
-            } else {
-                
+            var avorder = self.avorder
+            if avorder == nil {
+                avorder = AVOrder()
             }
-            order.baker = self.avbaker
-            order.deliveryTime = self.selectedTime?.date
-            order.saveInBackground()
+            self.saveOrder(avorder!, with: 0)
         }, notAct: { _ in })
     }
     
+    func saveOrder(_ order: AVOrder, with type: Int) {
+        let date = Date()
+        printit("now: \(date), selected: \(selectedTime?.date)")
+        if let preOrderDate = self.selectedTime?.date {
+        } else {
+        }
+        switch type {
+        case 0:
+            order.deliveryAddress = self.avaddress
+            order.deliveryTime = date
+        case 1:
+            order.deliveryAddress = self.avaddressPreOrder
+            order.deliveryTime = self.selectedTime?.date
+        default:
+            break
+        }
+        order.baker = self.avbaker
+        order.shop = self.avshop
+        order.type = type as NSNumber
+        order.saveInBackground({
+            succeeded, error in
+            if succeeded {
+                self.performSegue(withIdentifier: "showCheckOutFromShopCheckingVC", sender: self)
+            } else {
+                self.view.notify(text: "下单出现异常，请检查网络后重试！", color: .alertRed, nav: self.navigationController?.navigationBar)
+            }
+        })
+    }
     
     @IBAction func segmentedControlChanged(_ sender: Any) {
         switch segmentedControl.selectedSegmentIndex {
@@ -780,10 +808,16 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             view.addSubview(bgView)
             view.bringSubview(toFront: deliveryTimeView)
             UIView.animate(withDuration: 0.32, delay: 0, usingSpringWithDamping: 0.84, initialSpringVelocity: 0, options: [.curveEaseInOut], animations: {
-                self.deliveryTimeView.frame.origin.y = self.view.frame.height - self.deliveryTimeView.frame.height
                 self.deliveryTimeView.alpha = 1
+                self.deliveryTimeView.frame.origin.y = screenHeight - self.deliveryTimeView.frame.height
+                self.view.layoutIfNeeded()
                 bgView.alpha = 1
-            }, completion: nil)
+            }, completion: {
+                finished in
+                self.deliveryTimeView.alpha = 1
+                self.deliveryTimeView.frame.origin.y = screenHeight - self.deliveryTimeView.frame.height
+                bgView.alpha = 1
+            })
         case .expanded:
             deliveryTimeViewState = .collapsed
             tableView.reloadData()
@@ -791,14 +825,17 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 if $0.restorationIdentifier == "bgView" {
                     let bgView = $0
                     UIView.animate(withDuration: 0.48, delay: 0, usingSpringWithDamping: 0.84, initialSpringVelocity: 0, options: [.curveEaseOut], animations: {
-                        self.deliveryTimeView.frame.origin.y = self.view.frame.height
                         self.deliveryTimeView.alpha = 0.4
+                        self.deliveryTimeView.frame.origin.y = screenHeight
+                        self.view.layoutIfNeeded()
                         bgView.alpha = 0
                     }, completion: {
                         finished in
+                        self.deliveryTimeView.frame.origin.y = screenHeight
                         self.deliveryTimeView.alpha = 0
                         bgView.removeFromSuperview()
                     })
+                    return
                 }
             })
         }

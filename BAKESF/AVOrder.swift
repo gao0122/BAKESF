@@ -17,7 +17,7 @@ class AVOrder: AVObject, AVSubclassing {
     @NSManaged var deliveryTime: Date?
     @NSManaged var deliveryWay: NSNumber?
     @NSManaged var status: NSNumber?
-    @NSManaged var type: String?
+    @NSManaged var type: NSNumber?
     @NSManaged var totalCost: NSNumber?
     
     static func parseClassName() -> String {

@@ -66,6 +66,7 @@
 		009BA01F1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */; };
 		009BA0211F4944E200C7ABF7 /* AVCommentShop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0201F4944E100C7ABF7 /* AVCommentShop.swift */; };
 		009BA0231F49462000C7ABF7 /* AVRemarksOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0221F49462000C7ABF7 /* AVRemarksOrder.swift */; };
+		009BA0251F49997600C7ABF7 /* OrderCheckOutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
 		00A716E61F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */; };
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
@@ -164,6 +165,7 @@
 		009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryTimeDateViewCell.swift; sourceTree = "<group>"; };
 		009BA0201F4944E100C7ABF7 /* AVCommentShop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVCommentShop.swift; sourceTree = "<group>"; };
 		009BA0221F49462000C7ABF7 /* AVRemarksOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVRemarksOrder.swift; sourceTree = "<group>"; };
+		009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderCheckOutVC.swift; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
 		00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FancyNavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		00B4709A1F0404DD00725C95 /* AVBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBaker.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 				00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */,
 				009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */,
 				009BA01C1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift */,
+				009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */,
 				009BA0141F469D5E00C7ABF7 /* RedPacketVC */,
 				009BA0151F469DD200C7ABF7 /* DeliveryAddressVC */,
 				00264E661F2F637500D83073 /* BakeTableViewAndCell */,
@@ -653,6 +656,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				006024F61EC97D8700FFB859 /* MeTweetVC.swift in Sources */,
+				009BA0251F49997600C7ABF7 /* OrderCheckOutVC.swift in Sources */,
 				00E9030F1F012C030064F078 /* MeSettingVC.swift in Sources */,
 				006025001EC9995400FFB859 /* HomeVC.swift in Sources */,
 				006024F41EC973D600FFB859 /* MeMemoryVC.swift in Sources */,

@@ -90,6 +90,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AVBakePre.registerSubclass()
         AVAddress.registerSubclass()
         AVRedPacket.registerSubclass()
+        AVCommentShop.registerSubclass()
+        AVRemarksOrder.registerSubclass()
     }
 }
 
