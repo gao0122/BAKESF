@@ -25,7 +25,7 @@ enum TimerState {
 // Calendar
 func getDeliveryDateComponents(from date: Date) -> DateComponents {
     let cal = Calendar.current
-    var cs = cal.dateComponents([.year, .month, .day, .hour, .minute, .second, .timeZone, .weekday], from: date)
+    var cs = cal.dateComponents([.year, .month, .day, .hour, .minute, .timeZone, .weekday], from: date)
     cs.calendar = cal
     return cs
 }

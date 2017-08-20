@@ -333,7 +333,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     return cell
                 case 1:
                     // delivery time
-                    if determineSections(avshop) == 3 && segmentedControl.selectedSegmentIndex == 1 || segmentedControl.selectedSegmentIndex == 2 {
+                    let segIndex = segmentedControl.selectedSegmentIndex
+                    if determineSections(avshop) == 3 && segIndex == 1 || segIndex == 2 {
                         if selectedTime == nil {
                             return UITableViewCell.centerTextCell(with: "选择预约收货时间", in: .buttonBlue)
                         } else {
@@ -645,11 +646,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     let secs = determineSections(avshop)
                     let segIndex = segmentedControl.selectedSegmentIndex
                     if segIndex == 2 || segIndex == 1 && secs > 2 {
-                        deliveryTimeSwitch(row)
+                        deliveryTimeSwitch()
                     }
                 case 3:
                     // delivery time
-                     deliveryTimeSwitch(row)
+                     deliveryTimeSwitch()
                 case 2, 4:
                     if userRealm == nil {
                         // login
@@ -739,7 +740,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         deliveryTimeTableView.reloadData()
     }
     
-    func deliveryTimeSwitch(_ row: Int? = nil) {
+    func deliveryTimeSwitch() {
         switch deliveryTimeViewState {
         case .collapsed:
             deliveryTimeViewState = .expanded
