@@ -64,6 +64,8 @@
 		009BA01B1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA01A1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift */; };
 		009BA01D1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA01C1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift */; };
 		009BA01F1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */; };
+		009BA0211F4944E200C7ABF7 /* AVCommentShop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0201F4944E100C7ABF7 /* AVCommentShop.swift */; };
+		009BA0231F49462000C7ABF7 /* AVRemarksOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0221F49462000C7ABF7 /* AVRemarksOrder.swift */; };
 		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
 		00A716E61F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */; };
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
@@ -160,6 +162,8 @@
 		009BA01A1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Extensions.swift"; sourceTree = "<group>"; };
 		009BA01C1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryTimeViewCell.swift; sourceTree = "<group>"; };
 		009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryTimeDateViewCell.swift; sourceTree = "<group>"; };
+		009BA0201F4944E100C7ABF7 /* AVCommentShop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVCommentShop.swift; sourceTree = "<group>"; };
+		009BA0221F49462000C7ABF7 /* AVRemarksOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVRemarksOrder.swift; sourceTree = "<group>"; };
 		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
 		00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FancyNavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		00B4709A1F0404DD00725C95 /* AVBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBaker.swift; sourceTree = "<group>"; };
@@ -262,6 +266,8 @@
 				006B2E511F1B514B00C10BB9 /* AVOrder.swift */,
 				00BDA2DA1F34900000923D9F /* AVAddress.swift */,
 				009BA0181F46C67100C7ABF7 /* AVRedPacket.swift */,
+				009BA0201F4944E100C7ABF7 /* AVCommentShop.swift */,
+				009BA0221F49462000C7ABF7 /* AVRemarksOrder.swift */,
 			);
 			name = AVObject;
 			sourceTree = "<group>";
@@ -656,6 +662,7 @@
 				008F0AF11F2CBD7100700C0D /* MeSettingNameVC.swift in Sources */,
 				006024FC1EC9900000FFB859 /* HomeFollowVC.swift in Sources */,
 				00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */,
+				009BA0211F4944E200C7ABF7 /* AVCommentShop.swift in Sources */,
 				00D3AB661F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift in Sources */,
 				0028C46D1F383C13008A432C /* AMapLocationManager+Extensions.swift in Sources */,
 				00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */,
@@ -698,6 +705,7 @@
 				006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */,
 				00D3AB681F370D1F00A5E934 /* DeliveryAddressEditingVC.swift in Sources */,
 				00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */,
+				009BA0231F49462000C7ABF7 /* AVRemarksOrder.swift in Sources */,
 				00455A891F193079009F440F /* AVBake.swift in Sources */,
 				009BA01F1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift in Sources */,
 				00D23B9E1F14AF96002E45B7 /* Date+Extensions.swift in Sources */,

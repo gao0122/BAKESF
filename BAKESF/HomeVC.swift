@@ -54,7 +54,6 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
 
         preInit()
         
-        // page menu
         setPageMenu()
 
         locateOnce()

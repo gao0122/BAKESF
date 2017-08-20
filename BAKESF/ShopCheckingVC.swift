@@ -79,7 +79,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override func viewDidAppear(_ animated: Bool) {
         if checkCurrentUser() {
-            //tableView.reloadData()
             retrieveBaker(withID: userRealm.id, completion: {
                 object, error in
                 self.navigationController?.setNavigationBarHidden(false, animated: false)
@@ -90,6 +89,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         if let error = error {
                             self.avaddress = nil
                             self.avaddressPreOrder = nil
+                            self.setCheckOutBtn(enabled: false)
                             printit("Retrieve address error: \(error.localizedDescription)")
                         } else {
                             if let addresses = objects as? [AVAddress] {
@@ -103,22 +103,39 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                                         self.avaddress = address
                                     }
                                 }
+                                self.setCheckOutBtn(enabled: true)
                             } else {
                                 self.avaddress = nil
                                 self.avaddressPreOrder = nil
+                                self.setCheckOutBtn(enabled: false)
                             }
                         }
                         self.tableView.reloadData()
                     })
                 } else {
-                    // handle error
+                    // TODO: - handle error
+                    self.setCheckOutBtn(enabled: false)
                 }
             })
+        } else {
+            self.setCheckOutBtn(enabled: false)
         }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         
+    }
+    
+    func setCheckOutBtn(enabled: Bool) {
+        let secs = determineSections(avshop)
+        let enabled = !(secs > 2 && selectedTime == nil) && enabled
+        self.checkoutBtn.isEnabled = enabled
+        UIView.animate(withDuration: 0.27, animations: {
+            self.checkoutBtn.backgroundColor = enabled ? .appleGreen : .checkBtnGray
+        }, completion: {
+            finished in
+            self.checkoutBtn.backgroundColor = enabled ? .appleGreen : .checkBtnGray
+        })
     }
     
     
@@ -152,15 +169,32 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @IBAction func checkOutBtnPressed(_ sender: Any) {
+        let secs = determineSections(avshop)
+        makePayment(secs)
+    }
+    
+    func makePayment(_ secs: Int) {
         alertOkayOrNot(okTitle: "支付", notTitle: "取消", msg: "确认支付吗？", okAct: {
             _ in
+            switch secs {
+            case 2:
+                break
+            case 3:
+                break
+            case 4:
+                break
+            default:
+                break
+            }
             let order = AVOrder()
-            if var preOrderDate = self.selectedTime?.date {
+            if let preOrderDate = self.selectedTime?.date {
                 printit(preOrderDate)
             } else {
                 
             }
-            //order.deliveryTime = self.selectedTime?.date
+            order.baker = self.avbaker
+            order.deliveryTime = self.selectedTime?.date
+            order.saveInBackground()
         }, notAct: { _ in })
     }
     
@@ -474,7 +508,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.priceLabel.alpha = 1
         cell.nameLabel.alpha = 1
         cell.amountLabel.alpha = 0
-        cell.nameLabel.text = "配送费" + (preOrder ? "（预）" : "")
+        cell.nameLabel.text = "配送费" + (preOrder ? " (预)" : "")
         cell.priceLabel.text = "¥ \(fee.fixPriceTagFormat())"
         return cell
     }
@@ -493,7 +527,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
         case 1:
             if let bake = bakes[row] as? BakePreOrderRealm {
-                cell.nameLabel.text = bake.name + "（预）"
+                cell.nameLabel.text = bake.name + " (预)"
                 cell.amountLabel.text = "×\(bake.amount)"
                 cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
             } else if let bake = bakes[row] as? BakeInBagRealm {
@@ -513,6 +547,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     private func otherCell(_ indexPath: IndexPath) -> UITableViewCell {
+        var labelText = ""
         let cell = UITableViewCell()
         let label: UILabel = {
             let label = UILabel()
@@ -523,15 +558,15 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.addSubview(label)
         switch indexPath.row {
         case 0:
-            label.text = "支付方式"
+            labelText = "支付方式"
         case 1:
-            label.text = "订单备注"
+            labelText = "订单备注"
         case 2:
-            label.text = "发票"
+            labelText = "发票"
         default:
             break
         }
-        return cell
+        return UITableViewCell.btnCell(with: labelText)
     }
         
     private func deliveryTimeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckDeliveryTimeTableViewCell {
@@ -607,7 +642,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 switch row {
                 case 1:
                     // delivery time
-                    if segmentedControl.selectedSegmentIndex == 2 {
+                    let secs = determineSections(avshop)
+                    let segIndex = segmentedControl.selectedSegmentIndex
+                    if segIndex == 2 || segIndex == 1 && secs > 2 {
                         deliveryTimeSwitch(row)
                     }
                 case 3:
@@ -668,6 +705,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             let cell = tableView.cellForRow(at: indexPath) as! DeliveryTimeViewCell
             if let cs = cell.components {
                 selectedTime = cs
+                setCheckOutBtn(enabled: true)
                 deliveryTimeSwitch()
             }
         default:

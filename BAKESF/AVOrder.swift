@@ -10,9 +10,15 @@ import AVOSCloud
 
 class AVOrder: AVObject, AVSubclassing {
     
+    @NSManaged var baker: AVBaker?
     @NSManaged var shop: AVShop?
+    @NSManaged var comment: AVCommentShop?
+    @NSManaged var deliveryAddress: AVAddress?
     @NSManaged var deliveryTime: Date?
     @NSManaged var deliveryWay: NSNumber?
+    @NSManaged var status: NSNumber?
+    @NSManaged var type: String?
+    @NSManaged var totalCost: NSNumber?
     
     static func parseClassName() -> String {
         return "Order"
