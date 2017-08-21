@@ -21,6 +21,7 @@ class AVShop: AVObject, AVSubclassing {
     @NSManaged var lowestFee: NSNumber? // Double
     @NSManaged var deliveryMaxDistance: NSNumber?
     @NSManaged var deliveryPreOrderDays: NSNumber?
+    @NSManaged var deliveryWays: [NSNumber]?
     
     
     static func parseClassName() -> String {

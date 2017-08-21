@@ -21,6 +21,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     var avbakes: [AVBake]!
     var avbakesTag = [String: [AVBake]]()
     
+    var avbakesPre = [String: AVBakePre]()
     var tappedAtTagTableview = false
 
     override func viewDidLoad() {
@@ -101,13 +102,19 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     }
     
     func oneMoreBake(_ cell: ShopPreBakeTableCell) {
-        if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(byID: cell.bake.objectId!) {
+        guard let bake = cell.bake else { return }
+        if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(byID: bake.objectId!) {
             RealmHelper.addOneMoreBake(bakeRealm)
             cell.amountLabel.text = "\(bakeRealm.amount)"
+            avbakesPre[bake.objectId!]?.amount = bakeRealm.amount as NSNumber
         } else {
-            addBakeToRealm(cell.bake)
+            addBakeToRealm(bake)
             setShopCellFromNoneToOne(cell)
             cell.amountLabel.text = "1"
+            let bakePre = AVBakePre()
+            bakePre.bake = bake
+            bakePre.amount = 1
+            avbakesPre[bake.objectId!] = bakePre
         }
     }
     
@@ -120,11 +127,15 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     }
     
     func minusOneBake(_ cell: ShopPreBakeTableCell) {
-        if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(byID: cell.bake.objectId!) {
+        guard let bake = cell.bake else { return }
+        if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(byID: bake.objectId!) {
             if RealmHelper.minueOneBake(bakeRealm) {
                 setShopCellToNone(cell)
+                avbakesPre[bake.objectId!] = nil
             } else {
-                cell.amountLabel.text = "\(bakeRealm.amount)"
+                let amount = bakeRealm.amount
+                cell.amountLabel.text = "\(amount)"
+                avbakesPre[bake.objectId!]?.amount = amount as NSNumber
             }
         }
     }

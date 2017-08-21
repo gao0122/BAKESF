@@ -22,9 +22,11 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     var avbakesTag = [String: [AVBake]]()
     var avbakesSoldOut = [String: [AVBake]]()
     
+    var avbakesIn = [String: AVBakeIn]()
+    var tappedAtTagTableview = false
+    
     var bakeLiveQuery: AVLiveQuery!
     
-    var tappedAtTagTableview = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,13 +127,19 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func oneMoreBake(_ cell: ShopBuyBakeTableCell) {
-        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(byID: cell.bake.objectId!) {
+        guard let bake = cell.bake else { return }
+        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(byID: bake.objectId!) {
             RealmHelper.addOneMoreBake(bakeRealm)
             cell.amountLabel.text = "\(bakeRealm.amount)"
+            avbakesIn[bake.objectId!]?.amount = bakeRealm.amount as NSNumber
         } else {
-            addBakeToRealm(cell.bake)
+            addBakeToRealm(bake)
             setShopCellFromNoneToOne(cell)
             cell.amountLabel.text = "1"
+            let bakeIn = AVBakeIn()
+            bakeIn.bake = bake
+            bakeIn.amount = 1
+            avbakesIn[bake.objectId!] = bakeIn
         }
     }
     
@@ -144,11 +152,15 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func minusOneBake(_ cell: ShopBuyBakeTableCell) {
-        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(byID: cell.bake.objectId!) {
+        guard let bake = cell.bake else { return }
+        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(byID: bake.objectId!) {
             if RealmHelper.minueOneBake(bakeRealm) {
                 setShopCellToNone(cell)
+                avbakesIn[bake.objectId!] = nil
             } else {
-                cell.amountLabel.text = "\(bakeRealm.amount)"
+                let amount = bakeRealm.amount
+                cell.amountLabel.text = "\(amount)"
+                avbakesIn[bake.objectId!]?.amount = amount as NSNumber
             }
         }
     }
