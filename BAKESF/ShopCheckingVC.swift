@@ -293,7 +293,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     return 2
                 }
                 if segmentedControlDeliveryWay == nil {
-                    return 0
+                    return 1
                 }
                 switch segmentedControlDeliveryWay.selectedSegmentIndex {
                 case 0:
@@ -392,28 +392,34 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 case 0:
                     // segmented control
                     let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckSegmentedControlTableViewCell", for: indexPath) as! ShopCheckSegmentedControlTableViewCell
-                    self.segmentedControl = cell.segmentedControl
-                    self.segmentedControlDeliveryWay = cell.segmentedControlDW
                     let secs = determineSections(avshop)
                     switch secs {
                     case 2:
-                        self.segmentedControl.setEnabled(true, forSegmentAt: 0)
-                        self.segmentedControl.setEnabled(false, forSegmentAt: 1)
-                        self.segmentedControl.setEnabled(false, forSegmentAt: 2)
-                        self.segmentedControl.selectedSegmentIndex = 0
+                        cell.segmentedControl.setEnabled(true, forSegmentAt: 0)
+                        cell.segmentedControl.setEnabled(false, forSegmentAt: 1)
+                        cell.segmentedControl.setEnabled(false, forSegmentAt: 2)
+                        if self.segmentedControl == nil {
+                            cell.segmentedControl.selectedSegmentIndex = 0
+                        }
                     case 3:
-                        self.segmentedControl.setEnabled(false, forSegmentAt: 0)
-                        self.segmentedControl.setEnabled(false, forSegmentAt: 1)
-                        self.segmentedControl.setEnabled(true, forSegmentAt: 2)
-                        self.segmentedControl.selectedSegmentIndex = 2
+                        cell.segmentedControl.setEnabled(false, forSegmentAt: 0)
+                        cell.segmentedControl.setEnabled(false, forSegmentAt: 1)
+                        cell.segmentedControl.setEnabled(true, forSegmentAt: 2)
+                        if self.segmentedControl == nil {
+                            cell.segmentedControl.selectedSegmentIndex = 2
+                        }
                     case 4:
-                        self.segmentedControl.setEnabled(true, forSegmentAt: 0)
-                        self.segmentedControl.setEnabled(true, forSegmentAt: 1)
-                        self.segmentedControl.setEnabled(true, forSegmentAt: 2)
-                        self.segmentedControl.selectedSegmentIndex = 0
+                        cell.segmentedControl.setEnabled(true, forSegmentAt: 0)
+                        cell.segmentedControl.setEnabled(true, forSegmentAt: 1)
+                        cell.segmentedControl.setEnabled(true, forSegmentAt: 2)
+                        if self.segmentedControl == nil {
+                            cell.segmentedControl.selectedSegmentIndex = 0
+                        }
                     default:
                         break
                     }
+                    self.segmentedControl = cell.segmentedControl
+                    self.segmentedControlDeliveryWay = cell.segmentedControlDW
                     if avshop.deliveryWays!.contains(0) {
                         self.segmentedControlDeliveryWay.setEnabled(true, forSegmentAt: 0)
                     } else {
@@ -509,6 +515,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     break
                 }
             case 1:
+                if segmentedControl == nil { break }
                 let sections = determineSections(avshop)
                 let sc = segmentedControl.selectedSegmentIndex
                 switch row {
@@ -736,6 +743,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // Did Select Row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if segmentedControl == nil { return }
         let section = indexPath.section
         let row = indexPath.row
         switch tableView.tag {
