@@ -602,7 +602,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.amountLabel.alpha = 1
         cell.amountLabel.text = "总计"
         let price = fee.fixPriceTagFormat()
-        checkoutBtn.setTitle(checkoutBtnText + " ¥\(price)", for: .normal)
         cell.priceLabel.text = "¥ \(price)"
         return cell
     }
