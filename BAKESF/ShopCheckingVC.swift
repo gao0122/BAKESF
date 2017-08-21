@@ -122,6 +122,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         } else {
             self.setCheckOutBtn(enabled: false)
         }
+        let deliveryFee = avshop.deliveryFee as! Double
+        var fee = RealmHelper.retrieveAllBakesCost(avshopID: avshop.objectId!) + deliveryFee
+        let secs = determineSections(avshop)
+        if secs == 4 {
+            fee += deliveryFee
+        }
+        self.checkoutBtn.setTitle(checkoutBtnText + " ¥\(fee.fixPriceTagFormat())", for: .normal)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
