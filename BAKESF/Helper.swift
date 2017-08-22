@@ -159,8 +159,8 @@ func determineSections(_ avshop: AVShop) -> Int {
     let bakePreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count
     if bakeInBag == 0 && bakePreOrder == 0 { return 0 }     // none
     else if bakeInBag > 0 && bakePreOrder == 0 { return 2 } // only in bag
-    else if bakeInBag == 0 && bakePreOrder > 0 { return 3 } // only pre order
-    else { return 4 }                                       // both
+    else if bakeInBag == 0 && bakePreOrder > 0 { return 4 } // only pre order
+    else { return 3 }                                       // both
 }
 
 

@@ -11,6 +11,5 @@ import UIKit
 class ShopCheckSegmentedControlTableViewCell: UITableViewCell {
     
     @IBOutlet weak var segmentedControl: UISegmentedControl!
-    @IBOutlet weak var segmentedControlDW: UISegmentedControl!
 
 }

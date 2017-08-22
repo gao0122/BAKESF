@@ -53,6 +53,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     var shopPreVC: ShopPreVC!
     var shopBagVC: ShopBagEmbedVC!
     var shopCheckingVC: ShopCheckingVC!
+    var pagingMenuController: ShopPagingVC!
     
     var avshop: AVShop!
     var avbaker: AVBaker?
@@ -83,7 +84,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     let shopBagVCHeaderColor: Int = 0xFAFAFA
     
     let alwaysShowBag = true
-    
+    var lastPagingPage = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -122,6 +123,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                 guard let vc = segue.destination as? ShopCheckingVC else { break }
                 vc.shopVC = self
                 vc.avshop = self.avshop
+                vc.isInBag = pagingMenuController.currentPage == 0
                 navigationController?.navigationBar.barTintColor = .bkRed
                 navigationController?.navigationBar.tintColor = .white
                 self.animateShopIfNeeded()
@@ -221,7 +223,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             var isScrollEnabled: Bool
         }
         
-        let pagingMenuController = self.childViewControllers.first! as! ShopPagingVC
+        pagingMenuController = self.childViewControllers.first! as! ShopPagingVC
         let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
         // setup shopBuyVC
         option.shopBuyVC.shopVC = self
@@ -240,24 +242,39 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         self.shopPreVC.bakeTableView.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
         self.shopCardView.addGestureRecognizer(UIPanDirectionGestureRecognizer(direction: .vertical, target: self, action: #selector(ShopVC.panGestureAni(sender:))))
         
-//        pagingMenuController.onMove = {
-//            state in
-//            switch state {
-//            case let .willMoveController(menuController, previousMenuController):
-//                break
-//            case let .didMoveController(menuController, previousMenuController):
-//                break
-//            case let .willMoveItem(menuItemView, previousMenuItemView):
-//                break
-//            case let .didMoveItem(menuItemView, previousMenuItemView):
-//                break
-//            case .didScrollStart:
-//                break
-//            case .didScrollEnd:
-//                break
-//            }
-//        }
-        
+        pageControllerOnMove()
+    }
+    
+    func pageControllerOnMove() {
+        pagingMenuController.onMove = {
+            state in
+            switch state {
+            case .willMoveController(_, _):
+                break
+            case .didMoveController(_, _):
+                switch self.pagingMenuController.currentPage {
+                case 0:
+                    if self.lastPagingPage == 1 {
+                        self.setShopBagState()
+                    }
+                case 1:
+                    if self.lastPagingPage == 0 {
+                        self.setShopBagState()
+                    }
+                default:
+                    break
+                }
+                self.lastPagingPage = self.pagingMenuController.currentPage
+            case .willMoveItem(_, _):
+                break
+            case .didMoveItem(_, _):
+                break
+            case .didScrollStart:
+                break
+            case .didScrollEnd:
+                break
+            }
+        }
     }
 
     func shopInit() {
@@ -305,11 +322,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     // set state of outlets in shop bag view
     func setShopBagState() {
-        let shopID = avshop.objectId!
         let lowest = avshop.lowestFee as! Double
         let deliveryFee = avshop.deliveryFee as! Double
-        let totalCost = RealmHelper.retrieveAllBakesCost(avshopID: shopID)
-        let totalAmount = RealmHelper.retrieveAllBakesCount(avshopID: shopID)
+        let totalCost = retrieveBakesCost()
+        let totalAmount = retrieveBakesCount()
         let shouldReset = totalCost == 0
         let shouldSet = totalCost >= lowest
         let deliveryFeeText = deliveryFee == 0 ? "免费配送" : "另需配送费¥\(deliveryFee.fixPriceTagFormat())"
@@ -362,6 +378,24 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+    func retrieveBakesCost() -> Double {
+        let shopID = avshop.objectId!
+        if pagingMenuController.currentPage == 0 {
+            return RealmHelper.retrieveBakesInBagCost(avshopID: shopID)
+        } else {
+            return RealmHelper.retrieveBakesPreOrderCost(avshopID: shopID)
+        }
+    }
+    
+    func retrieveBakesCount() -> Int {
+        let shopID = avshop.objectId!
+        if pagingMenuController.currentPage == 0 {
+            return RealmHelper.retrieveBakesInBagCount(avshopID: shopID)
+        } else {
+            return RealmHelper.retrieveBakesPreOrderCount(avshopID: shopID)
+        }
+    }
+    
     func setShopBagStateAndTables() {
         setShopBagState()
         shopBuyVC.bakeTableView.reloadData()
@@ -375,8 +409,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func handleBagBarTap(_ sender: UITapGestureRecognizer) {
-        if determineSections(avshop) > 0 {
-            animateShop(bagAniState)
+        let secs = determineSections(avshop)
+        let page = pagingMenuController.currentPage
+        if secs == 3 || secs / 2 - 1 == page {
+            self.animateShop(self.bagAniState)
         }
     }
     
@@ -422,11 +458,9 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             shopBagVC.reloadShopBagEmbedTable()
             shopBagVC.numOfSections = shopBagVC.tableView.numberOfSections
             // compute the height of table view according to the amount of bakes
-            let bakeCount = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count + RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count
+            let bakeCount = retrieveBakesCount()
             let bakesHeight = CGFloat(bakeCount) * shopBagVC.cellHeight
-            let sections = CGFloat(shopBagVC.tableView.numberOfSections)
-            let headerHeight = sections * shopBagVC.headerHeight
-            let oy = view.frame.height - bagBarHeight - shopBagVC.tableView.frame.origin.y - bakesHeight - headerHeight
+            let oy = view.frame.height - bagBarHeight - shopBagVC.tableView.frame.origin.y - bakesHeight
             let y = oy < originBagViewY ? originBagViewY : oy
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
                 self.bagView.frame.origin.y = y!

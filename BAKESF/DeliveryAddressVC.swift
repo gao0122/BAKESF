@@ -215,10 +215,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         let address = addresses[row]
         selectedAddress = address
         hasSelectedCell = true
-        var editingAddress = currentAddress
-        if isPreOrder {
-            editingAddress = shopCheckingVC.avaddressPreOrder
-        }
+        let editingAddress = currentAddress
         if let editingAddress = editingAddress {
             if isPreOrder {
                 editingAddress.isForPreOrder = false

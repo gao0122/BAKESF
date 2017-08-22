@@ -13,5 +13,11 @@ class ShopClassifyTableCell: UITableViewCell {
     @IBOutlet weak var classLabel: UILabel!
     @IBOutlet weak var amountLabel: UILabel!
     
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        let color = self.amountLabel.backgroundColor
+        super.setSelected(selected, animated: animated)
+        self.amountLabel.backgroundColor = color
+    }
+    
 }
 

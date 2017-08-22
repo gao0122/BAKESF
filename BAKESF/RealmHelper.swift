@@ -117,7 +117,7 @@ class RealmHelper {
         return zero
     }
     
-    static func retrieveOneBakeInBag(byID id: String) -> BakeInBagRealm? {
+    static func retrieveOneBakeInBag(by id: String) -> BakeInBagRealm? {
         let realm = try! Realm()
         return realm.objects(BakeInBagRealm.self).filter("id = '\(id)'").first
     }
@@ -143,6 +143,16 @@ class RealmHelper {
         return total
     }
     
+    static func retrieveBakesInBagCount(by tag: String) -> Int {
+        let realm = try! Realm()
+        let bakes = realm.objects(BakeInBagRealm.self).filter("tag = '\(tag)'")
+        var total = 0
+        for bake in bakes {
+            total += bake.amount
+        }
+        return total
+    }
+    
     static func retrieveBakesInBagCost(avshopID shopID: String? = nil) -> Double {
         let realm = try! Realm()
         let bakes = realm.objects(BakeInBagRealm.self)
@@ -157,7 +167,7 @@ class RealmHelper {
         return total
     }
     
-    static func deleteAllBakesInBag(byShopID shopID: String? = nil) {
+    static func deleteAllBakesInBag(by shopID: String? = nil) {
         let realm = try! Realm()
         try! realm.write {
             if let id = shopID {
@@ -208,7 +218,7 @@ class RealmHelper {
         return zero
     }
     
-    static func retrieveOneBakePreOrder(byID id: String) -> BakePreOrderRealm? {
+    static func retrieveOneBakePreOrder(by id: String) -> BakePreOrderRealm? {
         let realm = try! Realm()
         return realm.objects(BakePreOrderRealm.self).filter("id = '\(id)'").first
     }
@@ -234,6 +244,16 @@ class RealmHelper {
         return total
     }
     
+    static func retrieveBakesPreOrderCount(by tag: String) -> Int {
+        let realm = try! Realm()
+        let bakes = realm.objects(BakePreOrderRealm.self).filter("tag = '\(tag)'")
+        var total = 0
+        for bake in bakes {
+            total += bake.amount
+        }
+        return total
+    }
+    
     static func retrieveBakesPreOrderCost(avshopID shopID: String? = nil) -> Double {
         let realm = try! Realm()
         let bakes = realm.objects(BakePreOrderRealm.self)
@@ -248,8 +268,7 @@ class RealmHelper {
         return total
     }
     
-    // All Bakes
-    static func deleteAllBakesPreOrder(byShopID shopID: String? = nil) {
+    static func deleteAllBakesPreOrder(by shopID: String? = nil) {
         let realm = try! Realm()
         try! realm.write {
             if let id = shopID {
@@ -261,6 +280,7 @@ class RealmHelper {
     }
     
     
+    // All Bakes
     static func retrieveAllBakesCount(avshopID shopID: String? = nil) -> Int {
         return retrieveBakesInBagCount(avshopID: shopID) + retrieveBakesPreOrderCount(avshopID: shopID)
     }
@@ -289,8 +309,8 @@ class RealmHelper {
     }
     
     static func deleteAllBakes(byShopID shopID: String? = nil) {
-        deleteAllBakesInBag(byShopID: shopID)
-        deleteAllBakesPreOrder(byShopID: shopID)
+        deleteAllBakesInBag(by: shopID)
+        deleteAllBakesPreOrder(by: shopID)
     }
 
     
@@ -314,6 +334,7 @@ class RealmHelper {
     }
     private static func setLocation(_ location: LocationRealm, by regeocode: AMapReGeocode, poi: AMapPOI? = nil) {
         guard let ac = regeocode.addressComponent else { return }
+        location.detailed = ""
         location.formatted = regeocode.formattedAddress!
         location.citycode = ac.citycode!
         location.province = ac.province!

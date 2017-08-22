@@ -21,15 +21,21 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     var avbakes: [AVBake]!
     var avbakesTag = [String: [AVBake]]()
     
+    var avbakesPreID = [String: BakePreOrderRealm]()
     var avbakesPre = [String: AVBakePre]()
     var tappedAtTagTableview = false
 
+    let cellAmountLabelheight: CGFloat = 15
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         avtag = avshop.tags!
         classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
 
+        for bake in RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!) {
+            avbakesPreID[bake.id] = bake
+        }
         loadAVBakes()
 
     }
@@ -48,13 +54,15 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         query.findObjectsInBackground({
             objects, error in
             if error == nil {
-                self.avbakes = objects as! [AVBake]
-                self.assignBakeTag()
-                if self.shopVC.shopBuyVC.avbakes != nil {
+                self.avbakes = objects as? [AVBake]
+                if let _ = self.avbakes {
+                    self.assignBakeTag()
                     self.shopVC.stopIndicatorViewAni()
+                } else {
+                    self.shopVC.showLoadFailedView()
                 }
             } else {
-                self.shopVC.showLoadFailedView()
+                self.shopVC.stopIndicatorViewAni()
                 printit(any: "shop buy vc \(error!.localizedDescription)")
             }
         })
@@ -67,7 +75,11 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     func assignBakeTag() {
         // assign bakes in their tags and take "sold out" as a new array
         for bake in self.avbakes {
+            let id = bake.objectId!
             let tag = bake.tag!
+            if avbakesPreID.keys.contains(id) {
+                assignAVBakeOrder(bakeRealm: avbakesPreID[id]!, bake: bake)
+            }
             if let _ = self.avbakesTag[tag] {
                 self.avbakesTag[tag]!.append(bake)
             } else {
@@ -77,12 +89,31 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         self.bakeTableView.reloadData()
     }
 
+    func assignAVBakeOrder(bakeRealm: BakePreOrderRealm?, bake: AVBake) {
+        let bakePre = AVBakePre()
+        bakePre.bake = bake
+        if let bakeRealm = bakeRealm {
+            bakePre.amount = bakeRealm.amount as NSNumber
+        } else {
+            bakePre.amount = 1
+        }
+        avbakesPre[bake.objectId!] = bakePre
+    }
+    
     // one more button pressed
     func oneMoreBtnPressed(_ sender: UIButton) {
         if shopVC.menuAniState == .collapsed { shopVC.animateMenu(state: shopVC.menuAniState) }
         guard let cell = sender.superview?.superview as? ShopPreBakeTableCell else { return }
         oneMoreBake(cell)
         shopVC.setShopBagState()
+        reloadClassifyTalbeView()
+    }
+    
+    func reloadClassifyTalbeView() {
+        if let index = classifyTableView.indexPathForSelectedRow {
+            classifyTableView.reloadData()
+            classifyTableView.selectRow(at: index, animated: false, scrollPosition: .none)
+        }
     }
     
     func setShopCellFromNoneToOne(_ cell: ShopPreBakeTableCell, amount: Int = 1) {
@@ -97,24 +128,22 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         bakeRealm.amount = amount
         bakeRealm.price = bake.price as! Double
         bakeRealm.name = bake.name!
+        bakeRealm.tag = bake.tag!
         bakeRealm.shopID = avshop.objectId!
         RealmHelper.addOneBake(bakeRealm)
     }
     
     func oneMoreBake(_ cell: ShopPreBakeTableCell) {
         guard let bake = cell.bake else { return }
-        if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(byID: bake.objectId!) {
+        if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: bake.objectId!) {
             RealmHelper.addOneMoreBake(bakeRealm)
             cell.amountLabel.text = "\(bakeRealm.amount)"
-            avbakesPre[bake.objectId!]?.amount = bakeRealm.amount as NSNumber
+            assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
         } else {
             addBakeToRealm(bake)
             setShopCellFromNoneToOne(cell)
             cell.amountLabel.text = "1"
-            let bakePre = AVBakePre()
-            bakePre.bake = bake
-            bakePre.amount = 1
-            avbakesPre[bake.objectId!] = bakePre
+            assignAVBakeOrder(bakeRealm: nil, bake: bake)
         }
     }
     
@@ -124,18 +153,19 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         guard let cell = sender.superview?.superview as? ShopPreBakeTableCell else { return }
         minusOneBake(cell)
         shopVC.setShopBagState()
+        reloadClassifyTalbeView()
     }
     
     func minusOneBake(_ cell: ShopPreBakeTableCell) {
         guard let bake = cell.bake else { return }
-        if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(byID: bake.objectId!) {
+        if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: bake.objectId!) {
             if RealmHelper.minueOneBake(bakeRealm) {
                 setShopCellToNone(cell)
                 avbakesPre[bake.objectId!] = nil
             } else {
                 let amount = bakeRealm.amount
                 cell.amountLabel.text = "\(amount)"
-                avbakesPre[bake.objectId!]?.amount = amount as NSNumber
+                assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
             }
         }
     }
@@ -180,8 +210,25 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             cell.selectedBackgroundView = bgView
             cell.backgroundColor = UIColor(hex: 0xEFEFEF)
             cell.layer.cornerRadius = 2
+            let tag = avtag[indexPath.row]
             cell.classLabel.textColor = .bkBlack
-            cell.classLabel.text = avtag[indexPath.row]
+            cell.classLabel.text = tag
+            let count = RealmHelper.retrieveBakesPreOrderCount(by: tag)
+            if count > 0 {
+                if count > 999 {
+                    cell.amountLabel.text = "999+"
+                } else {
+                    cell.amountLabel.text = "\(count)"
+                }
+                cell.amountLabel.layer.cornerRadius = cellAmountLabelheight / 2
+                cell.amountLabel.layer.masksToBounds = true
+                cell.amountLabel.sizeToFit()
+                cell.amountLabel.frame.size.height = cellAmountLabelheight
+                cell.amountLabel.frame.size.width += 9
+                cell.amountLabel.isHidden = false
+            } else {
+                cell.amountLabel.isHidden = true
+            }
             return cell
         case 1:
             let section = indexPath.section
@@ -194,7 +241,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             let price = bakee.price!
             let monthly = bakee.monthly as! Int
             let amount = bakee.amountPreLimit as! Int
-            let amountPreOrder = RealmHelper.retrieveOneBakePreOrder(byID: bakee.objectId!)?.amount ?? 0
+            let amountPreOrder = RealmHelper.retrieveOneBakePreOrder(by: bakee.objectId!)?.amount ?? 0
             
             if bakee.image == nil { printit(any: "\n\n\n\n\n\n\(bakee.name!)\n\n\n\n\n\n") }
             

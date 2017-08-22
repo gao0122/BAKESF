@@ -23,7 +23,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var deliveryTimeTableView: UITableView!
     @IBOutlet weak var checkoutBtn: UIButton!
     
-    var segmentedControl: UISegmentedControl!
+    var isInBag: Bool = true
     var segmentedControlDeliveryWay: UISegmentedControl!
     let deliveryAddressVC: DeliveryAddressVC = {
         return DeliveryAddressVC.instantiateFromStoryboard()
@@ -37,8 +37,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var avbaker: AVBaker!
     var userRealm: UserRealm!
     var avaddress: AVAddress?
-    var avaddressPreOrder: AVAddress?
-    var avorder: AVOrder?
+    var avorder = AVOrder()
     
     var bakes: [Object]!
     var deliveryTimeViewState: DeliveryTimeViewState = .collapsed
@@ -46,7 +45,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var deliveryDates = [String]()
     var deliveryTimecs = [DateComponents]()
     var deliveryTimes = [String]()
-    var selectedTimeIn: DateComponents?
     var selectedTime: DateComponents?
     
     let checkoutBtnText = "支付全部"
@@ -64,7 +62,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         checkoutBtn.titleLabel?.minimumScaleFactor = 0.5
 
         deliveryTimeView.frame.origin.y = view.frame.height
-        bakes = RealmHelper.retrieveAllBakes(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
+        if isInBag {
+            bakes = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
+        } else {
+            bakes = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
+        }
         let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         tableView.tableFooterView = footerView
         deliveryTimeDateTableView.tableFooterView = footerView
@@ -73,7 +75,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         view.isUserInteractionEnabled = true
         tableViewDeselection()
         navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -90,25 +91,25 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         objects, error in
                         if let error = error {
                             self.avaddress = nil
-                            self.avaddressPreOrder = nil
                             self.setCheckOutBtn(enabled: false)
                             printit("Retrieve address error: \(error.localizedDescription)")
                         } else {
                             if let addresses = objects as? [AVAddress] {
-                                self.avaddressPreOrder = nil
                                 self.avaddress = nil
                                 for address in addresses {
-                                    if address.isForPreOrder {
-                                        self.avaddressPreOrder = address
-                                    }
-                                    if address.isForRightNow {
-                                        self.avaddress = address
+                                    if self.isInBag {
+                                        if address.isForRightNow {
+                                            self.avaddress = address
+                                        }
+                                    } else {
+                                        if address.isForPreOrder {
+                                            self.avaddress = address
+                                        }
                                     }
                                 }
                                 self.setCheckOutBtn(enabled: true)
                             } else {
                                 self.avaddress = nil
-                                self.avaddressPreOrder = nil
                                 self.setCheckOutBtn(enabled: false)
                             }
                         }
@@ -123,11 +124,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.setCheckOutBtn(enabled: false)
         }
         let deliveryFee = avshop.deliveryFee as! Double
-        var fee = RealmHelper.retrieveAllBakesCost(avshopID: avshop.objectId!) + deliveryFee
-        let secs = determineSections(avshop)
-        if secs == 4 {
-            fee += deliveryFee
-        }
+        let fee = RealmHelper.retrieveAllBakesCost(avshopID: avshop.objectId!) + deliveryFee
         self.checkoutBtn.setTitle(checkoutBtnText + " ¥\(fee.fixPriceTagFormat())", for: .normal)
     }
     
@@ -136,8 +133,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func setCheckOutBtn(enabled: Bool) {
-        let secs = determineSections(avshop)
-        let enabled = !(secs > 2 && selectedTime == nil) && enabled
+        let enabled = enabled && selectedTime != nil
         self.checkoutBtn.isEnabled = enabled
         UIView.animate(withDuration: 0.27, animations: {
             self.checkoutBtn.backgroundColor = enabled ? .appleGreen : .checkBtnGray
@@ -183,90 +179,69 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @IBAction func checkOutBtnPressed(_ sender: Any) {
-        makePayment(determineSections(avshop))
-    }
-    
-    func makePayment(_ secs: Int) {
         alertOkayOrNot(okTitle: "支付", notTitle: "取消", msg: "确认支付吗？", okAct: {
             _ in
-            switch secs {
-            case 2:
-                break
-            case 3:
-                break
-            case 4:
-                break
-            default:
-                break
-            }
-            var avorder = self.avorder
-            if avorder == nil {
-                avorder = AVOrder()
-            }
-            self.saveOrderAndBakes(avorder!, with: 0)
+            self.saveOrderAndBakes()
         }, notAct: { _ in })
     }
     
-    func saveOrderAndBakes(_ order: AVOrder, with type: Int) {
-        switch type {
-        case 0:
-            order.deliveryAddress = self.avaddress
-            order.deliveryTime = Date()
-        case 1:
-            order.deliveryAddress = self.avaddressPreOrder
-            order.deliveryTime = self.selectedTime?.date
-        default:
-            break
-        }
-        order.baker = self.avbaker
-        order.shop = self.avshop
-        order.type = type as NSNumber
-        order.saveInBackground({
+    
+    func saveOrderAndBakes() {
+        let group = DispatchGroup()
+        avorder = AVOrder()
+        avorder.deliveryAddress = self.avaddress
+        avorder.deliveryTime = self.selectedTime?.date
+        avorder.baker = self.avbaker
+        avorder.shop = self.avshop
+        avorder.type = (isInBag ? 0 : 1) as NSNumber
+
+        group.enter()
+        avorder.saveInBackground({
             succeeded, error in
             if succeeded {
-                
+                group.leave()
+                if self.isInBag {
+                    for bake in self.shopVC.shopBuyVC.avbakesIn.values {
+                        bake.order = self.avorder
+                        group.enter()
+                        bake.saveInBackground({
+                            succeeded, error in
+                            if succeeded {
+                                group.leave()
+                            } else {
+                                printit("error: \(error!.localizedDescription)")
+                                group.leave()
+                            }
+                        })
+                    }
+                } else {
+                    for bake in self.shopVC.shopPreVC.avbakesPre.values {
+                        bake.order = self.avorder
+                        group.enter()
+                        bake.saveInBackground({
+                            succeeded, error in
+                            if succeeded {
+                                group.leave()
+                            } else {
+                                printit("error: \(error!.localizedDescription)")
+                                group.leave()
+                            }
+                        })
+                    }
+                }
             } else {
+                group.leave()
                 self.view.notify(text: "下单出现异常，请检查网络后重试！", color: .alertRed, nav: self.navigationController?.navigationBar)
             }
         })
-        for bake in self.shopVC.shopBuyVC.avbakesIn.values {
-            bake.order = order
-            bake.saveInBackground({
-                succeeded, error in
-                if succeeded {
-                    
-                } else {
-                    self.avorder = nil
-                }
-            })
-        }
-        for bake in self.shopVC.shopPreVC.avbakesPre.values {
-            bake.order = order
-            bake.saveInBackground({
-                succeeded, error in
-                if succeeded {
-                    
-                } else {
-                    self.avorder = nil
-                }
-            })
-        }
+
+        group.notify(queue: DispatchQueue.main, execute: {
+            // all completed
+        })
     }
     
     
-    @IBAction func segmentedControlChanged(_ sender: Any) {
-        switch segmentedControl.selectedSegmentIndex {
-        case 0:
-            bakes = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
-            tableView.reloadData()
-        case 1:
-            bakes = RealmHelper.retrieveAllBakes(avshopID: avshop.objectId!)
-            tableView.reloadData()
-        case 2:
-            bakes = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
-        default:
-            break
-        }
+    @IBAction func segmentedControlValueChanged(_ sender: Any) {
         tableView.reloadData()
     }
     
@@ -296,84 +271,14 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case 0:
             switch section {
             case 0:
-                if userRealm == nil {
-                    return 2
-                }
-                if segmentedControlDeliveryWay == nil {
-                    return 1
-                }
-                switch segmentedControlDeliveryWay.selectedSegmentIndex {
-                case 0:
-                    // 现货或预订，配送时间，收货地址
-                    let sections = determineSections(avshop)
-                    if segmentedControl == nil { return 3 }
-                    switch segmentedControl.selectedSegmentIndex {
-                    case 0:
-                        switch sections {
-                        case 2, 4:
-                            return 3
-                        case 3:
-                            return 1
-                        default:
-                            break
-                        }
-                    case 1:
-                        switch sections {
-                        case 2, 3:
-                            return 3
-                        case 4:
-                            return 5
-                        default:
-                            break
-                        }
-                    case 2:
-                        switch sections {
-                        case 2:
-                            return 1
-                        case 3, 4:
-                            return 3
-                        default:
-                            break
-                        }
-                    default:
-                        break
-                    }
-                case 1:
-                    return 3
-                default:
-                    break
-                }
+                if userRealm == nil { return 2 }
+                if segmentedControlDeliveryWay == nil { return 1 }
+                return 3
             case 1:
-                let sections = determineSections(avshop)
-                if segmentedControl == nil { return bakes.count + 3 }
-                switch segmentedControl.selectedSegmentIndex {
-                case 0:
-                    switch sections {
-                    case 3:
-                        return 1
-                    default:
-                        break
-                    }
-                case 1:
-                    switch sections {
-                    case 4:
-                        return bakes.count + 4
-                    default:
-                        break
-                    }
-                case 2:
-                    switch sections {
-                    case 2:
-                        return 1
-                    default:
-                        break
-                    }
-                default:
-                    break
-                }
+                if segmentedControlDeliveryWay == nil { return bakes.count + 2 }
                 return bakes.count + 3 // 配送费，红包，总计
             case 2:
-                return 3 // 支付方式，订单备注，发票
+                return tableSectionOtherCell.count // 支付方式，订单备注，发票
             default:
                 return 0
             }
@@ -399,44 +304,23 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 case 0:
                     // segmented control
                     let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckSegmentedControlTableViewCell", for: indexPath) as! ShopCheckSegmentedControlTableViewCell
-                    let secs = determineSections(avshop)
-                    switch secs {
-                    case 2:
-                        cell.segmentedControl.setEnabled(true, forSegmentAt: 0)
-                        cell.segmentedControl.setEnabled(false, forSegmentAt: 1)
-                        cell.segmentedControl.setEnabled(false, forSegmentAt: 2)
-                        if self.segmentedControl == nil {
-                            cell.segmentedControl.selectedSegmentIndex = 0
-                        }
-                    case 3:
-                        cell.segmentedControl.setEnabled(false, forSegmentAt: 0)
-                        cell.segmentedControl.setEnabled(false, forSegmentAt: 1)
-                        cell.segmentedControl.setEnabled(true, forSegmentAt: 2)
-                        if self.segmentedControl == nil {
-                            cell.segmentedControl.selectedSegmentIndex = 2
-                        }
-                    case 4:
-                        cell.segmentedControl.setEnabled(true, forSegmentAt: 0)
-                        cell.segmentedControl.setEnabled(true, forSegmentAt: 1)
-                        cell.segmentedControl.setEnabled(true, forSegmentAt: 2)
-                        if self.segmentedControl == nil {
-                            cell.segmentedControl.selectedSegmentIndex = 0
-                        }
-                    default:
-                        break
-                    }
-                    self.segmentedControl = cell.segmentedControl
-                    self.segmentedControlDeliveryWay = cell.segmentedControlDW
                     if avshop.deliveryWays!.contains(0) {
-                        self.segmentedControlDeliveryWay.setEnabled(true, forSegmentAt: 0)
+                        cell.segmentedControl.setEnabled(true, forSegmentAt: 0)
+                        if self.segmentedControlDeliveryWay == nil {
+                            cell.segmentedControl.selectedSegmentIndex = 0
+                        }
                     } else {
-                        self.segmentedControlDeliveryWay.setEnabled(false, forSegmentAt: 0)
+                        cell.segmentedControl.setEnabled(false, forSegmentAt: 0)
+                        if avshop.deliveryWays!.contains(1) {
+                            cell.segmentedControl.setEnabled(true, forSegmentAt: 1)
+                            if self.segmentedControlDeliveryWay == nil {
+                                cell.segmentedControl.selectedSegmentIndex = 1
+                            }
+                        } else {
+                            cell.segmentedControl.setEnabled(false, forSegmentAt: 1)
+                        }
                     }
-                    if avshop.deliveryWays!.contains(1) {
-                        self.segmentedControlDeliveryWay.setEnabled(true, forSegmentAt: 1)
-                    } else {
-                        self.segmentedControlDeliveryWay.setEnabled(false, forSegmentAt: 1)
-                    }
+                    self.segmentedControlDeliveryWay = cell.segmentedControl
                     return cell
                 case 1:
                     if userRealm == nil {
@@ -445,108 +329,36 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         // delivery time
                         switch segmentedControlDeliveryWay.selectedSegmentIndex {
                         case 0:
-                            let segIndex = segmentedControl.selectedSegmentIndex
-                            if determineSections(avshop) == 3 && segIndex == 1 || segIndex == 2 {
-                                if selectedTime == nil {
-                                    return UITableViewCell.centerTextCell(with: "选择预约收货时间", in: .buttonBlue)
-                                } else {
-                                    return deliveryTimeCell(indexPath, preOrder: true)
-                                }
+                            if selectedTime == nil {
+                                let text = isInBag ? "选择收货时间" : "选择预约收货时间"
+                                return UITableViewCell.centerTextCell(with: text, in: .buttonBlue)
                             } else {
                                 return deliveryTimeCell(indexPath)
                             }
                         case 1:
-                            return UITableViewCell.centerTextCell(with: "选择预约收货时间", in: .buttonBlue)
+                            return UITableViewCell.centerTextCell(with: "选择自取时间", in: .buttonBlue)
                         default:
                             break
                         }
                     }
                 case 2:
                     // delivery address
-                    var addr: AVAddress? = avaddress
-                    var text = "选择收货地址"
-                    if segmentedControl.selectedSegmentIndex == 1 {
-                        if determineSections(avshop) % 2 == 1 {
-                            addr = avaddressPreOrder
-                            text = "选择预约收货地址"
-                        }
-                    } else if segmentedControl.selectedSegmentIndex == 2 {
-                        addr = avaddressPreOrder
-                        text = "选择预约收货地址"
-                    }
-                    if let address = addr {
+                    if let address = self.avaddress {
                         return deliveryAddressCell(with: address, indexPath)
                     } else {
+                        let text = isInBag ? "选择收货地址" : "选择预约收货地址"
                         return UITableViewCell.centerTextCell(with: text, in: .buttonBlue)
-                    }
-                case 3:
-                    let sections = determineSections(avshop)
-                    switch segmentedControl.selectedSegmentIndex {
-                    case 1:
-                        switch sections {
-                        case 4:
-                            if userRealm != nil {
-                                // delivery time
-                                if selectedTime == nil {
-                                    return UITableViewCell.centerTextCell(with: "选择预约收货时间", in: .buttonBlue)
-                                } else {
-                                    return deliveryTimeCell(indexPath, preOrder: true)
-                                }
-                            }
-                        default:
-                            break
-                        }
-                    default:
-                        break
-                    }
-                case 4:
-                    let sections = determineSections(avshop)
-                    switch segmentedControl.selectedSegmentIndex {
-                    case 1:
-                        switch sections {
-                        case 4:
-                            if userRealm != nil {
-                                if let address = avaddressPreOrder {
-                                    return deliveryAddressCell(with: address, indexPath, preOrder: true)
-                                } else {
-                                    return UITableViewCell.centerTextCell(with: "选择预约收货地址", in: .buttonBlue)
-                                }
-                            }
-                        default:
-                            break
-                        }
-                    default:
-                        break
                     }
                 default:
                     break
                 }
             case 1:
-                if segmentedControl == nil { break }
-                let sections = determineSections(avshop)
-                let sc = segmentedControl.selectedSegmentIndex
                 switch row {
                 case bakes.count:
-                    if tableView.numberOfRows(inSection: section) == 1 {
-                        let cell = UITableViewCell.centerTextCell(with: "袋子空空的", in: .bkBlack)
-                        cell.selectionStyle = .none
-                        return cell
-                    } else {
-                        return deliveryFeeCell(indexPath)
-                    }
+                    return deliveryFeeCell(indexPath)
                 case bakes.count + 1:
-                    if sections == 4 && sc == 1 {
-                        return deliveryFeeCell(indexPath, preOrder: true)
-                    } else {
-                        return redPacketCell(indexPath)
-                    }
+                    return redPacketCell(indexPath)
                 case bakes.count + 2:
-                    if sections == 4 && sc == 1 {
-                        return redPacketCell(indexPath)
-                    } else {
-                        return totalFeeCell(indexPath)
-                    }
-                case bakes.count + 3:
                     return totalFeeCell(indexPath)
                 default:
                     return bakeItemCell(indexPath)
@@ -579,23 +391,17 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         return UITableViewCell()
     }
-    
+
+
     // Table Cells
     private func totalFeeCell(_ indexPath: IndexPath) -> ShopCheckBakeTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableViewCell", for: indexPath) as! ShopCheckBakeTableViewCell
         // TODO: Delivery fee part
         guard var fee = avshop.deliveryFee as? Double else { return cell }
-        let sections = determineSections(avshop)
-        switch segmentedControl.selectedSegmentIndex {
-        case 0:
+        if isInBag {
             fee += RealmHelper.retrieveBakesInBagCost(avshopID: avshop.objectId!)
-        case 1:
-            if sections == 4 { fee += fee } // TODO: in bag fee plus pre order fee
-            fee += RealmHelper.retrieveAllBakesCost(avshopID: avshop.objectId!)
-        case 2:
+        } else {
             fee += RealmHelper.retrieveBakesPreOrderCost(avshopID: avshop.objectId!)
-        default:
-            break
         }
         cell.priceLabel.alpha = 1
         cell.nameLabel.alpha = 0
@@ -617,13 +423,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    private func deliveryFeeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckBakeTableViewCell {
+    private func deliveryFeeCell(_ indexPath: IndexPath) -> ShopCheckBakeTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableViewCell", for: indexPath) as! ShopCheckBakeTableViewCell
         guard let fee = avshop.deliveryFee as? Double else { return cell }
         cell.priceLabel.alpha = 1
         cell.nameLabel.alpha = 1
         cell.amountLabel.alpha = 0
-        cell.nameLabel.text = "配送费" + (preOrder ? " (预)" : "")
+        cell.nameLabel.text = "配送费"
         cell.priceLabel.text = "¥ \(fee.fixPriceTagFormat())"
         return cell
     }
@@ -634,29 +440,16 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.amountLabel.alpha = 1
         cell.priceLabel.alpha = 1
         cell.nameLabel.alpha = 1
-        switch segmentedControl.selectedSegmentIndex {
-        case 0:
-            guard let bake = bakes[row] as? BakeInBagRealm else { break }
+        if isInBag {
+            guard let bake = bakes[row] as? BakeInBagRealm else { return cell }
             cell.nameLabel.text = bake.name
             cell.amountLabel.text = "×\(bake.amount)"
             cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
-        case 1:
-            if let bake = bakes[row] as? BakePreOrderRealm {
-                cell.nameLabel.text = bake.name + " (预)"
-                cell.amountLabel.text = "×\(bake.amount)"
-                cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
-            } else if let bake = bakes[row] as? BakeInBagRealm {
-                cell.nameLabel.text = bake.name
-                cell.amountLabel.text = "×\(bake.amount)"
-                cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
-            }
-        case 2:
-            guard let bake = bakes[row] as? BakePreOrderRealm else { break }
+        } else {
+            guard let bake = bakes[row] as? BakePreOrderRealm else { return cell }
             cell.nameLabel.text = bake.name
             cell.amountLabel.text = "×\(bake.amount)"
             cell.priceLabel.text = "¥ \((bake.price * Double(bake.amount)).fixPriceTagFormat())"
-        default:
-            break
         }
         return cell
     }
@@ -671,23 +464,17 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             return label
         }()
         cell.addSubview(label)
-        switch indexPath.row {
-        case 0:
-            labelText = "支付方式"
-        case 1:
-            labelText = "订单备注"
-        case 2:
-            labelText = "发票"
-        default:
-            break
-        }
+        labelText = tableSectionOtherCell[indexPath.row]!
         return UITableViewCell.btnCell(with: labelText)
     }
         
-    private func deliveryTimeCell(_ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckDeliveryTimeTableViewCell {
+    private func deliveryTimeCell(_ indexPath: IndexPath) -> ShopCheckDeliveryTimeTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableViewCell", for: indexPath) as! ShopCheckDeliveryTimeTableViewCell
-        cell.arrivalTime.alpha = 0
-        if preOrder {
+        if isInBag {
+            cell.arrivalTime.alpha = 0
+            cell.deliveryTime.text = "立即配送"
+            cell.deliveryTime.sizeToFit()
+        } else {
             cell.arrivalTime.alpha = 1
             if let selectedTime = selectedTime {
                 let mins = selectedTime.minute!
@@ -698,14 +485,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 cell.deliveryTime.sizeToFit()
                 cell.arrivalTime.frame.origin.x = cell.deliveryTime.frame.origin.x + cell.deliveryTime.frame.width + 10
             }
-        } else {
-            cell.deliveryTime.text = "立即配送"
-            cell.deliveryTime.sizeToFit()
         }
         return cell
     }
     
-    private func deliveryAddressCell(with addr: AVAddress, _ indexPath: IndexPath, preOrder: Bool = false) -> ShopCheckAddressTableViewCell {
+    private func deliveryAddressCell(with addr: AVAddress, _ indexPath: IndexPath) -> ShopCheckAddressTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckAddressTableViewCell", for: indexPath) as! ShopCheckAddressTableViewCell
         
         let township = addr.township ?? ""
@@ -736,11 +520,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             cell.addressLabel.text = addrText
         }
 
-        if preOrder {
-            if !cell.phoneLabel.text!.contains("(预)") {
-                cell.phoneLabel.text = cell.phoneLabel.text! + " (预)"
-            }
-        }
         cell.nameLabel.sizeToFit()
         cell.phoneLabel.sizeToFit()
         return cell
@@ -749,7 +528,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     // Did Select Row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if segmentedControl == nil { return }
+        if segmentedControlDeliveryWay == nil { return }
         let section = indexPath.section
         let row = indexPath.row
         switch tableView.tag {
@@ -763,29 +542,19 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         performSegue(withIdentifier: "showLoginFromShopChecking", sender: self)
                     } else {
                         // delivery time
-                        let secs = determineSections(avshop)
-                        let segIndex = segmentedControl.selectedSegmentIndex
-                        if segIndex == 2 || segIndex == 1 && secs == 3 {
-                            deliveryTimeSwitch()
-                        }
+                        deliveryTimeSwitch()
                     }
-                case 3:
-                    // delivery time
-                     deliveryTimeSwitch()
-                case 2, 4:
+                case 2:
                     // delivery address
-                    let isPreOrder = determineSections(avshop) == 3 && segmentedControl.selectedSegmentIndex == 1
-                    deliveryAddressVC.isPreOrder = row == 4 || isPreOrder
+                    deliveryAddressVC.isPreOrder = !isInBag
                     let segue = UIStoryboardSegue(identifier: "showDeliveryAddressFromShopCheckingVC", source: self, destination: deliveryAddressVC)
                     prepare(for: segue, sender: self)
                 default:
                     break
                 }
             case 1:
-                let secs = determineSections(avshop) / 4
-                let rows = segmentedControl.selectedSegmentIndex == 1 ? secs + 1 : 1
                 switch row {
-                case bakes.count + rows:
+                case bakes.count + 1:
                     // red packet
                     if redPacketVC == nil {
                         redPacketVC = RedPacketVC.instantiateFromStoryboard()
@@ -942,7 +711,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             switch section {
             case 0:
                 switch row {
-                case 2, 4:
+                case 2:
                     return UITableViewAutomaticDimension
                 default:
                     break
@@ -984,7 +753,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             switch indexPath.section {
             case 0:
                 switch indexPath.row {
-                case 2, 4:
+                case 2:
                     return UITableViewAutomaticDimension
                 default:
                     return 44
@@ -1023,6 +792,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 }
 
-private let tableSections: [Int: String] = [
-    0: ""
+private let tableSectionOtherCell: [Int: String] = [
+    0: "支付方式",
+    1: "订单备注",
+    2: "发票"
 ]

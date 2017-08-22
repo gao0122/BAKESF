@@ -43,8 +43,11 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     func reloadShopBagEmbedTable() {
-        bakesInBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _,_ in return true })
-        bakesPreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { _,_ in return true })
+        if shopVC.pagingMenuController.currentPage == 0 {
+            bakesInBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _,_ in return true })
+        } else {
+            bakesPreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { _,_ in return true })
+        }
         tableView.reloadData()
     }
     
@@ -57,7 +60,11 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func clearAllBakes() {
-        RealmHelper.deleteAllBakes(byShopID: avshop.objectId!)
+        if shopVC.pagingMenuController.currentPage == 0 {
+            RealmHelper.deleteAllBakesInBag(by: avshop.objectId!)
+        } else {
+            RealmHelper.deleteAllBakesPreOrder(by: avshop.objectId!)
+        }
         reloadShopBagEmbedTable()
         shopVC.setShopBagStateAndTables()
     }
@@ -66,11 +73,11 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         guard let cell = sender.superview?.superview as? ShopBagEmbedTableCell else { return }
         if let bake = cell.bakePre {
             RealmHelper.addOneMoreBake(bake)
-            setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
+            setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
         }
         if let bake = cell.bakeIn {
             RealmHelper.addOneMoreBake(bake)
-            setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
+            setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
         }
         shopVC.setShopBagStateAndTables()
     }
@@ -94,7 +101,7 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     reloadShopBagEmbedTable()
                 }
             } else {
-                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
+                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
             }
         }
         if let bake = cell.bakeIn {
@@ -110,13 +117,14 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     reloadShopBagEmbedTable()
                 }
             } else {
-                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
+                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
             }
         }
         shopVC.setShopBagStateAndTables()
     }
     
-    func setCellAmountPriceLabel(for cell: ShopBagEmbedTableCell, with amount: Int, price: Double) {
+    func setCellAmountPriceLabel(for cell: ShopBagEmbedTableCell, with amount: Int, price: Double, name: String) {
+        cell.nameLabel.text = name
         cell.amountLabel.text = "\(amount)"
         cell.priceLabel.text = "¥ \((price * Double(amount)).fixPriceTagFormat())"
     }
@@ -124,71 +132,32 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     // MARK: - TableView
     //
     func numberOfSections(in tableView: UITableView) -> Int {
-        return determineSections(avshop) / 2
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let sec = determineSections(avshop)
-        let inBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count
-        let preOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count
-        switch section {
-        case 0:
-            return sec % 2 == 1 ? preOrder : inBag
-        case 1:
-            return sec % 2 == 1 ? 0 : preOrder
-        default:
-            return 0
+        if shopVC.pagingMenuController == nil { return 0 }
+        if shopVC.pagingMenuController.currentPage == 0 {
+            return RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count
+        } else {
+            return RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopBagEmbedTableCell") as! ShopBagEmbedTableCell
-        let sec = determineSections(avshop)
-        switch indexPath.section {
-        case 0:
-            switch sec {
-            case 2, 4:
-                let bake = bakesInBag[indexPath.row]
-                cell.bakeIn = bake
-                cell.bakePre = nil
-                cell.nameLabel.text = bake.name
-                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
-            case 3:
-                let bake = bakesPreOrder[indexPath.row]
-                cell.bakePre = bake
-                cell.bakeIn = nil
-                cell.nameLabel.text = bake.name
-                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
-            default:
-                break
-            }
-        case 1:
-            switch sec {
-            case 4:
-                let bake = bakesPreOrder[indexPath.row]
-                cell.bakePre = bake
-                cell.bakeIn = nil
-                cell.nameLabel.text = bake.name
-                setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price)
-            default:
-                break
-            }
-        default:
-            break
+        if shopVC.pagingMenuController.currentPage == 0 {
+            let bake = bakesInBag[indexPath.row]
+            cell.bakeIn = bake
+            cell.bakePre = nil
+            setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
+        } else {
+            let bake = bakesPreOrder[indexPath.row]
+            cell.bakePre = bake
+            cell.bakeIn = nil
+            setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
         }
         return cell
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let sec = determineSections(avshop)
-        switch section {
-        case 0:
-            return sec % 2 == 1 ? "预订" : "现货"
-        case 1:
-            return sec % 2 == 1 ? nil : "预订"
-        default:
-            return nil
-        }
     }
     
     
