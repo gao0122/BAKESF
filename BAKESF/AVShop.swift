@@ -22,7 +22,10 @@ class AVShop: AVObject, AVSubclassing {
     @NSManaged var deliveryMaxDistance: NSNumber?
     @NSManaged var deliveryPreOrderDays: NSNumber?
     @NSManaged var deliveryWays: [NSNumber]?
-    
+    @NSManaged var status: Bool
+    @NSManaged var closeTime: Date?
+    @NSManaged var openTime: Date?
+
     
     static func parseClassName() -> String {
         return "Shop"

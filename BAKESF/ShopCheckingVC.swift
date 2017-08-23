@@ -123,9 +123,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         } else {
             self.setCheckOutBtn(enabled: false)
         }
-        let deliveryFee = avshop.deliveryFee as! Double
-        let fee = RealmHelper.retrieveAllBakesCost(avshopID: avshop.objectId!) + deliveryFee
-        self.checkoutBtn.setTitle(checkoutBtnText + " ¥\(fee.fixPriceTagFormat())", for: .normal)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -185,12 +182,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         }, notAct: { _ in })
     }
     
-    
     func saveOrderAndBakes() {
         let group = DispatchGroup()
         avorder = AVOrder()
         avorder.deliveryAddress = self.avaddress
-        avorder.deliveryTime = self.selectedTime?.date
+        avorder.predictionDeliveryTime = self.selectedTime?.date
         avorder.baker = self.avbaker
         avorder.shop = self.avshop
         avorder.type = (isInBag ? 0 : 1) as NSNumber
@@ -409,6 +405,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.amountLabel.text = "总计"
         let price = fee.fixPriceTagFormat()
         cell.priceLabel.text = "¥ \(price)"
+        checkoutBtn.setTitle(checkoutBtnText + " ¥\(fee.fixPriceTagFormat())", for: .normal)
         return cell
     }
     

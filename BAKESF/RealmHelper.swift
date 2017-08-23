@@ -319,12 +319,12 @@ class RealmHelper {
         if let location = retrieveLocation(by: tag) {
             let realm = try! Realm()
             try! realm.write {
-                setLocation(location, by: regeocode, poi: poi)
+                setLocation(location, by: regeocode, poi: poi, for: tag)
             }
             return location
         } else {
             let location = LocationRealm()
-            setLocation(location, by: regeocode, poi: poi)
+            setLocation(location, by: regeocode, poi: poi, for: tag)
             let realm = try! Realm()
             try! realm.write {
                 realm.add(location)
@@ -332,7 +332,7 @@ class RealmHelper {
             return location
         }
     }
-    private static func setLocation(_ location: LocationRealm, by regeocode: AMapReGeocode, poi: AMapPOI? = nil) {
+    private static func setLocation(_ location: LocationRealm, by regeocode: AMapReGeocode, poi: AMapPOI? = nil, for tag: Int) {
         guard let ac = regeocode.addressComponent else { return }
         location.detailed = ""
         location.formatted = regeocode.formattedAddress!
@@ -366,12 +366,12 @@ class RealmHelper {
         if let location = retrieveLocation(by: tag) {
             let realm = try! Realm()
             try! realm.write {
-                setLocation(location, by: avaddress)
+                setLocation(location, by: avaddress, for: tag)
             }
             return location
         } else {
             let location = LocationRealm()
-            setLocation(location, by: avaddress)
+            setLocation(location, by: avaddress, for: tag)
             let realm = try! Realm()
             try! realm.write {
                 realm.add(location)
@@ -379,7 +379,7 @@ class RealmHelper {
             return location
         }
     }
-    private static func setLocation(_ location: LocationRealm, by avaddress: AVAddress) {
+    private static func setLocation(_ location: LocationRealm, by avaddress: AVAddress, for tag: Int) {
         location.detailed = avaddress.detailed ?? ""
         location.formatted = avaddress.formatted ?? ""
         location.citycode = avaddress.citycode ?? ""

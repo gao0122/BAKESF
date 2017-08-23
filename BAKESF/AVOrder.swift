@@ -14,8 +14,11 @@ class AVOrder: AVObject, AVSubclassing {
     @NSManaged var shop: AVShop?
     @NSManaged var comment: AVCommentShop?
     @NSManaged var deliveryAddress: AVAddress?
-    @NSManaged var deliveryTime: Date?
-    @NSManaged var deliveryWay: NSNumber?
+    @NSManaged var deliveryStartTime: Date?
+    @NSManaged var deliveryEndTime: Date?
+    @NSManaged var deliveryRecievingTime: Date?
+    @NSManaged var predictionDeliveryTime: Date?
+    @NSManaged var deliveryWay: NSNumber? // 0 配送，1 自取
     @NSManaged var status: NSNumber?
     @NSManaged var type: NSNumber?
     @NSManaged var totalCost: NSNumber?
