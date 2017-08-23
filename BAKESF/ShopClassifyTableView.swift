@@ -16,4 +16,12 @@ class ShopClassifyTableView: UITableView, UIGestureRecognizerDelegate {
         return self.shouldScroll
     }
     
+    override func reloadData() {
+        if let index = self.indexPathForSelectedRow {
+            super.reloadData()
+            self.selectRow(at: index, animated: false, scrollPosition: .none)
+        }
+
+    }
+    
 }

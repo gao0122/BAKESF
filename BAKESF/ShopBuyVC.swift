@@ -129,14 +129,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         guard let cell = sender.superview?.superview as? ShopBuyBakeTableCell else { return }
         oneMoreBake(cell)
         shopVC.setShopBagState()
-        reloadClassifyTalbeView()
-    }
-    
-    func reloadClassifyTalbeView() {
-        if let index = classifyTableView.indexPathForSelectedRow {
-            classifyTableView.reloadData()
-            classifyTableView.selectRow(at: index, animated: false, scrollPosition: .none)
-        }
+        classifyTableView.reloadData()
     }
     
     func setShopCellFromNoneToOne(_ cell: ShopBuyBakeTableCell, amount: Int = 1) {
@@ -176,7 +169,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         guard let cell = sender.superview?.superview as? ShopBuyBakeTableCell else { return }
         minusOneBake(cell)
         shopVC.setShopBagState()
-        reloadClassifyTalbeView()
+        classifyTableView.reloadData()
     }
     
     func minusOneBake(_ cell: ShopBuyBakeTableCell) {

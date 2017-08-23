@@ -108,16 +108,9 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         guard let cell = sender.superview?.superview as? ShopPreBakeTableCell else { return }
         oneMoreBake(cell)
         shopVC.setShopBagState()
-        reloadClassifyTalbeView()
+        classifyTableView.reloadData()
     }
-    
-    func reloadClassifyTalbeView() {
-        if let index = classifyTableView.indexPathForSelectedRow {
-            classifyTableView.reloadData()
-            classifyTableView.selectRow(at: index, animated: false, scrollPosition: .none)
-        }
-    }
-    
+        
     func setShopCellFromNoneToOne(_ cell: ShopPreBakeTableCell, amount: Int = 1) {
         cell.amountLabel.isHidden = false
         cell.minusOneBtn.isHidden = false
@@ -155,7 +148,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         guard let cell = sender.superview?.superview as? ShopPreBakeTableCell else { return }
         minusOneBake(cell)
         shopVC.setShopBagState()
-        reloadClassifyTalbeView()
+        classifyTableView.reloadData()
     }
     
     func minusOneBake(_ cell: ShopPreBakeTableCell) {
