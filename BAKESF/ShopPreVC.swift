@@ -41,6 +41,9 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
 
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+    }
+    
     func loadAVBakes() {
         let shopQuery = AVBake.query()
         shopQuery.whereKey("shop", equalTo: avshop)
@@ -99,9 +102,19 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             bakePre.amount = 1
         }
         avbakesPre[bake.objectId!] = bakePre
-        printit(avbakesPre)
+        printit(avbakesPre.count)
     }
     
+    func reloadAVBakeOrder() {
+        if avbakes == nil { return }
+        for bake in avbakes {
+            let id = bake.objectId!
+            if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: id) {
+                assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
+            }
+        }
+    }
+
     // one more button pressed
     func oneMoreBtnPressed(_ sender: UIButton) {
         if shopVC.menuAniState == .collapsed { shopVC.animateMenu(state: shopVC.menuAniState) }
@@ -243,7 +256,8 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             let price = bakee.price!
             let monthly = bakee.monthly as! Int
             let amount = bakee.amountPreLimit as! Int
-            let amountPreOrder = RealmHelper.retrieveOneBakePreOrder(by: bakee.objectId!)?.amount ?? 0
+            let bakePreOrder = RealmHelper.retrieveOneBakePreOrder(by: bakee.objectId!)
+            let amountPreOrder = bakePreOrder?.amount ?? 0
             
             if bakee.image == nil { printit(any: "\n\n\n\n\n\n\(bakee.name!)\n\n\n\n\n\n") }
             

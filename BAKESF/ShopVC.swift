@@ -86,6 +86,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     let alwaysShowBag = true
     var lastPagingPage = 0
     
+    let emptyBagText = "购物袋空空的"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         preInit()
@@ -255,10 +257,12 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                 switch self.pagingMenuController.currentPage {
                 case 0:
                     if self.lastPagingPage == 1 {
+                        self.shopBuyVC.reloadAVBakeOrder()
                         self.setShopBagState()
                     }
                 case 1:
                     if self.lastPagingPage == 0 {
+                        self.shopPreVC.reloadAVBakeOrder()
                         self.setShopBagState()
                     }
                 default:
@@ -345,7 +349,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             self.checkBtn.setTitle("选好了", for: .normal)
             self.checkBtn.backgroundColor = .appleGreen
             self.emptyBagLabel.alpha = 0
-            self.emptyBagLabel.text = "购物车空空的"
+            self.emptyBagLabel.text = emptyBagText
             self.rightLowestFeeLabel.text = ""
             self.rightLowestFeeLabel.alpha = 0
             self.rightDeliveryFeeLabel.alpha = 0
@@ -369,7 +373,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             self.checkBtn.setTitle("", for: .normal)
             self.checkBtn.backgroundColor = .checkBtnGray
             self.emptyBagLabel.alpha = 1
-            self.emptyBagLabel.text = "购物车空空的"
+            self.emptyBagLabel.text = emptyBagText
             self.rightLowestFeeLabel.text = "¥\(lowest.fixPriceTagFormat()) 起送"
             self.rightLowestFeeLabel.alpha = 1
             self.rightDeliveryFeeLabel.alpha = 1

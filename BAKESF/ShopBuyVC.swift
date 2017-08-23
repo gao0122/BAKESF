@@ -44,6 +44,10 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+
+    }
+    
     func loadAVBakes() {
         let shopQuery = AVBake.query()
         shopQuery.whereKey("shop", equalTo: avshop)
@@ -119,9 +123,18 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             bakeIn.amount = 1
         }
         avbakesIn[bake.objectId!] = bakeIn
-        printit(avbakesIn)
+        printit(avbakesIn.count)
     }
 
+    func reloadAVBakeOrder() {
+        if avbakes == nil { return }
+        for bake in avbakes {
+            let id = bake.objectId!
+            if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: id) {
+                assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
+            }
+        }
+    }
     
     // one more button pressed
     func oneMoreBtnPressed(_ sender: UIButton) {
@@ -264,7 +277,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             let price = bakee.price!
             let monthly = bakee.monthly as! Int
             let amount = bakee.amount as! Int
-            let amountInBag = RealmHelper.retrieveOneBakeInBag(by: bakee.objectId!)?.amount ?? 0
+            let bakeInBag = RealmHelper.retrieveOneBakeInBag(by: bakee.objectId!)
+            let amountInBag = bakeInBag?.amount ?? 0
             
             if bakee.image == nil { printit(any: "\n\n\n\n\n\n\(bakee.name!)\n\n\n\n\n\n") }
 

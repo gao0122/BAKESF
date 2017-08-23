@@ -47,6 +47,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var deliveryTimes = [String]()
     var selectedTime: DateComponents?
     
+    var timer = Timer()
     let checkoutBtnText = "支付全部"
     
     override func viewDidLoad() {
@@ -81,6 +82,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.checkNavBar(_:)), userInfo: nil, repeats: false)
         if checkCurrentUser() {
             retrieveBaker(withID: userRealm.id, completion: {
                 object, error in
@@ -127,6 +129,14 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override func viewWillDisappear(_ animated: Bool) {
         
+    }
+    
+    func checkNavBar(_ sender: Any) {
+        if (navigationController?.navigationBar.isHidden)! {
+            navigationController?.setNavigationBarHidden(false, animated: true)
+        }
+        timer.invalidate()
+        timer = Timer()
     }
     
     func setCheckOutBtn(enabled: Bool) {
@@ -553,6 +563,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 switch row {
                 case bakes.count + 1:
                     // red packet
+                    if userRealm == nil { return }
                     if redPacketVC == nil {
                         redPacketVC = RedPacketVC.instantiateFromStoryboard()
                     }
