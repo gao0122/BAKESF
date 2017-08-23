@@ -334,6 +334,7 @@ class RealmHelper {
     }
     private static func setLocation(_ location: LocationRealm, by regeocode: AMapReGeocode, poi: AMapPOI? = nil, for tag: Int) {
         guard let ac = regeocode.addressComponent else { return }
+        location.tag = tag
         location.detailed = ""
         location.formatted = regeocode.formattedAddress!
         location.citycode = ac.citycode!
@@ -380,6 +381,7 @@ class RealmHelper {
         }
     }
     private static func setLocation(_ location: LocationRealm, by avaddress: AVAddress, for tag: Int) {
+        location.tag = tag
         location.detailed = avaddress.detailed ?? ""
         location.formatted = avaddress.formatted ?? ""
         location.citycode = avaddress.citycode ?? ""
