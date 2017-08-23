@@ -109,8 +109,8 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.setNavigationBarHidden(true, animated: true)
-        cityTableView.isHidden = true
-        helperView.isHidden = true
+        hideCityTableView()
+        hideHelperView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -190,6 +190,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     @IBAction func relocateBtnPressed(_ sender: Any) {
         shouldSearchAround = true
         showHelperView(with: locatingText)
+        hideCityTableView()
         locateOnce()
     }
     
@@ -200,12 +201,20 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     func showCityTableView() {
         cityTableView.isHidden = false
         bakerDATableView.isHidden = true
-        helperView.isHidden = true
+        hideHelperView()
+    }
+    
+    func hideCityTableView() {
+        cityTableView.isHidden = true
     }
     
     func showHelperView(with text: String) {
         helperView.isHidden = false
         helperLabel.text = text
+    }
+    
+    func hideHelperView() {
+        helperView.isHidden = true
     }
     
 
@@ -252,14 +261,14 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             self.showHelperView(with: noResultText)
             self.tableView.isHidden = true
         } else {
-            self.helperView.isHidden = true
+            self.hideHelperView()
             self.tableView.isHidden = false
             self.tableView.reloadData()
         }
     }
     
     func onReGeocodeSearchDone(_ request: AMapReGeocodeSearchRequest!, response: AMapReGeocodeSearchResponse!) {
-        self.helperView.isHidden = true
+        self.hideHelperView()
         guard let regeocode = response.regeocode else {
             // TODO: - no results
             
@@ -452,7 +461,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             cityBtn.setTitle(city, for: .normal)
             sizeToFitCityBtn()
             shouldSearchAround = false
-            cityTableView.isHidden = true
+            hideCityTableView()
             doPOIKeywordSearch()
             tableView.deselectRow(at: indexPath, animated: true)
         case 2:

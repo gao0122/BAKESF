@@ -396,10 +396,21 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+    func retrieveBakesKindsCount() -> Int {
+        let shopID = avshop.objectId!
+        if pagingMenuController.currentPage == 0 {
+            return RealmHelper.retrieveBakesInBag(avshopID: shopID).count
+        } else {
+            return RealmHelper.retrieveBakesPreOrder(avshopID: shopID).count
+        }
+    }
+    
     func setShopBagStateAndTables() {
         setShopBagState()
         shopBuyVC.bakeTableView.reloadData()
+        shopBuyVC.classifyTableView.reloadData()
         shopPreVC.bakeTableView.reloadData()
+        shopPreVC.classifyTableView.reloadData()
     }
 
     func animateShopIfNeeded() {
@@ -458,7 +469,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             shopBagVC.reloadShopBagEmbedTable()
             shopBagVC.numOfSections = shopBagVC.tableView.numberOfSections
             // compute the height of table view according to the amount of bakes
-            let bakeCount = retrieveBakesCount()
+            let bakeCount = retrieveBakesKindsCount()
             let bakesHeight = CGFloat(bakeCount) * shopBagVC.cellHeight
             let oy = view.frame.height - bagBarHeight - shopBagVC.tableView.frame.origin.y - bakesHeight
             let y = oy < originBagViewY ? originBagViewY : oy

@@ -26,8 +26,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     var avbakesIn = [String: AVBakeIn]()
     var tappedAtTagTableview = false
     
-    let cellAmountLabelheight: CGFloat = 15
-    
+
     var bakeLiveQuery: AVLiveQuery!
 
     override func viewDidLoad() {
@@ -35,6 +34,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         
         avtag = avshop.tags!
         classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
+        classifyTableView.rowHeight = UITableViewAutomaticDimension
+        classifyTableView.estimatedRowHeight = 58
         
         for bake in RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!) {
             avbakesInID[bake.id] = bake
@@ -110,14 +111,15 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func assignAVBakeOrder(bakeRealm: BakeInBagRealm?, bake: AVBake) {
-        let bakePre = AVBakeIn()
-        bakePre.bake = bake
+        let bakeIn = AVBakeIn()
+        bakeIn.bake = bake
         if let bakeRealm = bakeRealm {
-            bakePre.amount = bakeRealm.amount as NSNumber
+            bakeIn.amount = bakeRealm.amount as NSNumber
         } else {
-            bakePre.amount = 1
+            bakeIn.amount = 1
         }
-        avbakesIn[bake.objectId!] = bakePre
+        avbakesIn[bake.objectId!] = bakeIn
+        printit(avbakesIn)
     }
 
     
@@ -183,10 +185,11 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             if RealmHelper.minueOneBake(bakeRealm) {
                 setShopCellToNone(cell)
                 avbakesIn[bake.objectId!] = nil
+                printit(avbakesIn)
             } else {
                 let amount = bakeRealm.amount
                 cell.amountLabel.text = "\(amount)"
-                assignAVBakeOrder(bakeRealm: nil, bake: bake)
+                assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
             }
         }
     }
@@ -241,11 +244,17 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
                 } else {
                     cell.amountLabel.text = "\(count)"
                 }
-                cell.amountLabel.layer.cornerRadius = cellAmountLabelheight / 2
+                let height = cell.amountLabel.frame.size.height
+                cell.amountLabel.layer.cornerRadius = height / 2
                 cell.amountLabel.layer.masksToBounds = true
                 cell.amountLabel.sizeToFit()
-                cell.amountLabel.frame.size.height = cellAmountLabelheight
-                cell.amountLabel.frame.size.width += 9
+                var width = cell.amountLabel.frame.size.width + 7
+                if width < height {
+                    width = height
+                }
+                cell.amountLabelHeight.constant = height
+                cell.amountLabelWidth.constant = width
+                cell.amountLabel.updateConstraintsIfNeeded()
                 cell.amountLabel.isHidden = false
             } else {
                 cell.amountLabel.isHidden = true

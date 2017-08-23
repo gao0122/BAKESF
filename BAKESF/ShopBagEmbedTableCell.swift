@@ -18,6 +18,7 @@ class ShopBagEmbedTableCell: UITableViewCell {
     
     var bakeIn: BakeInBagRealm?
     var bakePre: BakePreOrderRealm?
+    var bake: AVBake?
 
 }
 

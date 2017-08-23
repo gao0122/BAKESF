@@ -12,8 +12,10 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     @IBOutlet weak var tableView: UITableView!
     
-    var bakesInBag: [BakeInBagRealm]!
-    var bakesPreOrder: [BakePreOrderRealm]!
+    var bakesInBag: [BakeInBagRealm]?
+    var bakesPreOrder: [BakePreOrderRealm]?
+    var avbakesIn: [AVBakeIn]?
+    var avbakesPre: [AVBakePre]?
     
     var shopVC: ShopVC!
     var avshop: AVShop!
@@ -25,9 +27,6 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        bakesInBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _, _ in return true})
-        bakesPreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { _, _ in return true})
         
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
     }
@@ -43,12 +42,19 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     func reloadShopBagEmbedTable() {
-        if shopVC.pagingMenuController.currentPage == 0 {
-            bakesInBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _,_ in return true })
-        } else {
-            bakesPreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { _,_ in return true })
-        }
+        if shopVC.pagingMenuController == nil { return }
+        reloadBakes()
         tableView.reloadData()
+    }
+    
+    func reloadBakes() {
+        if shopVC.pagingMenuController.currentPage == 0 {
+            avbakesIn = shopVC.shopBuyVC.avbakesIn.values.sorted(by: { b1, b2 in return b1.bake!.objectId! < b2.bake!.objectId! })
+            bakesInBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { b1, b2 in return b1.id < b2.id })
+        } else {
+            avbakesPre = shopVC.shopPreVC.avbakesPre.values.sorted(by: { b1, b2 in return b1.bake!.objectId! < b2.bake!.objectId! })
+            bakesPreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { b1, b2 in return b1.id < b2.id })
+        }
     }
     
     // MARK: - Outlet action
@@ -74,10 +80,12 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         if let bake = cell.bakePre {
             RealmHelper.addOneMoreBake(bake)
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
+            shopVC.shopPreVC.assignAVBakeOrder(bakeRealm: bake, bake: cell.bake!)
         }
         if let bake = cell.bakeIn {
             RealmHelper.addOneMoreBake(bake)
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
+            shopVC.shopBuyVC.assignAVBakeOrder(bakeRealm: bake, bake: cell.bake!)
         }
         shopVC.setShopBagStateAndTables()
     }
@@ -85,39 +93,41 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func minusOneBtnPressed(_ sender: UIButton) {
         guard let cell = sender.superview?.superview as? ShopBagEmbedTableCell else { return }
         if let bake = cell.bakePre {
+            let id = bake.id
             if RealmHelper.minueOneBake(bake) {
+                shopVC.shopBuyVC.avbakesIn[id] = nil
+                printit(shopVC.shopPreVC.avbakesPre)
                 if let indexPath = tableView.indexPath(for: cell) {
                     tableView.beginUpdates()
                     tableView.deleteRows(at: [indexPath], with: .top)
-                    if RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count == 0 {
-                        if tableView.numberOfSections == 2 {
-                            tableView.deleteSections([1], with: .top)
-                        } else {
-                            tableView.deleteSections([0], with: .top)
-                        }
-                    }
+                    shopVC.shopPreVC.avbakesPre[id] = nil
+                    reloadBakes()
                     tableView.endUpdates()
                 } else {
+                    shopVC.shopBuyVC.avbakesIn[id] = nil
                     reloadShopBagEmbedTable()
                 }
             } else {
                 setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
+                shopVC.shopPreVC.assignAVBakeOrder(bakeRealm: bake, bake: cell.bake!)
             }
         }
         if let bake = cell.bakeIn {
+            let id = bake.id
             if RealmHelper.minueOneBake(bake) {
+                shopVC.shopBuyVC.avbakesIn[id] = nil
+                printit(shopVC.shopBuyVC.avbakesIn)
                 if let indexPath = tableView.indexPath(for: cell) {
                     tableView.beginUpdates()
                     tableView.deleteRows(at: [indexPath], with: .top)
-                    if RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count == 0 {
-                        tableView.deleteSections([0], with: .top)
-                    }
+                    reloadBakes()
                     tableView.endUpdates()
                 } else {
                     reloadShopBagEmbedTable()
                 }
             } else {
                 setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
+                shopVC.shopBuyVC.assignAVBakeOrder(bakeRealm: bake, bake: cell.bake!)
             }
         }
         shopVC.setShopBagStateAndTables()
@@ -138,21 +148,24 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if shopVC.pagingMenuController == nil { return 0 }
         if shopVC.pagingMenuController.currentPage == 0 {
-            return RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).count
+            return bakesInBag?.count ?? 0
         } else {
-            return RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).count
+            return bakesPreOrder?.count ?? 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopBagEmbedTableCell") as! ShopBagEmbedTableCell
+        let row = indexPath.row
         if shopVC.pagingMenuController.currentPage == 0 {
-            let bake = bakesInBag[indexPath.row]
+            guard let bake = bakesInBag?[row] else { return cell }
+            cell.bake = avbakesIn![row].bake!
             cell.bakeIn = bake
             cell.bakePre = nil
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
         } else {
-            let bake = bakesPreOrder[indexPath.row]
+            guard let bake = bakesPreOrder?[indexPath.row] else { return cell }
+            cell.bake = avbakesPre![row].bake!
             cell.bakePre = bake
             cell.bakeIn = nil
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)

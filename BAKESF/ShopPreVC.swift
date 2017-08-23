@@ -25,13 +25,14 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     var avbakesPre = [String: AVBakePre]()
     var tappedAtTagTableview = false
 
-    let cellAmountLabelheight: CGFloat = 15
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         avtag = avshop.tags!
         classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
+        classifyTableView.rowHeight = UITableViewAutomaticDimension
+        classifyTableView.estimatedRowHeight = 58
 
         for bake in RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!) {
             avbakesPreID[bake.id] = bake
@@ -98,6 +99,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             bakePre.amount = 1
         }
         avbakesPre[bake.objectId!] = bakePre
+        printit(avbakesPre)
     }
     
     // one more button pressed
@@ -162,6 +164,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             if RealmHelper.minueOneBake(bakeRealm) {
                 setShopCellToNone(cell)
                 avbakesPre[bake.objectId!] = nil
+                printit(avbakesPre)
             } else {
                 let amount = bakeRealm.amount
                 cell.amountLabel.text = "\(amount)"
@@ -220,11 +223,17 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                 } else {
                     cell.amountLabel.text = "\(count)"
                 }
-                cell.amountLabel.layer.cornerRadius = cellAmountLabelheight / 2
+                let height = cell.amountLabel.frame.size.height
+                cell.amountLabel.layer.cornerRadius = height / 2
                 cell.amountLabel.layer.masksToBounds = true
                 cell.amountLabel.sizeToFit()
-                cell.amountLabel.frame.size.height = cellAmountLabelheight
-                cell.amountLabel.frame.size.width += 9
+                var width = cell.amountLabel.frame.size.width + 7
+                if width < height {
+                    width = height
+                }
+                cell.amountLabelHeight.constant = height
+                cell.amountLabelWidth.constant = width
+                cell.amountLabel.updateConstraintsIfNeeded()
                 cell.amountLabel.isHidden = false
             } else {
                 cell.amountLabel.isHidden = true
@@ -314,7 +323,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             bakeTableView.selectRow(at: IndexPath(row: 0, section: indexPath.row), animated: true, scrollPosition: .top)
         case 1:
             let cell = tableView.cellForRow(at: indexPath) as! ShopPreBakeTableCell
-        // TODO: - bake selection
+            // TODO: - bake selection
         default:
             break
         }

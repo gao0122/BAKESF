@@ -12,6 +12,8 @@ class ShopClassifyTableCell: UITableViewCell {
     
     @IBOutlet weak var classLabel: UILabel!
     @IBOutlet weak var amountLabel: UILabel!
+    @IBOutlet weak var amountLabelWidth: NSLayoutConstraint!
+    @IBOutlet weak var amountLabelHeight: NSLayoutConstraint!
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         let color = self.amountLabel.backgroundColor
