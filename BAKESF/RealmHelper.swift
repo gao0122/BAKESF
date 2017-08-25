@@ -336,7 +336,6 @@ class RealmHelper {
         guard let ac = regeocode.addressComponent else { return }
         location.tag = tag
         location.detailed = ""
-        location.formatted = regeocode.formattedAddress!
         location.citycode = ac.citycode!
         location.province = ac.province!
         location.city = ac.city!
@@ -361,6 +360,7 @@ class RealmHelper {
             location.street = nil
             location.address = addressText + location.streetName + location.streetNumber
         }
+        location.formatted = addressText + location.aoiname
     }
     
     static func addLocation(by avaddress: AVAddress, for tag: Int) -> LocationRealm {

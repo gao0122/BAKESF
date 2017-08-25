@@ -75,19 +75,22 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         provs = cities.keys.sorted(by: { $0 < $1 })
         switch showSegueID {
         case "showDeliveryAddressSelectionVCFromDAEditingVC":
+            tag = 1
             //currentAddressTextField.isUserInteractionEnabled = true
             //currentAddressNameTextField.isUserInteractionEnabled = true
             unwindSegueID = "unwindToDeliveryAddressEditingVCFromDASelectionVC"
-            tag = 1
+            locationRealm = RealmHelper.retrieveLocation(by: tag)
+            locateOnce()
         case "showDASelctionVCFromHomeVC", "showDASelctionVCFromHomeVCNaN":
+            tag = 0
             currentAddressTextField.isUserInteractionEnabled = false
             currentAddressNameTextField.isUserInteractionEnabled = false
             unwindSegueID = "unwindToHomeVCFromDASelectionVC"
-            tag = 0
+            locationRealm = RealmHelper.retrieveLocation(by: tag)
+            doPOIAroundSearch()
         default:
             break
         }
-        locationRealm = RealmHelper.retrieveLocation(by: tag)
 
         relocateBtn.layer.borderColor = relocateBtn.currentTitleColor.cgColor
         relocateBtn.layer.borderWidth = 1
@@ -102,7 +105,6 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         tableView.estimatedRowHeight = 56
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
-        doPOIAroundSearch()
         currentLocationView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(currentLocationSelected(_:))))
         
     }
@@ -195,7 +197,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
     
     @IBAction func cityBtnPressed(_ sender: Any) {
-        showCityTableView()
+        cityTableView.isHidden ? showCityTableView() : hideCityTableView()
     }
     
     func showCityTableView() {
@@ -267,6 +269,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         }
     }
     
+    
     func onReGeocodeSearchDone(_ request: AMapReGeocodeSearchRequest!, response: AMapReGeocodeSearchResponse!) {
         self.hideHelperView()
         guard let regeocode = response.regeocode else {
@@ -278,6 +281,9 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         if fromCellSelection {
             unwindFromCellSelection(by: regeocode)
         } else {
+            if tag == 1 {
+                self.locationRealm = RealmHelper.addLocation(by: regeocode, poi: selectedPOI, for: tag)
+            }
             self.showHelperView(with: searchingText)
             self.updateCurrentLocationView(by: regeocode)
             self.doPOIAroundSearch(by: regeocode)
@@ -337,6 +343,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     
     private func doPOIAroundSearch(by regeocode: AMapReGeocode? = nil) {
         bakerDATableView.isHidden = true
+        hideCityTableView()
         let request = AMapPOIAroundSearchRequest()
         if let location = regeocode?.pois.first?.location {
             request.location = location
@@ -356,6 +363,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     
     private func doPOIKeywordSearch() {
         bakerDATableView.isHidden = true
+        hideCityTableView()
         let request = AMapPOIKeywordsSearchRequest()
         request.requireExtension = true
         request.keywords = searchBar.text!

@@ -14,6 +14,6 @@ class DeliveryTimeViewCell: UITableViewCell {
     @IBOutlet weak var deliveryFeeLabel: UILabel!
     @IBOutlet weak var selectedIcon: UILabel!
     
-    var components: DateComponents!
+    var components: DateComponents?
    
 }

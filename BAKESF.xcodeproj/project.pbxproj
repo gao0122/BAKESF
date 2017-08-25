@@ -58,6 +58,9 @@
 		008F0AEF1F2C87EA00700C0D /* MeSettingPwdVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */; };
 		008F0AF11F2CBD7100700C0D /* MeSettingNameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AF01F2CBD7100700C0D /* MeSettingNameVC.swift */; };
 		008F74171F38670700AFEC9E /* LocationRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F74161F38670700AFEC9E /* LocationRealm.swift */; };
+		00988AE41F4ECC2700A9E6E5 /* AVBakeDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00988AE31F4ECC2700A9E6E5 /* AVBakeDetail.swift */; };
+		00988AE61F4ECCE300A9E6E5 /* AVBakeAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00988AE51F4ECCE300A9E6E5 /* AVBakeAttribute.swift */; };
+		00988AE81F4ECCFF00A9E6E5 /* AVBakeAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00988AE71F4ECCFF00A9E6E5 /* AVBakeAttributes.swift */; };
 		009BA0131F469D5800C7ABF7 /* RedPacketVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0121F469D5800C7ABF7 /* RedPacketVC.swift */; };
 		009BA0171F46C61B00C7ABF7 /* RedPacketTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0161F46C61B00C7ABF7 /* RedPacketTableViewCell.swift */; };
 		009BA0191F46C67100C7ABF7 /* AVRedPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0181F46C67100C7ABF7 /* AVRedPacket.swift */; };
@@ -157,6 +160,9 @@
 		008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingPwdVC.swift; sourceTree = "<group>"; };
 		008F0AF01F2CBD7100700C0D /* MeSettingNameVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingNameVC.swift; sourceTree = "<group>"; };
 		008F74161F38670700AFEC9E /* LocationRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationRealm.swift; sourceTree = "<group>"; };
+		00988AE31F4ECC2700A9E6E5 /* AVBakeDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBakeDetail.swift; sourceTree = "<group>"; };
+		00988AE51F4ECCE300A9E6E5 /* AVBakeAttribute.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBakeAttribute.swift; sourceTree = "<group>"; };
+		00988AE71F4ECCFF00A9E6E5 /* AVBakeAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBakeAttributes.swift; sourceTree = "<group>"; };
 		009BA0121F469D5800C7ABF7 /* RedPacketVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedPacketVC.swift; sourceTree = "<group>"; };
 		009BA0161F46C61B00C7ABF7 /* RedPacketTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RedPacketTableViewCell.swift; sourceTree = "<group>"; };
 		009BA0181F46C67100C7ABF7 /* AVRedPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVRedPacket.swift; sourceTree = "<group>"; };
@@ -264,6 +270,9 @@
 				00B4709A1F0404DD00725C95 /* AVBaker.swift */,
 				00455A841F15D4F5009F440F /* AVShop.swift */,
 				00455A881F193078009F440F /* AVBake.swift */,
+				00988AE51F4ECCE300A9E6E5 /* AVBakeAttribute.swift */,
+				00988AE71F4ECCFF00A9E6E5 /* AVBakeAttributes.swift */,
+				00988AE31F4ECC2700A9E6E5 /* AVBakeDetail.swift */,
 				00BF12661F28AF2400F67DF8 /* AVBakeIn.swift */,
 				00BF12641F28AE4400F67DF8 /* AVBakePre.swift */,
 				006B2E511F1B514B00C10BB9 /* AVOrder.swift */,
@@ -670,12 +679,15 @@
 				00D3AB661F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift in Sources */,
 				0028C46D1F383C13008A432C /* AMapLocationManager+Extensions.swift in Sources */,
 				00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */,
+				00988AE41F4ECC2700A9E6E5 /* AVBakeDetail.swift in Sources */,
+				00988AE81F4ECCFF00A9E6E5 /* AVBakeAttributes.swift in Sources */,
 				0044B0AC1ED17B3C003DE5AF /* HomeShopTableViewCell.swift in Sources */,
 				00D23B9A1F14AF66002E45B7 /* UIView+Extensions.swift in Sources */,
 				000D13781EFF862700A19D5A /* Constants.swift in Sources */,
 				00455A8B1F19E81D009F440F /* BakeInBagRealm.swift in Sources */,
 				002659A41F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift in Sources */,
 				006A3E201F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift in Sources */,
+				00988AE61F4ECCE300A9E6E5 /* AVBakeAttribute.swift in Sources */,
 				00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */,
 				0034EE361EE9116B005300AE /* ShopBuyVC.swift in Sources */,
 				00264E691F2F63A700D83073 /* ShopCheckBakeTableCell.swift in Sources */,

@@ -90,12 +90,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        switch showSegueID {
-        case "showLogin", "showLoginFromShopChecking": // from mevc
-            navigationController?.setNavigationBarHidden(false, animated: animated)
-        default:
-            break
-        }
+
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -321,8 +316,12 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                     }
                 }
             } else {
-                // please input verified phone number
-                self.view.notify(text: "请输入接受验证的手机号码", color: .alertOrange, nav: self.navigationController?.navigationBar)
+                if self.phoneNum == "" {
+                    self.view.notify(text: "请先获取验证码", color: .alertOrange, nav: self.navigationController?.navigationBar)
+                } else {
+                    // please input verified phone number
+                    self.view.notify(text: "请输入接受验证的手机号码", color: .alertOrange, nav: self.navigationController?.navigationBar)
+                }
             }
         } else {
             // please input the right phone number

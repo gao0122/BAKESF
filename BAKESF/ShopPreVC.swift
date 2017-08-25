@@ -14,6 +14,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
 
     @IBOutlet weak var classifyTableView: ShopClassifyTableView!
     @IBOutlet weak var bakeTableView: ShopPreBakeTableView!
+    @IBOutlet weak var helperView: UIView!
 
     var shopVC: ShopVC!
     var avshop: AVShop!
@@ -21,7 +22,6 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     var avbakes: [AVBake]!
     var avbakesTag = [String: [AVBake]]()
     
-    var avbakesPreID = [String: BakePreOrderRealm]()
     var avbakesPre = [String: AVBakePre]()
     var tappedAtTagTableview = false
 
@@ -29,14 +29,13 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.bringSubview(toFront: helperView)
+        helperView.isHidden = true
         avtag = avshop.tags!
         classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
         classifyTableView.rowHeight = UITableViewAutomaticDimension
         classifyTableView.estimatedRowHeight = 58
 
-        for bake in RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!) {
-            avbakesPreID[bake.id] = bake
-        }
         loadAVBakes()
 
     }
@@ -81,8 +80,8 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         for bake in self.avbakes {
             let id = bake.objectId!
             let tag = bake.tag!
-            if avbakesPreID.keys.contains(id) {
-                assignAVBakeOrder(bakeRealm: avbakesPreID[id]!, bake: bake)
+            if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: id) {
+                assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
             }
             if let _ = self.avbakesTag[tag] {
                 self.avbakesTag[tag]!.append(bake)
@@ -102,7 +101,6 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             bakePre.amount = 1
         }
         avbakesPre[bake.objectId!] = bakePre
-        printit(avbakesPre.count)
     }
     
     func reloadAVBakeOrder() {

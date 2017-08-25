@@ -10,6 +10,6 @@ import UIKit
 
 class DeliveryTimeDateViewCell: UITableViewCell {
  
-    var components: DateComponents!
+    var components: DateComponents?
     
 }

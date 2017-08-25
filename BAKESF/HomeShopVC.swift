@@ -13,6 +13,8 @@ import AVOSCloudLiveQuery
 import SDWebImage
 
 class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate {
+    
+    let TEST = true
 
     @IBOutlet weak var tableView: HomeShopTableView!
     
@@ -21,6 +23,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     var homeVC: HomeVC!
     let sellersPerPage = 5
     var currentPage = 0
+    
     
     lazy var refresher: UIRefreshControl = {
         let refresher = UIRefreshControl()
@@ -63,8 +66,8 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     func loadShops() {
         loadShops({
             shops, error in
-            if error == nil {
-                self.avshops = shops!
+            if let shops = shops {
+                self.avshops = shops
                 self.tableView.reloadData()
             } else {
                 // load failed
@@ -76,9 +79,9 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         loadShops({
             shops, error in
             self.refresher.endRefreshing()
-            if error == nil {
+            if let shops = shops {
                 // refreshed
-                self.avshops = shops!
+                self.avshops = shops
                 self.tableView.reloadData()
             } else {
                 // failed
@@ -94,13 +97,24 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         let sellersQuery = AVShop.query()
         sellersQuery.includeKey("baker") // key code: including all data inside Baker table but not only a pointer
         sellersQuery.includeKey("bgImage")
+        sellersQuery.includeKey("address")
         sellersQuery.includeKey("headphoto")
         sellersQuery.limit = sellersPerPage
         sellersQuery.skip = currentPage * sellersPerPage
         sellersQuery.findObjectsInBackground({
             objects, error in
-            if error == nil {
-                completion(objects as? [AVShop], nil)
+            if var shops = objects as? [AVShop] {
+                for shop in shops {
+                    let open = Date().isTimeBetween(from: shop.openTime, to: shop.closeTime)
+                    let status = shop.status
+                    if !open || !status {
+                        if !self.TEST { shops.remove(at: shops.index(of: shop)!) }
+                    }
+                }
+                if shops.count == 0 {
+                    self.homeVC.showLocateFailedViewAndStopIndicator(with: self.homeVC.noShopsText)
+                }
+                completion(shops, error)
             } else {
                 completion(nil, error)
             }

@@ -21,6 +21,9 @@ class AVBake: AVObject, AVSubclassing {
     @NSManaged var amountPreLimit: NSNumber? 
     @NSManaged var price: NSNumber?
     @NSManaged var priority: NSNumber?
+    @NSManaged var attributes: [String]?
+    @NSManaged var defaultBake: AVBakeDetail?
+
     
     static func parseClassName() -> String {
         return "Bake"

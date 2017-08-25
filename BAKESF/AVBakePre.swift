@@ -11,6 +11,7 @@ import AVOSCloud
 class AVBakePre: AVObject, AVSubclassing {
     
     @NSManaged var bake: AVBake?
+    @NSManaged var baked: AVBakeDetail?
     @NSManaged var order: AVOrder?
     @NSManaged var amount: NSNumber?
     @NSManaged var pickupTime: Date?

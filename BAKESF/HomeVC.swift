@@ -44,6 +44,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     var searchBarWidth: CGFloat!
     var hasSetShopView = false
     
+    let noShopsText = "未在该城市发现私房"
+    let locateErrorText = "出错啦！"
     
     private let mapSearch = AMapSearchAPI()!
     private let locationManager = AMapLocationManager()
@@ -144,6 +146,9 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     }
     
     @IBAction func relocateBtnPressed(_ sender: Any) {
+        if helperLabel.text == noShopsText {
+            homeShopVC.loadShops()
+        }
         indicatorStartAni()
         locateOnce()
     }
@@ -155,6 +160,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     
     
     func indicatorStartAni() {
+        helperLabel.text = ""
         indicatorView.startAnimating()
         indicatorSuperView.isHidden = false
     }
@@ -165,11 +171,13 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     }
 
     func hideLocateFailedViewAndStopIndicator() {
+        if helperLabel.text == noShopsText { return }
         locateFailedView.isHidden = true
         indicatorStopAni()
     }
     
-    func showLocateFailedViewAndStopIndicator() {
+    func showLocateFailedViewAndStopIndicator(with text: String) {
+        helperLabel.text = text
         locateFailedView.isHidden = false
         indicatorStopAni()
     }
@@ -184,7 +192,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     func onReGeocodeSearchDone(_ request: AMapReGeocodeSearchRequest!, response: AMapReGeocodeSearchResponse!) {
         guard let regeocode = response.regeocode else {
             // TODO: - no results
-            self.showLocateFailedViewAndStopIndicator()
+            self.showLocateFailedViewAndStopIndicator(with: locateErrorText)
             return
         }
         locatedOnce = true
@@ -218,7 +226,9 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
                 } else {
                     printit("没有错误：\(error.code) - \(error.localizedDescription)")
                 }
-                self?.showLocateFailedViewAndStopIndicator()
+                if let vc = self {
+                    vc.showLocateFailedViewAndStopIndicator(with: vc.locateErrorText)
+                }
                 return
             }
             
@@ -239,7 +249,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     }
     
     func aMapSearchRequest(_ request: Any!, didFailWithError error: Error!) {
-        showLocateFailedViewAndStopIndicator()
+        showLocateFailedViewAndStopIndicator(with: locateErrorText)
         var text = "出错啦！"
         if let error = error as NSError? {
             switch error.code {
@@ -371,7 +381,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
                         printit("Retrieve Baker Error: \(error.localizedDescription)")
                         self.helperLabel.text = "登录失败。"
                         if self.locatedOnce && self.indicatorView.isAnimating {
-                            self.showLocateFailedViewAndStopIndicator()
+                            self.showLocateFailedViewAndStopIndicator(with: self.locateErrorText)
                         }
                     } else {
                         if let baker = object as? AVBaker {
@@ -381,7 +391,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
                             }
                         } else {
                             if self.locatedOnce && self.indicatorView.isAnimating {
-                                self.showLocateFailedViewAndStopIndicator()
+                                self.showLocateFailedViewAndStopIndicator(with: self.locateErrorText)
                             }
                         }
                     }

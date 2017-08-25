@@ -33,6 +33,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(false, animated: true)
         if let selectedPOI = selectedPOI {
             if let _ = self.address {
                 self.title = "编辑地址"

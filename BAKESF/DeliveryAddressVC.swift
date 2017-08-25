@@ -193,7 +193,13 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
             cell.addressLabel.text = addrText
         }
         
-        cell.nameLabel.text = addr.name ?? ""
+        let name = addr.name ?? ""
+        let gender = addr.gender ?? ""
+        if gender == "帅哥" || gender == "靓女" {
+            cell.nameLabel.text = name + " " + gender
+        } else {
+            cell.nameLabel.text = name
+        }
         cell.phoneLabel.text = addr.phone ?? ""
         cell.address = addr
         cell.editBtn.addTarget(self, action: #selector(editBtnPressed(sender:)), for: .touchUpInside)

@@ -48,6 +48,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var indicatorView: UIActivityIndicatorView!
     @IBOutlet weak var loadFailedView: UIView!
     @IBOutlet weak var tryOneMoreTimeBtn: UIButton!
+    @IBOutlet weak var takeItYourselfLabel: UILabel!
+    @IBOutlet weak var deliveryByShopLabel: UILabel!
     
     var shopBuyVC: ShopBuyVC!
     var shopPreVC: ShopPreVC!
@@ -103,6 +105,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -303,7 +306,20 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         
         shopNameLabel.text = avshop.name!
         //addressLabel.setTitle(" \(avshop.address!.formatted!)", for: .normal)
-        commentNumberBtn.setTitle("\(423) 评论", for: .normal) // TODO: - comments
+      
+        // TODO: - comments
+        commentNumberBtn.setTitle("\(423) 评论", for: .normal)
+        
+        if avshop.deliveryWays!.contains(0) {
+            deliveryByShopLabel.textColor = .bkBlack
+        } else {
+            deliveryByShopLabel.textColor = .lightGray
+        }
+        if avshop.deliveryWays!.contains(1) {
+            takeItYourselfLabel.textColor = .bkBlack
+        } else {
+            takeItYourselfLabel.textColor = .lightGray
+        }
         
         let broadcast = avshop.broadcast!
         if broadcast == "-" {
@@ -350,6 +366,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             self.checkBtn.backgroundColor = .appleGreen
             self.emptyBagLabel.alpha = 0
             self.emptyBagLabel.text = emptyBagText
+            self.emptyBagLabel.font = UIFont.systemFont(ofSize: self.emptyBagLabel.font.pointSize)
             self.rightLowestFeeLabel.text = ""
             self.rightLowestFeeLabel.alpha = 0
             self.rightDeliveryFeeLabel.alpha = 0
@@ -361,6 +378,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             self.checkBtn.backgroundColor = .checkBtnGray
             self.emptyBagLabel.alpha = 1
             self.emptyBagLabel.text = "¥\(totalCost.fixPriceTagFormat())"
+            self.emptyBagLabel.font = UIFont.boldSystemFont(ofSize: self.emptyBagLabel.font.pointSize)
             self.rightLowestFeeLabel.text = "还差¥\((lowest - totalCost).fixPriceTagFormat())起送"
             self.rightLowestFeeLabel.alpha = 1
             self.rightDeliveryFeeLabel.alpha = 1
@@ -374,6 +392,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             self.checkBtn.backgroundColor = .checkBtnGray
             self.emptyBagLabel.alpha = 1
             self.emptyBagLabel.text = emptyBagText
+            self.emptyBagLabel.font = UIFont.systemFont(ofSize: self.emptyBagLabel.font.pointSize)
             self.rightLowestFeeLabel.text = "¥\(lowest.fixPriceTagFormat()) 起送"
             self.rightLowestFeeLabel.alpha = 1
             self.rightDeliveryFeeLabel.alpha = 1
@@ -471,7 +490,6 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         switch state {
         case .collapsed:
             shopBagVC.reloadShopBagEmbedTable()
-            shopBagVC.numOfSections = shopBagVC.tableView.numberOfSections
             // compute the height of table view according to the amount of bakes
             let bakeCount = retrieveBakesKindsCount()
             let bakesHeight = CGFloat(bakeCount) * shopBagVC.cellHeight
@@ -881,6 +899,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
 
     // handle pan gesture
     func panGestureAni(sender: UIPanGestureRecognizer) {
+        if !loadFailedView.isHidden || !indicatorSuperView.isHidden { return }
         guard let view = sender.view else { return }
         let velocity = sender.velocity(in: view)
         if shouldReturn(view: view, swipeDown: velocity.y <= 0) { return }

@@ -19,9 +19,7 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var shopVC: ShopVC!
     var avshop: AVShop!
-    
-    var numOfSections: Int!
-    
+        
     let cellHeight: CGFloat = 52
     let headerHeight: CGFloat = 28
     
