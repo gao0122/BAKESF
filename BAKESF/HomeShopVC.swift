@@ -66,11 +66,12 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     func loadShops() {
         loadShops({
             shops, error in
+            self.refresher.endRefreshing()
             if let shops = shops {
                 self.avshops = shops
                 self.tableView.reloadData()
             } else {
-                // load failed
+                self.homeVC.showLocateFailedViewAndStopIndicator(with: "商家获取失败，请重试。")
             }
         })
     }
@@ -84,7 +85,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
                 self.avshops = shops
                 self.tableView.reloadData()
             } else {
-                // failed
+                self.homeVC.showLocateFailedViewAndStopIndicator(with: "商家获取失败，请重试。")
             }
         })
     }
@@ -104,12 +105,14 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         sellersQuery.findObjectsInBackground({
             objects, error in
             if var shops = objects as? [AVShop] {
-                for shop in shops {
-                    let open = Date().isTimeBetween(from: shop.openTime, to: shop.closeTime)
-                    let status = shop.status
-                    if !open || !status {
-                        if !self.TEST { shops.remove(at: shops.index(of: shop)!) }
-                    }
+                if !self.TEST {
+                    shops = shops.filter({
+                        shop in
+                        let open = Date().isTimeBetween(from: shop.openTime, to: shop.closeTime)
+                        let status = shop.status
+                        let isSameCity = shop.address!.city == self.homeVC.locationRealm!.city
+                        return open && status && isSameCity
+                    })
                 }
                 if shops.count == 0 {
                     self.homeVC.showLocateFailedViewAndStopIndicator(with: self.homeVC.noShopsText)

@@ -305,7 +305,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         cardBgImage.clipsToBounds = false
         
         shopNameLabel.text = avshop.name!
-        //addressLabel.setTitle(" \(avshop.address!.formatted!)", for: .normal)
+        addressLabel.setTitle(" \(avshop.address!.formatted!)", for: .normal)
       
         // TODO: - comments
         commentNumberBtn.setTitle("\(423) 评论", for: .normal)

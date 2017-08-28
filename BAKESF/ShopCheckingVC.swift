@@ -46,6 +46,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var deliveryTimecs = [DateComponents]()
     var deliveryTimes = [String]()
     var selectedTime: DateComponents?
+    var totalCost: Double = 0
     
     var timer = Timer()
     let checkoutBtnText = "支付全部"
@@ -118,7 +119,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                         self.tableView.reloadData()
                     })
                 } else {
-                    // TODO: - handle error
                     self.setCheckOutBtn(enabled: false)
                 }
             })
@@ -130,24 +130,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     override func viewWillDisappear(_ animated: Bool) {
         
     }
-    
-    func checkNavBar(_ sender: Any) {
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        timer.invalidate()
-        timer = Timer()
-    }
-    
-    func setCheckOutBtn(enabled: Bool) {
-        let enabled = enabled && (selectedTime != nil || selectedTime == nil && isInBag)
-        self.checkoutBtn.isEnabled = enabled
-        UIView.animate(withDuration: 0.27, animations: {
-            self.checkoutBtn.backgroundColor = enabled ? .appleGreen : .checkBtnGray
-        }, completion: {
-            finished in
-            self.checkoutBtn.backgroundColor = enabled ? .appleGreen : .checkBtnGray
-        })
-    }
-    
     
     // MARK: - Navigation
     
@@ -174,6 +156,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             vc.title = "下单成功"
             vc.avbaker = self.avbaker
             vc.avshop = self.avshop
+            vc.avorder = self.avorder
         default:
             break
         }
@@ -182,6 +165,26 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func unwindToShopCheckingVC(segue: UIStoryboardSegue) {
         
     }
+    
+    func checkNavBar(_ sender: Any) {
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        timer.invalidate()
+        timer = Timer()
+    }
+    
+    
+    func setCheckOutBtn(enabled: Bool) {
+        let shouldEnabled = selectedTime != nil || (selectedTime == nil && isInBag && segmentedControlDeliveryWay.selectedSegmentIndex == 0)
+        let enabled = enabled && shouldEnabled
+        self.checkoutBtn.isEnabled = enabled && shouldEnabled
+        UIView.animate(withDuration: 0.27, animations: {
+            self.checkoutBtn.backgroundColor = enabled ? .appleGreen : .checkBtnGray
+        }, completion: {
+            finished in
+            self.checkoutBtn.backgroundColor = enabled ? .appleGreen : .checkBtnGray
+        })
+    }
+    
     
     @IBAction func checkOutBtnPressed(_ sender: Any) {
         alertOkayOrNot(okTitle: "支付", notTitle: "取消", msg: "确认支付吗？", okAct: {
@@ -192,18 +195,22 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func saveOrderAndBakes() {
         let group = DispatchGroup()
+        
         avorder = AVOrder()
         avorder.deliveryAddress = self.avaddress
         avorder.predictionDeliveryTime = self.selectedTime?.date
         avorder.baker = self.avbaker
         avorder.shop = self.avshop
         avorder.type = (isInBag ? 0 : 1) as NSNumber
-
+        avorder.shouldDeliveryAtOnce = self.selectedTime == nil
+        avorder.totalCost = totalCost as NSNumber
+        avorder.totalCostAfterDiscount = totalCost as NSNumber
+        
+        var isSucceeded: Bool = true
         group.enter()
         avorder.saveInBackground({
             succeeded, error in
             if succeeded {
-                group.leave()
                 if self.isInBag {
                     for bake in self.shopVC.shopBuyVC.avbakesIn.values {
                         bake.order = self.avorder
@@ -213,7 +220,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                             if succeeded {
                                 group.leave()
                             } else {
-                                printit("error: \(error!.localizedDescription)")
+                                isSucceeded = false
+                                self.view.notify(text: "下单失败，请检查网络后重试！", color: .alertRed, nav: self.navigationController?.navigationBar)
                                 group.leave()
                             }
                         })
@@ -227,26 +235,37 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                             if succeeded {
                                 group.leave()
                             } else {
-                                printit("error: \(error!.localizedDescription)")
+                                isSucceeded = false
+                                self.view.notify(text: "下单失败，请检查网络后重试！", color: .alertRed, nav: self.navigationController?.navigationBar)
                                 group.leave()
                             }
                         })
                     }
                 }
-            } else {
                 group.leave()
+            } else {
+                isSucceeded = false
                 self.view.notify(text: "下单出现异常，请检查网络后重试！", color: .alertRed, nav: self.navigationController?.navigationBar)
+                group.leave()
             }
         })
 
         group.notify(queue: DispatchQueue.main, execute: {
-            // all completed
+            if isSucceeded {
+                if self.isInBag {
+                    RealmHelper.deleteAllBakesInBag(by: self.avshop.objectId!)
+                } else {
+                    RealmHelper.deleteAllBakesPreOrder(by: self.avshop.objectId!)
+                }
+                self.performSegue(withIdentifier: "showCheckOutFromShopCheckingVC", sender: self)
+            }
         })
     }
     
     
     @IBAction func segmentedControlValueChanged(_ sender: Any) {
         tableView.reloadData()
+        setCheckOutBtn(enabled: true)
     }
     
     @IBAction func deliveryTimeViewCancelBtnPressed(_ sender: UIButton) {
@@ -342,7 +361,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                                 return deliveryTimeCell(indexPath)
                             }
                         case 1:
-                            return UITableViewCell.centerTextCell(with: "选择自取时间", in: .buttonBlue)
+                            if selectedTime == nil {
+                                return UITableViewCell.centerTextCell(with: "选择自取时间", in: .buttonBlue)
+                            } else {
+                                return deliveryTimeCell(indexPath)
+                            }
                         default:
                             break
                         }
@@ -391,7 +414,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             return cell
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryTimeViewCell", for: indexPath) as! DeliveryTimeViewCell
-            if isInBag && row == 0 {
+            let index = segmentedControlDeliveryWay.selectedSegmentIndex
+            if isInBag && row == 0 && index == 0 {
                 cell.deliveryTimeLabel.text = "立即配送"
                 cell.components = nil
                 cell.selectedIcon.isHidden = selectedTime != nil
@@ -413,7 +437,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     private func totalFeeCell(_ indexPath: IndexPath) -> ShopCheckBakeTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckBakeTableViewCell", for: indexPath) as! ShopCheckBakeTableViewCell
         // TODO: Delivery fee part
-        guard var fee = avshop.deliveryFee as? Double else { return cell }
+        var fee: Double = (avshop.deliveryFee as? Double) ?? 0
         if isInBag {
             fee += RealmHelper.retrieveBakesInBagCost(avshopID: avshop.objectId!)
         } else {
@@ -425,6 +449,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         cell.amountLabel.text = "总计"
         let price = fee.fixPriceTagFormat()
         cell.priceLabel.text = "¥ \(price)"
+        totalCost = fee
         checkoutBtn.setTitle(checkoutBtnText + " ¥\(fee.fixPriceTagFormat())", for: .normal)
         return cell
     }
@@ -492,8 +517,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 let mins = selectedTime.minute!
                 let minsText = mins < 10 ? "0\(mins)" : "\(mins)"
                 cell.arrivalTime.alpha = 1
-                cell.arrivalTime.text = "\(selectedTime.hour!):\(minsText) 前送达"
-                cell.deliveryTime.text = "今天"
+                let hour = selectedTime.hour! % 24
+                cell.arrivalTime.text = "\(hour):\(minsText) 前送达"
+                if hour < selectedTime.hour! {
+                    cell.deliveryTime.text = "明天"
+                } else {
+                    cell.deliveryTime.text = "今天"
+                }
             } else {
                 cell.arrivalTime.alpha = 0
                 cell.deliveryTime.text = "立即配送"
@@ -610,6 +640,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 break
             }
         case 1:
+            if isInBag { return }
             let cell = tableView.cellForRow(at: indexPath) as! DeliveryTimeDateViewCell
             if let cs = cell.components {
                 resetDeliveryTimes(by: cs)
@@ -626,15 +657,24 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func resetDeliveryTimes(by cs: DateComponents) {
+        deliveryTimes.removeAll()
+        deliveryTimecs.removeAll()
         let date = Date()
-        let currCs = getDeliveryDateComponents(from: date)
+        let currCs = date.getDeliveryDateComponents()
         var startHour = 9
         if isInBag {
-            startHour = currCs.hour! + 2
-            if let closeTime = avshop.closeTime {
-                let closeCs = getDeliveryDateComponents(from: closeTime)
-                if startHour > closeCs.hour! {
-                    startHour = currCs.hour!
+            startHour = (currCs.hour! + 2) % 24
+            if let closeTime = avshop.closeTime, let openTime = avshop.openTime {
+                let minutes = closeTime.minutesInOneDay(fromDate: openTime)
+                let minutesToCurrent = date.minutesInOneDay(fromDate: openTime)
+                let minutesFromCurrent = closeTime.minutesInOneDay(fromDate: date)
+                if minutes > 0 {
+                    if minutesFromCurrent < 60 * 2 || minutesToCurrent < 0 {
+                        return
+                    }
+                } else if minutes < 0 {
+                    
+                    
                 }
             }
         } else {
@@ -643,19 +683,32 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 startHour = hour < 9 ? 12 : hour + 3
             }
         }
-        deliveryTimes.removeAll()
-        deliveryTimecs.removeAll()
-        for i in startHour...23 {
+        for i in startHour...(startHour + 10) {
             for j in 0...2 {
-                let timeText = "\(i):\(j * 2)0"
-                var components = getDeliveryDateComponents(from: date)
+                let h = i % 24
+                var timeText = "\(h):\(j * 2)0"
+                if h < i {
+                    timeText += " (明天)"
+                }
+                var components = date.getDeliveryDateComponents()
                 components.weekday = cs.weekday
+                components.year = cs.year
                 components.month = cs.month
                 components.day = cs.day
                 components.hour = i
-                components.minute = 0
-                deliveryTimecs.append(components)
-                deliveryTimes.append(timeText)
+                components.minute = j * 20
+                if let closeTime = avshop.closeTime, let dateToAdd = components.date {
+                    var minutes = closeTime.minutesInOneDay(fromDate: dateToAdd)
+                    if closeTime.getDeliveryDateComponents().hour! <= 6 {
+                        if h >= i {
+                            minutes += 60 * 24
+                        }
+                    }
+                    if minutes > 0 {
+                        deliveryTimecs.append(components)
+                        deliveryTimes.append(timeText)
+                    }
+                }
             }
         }
         deliveryTimeTableView.reloadData()
@@ -670,7 +723,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             deliveryDates.removeAll()
             deliveryDatecs.removeAll()
             if days == 0 {
-                let cs = getDeliveryDateComponents(from: date)
+                let cs = date.getDeliveryDateComponents()
                 if cs.hour! >= 12 {
                     view.notify(text: "暂不接受预订哦。", color: .alertOrange, nav: navigationController?.navigationBar)
                     return
@@ -681,11 +734,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 }
             }
             if isInBag {
+                let cs = date.getDeliveryDateComponents()
+                deliveryDatecs.append(cs)
                 deliveryDates.append("今天")
             } else {
                 for i in 1...days {
                     let dateToBeAdd = date.addingTimeInterval(TimeInterval(i * 60 * 60 * 24))
-                    let cs = getDeliveryDateComponents(from: dateToBeAdd)
+                    let cs = dateToBeAdd.getDeliveryDateComponents()
                     var dateText = "\(weekdays[cs.weekday! - 1]) \(cs.month!).\(cs.day!)"
                     if i == 1 {
                         dateText += " (明天)"
@@ -697,7 +752,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             deliveryTimeDateTableView.reloadData()
             deliveryTimeDateTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
             if isInBag {
-                resetDeliveryTimes(by: Calendar.current.dateComponents([.hour, .minute, .weekday, .month, .day], from: date))
+                resetDeliveryTimes(by: Calendar.current.dateComponents([.hour, .minute, .weekday, .year, .month, .day], from: date))
             } else {
                 resetDeliveryTimes(by: deliveryDatecs[0])
             }

@@ -94,7 +94,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
 
     func assignAVBakeOrder(bakeRealm: BakePreOrderRealm?, bake: AVBake) {
         let bakePre = AVBakePre()
-        bakePre.bake = bake
+        bakePre.bakee = bake
         if let bakeRealm = bakeRealm {
             bakePre.amount = bakeRealm.amount as NSNumber
         } else {

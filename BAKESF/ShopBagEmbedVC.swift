@@ -157,13 +157,13 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         let row = indexPath.row
         if shopVC.pagingMenuController.currentPage == 0 {
             guard let bake = bakesInBag?[row] else { return cell }
-            cell.bake = avbakesIn![row].bake!
+            cell.bake = avbakesIn![row].bakee
             cell.bakeIn = bake
             cell.bakePre = nil
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
         } else {
             guard let bake = bakesPreOrder?[indexPath.row] else { return cell }
-            cell.bake = avbakesPre![row].bake!
+            cell.bake = avbakesPre![row].bakee
             cell.bakePre = bake
             cell.bakeIn = nil
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)

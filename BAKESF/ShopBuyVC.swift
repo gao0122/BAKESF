@@ -115,7 +115,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     
     func assignAVBakeOrder(bakeRealm: BakeInBagRealm?, bake: AVBake) {
         let bakeIn = AVBakeIn()
-        bakeIn.bake = bake
+        bakeIn.bakee = bake
         if let bakeRealm = bakeRealm {
             bakeIn.amount = bakeRealm.amount as NSNumber
         } else {

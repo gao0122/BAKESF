@@ -22,14 +22,6 @@ enum TimerState {
     case inited, rolling, done
 }
 
-// Calendar
-func getDeliveryDateComponents(from date: Date) -> DateComponents {
-    let cal = Calendar.current
-    var cs = cal.dateComponents([.year, .month, .day, .hour, .minute, .timeZone, .weekday], from: date)
-    cs.calendar = cal
-    return cs
-}
-
 
 // navigation controller 
 func setBackItemTitle(with title: String = "", for navigationItem: UINavigationItem) {

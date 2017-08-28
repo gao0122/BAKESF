@@ -147,8 +147,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     
     @IBAction func relocateBtnPressed(_ sender: Any) {
         if helperLabel.text == noShopsText {
-            homeShopVC.loadShops()
         }
+        homeShopVC.loadShops()
         indicatorStartAni()
         locateOnce()
     }
@@ -184,11 +184,6 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     
     
     // MARK: - AMap
-    func onPOISearchDone(_ request: AMapPOISearchBaseRequest!, response: AMapPOISearchResponse!) {
-        if response.count == 0 { return }
-        //response.pois
-    }
-    
     func onReGeocodeSearchDone(_ request: AMapReGeocodeSearchRequest!, response: AMapReGeocodeSearchResponse!) {
         guard let regeocode = response.regeocode else {
             // TODO: - no results
@@ -197,6 +192,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         }
         locatedOnce = true
         locationRealm = RealmHelper.addLocation(by: regeocode, for: 0)
+        homeShopVC.tableView.reloadData()
         updateLocationBtnAndSearchBar(by: locationRealm!.city)
         if let _ = avbaker {
             hideLocateFailedViewAndStopIndicator()
