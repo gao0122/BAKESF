@@ -153,10 +153,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             show(vc, sender: sender)
         case "showCheckOutFromShopCheckingVC":
             guard let vc = segue.destination as? OrderCheckOutVC else { break }
+            vc.modalTransitionStyle = .coverVertical
             vc.title = "下单成功"
             vc.avbaker = self.avbaker
             vc.avshop = self.avshop
             vc.avorder = self.avorder
+            vc.shopVC = self.shopVC
+            vc.isInBag = self.isInBag
         default:
             break
         }
@@ -254,8 +257,10 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             if isSucceeded {
                 if self.isInBag {
                     RealmHelper.deleteAllBakesInBag(by: self.avshop.objectId!)
+                    self.shopVC.shopBuyVC.avbakesIn.removeAll()
                 } else {
                     RealmHelper.deleteAllBakesPreOrder(by: self.avshop.objectId!)
+                    self.shopVC.shopPreVC.avbakesPre.removeAll()
                 }
                 self.performSegue(withIdentifier: "showCheckOutFromShopCheckingVC", sender: self)
             }
@@ -372,11 +377,18 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     }
                 case 2:
                     // delivery address
-                    if let address = self.avaddress {
-                        return deliveryAddressCell(with: address, indexPath)
-                    } else {
-                        let text = isInBag ? "选择收货地址" : "选择预约收货地址"
-                        return UITableViewCell.centerTextCell(with: text, in: .buttonBlue)
+                    switch segmentedControlDeliveryWay.selectedSegmentIndex {
+                    case 0:
+                        if let address = self.avaddress {
+                            return deliveryAddressCell(with: address, indexPath)
+                        } else {
+                            let text = isInBag ? "选择收货地址" : "选择预约收货地址"
+                            return UITableViewCell.centerTextCell(with: text, in: .buttonBlue)
+                        }
+                    case 1:
+                        return deliveryAddressCell(with: avaddress!, indexPath)
+                    default:
+                        break
                     }
                 default:
                     break

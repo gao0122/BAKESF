@@ -18,6 +18,9 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
     var avshop: AVShop!
     var avbaker: AVBaker!
     var avorder: AVOrder!
+    var shopVC: ShopVC!
+    
+    var isInBag: Bool = false
     
     var liveQuery: AVLiveQuery!
     
@@ -50,13 +53,13 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
 
     override func viewWillDisappear(_ animated: Bool) {
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        navigationItem.hidesBackButton = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
-        navigationItem.hidesBackButton = true
     }
+    
+    
     
     // MARK: - Navigation
 
@@ -69,6 +72,19 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
     
     @IBAction func backToHomeBtnPressed(_ sender: Any) {
         navigationController?.popToRootViewController(animated: true)
+        tabBarController?.selectedIndex = 1
+    }
+    
+    @IBAction func backToShopBtnPressed(_ sender: Any) {
+        if isInBag {
+            shopVC.shopBuyVC.bakeTableView.reloadData()
+            shopVC.shopBuyVC.classifyTableView.reloadData()
+        } else {
+            shopVC.shopPreVC.bakeTableView.reloadData()
+            shopVC.shopPreVC.classifyTableView.reloadData()
+        }
+        shopVC.setShopBagState()
+        navigationController?.popToViewController(shopVC, animated: true)
     }
     
     @IBAction func checkTheOrderBtnPressed(_ sender: Any) {

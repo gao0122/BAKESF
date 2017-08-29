@@ -102,6 +102,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -990,8 +991,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     // set table views and reset the content offset to zero, reset the selection row to index 0.
-    func setTableViewsAndReset() {
-        setTableViews(false)
+    func setTableViewsAndReset(reset: Bool = false) {
+        setTableViews(reset)
         shopBuyVC.bakeTableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
         shopBuyVC.classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
         shopPreVC.bakeTableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)

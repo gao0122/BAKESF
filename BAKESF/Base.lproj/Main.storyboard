@@ -1347,9 +1347,9 @@
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="25L-Du-JCt">
                                 <rect key="frame" x="118" y="244" width="62" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="返回首页"/>
+                                <state key="normal" title="返回店铺"/>
                                 <connections>
-                                    <action selector="backToHomeBtnPressed:" destination="hlY-g2-8uh" eventType="touchUpInside" id="YMG-Ns-fdw"/>
+                                    <action selector="backToShopBtnPressed:" destination="hlY-g2-8uh" eventType="touchUpInside" id="Ud3-gK-CsD"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="等待商家接单..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yay-kd-9U8">

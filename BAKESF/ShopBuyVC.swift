@@ -44,7 +44,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     override func viewDidAppear(_ animated: Bool) {
-
+        
     }
     
     func loadAVBakes() {
