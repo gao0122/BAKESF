@@ -74,8 +74,13 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
     
     
     @IBAction func backToHomeBtnPressed(_ sender: Any) {
-        navigationController?.modalTransitionStyle = .flipHorizontal
-        navigationController?.popToRootViewController(animated: true)
+        let transition = CATransition()
+        transition.duration = 0.32
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionMoveIn
+        transition.type = kCATransitionFromTop
+        self.navigationController?.view.layer.add(transition, forKey: nil)
+        navigationController?.popToRootViewController(animated: false)
     }
     
     @IBAction func backToShopBtnPressed(_ sender: Any) {
