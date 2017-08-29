@@ -57,6 +57,9 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.stop, target: self, action: #selector(backToHomeBtnPressed(_:)))
+        button.style = .plain
+        navigationItem.leftBarButtonItem = button
     }
     
     
@@ -71,8 +74,8 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
     
     
     @IBAction func backToHomeBtnPressed(_ sender: Any) {
+        navigationController?.modalTransitionStyle = .flipHorizontal
         navigationController?.popToRootViewController(animated: true)
-        tabBarController?.selectedIndex = 1
     }
     
     @IBAction func backToShopBtnPressed(_ sender: Any) {

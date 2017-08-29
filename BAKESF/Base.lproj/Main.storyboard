@@ -1362,6 +1362,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="PlQ-1f-RFG">
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="CXU-Dy-0eE"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="backToHomeVCBtn" destination="25L-Du-JCt" id="Ucq-fT-CX3"/>
                         <outlet property="checkTheOrderBtn" destination="yE0-eH-qZg" id="CRv-Gh-VpX"/>

@@ -13,6 +13,7 @@ class AVShop: AVObject, AVSubclassing {
     @NSManaged var baker: AVBaker?
     @NSManaged var name: String?
     @NSManaged var address: AVAddress?
+    @NSManaged var selfTakeAddress: AVAddress?
     @NSManaged var bgImage: AVFile?
     @NSManaged var headphoto: AVFile?
     @NSManaged var broadcast: String?

@@ -386,7 +386,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                             return UITableViewCell.centerTextCell(with: text, in: .buttonBlue)
                         }
                     case 1:
-                        return deliveryAddressCell(with: avaddress!, indexPath)
+                        return deliveryAddressCell(with: avshop.selfTakeAddress ?? avshop.address!, indexPath)
                     default:
                         break
                     }
@@ -530,7 +530,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 let minsText = mins < 10 ? "0\(mins)" : "\(mins)"
                 cell.arrivalTime.alpha = 1
                 let hour = selectedTime.hour! % 24
-                cell.arrivalTime.text = "\(hour):\(minsText) 前送达"
+                let endText = segmentedControlDeliveryWay.selectedSegmentIndex == 0 ? "送达" : "自取"
+                cell.arrivalTime.text = "\(hour):\(minsText) 前\(endText)"
                 if hour < selectedTime.hour! {
                     cell.deliveryTime.text = "明天"
                 } else {
@@ -548,7 +549,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             if let selectedTime = selectedTime {
                 let mins = selectedTime.minute!
                 let minsText = mins < 10 ? "0\(mins)" : "\(mins)"
-                cell.arrivalTime.text = "预约 \(selectedTime.hour!):\(minsText) 前送达"
+                let endText = segmentedControlDeliveryWay.selectedSegmentIndex == 0 ? "送达" : "自取"
+                cell.arrivalTime.text = "预约 \(selectedTime.hour!):\(minsText) 前\(endText)"
                 cell.deliveryTime.text = "\(selectedTime.month!).\(selectedTime.day!)"
                 cell.deliveryTime.textColor = .black
                 cell.deliveryTime.sizeToFit()
@@ -615,9 +617,17 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     }
                 case 2:
                     // delivery address
-                    deliveryAddressVC.isPreOrder = !isInBag
-                    let segue = UIStoryboardSegue(identifier: "showDeliveryAddressFromShopCheckingVC", source: self, destination: deliveryAddressVC)
-                    prepare(for: segue, sender: self)
+                    switch segmentedControlDeliveryWay.selectedSegmentIndex {
+                    case 0:
+                        deliveryAddressVC.isPreOrder = !isInBag
+                        let segue = UIStoryboardSegue(identifier: "showDeliveryAddressFromShopCheckingVC", source: self, destination: deliveryAddressVC)
+                        prepare(for: segue, sender: self)
+                    case 1:
+                        // shop address for self taking
+                        break
+                    default:
+                        break
+                    }
                 default:
                     break
                 }
@@ -686,7 +696,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     }
                 } else if minutes < 0 {
                     
-                    
                 }
             }
         } else {
@@ -709,16 +718,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 components.day = cs.day
                 components.hour = i
                 components.minute = j * 20
-                if let closeTime = avshop.closeTime, let dateToAdd = components.date {
-                    var minutes = closeTime.minutesInOneDay(fromDate: dateToAdd)
-                    if closeTime.getDeliveryDateComponents().hour! <= 6 {
-                        if h >= i {
-                            minutes += 60 * 24
-                        }
-                    }
-                    if minutes > 0 {
-                        deliveryTimecs.append(components)
-                        deliveryTimes.append(timeText)
+                if let openTime = avshop.openTime, let closeTime = avshop.closeTime, let dateToAdd = components.date {
+                    if dateToAdd.isTimeBetween(from: openTime, to: closeTime) {
                     }
                 }
             }
