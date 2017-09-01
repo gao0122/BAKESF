@@ -216,21 +216,10 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         picker.delegate = self
         headphoto.layer.cornerRadius = headphoto.frame.width / 2
         headphoto.layer.masksToBounds = true
-        loginBtn.layer.cornerRadius = 4
-        loginBtn.layer.masksToBounds = true
-        loginBtn.layer.borderWidth = 1
-        loginBtn.layer.borderColor = UIColor.bkBlack.cgColor
-        likeBtn.layer.cornerRadius = 4
-        likeBtn.layer.masksToBounds = true
-        likeBtn.layer.borderWidth = 1
-        likeBtn.layer.borderColor = UIColor.bkBlack.cgColor
-        editInfoBtn.layer.cornerRadius = 4
-        editInfoBtn.layer.masksToBounds = true
-        editInfoBtn.layer.borderWidth = 1
-        editInfoBtn.layer.borderColor = UIColor.bkBlack.cgColor
-        editBtnBg.layer.cornerRadius = editBtnBg.frame.width / 2
-        editBtnBg.layer.masksToBounds = true
-        editBtnBg.layer.backgroundColor = UIColor.bkWhite.cgColor
+        loginBtn.setBorder(with: .bkBlack)
+        likeBtn.setBorder(with: .bkBlack)
+        editInfoBtn.setBorder(with: .bkBlack)
+        editBtnBg.setBorder(with: .bkWhite)
         editBtnBg.alpha = 0.88
         view.bringSubview(toFront: editBtn)
     }

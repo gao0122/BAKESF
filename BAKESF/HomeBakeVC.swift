@@ -9,14 +9,15 @@
 import UIKit
 
 class HomeBakeVC: UIViewController {
-
-    @IBOutlet weak var subView: UIView!
     
     
     var homeVC: HomeVC!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        
         
     }
 

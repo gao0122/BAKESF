@@ -92,9 +92,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             break
         }
 
-        relocateBtn.layer.borderColor = relocateBtn.currentTitleColor.cgColor
-        relocateBtn.layer.borderWidth = 1
-        relocateBtn.layer.cornerRadius = 3
+        relocateBtn.setBorder(with: relocateBtn.currentTitleColor)
         
         mapSearch.delegate = self
         

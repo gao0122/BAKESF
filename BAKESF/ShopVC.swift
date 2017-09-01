@@ -149,10 +149,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     func preInit() {
         hideLoadFailedView()
-        tryOneMoreTimeBtn.layer.borderWidth = 1
-        tryOneMoreTimeBtn.layer.cornerRadius = 4
-        tryOneMoreTimeBtn.layer.borderColor = UIColor.bkRed.cgColor
-        tryOneMoreTimeBtn.setTitleColor(.bkRed, for: .normal)
+        tryOneMoreTimeBtn.setBorder(with: .bkRed)
         startIndicatorViewAni()
         navigationController?.navigationBar.barTintColor = .bkRed
         navigationController?.navigationBar.barStyle = .black

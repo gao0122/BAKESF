@@ -106,14 +106,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         mapSearch.delegate = self
         locateFailedView.isHidden = true
         indicatorStartAni()
-        retryBtn.layer.cornerRadius = 4
-        retryBtn.layer.borderWidth = 1
-        retryBtn.layer.borderColor = UIColor.bkRed.cgColor
-        retryBtn.setTitleColor(.bkRed, for: .normal)
-        locateManuallyBtn.layer.cornerRadius = 4
-        locateManuallyBtn.layer.borderWidth = 1
-        locateManuallyBtn.layer.borderColor = UIColor.bkRed.cgColor
-        locateManuallyBtn.setTitleColor(.bkRed, for: .normal)
+        retryBtn.setBorder(with: .bkRed)
+        locateManuallyBtn.setBorder(with: .bkRed)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

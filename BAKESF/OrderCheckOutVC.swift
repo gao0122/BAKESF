@@ -33,6 +33,9 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        checkTheOrderBtn.setBorder(with: .bkRed)
+        backToHomeVCBtn.setBorder(with: .bkRed)
+        
         let query = AVOrder.query()
         query.includeKey("deliveryAddress")
         query.includeKey("shop")

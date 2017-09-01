@@ -1,5 +1,5 @@
 //
-//  OrderMakingVC.swift
+//  OrderEditingVC.swift
 //  BAKESF
 //
 //  Created by 高宇超 on 6/9/17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class OrderMakingVC: UIViewController {
+class OrderEditingVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

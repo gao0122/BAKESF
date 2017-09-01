@@ -39,10 +39,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         view.bringSubview(toFront: indicatorSuperView)
         view.bringSubview(toFront: loadFailedView)
         hideLoadFailedView()
-        tryOneMoreTimeBtn.layer.borderWidth = 1
-        tryOneMoreTimeBtn.layer.cornerRadius = 4
-        tryOneMoreTimeBtn.layer.borderColor = UIColor.bkRed.cgColor
-        tryOneMoreTimeBtn.setTitleColor(.bkRed, for: .normal)
+        tryOneMoreTimeBtn.setBorder(with: .bkRed)
         startIndicatorViewAni()
         
     }

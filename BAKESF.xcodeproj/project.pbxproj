@@ -15,6 +15,7 @@
 		00020F8E1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F8A1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift */; };
 		00020F8F1F0E2D5D008ABFB1 /* CGVector+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F8B1F0E2D5D008ABFB1 /* CGVector+Extensions.swift */; };
 		00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F8C1F0E2D5D008ABFB1 /* Int+Extensions.swift */; };
+		0008AD941F568D49005E4061 /* UIButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0008AD931F568D49005E4061 /* UIButton+Extensions.swift */; };
 		000D13781EFF862700A19D5A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13771EFF862700A19D5A /* Constants.swift */; };
 		001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001DB09C1F024CD100A09F32 /* CommunityVC.swift */; };
 		00264E651F2F275700D83073 /* ShopCheckingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E641F2F275700D83073 /* ShopCheckingVC.swift */; };
@@ -70,7 +71,7 @@
 		009BA0211F4944E200C7ABF7 /* AVCommentShop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0201F4944E100C7ABF7 /* AVCommentShop.swift */; };
 		009BA0231F49462000C7ABF7 /* AVRemarksOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0221F49462000C7ABF7 /* AVRemarksOrder.swift */; };
 		009BA0251F49997600C7ABF7 /* OrderCheckOutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */; };
-		009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */; };
+		009E97301EEBC79700D55A5A /* OrderEditingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009E972F1EEBC79700D55A5A /* OrderEditingVC.swift */; };
 		00A716E61F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */; };
 		00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B4709A1F0404DD00725C95 /* AVBaker.swift */; };
 		00B474E21ECD6A2200ED1B7A /* RealmHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00B474E11ECD6A2200ED1B7A /* RealmHelper.swift */; };
@@ -113,6 +114,7 @@
 		00020F8A1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
 		00020F8B1F0E2D5D008ABFB1 /* CGVector+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGVector+Extensions.swift"; sourceTree = "<group>"; };
 		00020F8C1F0E2D5D008ABFB1 /* Int+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
+		0008AD931F568D49005E4061 /* UIButton+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+Extensions.swift"; sourceTree = "<group>"; };
 		000D13771EFF862700A19D5A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		001DB09C1F024CD100A09F32 /* CommunityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityVC.swift; sourceTree = "<group>"; };
 		00264E641F2F275700D83073 /* ShopCheckingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckingVC.swift; sourceTree = "<group>"; };
@@ -172,7 +174,7 @@
 		009BA0201F4944E100C7ABF7 /* AVCommentShop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVCommentShop.swift; sourceTree = "<group>"; };
 		009BA0221F49462000C7ABF7 /* AVRemarksOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVRemarksOrder.swift; sourceTree = "<group>"; };
 		009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderCheckOutVC.swift; sourceTree = "<group>"; };
-		009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderMakingVC.swift; sourceTree = "<group>"; };
+		009E972F1EEBC79700D55A5A /* OrderEditingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderEditingVC.swift; sourceTree = "<group>"; };
 		00A716E51F0BCA0300A8FF78 /* FancyNavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FancyNavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		00B4709A1F0404DD00725C95 /* AVBaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVBaker.swift; sourceTree = "<group>"; };
 		00B474DD1ECD655C00ED1B7A /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = "Pods/../build/Debug-iphoneos/Realm/Realm.framework"; sourceTree = "<group>"; };
@@ -254,7 +256,6 @@
 				00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */,
 				009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */,
 				009BA01C1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift */,
-				009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */,
 				009BA0141F469D5E00C7ABF7 /* RedPacketVC */,
 				009BA0151F469DD200C7ABF7 /* DeliveryAddressVC */,
 				00264E661F2F637500D83073 /* BakeTableViewAndCell */,
@@ -449,6 +450,7 @@
 				00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */,
 				0028C46C1F383C13008A432C /* AMapLocationManager+Extensions.swift */,
 				009BA01A1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift */,
+				0008AD931F568D49005E4061 /* UIButton+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -456,8 +458,9 @@
 		00E14EF71ECB03E1008197A3 /* OrderVC */ = {
 			isa = PBXGroup;
 			children = (
+				009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */,
 				00629C7D1EC80BBC00B78151 /* OrderVC.swift */,
-				009E972F1EEBC79700D55A5A /* OrderMakingVC.swift */,
+				009E972F1EEBC79700D55A5A /* OrderEditingVC.swift */,
 			);
 			name = OrderVC;
 			sourceTree = "<group>";
@@ -678,6 +681,7 @@
 				008F0AF11F2CBD7100700C0D /* MeSettingNameVC.swift in Sources */,
 				006024FC1EC9900000FFB859 /* HomeFollowVC.swift in Sources */,
 				00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */,
+				0008AD941F568D49005E4061 /* UIButton+Extensions.swift in Sources */,
 				009BA0211F4944E200C7ABF7 /* AVCommentShop.swift in Sources */,
 				00D3AB661F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift in Sources */,
 				0028C46D1F383C13008A432C /* AMapLocationManager+Extensions.swift in Sources */,
@@ -712,7 +716,7 @@
 				00D23B961F14AF37002E45B7 /* String+Extensions.swift in Sources */,
 				00CA4A7C1F1DFF9F00541A4C /* UIDevice+Extensions.swift in Sources */,
 				00BF126F1F2C622300F67DF8 /* MeSettingTableCell.swift in Sources */,
-				009E97301EEBC79700D55A5A /* OrderMakingVC.swift in Sources */,
+				009E97301EEBC79700D55A5A /* OrderEditingVC.swift in Sources */,
 				00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */,
 				00020F8F1F0E2D5D008ABFB1 /* CGVector+Extensions.swift in Sources */,
 				0048FDAB1EEA725C002B49B6 /* ShopBuyBakeTableView.swift in Sources */,
