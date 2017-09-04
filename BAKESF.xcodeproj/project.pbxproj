@@ -97,6 +97,9 @@
 		00D3AB641F36D47800A5E934 /* DeliveryAddressVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D3AB631F36D47800A5E934 /* DeliveryAddressVC.swift */; };
 		00D3AB661F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D3AB651F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift */; };
 		00D3AB681F370D1F00A5E934 /* DeliveryAddressEditingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D3AB671F370D1F00A5E934 /* DeliveryAddressEditingVC.swift */; };
+		00DEA9D41F5A4DBD00641F9E /* HomeBakeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00DEA9D31F5A4DBD00641F9E /* HomeBakeTableViewCell.swift */; };
+		00DEA9D61F5A4DCA00641F9E /* HomeBakeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00DEA9D51F5A4DCA00641F9E /* HomeBakeCollectionViewCell.swift */; };
+		00DEA9D81F5BD8C100641F9E /* OrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00DEA9D71F5BD8C100641F9E /* OrderTableViewCell.swift */; };
 		00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 00E14EF51ECAE016008197A3 /* Assets.xcassets */; };
 		00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EF81ECB1866008197A3 /* MeVC.swift */; };
 		00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */; };
@@ -203,6 +206,9 @@
 		00D3AB651F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressTableViewCell.swift; sourceTree = "<group>"; };
 		00D3AB671F370D1F00A5E934 /* DeliveryAddressEditingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressEditingVC.swift; sourceTree = "<group>"; };
 		00D3AB6B1F3754EE00A5E934 /* BAKESF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BAKESF.entitlements; sourceTree = "<group>"; };
+		00DEA9D31F5A4DBD00641F9E /* HomeBakeTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeBakeTableViewCell.swift; sourceTree = "<group>"; };
+		00DEA9D51F5A4DCA00641F9E /* HomeBakeCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeBakeCollectionViewCell.swift; sourceTree = "<group>"; };
+		00DEA9D71F5BD8C100641F9E /* OrderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderTableViewCell.swift; sourceTree = "<group>"; };
 		00E14EF51ECAE016008197A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		00E14EF81ECB1866008197A3 /* MeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeVC.swift; sourceTree = "<group>"; };
 		00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeLoginVC.swift; sourceTree = "<group>"; };
@@ -326,11 +332,9 @@
 			children = (
 				006024FF1EC9995400FFB859 /* HomeVC.swift */,
 				006024F91EC98FCF00FFB859 /* HomeMasterVC.swift */,
-				006024FD1EC9900F00FFB859 /* HomeShopVC.swift */,
-				006025011EC99DDE00FFB859 /* HomeBakeVC.swift */,
-				006024FB1EC9900000FFB859 /* HomeFollowVC.swift */,
-				004BF0DF1ED184CF00554A5E /* HomeShopTableView.swift */,
-				0044B0AB1ED17B3C003DE5AF /* HomeShopTableViewCell.swift */,
+				00DEA9D01F599B7D00641F9E /* HomeShopVC */,
+				00DEA9D21F599B9F00641F9E /* HomeBakeVC */,
+				00DEA9D11F599B9300641F9E /* HomeFollowVC */,
 			);
 			name = HomeVC;
 			sourceTree = "<group>";
@@ -455,12 +459,41 @@
 			name = Extensions;
 			sourceTree = "<group>";
 		};
+		00DEA9D01F599B7D00641F9E /* HomeShopVC */ = {
+			isa = PBXGroup;
+			children = (
+				006024FD1EC9900F00FFB859 /* HomeShopVC.swift */,
+				004BF0DF1ED184CF00554A5E /* HomeShopTableView.swift */,
+				0044B0AB1ED17B3C003DE5AF /* HomeShopTableViewCell.swift */,
+			);
+			name = HomeShopVC;
+			sourceTree = "<group>";
+		};
+		00DEA9D11F599B9300641F9E /* HomeFollowVC */ = {
+			isa = PBXGroup;
+			children = (
+				006024FB1EC9900000FFB859 /* HomeFollowVC.swift */,
+			);
+			name = HomeFollowVC;
+			sourceTree = "<group>";
+		};
+		00DEA9D21F599B9F00641F9E /* HomeBakeVC */ = {
+			isa = PBXGroup;
+			children = (
+				006025011EC99DDE00FFB859 /* HomeBakeVC.swift */,
+				00DEA9D31F5A4DBD00641F9E /* HomeBakeTableViewCell.swift */,
+				00DEA9D51F5A4DCA00641F9E /* HomeBakeCollectionViewCell.swift */,
+			);
+			name = HomeBakeVC;
+			sourceTree = "<group>";
+		};
 		00E14EF71ECB03E1008197A3 /* OrderVC */ = {
 			isa = PBXGroup;
 			children = (
-				009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */,
 				00629C7D1EC80BBC00B78151 /* OrderVC.swift */,
+				00DEA9D71F5BD8C100641F9E /* OrderTableViewCell.swift */,
 				009E972F1EEBC79700D55A5A /* OrderEditingVC.swift */,
+				009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */,
 			);
 			name = OrderVC;
 			sourceTree = "<group>";
@@ -725,10 +758,13 @@
 				00B491A91EE4CFE1000C63EB /* ShopVC.swift in Sources */,
 				00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */,
 				00264E6F1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift in Sources */,
+				00DEA9D41F5A4DBD00641F9E /* HomeBakeTableViewCell.swift in Sources */,
 				006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */,
 				00D3AB681F370D1F00A5E934 /* DeliveryAddressEditingVC.swift in Sources */,
 				00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */,
 				009BA0231F49462000C7ABF7 /* AVRemarksOrder.swift in Sources */,
+				00DEA9D81F5BD8C100641F9E /* OrderTableViewCell.swift in Sources */,
+				00DEA9D61F5A4DCA00641F9E /* HomeBakeCollectionViewCell.swift in Sources */,
 				00455A891F193079009F440F /* AVBake.swift in Sources */,
 				009BA01F1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift in Sources */,
 				00D23B9E1F14AF96002E45B7 /* Date+Extensions.swift in Sources */,

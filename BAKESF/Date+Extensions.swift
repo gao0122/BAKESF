@@ -78,4 +78,10 @@ extension Date {
         }
     }
     
+    func formatted() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd hh:mm:ss"
+        return formatter.string(from: self)
+    }
+    
 }

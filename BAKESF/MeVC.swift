@@ -32,8 +32,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        checkCurrentUser()
-        
+
         vcInit()
         
         navigationController?.navigationBar.barTintColor = .bkRed
@@ -111,10 +110,10 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        checkCurrentUser()
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        checkCurrentUser()
         guard let tabBarController = self.tabBarController else { return }
         tabBarController.tabBar.isHidden = false
         let duration: TimeInterval = animated ? 0.17 : 0
@@ -219,7 +218,9 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         loginBtn.setBorder(with: .bkBlack)
         likeBtn.setBorder(with: .bkBlack)
         editInfoBtn.setBorder(with: .bkBlack)
-        editBtnBg.setBorder(with: .bkWhite)
+        editBtnBg.layer.masksToBounds = true
+        editBtnBg.layer.cornerRadius = 8
+        editBtnBg.backgroundColor = .bkWhite
         editBtnBg.alpha = 0.88
         view.bringSubview(toFront: editBtn)
     }

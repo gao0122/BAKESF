@@ -75,6 +75,8 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
             unwindSegueID = "unwindToMeFromLogin"
         case "showLoginFromShopChecking":
             unwindSegueID = "unwindToShopCheckingFromLogin"
+        case "showLoginFromOrder":
+            unwindSegueID = "unwindToShopCheckingFromLogin"
         default:
             break
         }
@@ -111,6 +113,10 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                 break
             }
         }
+    }
+    
+    class func instantiateFromStoryboard() -> MeLoginVC {
+        return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! MeLoginVC
     }
     
     @IBAction func backBtnPressed(_ sender: Any) {
