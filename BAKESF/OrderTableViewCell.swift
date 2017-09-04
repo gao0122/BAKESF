@@ -13,6 +13,7 @@ class OrderTableViewCell: UITableViewCell {
     @IBOutlet weak var oneMoreBtn: UIButton!
     @IBOutlet weak var shopNameBtn: UIButton!
     @IBOutlet weak var createdAtLabel: UILabel!
-    @IBOutlet weak var avatarBtn: UIButton!
+    @IBOutlet weak var avatarIV: UIImageView!
+    @IBOutlet weak var stateLabel: UILabel!
     
 }

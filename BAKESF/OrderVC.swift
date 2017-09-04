@@ -50,7 +50,6 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        showHelperView(indicating: true)
         checkCurrentUser()
         guard let tabBarController = self.tabBarController else { return }
         tabBarController.tabBar.isHidden = false
@@ -89,6 +88,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         query.whereKey("baker", equalTo: avbaker)
         query.includeKey("baker")
         query.includeKey("shop")
+        query.includeKey("shop.headphoto")
         query.includeKey("deliveryAddress")
         switch orderPresentState {
         case .one:
@@ -105,6 +105,9 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 self.showHelperView(with: "获取订单失败，请重试。", indicating: false)
             } else {
                 if let orders = objects as? [AVOrder] {
+                    for order in orders {
+                        // TODO: - load bakes
+                    }
                     self.avorders = orders
                     self.hideHelperView()
                     self.refresher.endRefreshing()
@@ -170,17 +173,34 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                     cell.selectionStyle = .none
                     cell.oneMoreBtn.setBorder(with: .buttonBlue)
                     cell.shopNameBtn.setTitle(shop.name!, for: .normal)
-                    cell.shopNameBtn.titleLabel?.sizeToFit()
+                    cell.shopNameBtn.sizeToFit()
                     cell.createdAtLabel.text = order.createdAt?.formatted()
                     if let url = shop.headphoto?.url {
-                        cell.avatarBtn.sd_setImage(with: URL(string: url), for: .normal, completed: nil)
+                        cell.avatarIV.sd_setImage(with: URL(string: url), completed: {
+                            _ in
+                            cell.avatarIV.contentMode = .scaleAspectFill
+                            cell.avatarIV.clipsToBounds = true
+                            cell.avatarIV.layer.cornerRadius = cell.avatarIV.frame.size.width / 2
+                            cell.avatarIV.layer.masksToBounds = true
+                        })
                     } else {
-                        cell.avatarBtn.setImage(UIImage(named: "蓝莓蛋糕"), for: .normal)
+                        cell.avatarIV.image = UIImage(named: "蓝莓蛋糕")
+                        cell.avatarIV.contentMode = .scaleAspectFill
+                        cell.avatarIV.clipsToBounds = true
+                        cell.avatarIV.layer.cornerRadius = cell.avatarIV.frame.size.width / 2
+                        cell.avatarIV.layer.masksToBounds = true
                     }
-                    cell.avatarBtn.contentMode = .scaleAspectFill
-                    cell.avatarBtn.clipsToBounds = true
-                    cell.avatarBtn.layer.cornerRadius = cell.avatarBtn.frame.size.width / 2
-                    cell.avatarBtn.layer.masksToBounds = true
+                    cell.stateLabel.text = ""
+                    if let status = order.status as? Int {
+                        switch status {
+                        case 0:
+                            break
+                        case 1:
+                            break
+                        default:
+                            break
+                        }
+                    }
                     return cell
                 }
             }
@@ -236,6 +256,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             if let _ = avbaker {
                 // logged in
             } else {
+                showHelperView(indicating: true)
                 retrieveBaker(withID: usr.id, completion: {
                     object, error in
                     if let error = error {

@@ -2346,30 +2346,38 @@
                                                     <state key="normal" title="再来一单"/>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="createdAt" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U9u-S9-9Ji">
-                                                    <rect key="frame" x="70" y="33" width="142" height="21"/>
+                                                    <rect key="frame" x="70" y="34" width="142" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                                     <color key="textColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gb7-KU-gEe">
-                                                    <rect key="frame" x="70" y="10" width="62" height="30"/>
+                                                    <rect key="frame" x="70" y="11" width="62" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <state key="normal" title="焙可私房">
                                                         <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     </state>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qMy-mR-1U1">
-                                                    <rect key="frame" x="17" y="9" width="46" height="46"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qia-07-HGV">
+                                                    <rect key="frame" x="17" y="10" width="46" height="46"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                </button>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="state" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yoa-qL-yPc">
+                                                    <rect key="frame" x="345" y="18" width="42" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="avatarBtn" destination="qMy-mR-1U1" id="dBm-La-o1a"/>
+                                            <outlet property="avatarIV" destination="qia-07-HGV" id="YJr-8d-pUn"/>
                                             <outlet property="createdAtLabel" destination="U9u-S9-9Ji" id="gbf-Zp-uKb"/>
                                             <outlet property="oneMoreBtn" destination="e0K-Ve-Fw7" id="RuQ-3L-Jv0"/>
                                             <outlet property="shopNameBtn" destination="gb7-KU-gEe" id="eIK-Dp-Xwf"/>
+                                            <outlet property="stateLabel" destination="Yoa-qL-yPc" id="eka-dX-bkn"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
