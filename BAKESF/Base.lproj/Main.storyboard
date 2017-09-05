@@ -2332,15 +2332,15 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="orderTableViewCell" rowHeight="114" id="avg-Kf-ZTC" customClass="OrderTableViewCell" customModule="BAKESF" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="114"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="orderTableViewCell" rowHeight="128" id="avg-Kf-ZTC" customClass="OrderTableViewCell" customModule="BAKESF" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="414" height="128"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="avg-Kf-ZTC" id="55Z-eW-VVO">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="113.66666666666667"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="127.66666666666667"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e0K-Ve-Fw7">
-                                                    <rect key="frame" x="323" y="73" width="78" height="30"/>
+                                                    <rect key="frame" x="317" y="87" width="78" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <state key="normal" title="再来一单"/>
@@ -2364,9 +2364,23 @@
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="state" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yoa-qL-yPc">
-                                                    <rect key="frame" x="345" y="18" width="42" height="21"/>
+                                                    <rect key="frame" x="215" y="18" width="172" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="商品" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ENY-rN-YH8">
+                                                    <rect key="frame" x="70" y="71" width="273" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="价格" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oND-JM-FFr">
+                                                    <rect key="frame" x="70" y="91" width="273" height="22"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -2374,8 +2388,10 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="avatarIV" destination="qia-07-HGV" id="YJr-8d-pUn"/>
+                                            <outlet property="bakesInfoLabel" destination="ENY-rN-YH8" id="TvA-U7-mLn"/>
+                                            <outlet property="btn" destination="e0K-Ve-Fw7" id="cfH-Ax-33A"/>
                                             <outlet property="createdAtLabel" destination="U9u-S9-9Ji" id="gbf-Zp-uKb"/>
-                                            <outlet property="oneMoreBtn" destination="e0K-Ve-Fw7" id="RuQ-3L-Jv0"/>
+                                            <outlet property="priceLabel" destination="oND-JM-FFr" id="PMy-2e-cOX"/>
                                             <outlet property="shopNameBtn" destination="gb7-KU-gEe" id="eIK-Dp-Xwf"/>
                                             <outlet property="stateLabel" destination="Yoa-qL-yPc" id="eka-dX-bkn"/>
                                         </connections>

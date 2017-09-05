@@ -10,10 +10,12 @@ import UIKit
 
 class OrderTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var oneMoreBtn: UIButton!
+    @IBOutlet weak var btn: UIButton!
     @IBOutlet weak var shopNameBtn: UIButton!
     @IBOutlet weak var createdAtLabel: UILabel!
     @IBOutlet weak var avatarIV: UIImageView!
     @IBOutlet weak var stateLabel: UILabel!
+    @IBOutlet weak var bakesInfoLabel: UILabel!
+    @IBOutlet weak var priceLabel: UILabel!
     
 }

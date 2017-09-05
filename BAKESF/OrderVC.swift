@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVOSCloud
 
 class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -33,7 +34,11 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     var avbaker: AVBaker?
     var avorders = [AVOrder]()
+    var avbakesDict = [AVOrder: [AVObject]]()
     var orderPresentState: OrderPresentState = .one
+    
+    var lastTableViewCellText = "查看更多"
+    let OrderTableViewCellHeight: CGFloat = 128
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +86,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
 
-    func loadOrders() {
+    func loadOrdersAndBakes() {
         guard let avbaker = self.avbaker else { return }
         let query = AVOrder.query()
         query.addDescendingOrder("createAt")
@@ -98,30 +103,88 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         case .all:
             break
         }
+
+        var isSucceeded = true
+        let group = DispatchGroup()
+        group.enter()
         query.findObjectsInBackground({
             objects, error in
             if let error = error {
                 printit("load order error: \(error.localizedDescription)")
+                isSucceeded = false
                 self.showHelperView(with: "获取订单失败，请重试。", indicating: false)
             } else {
                 if let orders = objects as? [AVOrder] {
+                    self.avorders = orders
                     for order in orders {
                         // TODO: - load bakes
+                        if order.type == NSNumber(value: 0) {
+                            // AVBakeIn
+                            let query = AVBakeIn.query()
+                            query.whereKey("order", equalTo: order)
+                            query.includeKey("order")
+                            query.includeKey("order.shop")
+                            query.includeKey("bake")
+                            query.includeKey("bakee")
+                            group.enter()
+                            query.findObjectsInBackground({
+                                objects, error in
+                                if let error = error {
+                                    printit("load bakes in error: \(error.localizedDescription)")
+                                    isSucceeded = false
+                                } else {
+                                    if let bakes = objects as? [AVBakeIn] {
+                                        self.avbakesDict[order] = bakes
+                                    } else {
+                                        isSucceeded = false
+                                    }
+                                }
+                                group.leave()
+                            })
+                        } else if order.type == NSNumber(value: 1) {
+                            // AVBakePre
+                            let query = AVBakePre.query()
+                            query.whereKey("order", equalTo: order)
+                            query.includeKey("order.shop")
+                            query.includeKey("bake")
+                            query.includeKey("bakee")
+                            group.enter()
+                            query.findObjectsInBackground({
+                                objects, error in
+                                if let error = error {
+                                    printit("load bakes pre error: \(error.localizedDescription)")
+                                    isSucceeded = false
+                                } else {
+                                    if let bakes = objects as? [AVBakePre] {
+                                        self.avbakesDict[order] = bakes
+                                    } else {
+                                        isSucceeded = false
+                                    }
+                                }
+                                group.leave()
+                            })
+                        }
                     }
-                    self.avorders = orders
-                    self.hideHelperView()
-                    self.refresher.endRefreshing()
-                    self.tableView.reloadData()
                 } else {
                     self.showHelperView(with: "加载订单失败，请重试。", indicating: false)
                 }
+            }
+            group.leave()
+        })
+        group.notify(queue: DispatchQueue.main, execute: {
+            if isSucceeded {
+                self.hideHelperView()
+                self.refresher.endRefreshing()
+                self.tableView.reloadData()
+            } else {
+                self.showHelperView(with: "订单加载失败", indicating: false)
             }
         })
     }
     
     @IBAction func tryOneMoreBtnPressed(_ sender: Any) {
         if let _ = avbaker {
-            loadOrders()
+            loadOrdersAndBakes()
         } else {
             let segue = UIStoryboardSegue.init(identifier: "showLoginFromOrder", source: self, destination: MeLoginVC.instantiateFromStoryboard())
             prepare(for: segue, sender: self)
@@ -165,13 +228,13 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         case 0:
             let row = indexPath.row
             if row == avorders.count {
-                return UITableViewCell.centerTextCell(with: "查看更多", in: .buttonBlue)
+                return UITableViewCell.centerTextCell(with: self.lastTableViewCellText, in: .buttonBlue)
             } else {
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "orderTableViewCell", for: indexPath) as? OrderTableViewCell {
                     let order = avorders[row]
                     let shop = order.shop!
                     cell.selectionStyle = .none
-                    cell.oneMoreBtn.setBorder(with: .buttonBlue)
+                    cell.btn.setBorder(with: .buttonBlue)
                     cell.shopNameBtn.setTitle(shop.name!, for: .normal)
                     cell.shopNameBtn.sizeToFit()
                     cell.createdAtLabel.text = order.createdAt?.formatted()
@@ -194,12 +257,48 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                     if let status = order.status as? Int {
                         switch status {
                         case 0:
-                            break
+                            cell.stateLabel.text = "等待付款"
+                            cell.btn.isHidden = false
+                            cell.btn.setTitle("去付款", for: .normal)
                         case 1:
-                            break
+                            cell.stateLabel.text = "等待卖家接单"
+                            cell.btn.isHidden = true
+                        case 3:
+                            cell.stateLabel.text = "等待配送"
+                            cell.btn.isHidden = true
+                        case 4:
+                            cell.stateLabel.text = "正在配送"
+                            cell.btn.isHidden = true
+                        case 5:
+                            cell.stateLabel.text = "已送达"
+                            cell.btn.isHidden = false
+                            cell.btn.setTitle("确认收货", for: .normal)
+                        case 6:
+                            cell.stateLabel.text = "待评价"
+                            cell.btn.isHidden = false
+                            cell.btn.setTitle("评价", for: .normal)
+                        case 7:
+                            cell.stateLabel.text = "待确认收货"
+                            cell.btn.isHidden = false
+                            cell.btn.setTitle("确认收货", for: .normal)
+                        case 8:
+                            cell.stateLabel.text = "已完成"
+                            cell.btn.isHidden = false
+                            cell.btn.setTitle("再来一单", for: .normal)
                         default:
                             break
                         }
+                    }
+                    if let avbakes = avbakesDict[order] {
+                        var bakesInfoText = ""
+                        if let bake = avbakes.first as? AVBakeIn {
+                            bakesInfoText = bake.bakee.name!
+                        } else if let bake = avbakes.first as? AVBakePre {
+                            bakesInfoText = bake.bakee.name!
+                        }
+                        bakesInfoText += " 等\(avbakes.count)件商品"
+                        cell.bakesInfoLabel.text = bakesInfoText
+                        cell.priceLabel.text = "\(String(describing: order.totalCost!))元"
                     }
                     return cell
                 }
@@ -218,13 +317,20 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             if row == avorders.count {
                 switch orderPresentState {
                 case .one:
-                    break
+                    lastTableViewCellText = "查看更多"
+                    orderPresentState = .more
+                    loadOrdersAndBakes()
                 case .more:
-                    break
+                    lastTableViewCellText = "查看全部"
+                    orderPresentState = .all
+                    loadOrdersAndBakes()
                 case .all:
+                    lastTableViewCellText = "已经是全部订单啦"
                     break
                 }
                 tableView.deselectRow(at: indexPath, animated: true)
+            } else {
+                
             }
         default:
             break
@@ -242,12 +348,12 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         default:
             break
         }
-        return 160
+        return OrderTableViewCellHeight
     }
 
     func ordersRefresh(_ sender: Any) -> Void {
         orderPresentState = .one
-        loadOrders()
+        loadOrdersAndBakes()
     }
     
 
@@ -265,7 +371,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                     } else {
                         if let baker = object as? AVBaker {
                             self.avbaker = baker
-                            self.loadOrders()
+                            self.loadOrdersAndBakes()
                         }
                     }
                 })
