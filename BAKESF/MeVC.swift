@@ -13,7 +13,9 @@ import Crashlytics
 
 class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
-    @IBOutlet weak var loginBtn: UIButton!
+    @IBOutlet weak var bakerView: UIView!
+    @IBOutlet weak var loginBtn0: UIButton! // currently using
+    @IBOutlet weak var loginBtn: UIButton! // enabled when community is open
     @IBOutlet weak var editBtn: UIButton!
     @IBOutlet weak var headphoto: UIButton!
     @IBOutlet weak var settingBtn: UIButton!
@@ -21,11 +23,12 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     @IBOutlet weak var followeeBtn: UIButton!
     @IBOutlet weak var followerBtn: UIButton!
     @IBOutlet weak var likeBtn: UIButton!
-    @IBOutlet weak var editInfoBtn: UIButton!
     @IBOutlet weak var editBtnBg: UIButton!
-
+    @IBOutlet weak var userNameLabel: UILabel!
+    @IBOutlet weak var rightArrowLabel: UILabel!
+    
     var user: UserRealm!
-    var avbaker: AVBaker!
+    var avbaker: AVBaker?
     
     var picker: UIImagePickerController = UIImagePickerController()
 
@@ -34,82 +37,21 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         
 
         vcInit()
-        
-        navigationController?.navigationBar.barTintColor = .bkRed
-        navigationController?.navigationBar.tintColor = .white
-        
+        // page menu
+        //pageMenuInit()
         
         
-        /* Paging Menu
-        // page menu 
-        struct MeMemory: MenuItemViewCustomizable {
-            var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "回忆", selectedColor: UIColor.red))
-            }
-        }
-        struct MeTweet: MenuItemViewCustomizable {
-            var displayMode: MenuItemDisplayMode {
-                return .text(title: MenuItemText(text: "推文", selectedColor: UIColor.red))
-            }
-        }
         
-        struct MenuOptions: MenuViewCustomizable {
-            var itemsOptions: [MenuItemViewCustomizable] {
-                return [MeMemory(), MeTweet()]
-            }
-            
-            var scroll: MenuScrollingMode
-            var displayMode: MenuDisplayMode
-            var animationDuration: TimeInterval
-            
-            var focusMode: MenuFocusMode {
-                return .none //underline(height: 3, color: UIColor.red, horizontalPadding: 10, verticalPadding: 0)
-            }
-        }
         
-        struct PagingMenuOptions: PagingMenuControllerCustomizable {
-            let meMemoryVC = MeMemoryVC.instantiateFromStoryboard()
-            let meTweetVC = MeTweetVC.instantiateFromStoryboard()
-            
-            var componentType: ComponentType {
-                return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [meMemoryVC, meTweetVC])
-            }
-            
-            var defaultPage: Int
-            var isScrollEnabled: Bool
-        }
-        
-        let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
-        let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
-        pagingMenuController.setup(option)
-        
-        pagingMenuController.onMove = {
-            state in
-            switch state {
-            case let .willMoveController(menuController, previousMenuController):
-                break
-            case let .didMoveController(menuController, previousMenuController):
-                break
-            case let .willMoveItem(menuItemView, previousMenuItemView):
-                break
-            case let .didMoveItem(menuItemView, previousMenuItemView):
-                break
-            case .didScrollStart:
-                break
-            case .didScrollEnd:
-                break
-            }
-        }
-         */
-
+ 
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        self.title = "个人主页"
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -174,6 +116,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     
     @IBAction func headphotoTapped(_ sender: Any) {
         if user != nil {
+            guard let avbaker = avbaker else { return }
             if avbaker.headphoto == user.headphotoURL { return }
             let fileQuery = AVFileQuery(className: "_File")
             fileQuery.whereKey(lcKey[.url]!, equalTo: avbaker.headphoto!)
@@ -185,7 +128,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
                             let data = UIImage(data: data)?.cropAndResize(width: 150, height: 150).imageData
                             let img = UIImage(data: data!)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
                             self.headphoto.setImage(img?.fixOrientation(), for: .normal)
-                            _ = RealmHelper.setCurrentUser(baker: self.avbaker, data: data)
+                            _ = RealmHelper.setCurrentUser(baker: self.avbaker!, data: data)
                         }
                     }
                 }
@@ -217,12 +160,13 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         headphoto.layer.masksToBounds = true
         loginBtn.setBorder(with: .bkBlack)
         likeBtn.setBorder(with: .bkBlack)
-        editInfoBtn.setBorder(with: .bkBlack)
         editBtnBg.layer.masksToBounds = true
         editBtnBg.layer.cornerRadius = 8
         editBtnBg.backgroundColor = .bkWhite
         editBtnBg.alpha = 0.88
         view.bringSubview(toFront: editBtn)
+        navigationController?.navigationBar.barTintColor = .bkRed
+        navigationController?.navigationBar.tintColor = .white
     }
     
     // MARK: - Image Picker
@@ -276,6 +220,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     }
     
     func saveImgToLC(data: Data, img: UIImage) {
+        guard let _ = self.avbaker else { return }
         guard let urlToDelete = user.headphotoURL else { return }
         let scaledImg = img.cropAndResize(width: headphoto.frame.width, height: headphoto.frame.height)
         let file = AVFile(data: data)
@@ -288,9 +233,9 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
             succeeded, error in
             if succeeded {
                 RealmHelper.saveHeadphoto(user: self.user, data: scaledImg.imageData!, url: file.url!)
-                self.avbaker.headphoto = file.url!
-                self.avbaker.setObject(file.url!, forKey: "headphoto")
-                self.avbaker.saveInBackground({
+                self.avbaker!.headphoto = file.url!
+                self.avbaker!.setObject(file.url!, forKey: "headphoto")
+                self.avbaker!.saveInBackground({
                     succeeded, error in
                     if succeeded {
                         self.headphoto.setImage(scaledImg, for: .normal)
@@ -318,32 +263,103 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
 
     func checkCurrentUser() {
         if let usr = RealmHelper.retrieveCurrentUser() {
-            setupViewsAfterChecking(loggedin: true)
-            user = usr
-            self.title = "\(usr.name)"
-            avbaker = retrieveBaker(withID: usr.id)
-            if let data = usr.headphoto {
-                let img = UIImage(data: data)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
-                self.headphoto.setImage(img?.fixOrientation(), for: .normal)
+            if let avbaker = retrieveBaker(withID: usr.id) {
+                //self.title = "\(usr.name)"
+                self.avbaker = avbaker
+                setupViewsAfterChecking(loggedin: true)
+                user = usr
+                userNameLabel.text = usr.name
+                if let data = usr.headphoto {
+                    let img = UIImage(data: data)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
+                    self.headphoto.setImage(img?.fixOrientation(), for: .normal)
+                }
+            } else {
+                setupLogout(usr: usr)
             }
         } else {
             setupLogout()
         }
     }
     
-    func setupLogout() {
+    func setupLogout(usr: UserRealm? = nil) {
+        if let usr = usr {
+            RealmHelper.logoutCurrentUser(user: usr)
+        }
+        user = nil
         setupViewsAfterChecking(loggedin: false)
-        navigationController?.title = "个人主页"
         headphoto.setImage(UIImage(named: "巧克力布丁")!, for: .normal)
     }
     
     func setupViewsAfterChecking(loggedin: Bool) {
         editBtn.isHidden = !loggedin
         editBtnBg.isHidden = !loggedin
-        editInfoBtn.isHidden = !loggedin
+        userNameLabel.isHidden = !loggedin
+        rightArrowLabel.isHidden = !loggedin
         loginBtn.isHidden = loggedin
+        loginBtn0.isHidden = loggedin
     }
     
+    
+    func pageMenuInit() {
+        struct MeMemory: MenuItemViewCustomizable {
+            var displayMode: MenuItemDisplayMode {
+                return .text(title: MenuItemText(text: "回忆", selectedColor: UIColor.red))
+            }
+        }
+        struct MeTweet: MenuItemViewCustomizable {
+            var displayMode: MenuItemDisplayMode {
+                return .text(title: MenuItemText(text: "推文", selectedColor: UIColor.red))
+            }
+        }
+        
+        struct MenuOptions: MenuViewCustomizable {
+            var itemsOptions: [MenuItemViewCustomizable] {
+                return [MeMemory(), MeTweet()]
+            }
+            
+            var scroll: MenuScrollingMode
+            var displayMode: MenuDisplayMode
+            var animationDuration: TimeInterval
+            
+            var focusMode: MenuFocusMode {
+                return .none //underline(height: 3, color: UIColor.red, horizontalPadding: 10, verticalPadding: 0)
+            }
+        }
+        
+        struct PagingMenuOptions: PagingMenuControllerCustomizable {
+            let meMemoryVC = MeMemoryVC.instantiateFromStoryboard()
+            let meTweetVC = MeTweetVC.instantiateFromStoryboard()
+            
+            var componentType: ComponentType {
+                return .all(menuOptions: MenuOptions(scroll: .scrollEnabledAndBouces, displayMode: .segmentedControl, animationDuration: 0.24), pagingControllers: [meMemoryVC, meTweetVC])
+            }
+            
+            var defaultPage: Int
+            var isScrollEnabled: Bool
+        }
+        
+        let pagingMenuController = self.childViewControllers.first! as! PagingMenuController
+        let option = PagingMenuOptions(defaultPage: 0, isScrollEnabled: true)
+        pagingMenuController.setup(option)
+        
+        pagingMenuController.onMove = {
+            state in
+            switch state {
+            case let .willMoveController(menuController, previousMenuController):
+                break
+            case let .didMoveController(menuController, previousMenuController):
+                break
+            case let .willMoveItem(menuItemView, previousMenuItemView):
+                break
+            case let .didMoveItem(menuItemView, previousMenuItemView):
+                break
+            case .didScrollStart:
+                break
+            case .didScrollEnd:
+                break
+            }
+        }
+    }
     
 }
 

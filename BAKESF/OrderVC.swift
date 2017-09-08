@@ -81,6 +81,8 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         switch id {
         case "showLoginFromOrder":
             show(segue.destination, sender: sender)
+        case "showOrderDetailVCFromOrderTableViewCell":
+            show(segue.destination, sender: sender)
         default:
             break
         }
@@ -88,9 +90,12 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     func loadOrdersAndBakes() {
         guard let avbaker = self.avbaker else { return }
-        let query = AVOrder.query()
+        let queryBaker = AVOrder.query()
+        queryBaker.whereKey("baker", equalTo: avbaker)
+        let queryBool = AVOrder.query()
+        queryBool.whereKey("hasDeletedByUser", equalTo: false)
+        let query = AVQuery.andQuery(withSubqueries: [queryBaker, queryBool])
         query.addDescendingOrder("createAt")
-        query.whereKey("baker", equalTo: avbaker)
         query.includeKey("baker")
         query.includeKey("shop")
         query.includeKey("shop.headphoto")
@@ -233,8 +238,9 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 if let cell = tableView.dequeueReusableCell(withIdentifier: "orderTableViewCell", for: indexPath) as? OrderTableViewCell {
                     let order = avorders[row]
                     let shop = order.shop!
-                    cell.selectionStyle = .none
+                    cell.order = order
                     cell.btn.setBorder(with: .buttonBlue)
+                    cell.btn.addTarget(self, action: #selector(OrderVC.cellBtnPressed(_:)), for: .touchUpInside)
                     cell.shopNameBtn.setTitle(shop.name!, for: .normal)
                     cell.shopNameBtn.sizeToFit()
                     cell.createdAtLabel.text = order.createdAt?.formatted()
@@ -296,7 +302,9 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                         } else if let bake = avbakes.first as? AVBakePre {
                             bakesInfoText = bake.bakee.name!
                         }
-                        bakesInfoText += " 等\(avbakes.count)件商品"
+                        if avbakes.count > 1 {
+                            bakesInfoText += " 等\(avbakes.count)件商品"
+                        }
                         cell.bakesInfoLabel.text = bakesInfoText
                         cell.priceLabel.text = "\(String(describing: order.totalCost!))元"
                     }
@@ -317,20 +325,22 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             if row == avorders.count {
                 switch orderPresentState {
                 case .one:
-                    lastTableViewCellText = "查看更多"
                     orderPresentState = .more
                     loadOrdersAndBakes()
-                case .more:
                     lastTableViewCellText = "查看全部"
+                case .more:
                     orderPresentState = .all
                     loadOrdersAndBakes()
-                case .all:
                     lastTableViewCellText = "已经是全部订单啦"
+                case .all:
                     break
                 }
                 tableView.deselectRow(at: indexPath, animated: true)
             } else {
-                
+                let order = avorders[row]
+                let orderDetailVC = OrderDetailVC.instantiateFromStoryboard(with: order)
+                let segue = UIStoryboardSegue(identifier: "showOrderDetailVCFromOrderTableViewCell", source: self, destination: orderDetailVC)
+                prepare(for: segue, sender: self)
             }
         default:
             break
@@ -355,7 +365,47 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         orderPresentState = .one
         loadOrdersAndBakes()
     }
+
     
+    // ----
+    func cellBtnPressed(_ sender: UIButton) {
+        guard let cell = sender.superview?.superview as? OrderTableViewCell else { return }
+        guard let order = cell.order else { return }
+        guard let status = order.status as? Int else { return }
+        switch status {
+        case 0:
+            cell.stateLabel.text = "等待付款"
+            cell.btn.isHidden = false
+            cell.btn.setTitle("去付款", for: .normal)
+        case 1:
+            cell.stateLabel.text = "等待卖家接单"
+            cell.btn.isHidden = true
+        case 3:
+            cell.stateLabel.text = "等待配送"
+            cell.btn.isHidden = true
+        case 4:
+            cell.stateLabel.text = "正在配送"
+            cell.btn.isHidden = true
+        case 5:
+            cell.stateLabel.text = "已送达"
+            cell.btn.isHidden = false
+            cell.btn.setTitle("确认收货", for: .normal)
+        case 6:
+            cell.stateLabel.text = "待评价"
+            cell.btn.isHidden = false
+            cell.btn.setTitle("评价", for: .normal)
+        case 7:
+            cell.stateLabel.text = "待确认收货"
+            cell.btn.isHidden = false
+            cell.btn.setTitle("确认收货", for: .normal)
+        case 8:
+            cell.stateLabel.text = "已完成"
+            cell.btn.isHidden = false
+            cell.btn.setTitle("再来一单", for: .normal)
+        default:
+            break
+        }
+    }
 
     func checkCurrentUser() {
         if let usr = self.user {

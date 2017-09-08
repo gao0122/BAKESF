@@ -16,7 +16,7 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     var categories: [AVObject]?
     var bakesDict = [String: [AVBake]]()
     
-    var homeVC: HomeVC!
+    var homeVC: HomeVC?
     
     lazy var refresher: UIRefreshControl = {
         let refresher = UIRefreshControl()
@@ -71,7 +71,7 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
             } else {
                 self.categories = nil
                 self.refresher.endRefreshing()
-                self.homeVC.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重试。")
+                self.homeVC?.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重试。")
             }
         })
     }
@@ -85,7 +85,7 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
             } else {
                 self.categories = nil
                 self.refresher.endRefreshing()
-                self.homeVC.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重新尝试。")
+                self.homeVC?.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重新尝试。")
             }
         })
     }

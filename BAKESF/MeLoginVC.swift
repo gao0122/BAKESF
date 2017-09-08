@@ -44,7 +44,6 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     var timerState: TimerState = .inited
     var loginMethod: LoginMethod = .msg
     var phoneNum = ""
-    var userID = ""
     var msgOrPwdAnimating = false
     var btnWidth: CGFloat = 0
     var loginBtnX: CGFloat = 0
@@ -92,7 +91,12 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-
+        switch showSegueID {
+        case "showLogin", "showLoginFromShopChecking": // from mevc
+            navigationController?.setNavigationBarHidden(false, animated: animated)
+        default:
+            break
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -203,44 +207,45 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                         object, error in
                         if error == nil {
                             // old user
-                            let usr = object as! AVBaker
-                            var canSendMsg = false
-                            let sentLCDate = usr.msgSentDate
-                            if sentLCDate == nil {
-                                canSendMsg = true
-                            } else {
-                                let secs = Date().seconds(fromDate: sentLCDate!)
-                                if secs > self.totalSeconds {
+                            if let usr = object as? AVBaker {
+                                var canSendMsg = false
+                                let sentLCDate = usr.msgSentDate
+                                if sentLCDate == nil {
                                     canSendMsg = true
                                 } else {
-                                    // notify how many seconds left
-                                    self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .alertOrange, nav: self.navigationController?.navigationBar)
-                                    canSendMsg = false
+                                    let secs = Date().seconds(fromDate: sentLCDate!)
+                                    if secs > self.totalSeconds {
+                                        canSendMsg = true
+                                    } else {
+                                        // notify how many seconds left
+                                        self.view.notify(text: "还需要\(self.totalSeconds - secs)秒后才能获取验证码哦", color: .alertOrange, nav: self.navigationController?.navigationBar)
+                                        canSendMsg = false
+                                    }
                                 }
-                            }
-                            
-                            if canSendMsg {
-                                self.userID = usr.objectId!
-                                self.sendMsg(phone: phone)
-                            } else {
-                                self.resetGetMsgBtn()
+                                
+                                if canSendMsg {
+                                    self.avbaker = usr
+                                    self.sendMsg(phone: phone)
+                                } else {
+                                    self.resetGetMsgBtn()
+                                }
                             }
                         } else {
                             // new user
-                            let userAV = AVBaker()
+                            let user = AVBaker()
                             let pwd = generateRandomPwd()
                             let uname = "u\(phone)"
                             let acl = AVACL()
                             acl.setPublicReadAccess(true)
                             acl.setPublicWriteAccess(true)
-                            userAV.acl = acl
-                            userAV.mobilePhoneNumber = phone
-                            userAV.password = pwd
-                            userAV.username = uname
-                            userAV.saveInBackground({
+                            user.acl = acl
+                            user.mobilePhoneNumber = phone
+                            user.password = pwd
+                            user.username = uname
+                            user.saveInBackground({
                                 succeeded, error in
                                 if succeeded {
-                                    self.userID = userAV.objectId!
+                                    self.avbaker = user
                                     self.sendMsg(phone: phone)
                                 } else {
                                     self.resetGetMsgBtn()
@@ -346,7 +351,6 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
             if error == nil {
                 if let baker = objects?.first as? AVBaker {
                     self.avbaker = baker
-                    self.userID = baker.objectId!
                     self.doLogin(self)
                 } else {
                     self.view.notify(text: "手机号或密码错误", color: .alertRed, nav: self.navigationController?.navigationBar)
@@ -383,7 +387,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         if avbaker == nil {
             avbaker = retrieveBaker(withPhone: self.phoneNum)!
         }
-        if let usr = RealmHelper.retrieveUser(withID: self.userID) {
+        if let usr = RealmHelper.retrieveUser(withID: self.avbaker.objectId!) {
             userRealm = usr
             isFirstLogin = false
         } else {

@@ -100,6 +100,7 @@
 		00DEA9D41F5A4DBD00641F9E /* HomeBakeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00DEA9D31F5A4DBD00641F9E /* HomeBakeTableViewCell.swift */; };
 		00DEA9D61F5A4DCA00641F9E /* HomeBakeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00DEA9D51F5A4DCA00641F9E /* HomeBakeCollectionViewCell.swift */; };
 		00DEA9D81F5BD8C100641F9E /* OrderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00DEA9D71F5BD8C100641F9E /* OrderTableViewCell.swift */; };
+		00DEA9DA1F6126DB00641F9E /* OrderDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00DEA9D91F6126DB00641F9E /* OrderDetailVC.swift */; };
 		00E14EF61ECAE016008197A3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 00E14EF51ECAE016008197A3 /* Assets.xcassets */; };
 		00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EF81ECB1866008197A3 /* MeVC.swift */; };
 		00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */; };
@@ -209,6 +210,7 @@
 		00DEA9D31F5A4DBD00641F9E /* HomeBakeTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeBakeTableViewCell.swift; sourceTree = "<group>"; };
 		00DEA9D51F5A4DCA00641F9E /* HomeBakeCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeBakeCollectionViewCell.swift; sourceTree = "<group>"; };
 		00DEA9D71F5BD8C100641F9E /* OrderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderTableViewCell.swift; sourceTree = "<group>"; };
+		00DEA9D91F6126DB00641F9E /* OrderDetailVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrderDetailVC.swift; sourceTree = "<group>"; };
 		00E14EF51ECAE016008197A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		00E14EF81ECB1866008197A3 /* MeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeVC.swift; sourceTree = "<group>"; };
 		00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeLoginVC.swift; sourceTree = "<group>"; };
@@ -492,6 +494,7 @@
 			children = (
 				00629C7D1EC80BBC00B78151 /* OrderVC.swift */,
 				00DEA9D71F5BD8C100641F9E /* OrderTableViewCell.swift */,
+				00DEA9D91F6126DB00641F9E /* OrderDetailVC.swift */,
 				009E972F1EEBC79700D55A5A /* OrderEditingVC.swift */,
 				009BA0241F49997600C7ABF7 /* OrderCheckOutVC.swift */,
 			);
@@ -751,6 +754,7 @@
 				00BF126F1F2C622300F67DF8 /* MeSettingTableCell.swift in Sources */,
 				009E97301EEBC79700D55A5A /* OrderEditingVC.swift in Sources */,
 				00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */,
+				00DEA9DA1F6126DB00641F9E /* OrderDetailVC.swift in Sources */,
 				00020F8F1F0E2D5D008ABFB1 /* CGVector+Extensions.swift in Sources */,
 				0048FDAB1EEA725C002B49B6 /* ShopBuyBakeTableView.swift in Sources */,
 				00020F8E1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift in Sources */,

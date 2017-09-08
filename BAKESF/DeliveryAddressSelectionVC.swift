@@ -234,8 +234,8 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
                 vc.homeVC.selectedPOI = self.selectedPOI
             }
             if let vc = segue.destination as? HomeBakeVC {
-                vc.homeVC.poiChanged = selectedPOI != vc.homeVC.selectedPOI
-                vc.homeVC.selectedPOI = self.selectedPOI
+                vc.homeVC?.poiChanged = selectedPOI != vc.homeVC?.selectedPOI
+                vc.homeVC?.selectedPOI = self.selectedPOI
             }
             if let vc = segue.destination as? HomeFollowVC {
                 vc.homeVC.poiChanged = selectedPOI != vc.homeVC.selectedPOI

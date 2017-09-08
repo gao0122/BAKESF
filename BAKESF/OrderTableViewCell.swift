@@ -18,4 +18,6 @@ class OrderTableViewCell: UITableViewCell {
     @IBOutlet weak var bakesInfoLabel: UILabel!
     @IBOutlet weak var priceLabel: UILabel!
     
+    var order: AVOrder?
+    
 }
