@@ -77,13 +77,15 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
         view.isUserInteractionEnabled = true
         tableViewDeselection()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        navigationController?.setNavigationBarHidden(false, animated: animated)
-        timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.checkNavBar(_:)), userInfo: nil, repeats: false)
+        super.viewDidAppear(animated)
+        timer = Timer.scheduledTimer(timeInterval: 0.12, target: self, selector: #selector(self.checkNavBar(_:)), userInfo: nil, repeats: false)
         if checkCurrentUser() {
             retrieveBaker(withID: userRealm.id, completion: {
                 object, error in

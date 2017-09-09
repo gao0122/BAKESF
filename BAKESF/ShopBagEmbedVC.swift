@@ -65,8 +65,10 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func clearAllBakes() {
         if shopVC.pagingMenuController.currentPage == 0 {
+            shopVC.shopBuyVC.avbakesIn.removeAll()
             RealmHelper.deleteAllBakesInBag(by: avshop.objectId!)
         } else {
+            shopVC.shopPreVC.avbakesPre.removeAll()
             RealmHelper.deleteAllBakesPreOrder(by: avshop.objectId!)
         }
         reloadShopBagEmbedTable()

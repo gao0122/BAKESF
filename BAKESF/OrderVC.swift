@@ -18,8 +18,8 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var helperView: UIView!
     @IBOutlet weak var helperLabel: UILabel!
+    @IBOutlet weak var helperBtn: UIButton!
     @IBOutlet weak var indicatorView: UIActivityIndicatorView!
-    @IBOutlet weak var tryOneMoreTimeBtn: UIButton!
     @IBOutlet weak var tableFooterView: UIView!
     
     lazy var refresher: UIRefreshControl = {
@@ -51,6 +51,8 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
         tableView.addSubview(refresher)
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
+        
+        helperBtn.setBorder(with: .bkRed)
         
     }
 
@@ -87,6 +89,11 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             break
         }
     }
+
+    @IBAction func unwindToOrderVC(segue: UIStoryboardSegue) {
+        
+    }
+    
 
     func loadOrdersAndBakes() {
         guard let avbaker = self.avbaker else { return }
@@ -187,13 +194,14 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         })
     }
     
-    @IBAction func tryOneMoreBtnPressed(_ sender: Any) {
+    @IBAction func helperBtnPressed(_ sender: Any) {
         if let _ = avbaker {
             loadOrdersAndBakes()
         } else {
-            let segue = UIStoryboardSegue.init(identifier: "showLoginFromOrder", source: self, destination: MeLoginVC.instantiateFromStoryboard())
+            let meLoginVC = MeLoginVC.instantiateFromStoryboard()
+            meLoginVC.showSegueID = "showLoginFromOrder"
+            let segue = UIStoryboardSegue(identifier: "showLoginFromOrder", source: self, destination: meLoginVC)
             prepare(for: segue, sender: self)
-            performSegue(withIdentifier: "showLoginFromOrder", sender: self)
         }
     }
 
@@ -201,12 +209,12 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         helperView.isHidden = false
         indicatorView.isHidden = !indicating
         helperLabel.isHidden = indicating
-        tryOneMoreTimeBtn.isHidden = indicating
+        helperBtn.isHidden = indicating
         if indicating {
             indicatorView.startAnimating()
         } else {
             helperLabel.text = labelText
-            tryOneMoreTimeBtn.setTitle(btnText, for: .normal)
+            helperBtn.setTitle(btnText, for: .normal)
             indicatorView.stopAnimating()
         }
     }
@@ -427,7 +435,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 })
             }
         } else {
-            self.showHelperView(with: "未登录", btn: "立即登录", indicating: false)
+            self.showHelperView(with: "需要登录后才可以查看订单哦。", btn: "立即登录", indicating: false)
         }
     }
     

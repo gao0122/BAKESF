@@ -53,6 +53,8 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
         case "showSettingPwd":
             let pwdVC = segue.destination as! MeSettingPwdVC
             pwdVC.avbaker = self.avbaker
+        case "unwindToMeFromSetting":
+            break
         default:
             break
         }

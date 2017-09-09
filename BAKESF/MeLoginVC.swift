@@ -48,7 +48,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     var btnWidth: CGFloat = 0
     var loginBtnX: CGFloat = 0
     
-    var showSegueID: String!
+    var showSegueID: String = ""
     var unwindSegueID: String!
     
     override func viewDidLoad() {
@@ -75,32 +75,18 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         case "showLoginFromShopChecking":
             unwindSegueID = "unwindToShopCheckingFromLogin"
         case "showLoginFromOrder":
-            unwindSegueID = "unwindToShopCheckingFromLogin"
+            unwindSegueID = "unwindToOrderFromLogin"
         default:
             break
         }
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        switch showSegueID {
-        case "showLogin", "showLoginFromShopChecking": // from mevc
-            navigationController?.setNavigationBarHidden(true, animated: animated)
-        default:
-            break
-        }
+        super.viewWillAppear(animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        switch showSegueID {
-        case "showLogin", "showLoginFromShopChecking": // from mevc
-            navigationController?.setNavigationBarHidden(false, animated: animated)
-        default:
-            break
-        }
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        
+        super.viewWillDisappear(animated)
     }
     
     
@@ -113,6 +99,9 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
             case "unwindToShopCheckingFromLogin":
                 let shopCheckingVC = segue.destination as! ShopCheckingVC
                 shopCheckingVC.avbaker = self.avbaker
+            case "unwindToOrderFromLogin":
+                let orderVC = segue.destination as! OrderVC
+                orderVC.avbaker = self.avbaker
             default:
                 break
             }

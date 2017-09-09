@@ -47,14 +47,15 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        super.viewDidDisappear(animated)
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
+        super.viewWillAppear(animated)
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         checkCurrentUser()
         guard let tabBarController = self.tabBarController else { return }
         tabBarController.tabBar.isHidden = false
@@ -68,8 +69,33 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         self.tabBarController?.tabBar.isHidden = true
         self.tabBarController?.tabBar.frame.origin.y = screenHeight
+    }
+    
+    func vcInit() {
+        picker.delegate = self
+        headphoto.layer.cornerRadius = headphoto.frame.width / 2
+        headphoto.layer.masksToBounds = true
+        loginBtn.setBorder(with: .bkBlack)
+        likeBtn.setBorder(with: .bkBlack)
+        editBtnBg.layer.masksToBounds = true
+        editBtnBg.layer.cornerRadius = 8
+        editBtnBg.backgroundColor = .bkWhite
+        editBtnBg.alpha = 0.88
+        view.bringSubview(toFront: editBtn)
+        navigationController?.navigationBar.barTintColor = .bkRed
+        navigationController?.navigationBar.tintColor = .white
+        bakerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MeVC.bakerViewTapped(_:))))
+    }
+
+    func bakerViewTapped(_ sender: Any) {
+        if let _ = avbaker {
+            performSegue(withIdentifier: "showInfoEditingFromMe", sender: sender)
+        } else {
+            performSegue(withIdentifier: "showLogin", sender: sender)
+        }
     }
     
     // MARK: - Navigation
@@ -77,19 +103,16 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         if let id = segue.identifier {
             switch id {
             case "showLogin":
-                let sourceVC = segue.source
-                sourceVC.navigationController?.interactivePopGestureRecognizer?.delegate = self
-                sourceVC.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
-
                 guard let loginVC = segue.destination as? MeLoginVC else { break }
+                setBackItemTitle(for: navigationItem)
                 loginVC.showSegueID = id
             case "showSettingFromMeVC":
-                setBackItemTitle(for: navigationItem)
                 guard let settingVC = segue.destination as? MeSettingVC else { break }
-                settingVC.avbaker = self.avbaker
-            case "showInfoFromMeVC":
                 setBackItemTitle(for: navigationItem)
+                settingVC.avbaker = self.avbaker
+            case "showInfoEditingFromMe":
                 guard let infoVC = segue.destination as? MeInfoVC else { break }
+                setBackItemTitle(for: navigationItem)
                 infoVC.avbaker = self.avbaker
             default:
                 break
@@ -153,21 +176,6 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         self.present(alertVC, animated: true, completion: nil)
     }
     
-    
-    func vcInit() {
-        picker.delegate = self
-        headphoto.layer.cornerRadius = headphoto.frame.width / 2
-        headphoto.layer.masksToBounds = true
-        loginBtn.setBorder(with: .bkBlack)
-        likeBtn.setBorder(with: .bkBlack)
-        editBtnBg.layer.masksToBounds = true
-        editBtnBg.layer.cornerRadius = 8
-        editBtnBg.backgroundColor = .bkWhite
-        editBtnBg.alpha = 0.88
-        view.bringSubview(toFront: editBtn)
-        navigationController?.navigationBar.barTintColor = .bkRed
-        navigationController?.navigationBar.tintColor = .white
-    }
     
     // MARK: - Image Picker
     func openCamera() {
@@ -286,6 +294,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
             RealmHelper.logoutCurrentUser(user: usr)
         }
         user = nil
+        avbaker = nil
         setupViewsAfterChecking(loggedin: false)
         headphoto.setImage(UIImage(named: "巧克力布丁")!, for: .normal)
     }
