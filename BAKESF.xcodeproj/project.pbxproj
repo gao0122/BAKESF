@@ -82,7 +82,6 @@
 		00BF12691F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */; };
 		00BF126B1F2B425000F67DF8 /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF126A1F2B425000F67DF8 /* Double+Extension.swift */; };
 		00BF126D1F2B7DAF00F67DF8 /* ShopCheckingVCPureCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */; };
-		00BF126F1F2C622300F67DF8 /* MeSettingTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF126E1F2C622300F67DF8 /* MeSettingTableCell.swift */; };
 		00CA4A7C1F1DFF9F00541A4C /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */; };
 		00CA4A7E1F1E093500541A4C /* ShopBagEmbedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */; };
 		00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D0AF991EE3C7F300B1F5A2 /* Helper.swift */; };
@@ -191,7 +190,6 @@
 		00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBagEmbedTableCell.swift; sourceTree = "<group>"; };
 		00BF126A1F2B425000F67DF8 /* Double+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
 		00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckingVCPureCoding.swift; sourceTree = "<group>"; };
-		00BF126E1F2C622300F67DF8 /* MeSettingTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingTableCell.swift; sourceTree = "<group>"; };
 		00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBagEmbedVC.swift; sourceTree = "<group>"; };
 		00D0AF991EE3C7F300B1F5A2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
@@ -324,7 +322,6 @@
 				00020F871F0C201E008ABFB1 /* MeInfoVC.swift */,
 				00E9030E1F012C030064F078 /* MeSettingVC.swift */,
 				008F0AF21F2CBD7700700C0D /* EditingInfo */,
-				00BF126E1F2C622300F67DF8 /* MeSettingTableCell.swift */,
 			);
 			name = MeVC;
 			sourceTree = "<group>";
@@ -455,8 +452,8 @@
 				00D23B9F1F14AFD0002E45B7 /* UIImage+Extensions.swift */,
 				00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */,
 				0028C46C1F383C13008A432C /* AMapLocationManager+Extensions.swift */,
-				009BA01A1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift */,
 				0008AD931F568D49005E4061 /* UIButton+Extensions.swift */,
+				009BA01A1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -751,7 +748,6 @@
 				00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */,
 				00D23B961F14AF37002E45B7 /* String+Extensions.swift in Sources */,
 				00CA4A7C1F1DFF9F00541A4C /* UIDevice+Extensions.swift in Sources */,
-				00BF126F1F2C622300F67DF8 /* MeSettingTableCell.swift in Sources */,
 				009E97301EEBC79700D55A5A /* OrderEditingVC.swift in Sources */,
 				00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */,
 				00DEA9DA1F6126DB00641F9E /* OrderDetailVC.swift in Sources */,

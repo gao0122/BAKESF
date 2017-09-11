@@ -17,7 +17,7 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
     var avbaker: AVBaker!
     var user: UserRealm!
     
-    var settingDict: [Int: [String]]!
+    var settingDict: [Int: [Int: String]]!
     
     var totalSeconds = 42 + 3
 
@@ -34,11 +34,16 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
             settingDict = settingDictLogout
         }
         
-
+        let tableHeaderFooterView = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 17))
+        tableHeaderFooterView.backgroundColor = UIColor(hex: 0xF7F7F7)
+        tableView.tableHeaderView = tableHeaderFooterView
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 50))
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+        tabBarController?.tabBar.frame.origin.y = screenHeight
     }
 
 
@@ -121,41 +126,40 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return settingDict[section]!.count
-        case 1:
-            return settingDict[section]!.count
-        case 2:
-            return settingDict[section]!.count
-        case 3:
-            return settingDict[section]!.count
-        default:
+        if let dict = settingDict[section] {
+            return dict.count + 1
+        } else {
             return 0
         }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "meSettingTableCell") as! MeSettingTableCell
-        let sec = indexPath.section
+        let section = indexPath.section
         let row = indexPath.row
-        cell.label.text = settingDict[sec]![row]
-        cell.rightLabel.alpha = 0
-        if user == nil {
-            
-        } else {
-            if sec == 0 && row == 0 {
-                cell.rightLabel.alpha = 1
-                cell.rightLabel.text = "\(user.name)"
+        if let text = settingDict[section]?[row] {
+            let cell = UITableViewCell.btnCell(with: text)
+            cell.accessoryType = .none
+            if user == nil {
+                
+            } else {
+                if section == 0 && row == 0 {
+                    cell.accessoryType = .disclosureIndicator
+                    cell.detailTextLabel?.text = user.name
+                }
             }
+            if row + 1 == settingDict[section]?.count {
+                cell.separatorInset.left = screenWidth
+            }
+            return cell
+        } else {
+            return UITableViewCell.separatorCell()
         }
-        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let sec = indexPath.section
+        let section = indexPath.section
         let row = indexPath.row
-        switch sec {
+        switch section {
         case 0:
             switch row {
             case 0:
@@ -187,12 +191,22 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return section == settingDict.count - 1 ? 15 : 0
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0
     }
     
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 15
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let section = indexPath.section
+        let row = indexPath.row
+        if let _ = settingDict[section]?[row] {
+            return 50
+        } else {
+            return 17
+        }
     }
     
     func tableViewDeselection() {
@@ -204,13 +218,13 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
 
 }
 
-private let settingDictLogin: [Int: [String]] = [
-    0: ["用户名"],
-    1: ["修改密码"],
-    2: ["退出登录"]
+private let settingDictLogin: [Int: [Int: String]] = [
+    0: [0: "用户名"],
+    1: [0: "修改密码"],
+    2: [0: "退出登录"]
 ]
 
-private let settingDictLogout: [Int: [String]] = [
-    0: ["登录"]
+private let settingDictLogout: [Int: [Int: String]] = [
+    0: [0: "登录"]
 ]
 

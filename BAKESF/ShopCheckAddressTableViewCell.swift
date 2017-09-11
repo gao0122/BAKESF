@@ -14,4 +14,9 @@ class ShopCheckAddressTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var addressLabel: UILabel!
     
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        self.accessoryType = .disclosureIndicator
+    }
+    
 }

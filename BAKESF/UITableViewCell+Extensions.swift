@@ -26,15 +26,17 @@ public extension UITableViewCell {
         return cell
     }
 
-    static func btnCell(with text: String, in color: UIColor = .bkBlack) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = text
+    static func btnCell(with text: String, in color: UIColor = .bkBlack, img: UIImage? = nil, detail: String = "") -> UITableViewCell {
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: "btnTableViewCell")
+        cell.imageView?.image = img
         cell.textLabel?.textColor = color
+        cell.detailTextLabel?.text = detail
+        cell.accessoryType = .disclosureIndicator
         let label: UILabel = {
             let label = UILabel()
-            label.frame = CGRect(x: cell.frame.width - 15 - 30, y: (cell.frame.height - 24) / 2, width: 30, height: 24)
-            label.autoresizingMask = [.flexibleTopMargin, .flexibleBottomMargin, .flexibleLeftMargin]
-            label.text = ">"
+            label.frame = CGRect(x: 15, y: (cell.frame.height - 24) / 2, width: cell.frame.width - 50, height: 24)
+            label.autoresizingMask = [.flexibleTopMargin, .flexibleBottomMargin, .flexibleRightMargin]
+            label.text = text
             label.textColor = color
             label.textAlignment = .right
             return label
@@ -42,5 +44,12 @@ public extension UITableViewCell {
         cell.addSubview(label)
         return cell
     }
-    
+ 
+    static func separatorCell() -> UITableViewCell {
+        let cell = UITableViewCell()
+        cell.backgroundColor = UIColor(hex: 0xF7F7F7)
+        cell.selectionStyle = .none
+        cell.separatorInset.left = screenWidth
+        return cell
+    }
 }

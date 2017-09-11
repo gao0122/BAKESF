@@ -108,7 +108,10 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+        tabBarController?.tabBar.isHidden = true
+        tabBarController?.tabBar.frame.origin.y = screenHeight
         hideCityTableView()
         hideHelperView()
     }

@@ -722,6 +722,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 components.minute = j * 20
                 if let openTime = avshop.openTime, let closeTime = avshop.closeTime, let dateToAdd = components.date {
                     if dateToAdd.isTimeBetween(from: openTime, to: closeTime) {
+                        deliveryTimes.append(timeText)
+                        deliveryTimecs.append(components)
                     }
                 }
             }
@@ -767,7 +769,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             deliveryTimeDateTableView.reloadData()
             deliveryTimeDateTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
             if isInBag {
-                resetDeliveryTimes(by: Calendar.current.dateComponents([.hour, .minute, .weekday, .year, .month, .day], from: date))
+                let currentCs = Calendar.current.dateComponents([.hour, .minute, .weekday, .year, .month, .day], from: date)
+                resetDeliveryTimes(by: currentCs)
             } else {
                 resetDeliveryTimes(by: deliveryDatecs[0])
             }

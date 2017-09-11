@@ -17,6 +17,8 @@ class OrderTableViewCell: UITableViewCell {
     @IBOutlet weak var stateLabel: UILabel!
     @IBOutlet weak var bakesInfoLabel: UILabel!
     @IBOutlet weak var priceLabel: UILabel!
+    @IBOutlet weak var preorderLabel: UILabel!
+    @IBOutlet weak var preorderIV: UIImageView!
     
     var order: AVOrder?
     

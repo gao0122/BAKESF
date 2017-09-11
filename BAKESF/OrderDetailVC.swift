@@ -21,9 +21,15 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         let navBar = navigationController?.navigationBar
         
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+        tabBarController?.tabBar.frame.origin.y = screenHeight
+    }
 
     override func viewDidAppear(_ animated: Bool) {
-        
+        super.viewDidAppear(animated)
     }
     
     class func instantiateFromStoryboard(with order: AVOrder) -> OrderDetailVC {

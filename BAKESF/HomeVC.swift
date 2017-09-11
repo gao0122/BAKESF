@@ -63,10 +63,12 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         if let tabBarController = self.tabBarController {
             tabBarController.tabBar.isHidden = false
             let duration: TimeInterval = animated ? 0.17 : 0
@@ -97,8 +99,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = true
-        self.tabBarController?.tabBar.frame.origin.y = screenHeight
+        super.viewWillDisappear(animated)
     }
     
     func preInit() {

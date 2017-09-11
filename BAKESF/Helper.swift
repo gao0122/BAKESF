@@ -33,7 +33,7 @@ func setBackItemTitle(with title: String = "", for navigationItem: UINavigationI
         }
     }
 }
-func setBackItemTitle(_ title: String, for navigationItem: UINavigationItem ) {
+private func setBackItemTitle(_ title: String, for navigationItem: UINavigationItem ) {
     let backItem = UIBarButtonItem()
     backItem.title = title
     navigationItem.backBarButtonItem = backItem

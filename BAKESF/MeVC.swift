@@ -11,7 +11,7 @@ import PagingMenuController
 import AVOSCloud
 import Crashlytics
 
-class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
+class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var bakerView: UIView!
     @IBOutlet weak var loginBtn0: UIButton! // currently using
@@ -26,23 +26,33 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     @IBOutlet weak var editBtnBg: UIButton!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var rightArrowLabel: UILabel!
+    @IBOutlet weak var settingTableView: UITableView!
+
     
     var user: UserRealm!
     var avbaker: AVBaker?
     
     var picker: UIImagePickerController = UIImagePickerController()
 
+    var settingDict: [Int: [Int: String]] = {
+        return [
+            0: [0: "我的红包",
+                1: "我的地址",
+                2: "我的收藏"],
+            1: [0: "私房入驻",
+                1: "给个好评",
+                2: "服务中心"]
+        ]
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
 
         vcInit()
+        
         // page menu
         //pageMenuInit()
-        
-        
-        
-        
  
     }
 
@@ -70,8 +80,6 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.tabBarController?.tabBar.isHidden = true
-        self.tabBarController?.tabBar.frame.origin.y = screenHeight
     }
     
     func vcInit() {
@@ -88,6 +96,10 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         navigationController?.navigationBar.barTintColor = .bkRed
         navigationController?.navigationBar.tintColor = .white
         bakerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MeVC.bakerViewTapped(_:))))
+        let tableHeaderFooterView = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 17))
+        tableHeaderFooterView.backgroundColor = UIColor(hex: 0xF7F7F7)
+        settingTableView.tableHeaderView = tableHeaderFooterView
+        settingTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 50))
     }
 
     func bakerViewTapped(_ sender: Any) {
@@ -268,11 +280,58 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
             progressView.frame.size.width = width * CGFloat(percent) / 100
         })
     }
-
+    
+    
+    // MARK: - TableView
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return settingDict.count
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let dict = settingDict[section] {
+            return dict.count + 1
+        } else {
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let section = indexPath.section
+        let row = indexPath.row
+        if let text = settingDict[section]?[row] {
+            let cell = UITableViewCell.btnCell(with: text)
+            if row + 1 == settingDict[section]?.count {
+                cell.separatorInset.left = screenWidth
+            }
+            return cell
+        } else {
+            return UITableViewCell.separatorCell()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let section = indexPath.section
+        let row = indexPath.row
+        if let _ = settingDict[section]?[row] {
+            return 50
+        } else {
+            return 17
+        }
+    }
+    
+    
+    // MARK: - functions
     func checkCurrentUser() {
         if let usr = RealmHelper.retrieveCurrentUser() {
             if let avbaker = retrieveBaker(withID: usr.id) {
-                //self.title = "\(usr.name)"
                 self.avbaker = avbaker
                 setupViewsAfterChecking(loggedin: true)
                 user = usr
@@ -303,7 +362,6 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         editBtn.isHidden = !loggedin
         editBtnBg.isHidden = !loggedin
         userNameLabel.isHidden = !loggedin
-        rightArrowLabel.isHidden = !loggedin
         loginBtn.isHidden = loggedin
         loginBtn0.isHidden = loggedin
     }

@@ -103,6 +103,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        tabBarController?.tabBar.isHidden = true
+        tabBarController?.tabBar.frame.origin.y = screenHeight
     }
     
     override func viewWillDisappear(_ animated: Bool) {

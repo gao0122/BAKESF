@@ -57,6 +57,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         checkCurrentUser()
         guard let tabBarController = self.tabBarController else { return }
         tabBarController.tabBar.isHidden = false
@@ -70,8 +71,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = true
-        self.tabBarController?.tabBar.frame.origin.y = screenHeight
+        super.viewWillDisappear(animated)
     }
     
     
@@ -80,6 +80,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let id = segue.identifier else { return }
+        setBackItemTitle(for: navigationItem)
         switch id {
         case "showLoginFromOrder":
             show(segue.destination, sender: sender)
@@ -102,7 +103,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let queryBool = AVOrder.query()
         queryBool.whereKey("hasDeletedByUser", equalTo: false)
         let query = AVQuery.andQuery(withSubqueries: [queryBaker, queryBool])
-        query.addDescendingOrder("createAt")
+        query.addAscendingOrder("createAt")
         query.includeKey("baker")
         query.includeKey("shop")
         query.includeKey("shop.headphoto")
@@ -267,6 +268,14 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                         cell.avatarIV.layer.cornerRadius = cell.avatarIV.frame.size.width / 2
                         cell.avatarIV.layer.masksToBounds = true
                     }
+                    
+                    cell.preorderLabel.layer.borderColor = UIColor.bkRed.cgColor
+                    cell.preorderLabel.layer.borderWidth = 1
+                    cell.preorderLabel.layer.cornerRadius = cell.preorderLabel.frame.width / 2
+                    if let type = order.type?.intValue {
+                        cell.preorderLabel.isHidden = type == 0
+                    }
+                    
                     cell.stateLabel.text = ""
                     if let status = order.status as? Int {
                         switch status {
@@ -303,12 +312,13 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                             break
                         }
                     }
+                    
                     if let avbakes = avbakesDict[order] {
                         var bakesInfoText = ""
                         if let bake = avbakes.first as? AVBakeIn {
-                            bakesInfoText = bake.bakee.name!
+                            bakesInfoText = bake.bakee!.name!
                         } else if let bake = avbakes.first as? AVBakePre {
-                            bakesInfoText = bake.bakee.name!
+                            bakesInfoText = bake.bakee!.name!
                         }
                         if avbakes.count > 1 {
                             bakesInfoText += " 等\(avbakes.count)件商品"
@@ -316,6 +326,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                         cell.bakesInfoLabel.text = bakesInfoText
                         cell.priceLabel.text = "\(String(describing: order.totalCost!))元"
                     }
+                    
                     return cell
                 }
             }
@@ -347,6 +358,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             } else {
                 let order = avorders[row]
                 let orderDetailVC = OrderDetailVC.instantiateFromStoryboard(with: order)
+                orderDetailVC.title = order.shop?.name
                 let segue = UIStoryboardSegue(identifier: "showOrderDetailVCFromOrderTableViewCell", source: self, destination: orderDetailVC)
                 prepare(for: segue, sender: self)
             }

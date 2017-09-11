@@ -46,11 +46,12 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func reloadBakes() {
+        // TODO: - change 'bakee' to 'bake' after finished bake specification
         if shopVC.pagingMenuController.currentPage == 0 {
-            avbakesIn = shopVC.shopBuyVC.avbakesIn.values.sorted(by: { b1, b2 in return b1.bake!.objectId! < b2.bake!.objectId! })
+            avbakesIn = shopVC.shopBuyVC.avbakesIn.values.sorted(by: { b1, b2 in return b1.bakee!.objectId! < b2.bakee!.objectId! })
             bakesInBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { b1, b2 in return b1.id < b2.id })
         } else {
-            avbakesPre = shopVC.shopPreVC.avbakesPre.values.sorted(by: { b1, b2 in return b1.bake!.objectId! < b2.bake!.objectId! })
+            avbakesPre = shopVC.shopPreVC.avbakesPre.values.sorted(by: { b1, b2 in return b1.bakee!.objectId! < b2.bakee!.objectId! })
             bakesPreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { b1, b2 in return b1.id < b2.id })
         }
     }
