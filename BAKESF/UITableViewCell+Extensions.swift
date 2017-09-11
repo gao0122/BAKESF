@@ -38,7 +38,7 @@ public extension UITableViewCell {
             label.autoresizingMask = [.flexibleTopMargin, .flexibleBottomMargin, .flexibleRightMargin]
             label.text = text
             label.textColor = color
-            label.textAlignment = .right
+            label.textAlignment = .left
             return label
         }()
         cell.addSubview(label)
