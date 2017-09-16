@@ -62,6 +62,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        settingTableView.deselection()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -126,6 +127,16 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
                 guard let infoVC = segue.destination as? MeInfoVC else { break }
                 setBackItemTitle(for: navigationItem)
                 infoVC.avbaker = self.avbaker
+            case "showDAVCFromMeVC":
+                show(segue.destination, sender: sender)
+            case "showRedPacketVCFromMeVC":
+                show(segue.destination, sender: sender)
+            case "showFavorateVCFromMeVC":
+                show(segue.destination, sender: sender)
+            case "showJoinUsVCFromMeVC":
+                show(segue.destination, sender: sender)
+            case "showServiceVCFromVC":
+                show(segue.destination, sender: sender)
             default:
                 break
             }
@@ -309,6 +320,90 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let section = indexPath.section
+        let row = indexPath.row
+        switch section {
+        case 0:
+            switch row {
+            case 0:
+                // 我的红包
+                if let avbaker = self.avbaker {
+                    let redPacketVC = RedPacketVC.instantiateFromStoryboard()
+                    redPacketVC.avbaker = avbaker
+                    let segue = UIStoryboardSegue(identifier: "showRedPacketVCFromMeVC", source: self, destination: redPacketVC)
+                    prepare(for: segue, sender: self)
+                } else {
+                    tableView.deselectRow(at: indexPath, animated: true)
+                    view.notify(text: "登陆后才可以查看哦", color: .alertOrange, nav: navigationController?.navigationBar)
+                }
+            case 1:
+                // 我的地址
+                if let avbaker = self.avbaker {
+                    let daVC = DeliveryAddressVC.instantiateFromStoryboard()
+                    daVC.avbaker = avbaker
+                    let segue = UIStoryboardSegue(identifier: "showDAVCFromMeVC", source: self, destination: daVC)
+                    prepare(for: segue, sender: self)
+                } else {
+                    tableView.deselectRow(at: indexPath, animated: true)
+                    view.notify(text: "登陆后才可以查看哦", color: .alertOrange, nav: navigationController?.navigationBar)
+                }
+            case 2:
+                // 我的收藏
+                if let avbaker = self.avbaker {
+                    let favorVC = MeFavoriteVC.instantiateFromStoryboard()
+                    favorVC.avbaker = avbaker
+                    let segue = UIStoryboardSegue(identifier: "showFavorateVCFromMeVC", source: self, destination: favorVC)
+                    prepare(for: segue, sender: self)
+                } else {
+                    tableView.deselectRow(at: indexPath, animated: true)
+                    view.notify(text: "登陆后才可以查看哦", color: .alertOrange, nav: navigationController?.navigationBar)
+                }
+            default:
+                break
+            }
+        case 1:
+            switch row {
+            case 0:
+                // 私房入驻
+                if let avbaker = self.avbaker {
+                    let joneUsVC = MeJoinUsVC.instantiateFromStoryboard()
+                    joneUsVC.avbaker = avbaker
+                    let segue = UIStoryboardSegue(identifier: "showJoinUsVCFromMeVC", source: self, destination: joneUsVC)
+                    prepare(for: segue, sender: self)
+                } else {
+                    tableView.deselectRow(at: indexPath, animated: true)
+                    view.notify(text: "登陆后才可以查看哦", color: .alertOrange, nav: navigationController?.navigationBar)
+                }
+            case 1:
+                // 给个好评
+                tableView.deselectRow(at: indexPath, animated: true)
+                let url = URL(string: "itms-apps://itunes.apple.com/app/id1252056445")
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(url!, options: [:], completionHandler: nil)
+                } else {
+                    // Fallback on earlier versions
+                    UIApplication.shared.openURL(url!)
+                }
+            case 2:
+                // 服务中心
+                if let avbaker = self.avbaker {
+                    let serviceVC = MeServiceVC.instantiateFromStoryboard()
+                    serviceVC.avbaker = avbaker
+                    let segue = UIStoryboardSegue(identifier: "showServiceVCFromVC", source: self, destination: serviceVC)
+                    prepare(for: segue, sender: self)
+                } else {
+                    tableView.deselectRow(at: indexPath, animated: true)
+                    view.notify(text: "登陆后才可以查看哦", color: .alertOrange, nav: navigationController?.navigationBar)
+                }
+            default:
+                break
+            }
+        default:
+            break
+        }
+    }
+    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 0
     }
@@ -326,6 +421,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
             return 17
         }
     }
+    
     
     
     // MARK: - functions

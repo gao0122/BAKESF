@@ -42,7 +42,7 @@
 #endif
 
 #ifndef MA_CUSTOM_MAP
-#define MA_CUSTOM_MAP 1
+#define MA_CUSTOM_MAP 0
 #endif
 
 

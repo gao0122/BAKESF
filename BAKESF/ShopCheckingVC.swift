@@ -80,7 +80,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
         view.isUserInteractionEnabled = true
-        tableViewDeselection()
+        tableView.deselection()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -146,12 +146,12 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case "showDeliveryAddressFromShopCheckingVC":
             guard let daVC = segue.destination as? DeliveryAddressVC else { break }
             daVC.avbaker = self.avbaker
-            daVC.shopCheckingVC = self
             daVC.currentAddress = self.avaddress
+            daVC.segueID = id
             show(daVC, sender: self)
         case "showRedPacketVCFromShopCheckingVC":
             guard let vc = segue.destination as? RedPacketVC else { break }
-            vc.baker = self.avbaker
+            vc.avbaker = self.avbaker
             show(vc, sender: sender)
         case "showCheckOutFromShopCheckingVC":
             guard let vc = segue.destination as? OrderCheckOutVC else { break }
@@ -255,6 +255,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         })
 
+        // all queues finished executing
         group.notify(queue: DispatchQueue.main, execute: {
             if isSucceeded {
                 if self.isInBag {
@@ -889,12 +890,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         return section == 0 ? 0 : 15
     }
     
-    func tableViewDeselection() {
-        if let index = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: index, animated: true)
-        }
-    }
-
 
     
     func checkCurrentUser() -> Bool {

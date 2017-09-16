@@ -12,6 +12,7 @@ import AVOSCloud
 class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     
+    var orderVC: OrderVC!
     var order: AVOrder!
     var avbakes: [AVObject]!
     
@@ -32,9 +33,15 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         super.viewDidAppear(animated)
     }
     
-    class func instantiateFromStoryboard(with order: AVOrder) -> OrderDetailVC {
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        orderVC.tableViewCellDeselection()
+    }
+    
+    class func instantiateFromStoryboard(with order: AVOrder, orderVC: OrderVC) -> OrderDetailVC {
         let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! OrderDetailVC
         vc.order = order
+        vc.orderVC = orderVC
         return vc
     }
 

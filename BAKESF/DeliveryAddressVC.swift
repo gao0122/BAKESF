@@ -19,7 +19,6 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     var deliveryAddressEditingVC: DeliveryAddressEditingVC!
     var addresses: [AVAddress]!
-    var shopCheckingVC: ShopCheckingVC!
     var avbaker: AVBaker?
     var editingAddress: AVAddress?
     var selectedAddress: AVAddress?
@@ -29,11 +28,18 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     var isPreOrder = false
     
     let errorText = "操作失败，请检查网络连接。"
+    var segueID = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.title = "选择收货地址"
+        switch segueID {
+        case "showDeliveryAddressFromShopCheckingVC":
+            self.title = "选择收货地址"
+        default:
+            self.title = "收货地址"
+        }
+        
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
 
         view.bringSubview(toFront: indicatorSuperView)
@@ -45,7 +51,13 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+        tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -214,6 +226,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if segueID != "showDeliveryAddressFromShopCheckingVC" { return }
         let row = indexPath.row
         let address = addresses[row]
         selectedAddress = address

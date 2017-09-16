@@ -10,7 +10,7 @@ import UIKit
 import PagingMenuController
 import AVOSCloud
 
-class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
+class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var masterView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -21,6 +21,9 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     @IBOutlet weak var retryBtn: UIButton!
     @IBOutlet weak var locateManuallyBtn: UIButton!
     @IBOutlet weak var helperLabel: UILabel!
+    @IBOutlet weak var searchResultsTableView: UITableView!
+    @IBOutlet weak var searchResultsView: UIView!
+    @IBOutlet weak var searchResultsHelperView: UIView!
     
     private var homeShopVC: HomeShopVC!
     private var homeBakeVC: HomeBakeVC!
@@ -28,7 +31,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     private var sellerTableView: UITableView!
     private var bakeTableView: UITableView!
     private var followTableView: UITableView!
-
+    
     let bakeLocationRadius: CGFloat = 3000
     
     var user: UserRealm!
@@ -43,9 +46,12 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
     var locatedOnce = false
     var searchBarWidth: CGFloat!
     var hasSetShopView = false
+    var searchResults = [Any]()
     
     let noShopsText = "未在该城市发现私房"
-    let locateErrorText = "出错啦！"
+    let locateErrorText = "加载失败，请重试"
+    let searchResultsNoResultsText = "未找到相关结果"
+    let searchResultsToSearchText = "输入商品名称、类别或私房名称搜索"
     
     private let mapSearch = AMapSearchAPI()!
     private let locationManager = AMapLocationManager()
@@ -109,8 +115,13 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         indicatorStartAni()
         retryBtn.setBorder(with: .bkRed)
         locateManuallyBtn.setBorder(with: .bkRed)
+        view.bringSubview(toFront: locateFailedView)
+        view.bringSubview(toFront: indicatorSuperView)
+        searchResultsTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
     }
     
+    
+    // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let id = segue.identifier else { return }
         switch id {
@@ -126,6 +137,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
             break
         }
     }
+    
+    
     
     @IBAction func locationBtnPressed(_ sender: Any) {
         // do nothing
@@ -266,9 +279,14 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
             finished in
             self.searchBarFocusAni()
         })
+        setSearchResultsViewHidden(for: false)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        cancelSearch()
+    }
+    
+    func cancelSearch() {
         dismissKeyboard(sender: self)
         UIView.animate(withDuration: 0.21, delay: 0, options: [.curveEaseInOut], animations: {
             self.searchBarCancelAni()
@@ -276,6 +294,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
             finished in
             self.searchBarCancelAni()
         })
+        setSearchResultsViewHidden(for: true)
     }
     
     func dismissKeyboard(_ sender: Any) {
@@ -292,6 +311,42 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate {
         self.searchBar.frame.size.width = self.searchBarWidth
         self.locationBtn.alpha = 1
     }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        printit("searchbuttonclicked")
+    }
+    
+    func setSearchResultsViewHidden(for shouldHidden: Bool) {
+        searchResultsView.isHidden = shouldHidden
+        if shouldHidden {
+            view.bringSubview(toFront: locateFailedView)
+            view.bringSubview(toFront: indicatorSuperView)
+        } else {
+            view.bringSubview(toFront: searchResultsView)
+        }
+    }
+    
+    
+    
+    // MARK: - TableView
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return searchResults.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let row = indexPath.row
+        if let res = searchResults[row] as? AVBake {
+            printit(res)
+        } else if let res = searchResults[row] as? AVShop {
+            printit(res)
+        }
+        return UITableViewCell()
+    }
+    
     
     // MARK: - Page Menu
     func setPageMenu() {

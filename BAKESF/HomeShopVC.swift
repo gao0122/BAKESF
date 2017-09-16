@@ -41,7 +41,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         navigationController?.navigationBar.tintColor = .white
 
         tableView.addSubview(refresher)
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 50))
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 5))
     }
     
     override func viewWillAppear(_ animated: Bool) {

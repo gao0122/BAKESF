@@ -208,13 +208,7 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
             return 17
         }
     }
-    
-    func tableViewDeselection() {
-        if let index = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: index, animated: true)
-        }
-    }
-    
+        
 
 }
 

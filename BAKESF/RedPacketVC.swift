@@ -12,7 +12,7 @@ class RedPacketVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
 
     @IBOutlet weak var tableView: UITableView!
     
-    var baker: AVBaker?
+    var avbaker: AVBaker?
     var redPackets: [AVRedPacket]!
     
     override func viewDidLoad() {
@@ -46,7 +46,7 @@ class RedPacketVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let _ = baker {
+        if let _ = avbaker {
             if redPackets == nil {
                 let cell = UITableViewCell.centerTextCell(with: "暂无可用红包", in: .bkBlack)
                 cell.selectionStyle = .none

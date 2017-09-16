@@ -18,6 +18,10 @@
 		0008AD941F568D49005E4061 /* UIButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0008AD931F568D49005E4061 /* UIButton+Extensions.swift */; };
 		000D13781EFF862700A19D5A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13771EFF862700A19D5A /* Constants.swift */; };
 		001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001DB09C1F024CD100A09F32 /* CommunityVC.swift */; };
+		002515061F6CC71100DCEB80 /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002515051F6CC71100DCEB80 /* UITableView+Extensions.swift */; };
+		002515081F6D1B9100DCEB80 /* MeFavoriteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002515071F6D1B9100DCEB80 /* MeFavoriteVC.swift */; };
+		0025150A1F6D277D00DCEB80 /* MeJoinUsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002515091F6D277D00DCEB80 /* MeJoinUsVC.swift */; };
+		0025150C1F6D295300DCEB80 /* MeServiceVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0025150B1F6D295300DCEB80 /* MeServiceVC.swift */; };
 		00264E651F2F275700D83073 /* ShopCheckingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E641F2F275700D83073 /* ShopCheckingVC.swift */; };
 		00264E691F2F63A700D83073 /* ShopCheckBakeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */; };
 		00264E6B1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift */; };
@@ -104,6 +108,7 @@
 		00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EF81ECB1866008197A3 /* MeVC.swift */; };
 		00E14EFB1ECBF5C4008197A3 /* MeLoginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */; };
 		00E14EFF1ECC9587008197A3 /* UserRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E14EFE1ECC9587008197A3 /* UserRealm.swift */; };
+		00E5C39A1F694ACC0061E7CE /* HomeSearchResultTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E5C3991F694ACC0061E7CE /* HomeSearchResultTableViewCell.swift */; };
 		00E9030F1F012C030064F078 /* MeSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E9030E1F012C030064F078 /* MeSettingVC.swift */; };
 		7A39B2C152FC8E14A77AFBC0 /* Pods_BAKESF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 347DBBFADC15C16C10915F5A /* Pods_BAKESF.framework */; };
 /* End PBXBuildFile section */
@@ -120,6 +125,10 @@
 		0008AD931F568D49005E4061 /* UIButton+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+Extensions.swift"; sourceTree = "<group>"; };
 		000D13771EFF862700A19D5A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		001DB09C1F024CD100A09F32 /* CommunityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityVC.swift; sourceTree = "<group>"; };
+		002515051F6CC71100DCEB80 /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
+		002515071F6D1B9100DCEB80 /* MeFavoriteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeFavoriteVC.swift; sourceTree = "<group>"; };
+		002515091F6D277D00DCEB80 /* MeJoinUsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeJoinUsVC.swift; sourceTree = "<group>"; };
+		0025150B1F6D295300DCEB80 /* MeServiceVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeServiceVC.swift; sourceTree = "<group>"; };
 		00264E641F2F275700D83073 /* ShopCheckingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckingVC.swift; sourceTree = "<group>"; };
 		00264E681F2F63A700D83073 /* ShopCheckBakeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckBakeTableCell.swift; sourceTree = "<group>"; };
 		00264E6A1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckAddressTableViewCell.swift; sourceTree = "<group>"; };
@@ -213,6 +222,7 @@
 		00E14EF81ECB1866008197A3 /* MeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeVC.swift; sourceTree = "<group>"; };
 		00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeLoginVC.swift; sourceTree = "<group>"; };
 		00E14EFE1ECC9587008197A3 /* UserRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRealm.swift; sourceTree = "<group>"; };
+		00E5C3991F694ACC0061E7CE /* HomeSearchResultTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSearchResultTableViewCell.swift; sourceTree = "<group>"; };
 		00E9030E1F012C030064F078 /* MeSettingVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingVC.swift; sourceTree = "<group>"; };
 		347DBBFADC15C16C10915F5A /* Pods_BAKESF.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BAKESF.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A81FAE95BB34EB6E0AC6AFE /* Pods-BAKESF.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BAKESF.release.xcconfig"; path = "Pods/Target Support Files/Pods-BAKESF/Pods-BAKESF.release.xcconfig"; sourceTree = "<group>"; };
@@ -263,7 +273,6 @@
 				009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */,
 				009BA01C1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift */,
 				009BA0141F469D5E00C7ABF7 /* RedPacketVC */,
-				009BA0151F469DD200C7ABF7 /* DeliveryAddressVC */,
 				00264E661F2F637500D83073 /* BakeTableViewAndCell */,
 				00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */,
 				002659A31F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift */,
@@ -321,6 +330,9 @@
 				00E14EFA1ECBF5C4008197A3 /* MeLoginVC.swift */,
 				00020F871F0C201E008ABFB1 /* MeInfoVC.swift */,
 				00E9030E1F012C030064F078 /* MeSettingVC.swift */,
+				002515071F6D1B9100DCEB80 /* MeFavoriteVC.swift */,
+				002515091F6D277D00DCEB80 /* MeJoinUsVC.swift */,
+				0025150B1F6D295300DCEB80 /* MeServiceVC.swift */,
 				008F0AF21F2CBD7700700C0D /* EditingInfo */,
 			);
 			name = MeVC;
@@ -330,6 +342,7 @@
 			isa = PBXGroup;
 			children = (
 				006024FF1EC9995400FFB859 /* HomeVC.swift */,
+				00E5C3991F694ACC0061E7CE /* HomeSearchResultTableViewCell.swift */,
 				006024F91EC98FCF00FFB859 /* HomeMasterVC.swift */,
 				00DEA9D01F599B7D00641F9E /* HomeShopVC */,
 				00DEA9D21F599B9F00641F9E /* HomeBakeVC */,
@@ -431,6 +444,7 @@
 				00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */,
 				00BF12681F299A6D00F67DF8 /* ShopBagEmbedTableCell.swift */,
 				00264E671F2F639200D83073 /* ShopCheckingVC */,
+				009BA0151F469DD200C7ABF7 /* DeliveryAddressVC */,
 			);
 			name = ShopVC;
 			sourceTree = "<group>";
@@ -454,6 +468,7 @@
 				0028C46C1F383C13008A432C /* AMapLocationManager+Extensions.swift */,
 				0008AD931F568D49005E4061 /* UIButton+Extensions.swift */,
 				009BA01A1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift */,
+				002515051F6CC71100DCEB80 /* UITableView+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -718,12 +733,14 @@
 				009BA0211F4944E200C7ABF7 /* AVCommentShop.swift in Sources */,
 				00D3AB661F36FA4200A5E934 /* DeliveryAddressTableViewCell.swift in Sources */,
 				0028C46D1F383C13008A432C /* AMapLocationManager+Extensions.swift in Sources */,
+				002515061F6CC71100DCEB80 /* UITableView+Extensions.swift in Sources */,
 				00E14EF91ECB1866008197A3 /* MeVC.swift in Sources */,
 				00988AE41F4ECC2700A9E6E5 /* AVBakeDetail.swift in Sources */,
 				00988AE81F4ECCFF00A9E6E5 /* AVBakeAttributes.swift in Sources */,
 				0044B0AC1ED17B3C003DE5AF /* HomeShopTableViewCell.swift in Sources */,
 				00D23B9A1F14AF66002E45B7 /* UIView+Extensions.swift in Sources */,
 				000D13781EFF862700A19D5A /* Constants.swift in Sources */,
+				00E5C39A1F694ACC0061E7CE /* HomeSearchResultTableViewCell.swift in Sources */,
 				00455A8B1F19E81D009F440F /* BakeInBagRealm.swift in Sources */,
 				002659A41F30BF0E0016A9F6 /* DeliveryAddressVCFoff.swift in Sources */,
 				006A3E201F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift in Sources */,
@@ -735,6 +752,7 @@
 				00020F861F0BCDC5008ABFB1 /* FancyTransitionAnimator.swift in Sources */,
 				006024FE1EC9900F00FFB859 /* HomeShopVC.swift in Sources */,
 				0034EE381EE91176005300AE /* ShopPreVC.swift in Sources */,
+				0025150A1F6D277D00DCEB80 /* MeJoinUsVC.swift in Sources */,
 				004318321F13EF8E00FD0227 /* ShopClassifyTableCell.swift in Sources */,
 				0000D8191F1F3DC100BB2B30 /* ShopPreBakeTableView.swift in Sources */,
 				00020F8D1F0E2D5D008ABFB1 /* CGFloat+Extensions.swift in Sources */,
@@ -754,6 +772,7 @@
 				00020F8F1F0E2D5D008ABFB1 /* CGVector+Extensions.swift in Sources */,
 				0048FDAB1EEA725C002B49B6 /* ShopBuyBakeTableView.swift in Sources */,
 				00020F8E1F0E2D5D008ABFB1 /* CGPoint+Extensions.swift in Sources */,
+				0025150C1F6D295300DCEB80 /* MeServiceVC.swift in Sources */,
 				00B4709B1F0404DD00725C95 /* AVBaker.swift in Sources */,
 				00B491A91EE4CFE1000C63EB /* ShopVC.swift in Sources */,
 				00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */,
@@ -789,6 +808,7 @@
 				009BA01B1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift in Sources */,
 				00D23B981F14AF4E002E45B7 /* Data+Extensions.swift in Sources */,
 				009BA0131F469D5800C7ABF7 /* RedPacketVC.swift in Sources */,
+				002515081F6D1B9100DCEB80 /* MeFavoriteVC.swift in Sources */,
 				006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */,
 				004BF0E01ED184CF00554A5E /* HomeShopTableView.swift in Sources */,
 				0000D81B1F1F3DD300BB2B30 /* ShopPreBakeTableCell.swift in Sources */,

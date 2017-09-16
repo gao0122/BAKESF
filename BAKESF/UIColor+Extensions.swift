@@ -65,5 +65,8 @@ extension UIColor {
     static var textGray: UIColor {
         return UIColor(hex: 0x787878)
     }
+    static var iron: UIColor {
+        return UIColor(hex: 0x4C4C4C)
+    }
     
 }

@@ -357,7 +357,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 tableView.deselectRow(at: indexPath, animated: true)
             } else {
                 let order = avorders[row]
-                let orderDetailVC = OrderDetailVC.instantiateFromStoryboard(with: order)
+                let orderDetailVC = OrderDetailVC.instantiateFromStoryboard(with: order, orderVC: self)
                 orderDetailVC.title = order.shop?.name
                 let segue = UIStoryboardSegue(identifier: "showOrderDetailVCFromOrderTableViewCell", source: self, destination: orderDetailVC)
                 prepare(for: segue, sender: self)
@@ -384,6 +384,12 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func ordersRefresh(_ sender: Any) -> Void {
         orderPresentState = .one
         loadOrdersAndBakes()
+    }
+    
+    func tableViewCellDeselection() {
+        if let index = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: index, animated: true)
+        }
     }
 
     
@@ -437,7 +443,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                     object, error in
                     if let error = error {
                         printit("Retrieve Baker Error: \(error.localizedDescription)")
-                        self.showHelperView(with: "当前用户获取失败。", btn: "重新登录", indicating: false)
+                        self.showHelperView(with: "当前用户获取失败", btn: "重新登录", indicating: false)
                     } else {
                         if let baker = object as? AVBaker {
                             self.avbaker = baker
@@ -447,7 +453,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 })
             }
         } else {
-            self.showHelperView(with: "需要登录后才可以查看订单哦。", btn: "立即登录", indicating: false)
+            self.showHelperView(with: "需要登录后才可以查看订单哦", btn: "立即登录", indicating: false)
         }
     }
     

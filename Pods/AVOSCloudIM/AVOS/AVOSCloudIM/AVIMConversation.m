@@ -58,6 +58,42 @@ NSNotificationName LCIMConversationPropertyUpdateNotification = @"LCIMConversati
 NSNotificationName LCIMConversationMessagePatchNotification = @"LCIMConversationMessagePatchNotification";
 NSNotificationName LCIMConversationDidReceiveMessageNotification = @"LCIMConversationDidReceiveMessageNotification";
 
+@implementation AVIMMessageIntervalBound
+
+- (instancetype)initWithMessageId:(NSString *)messageId
+                        timestamp:(int64_t)timestamp
+                           closed:(BOOL)closed
+{
+    self = [super init];
+
+    if (self) {
+        _messageId = [messageId copy];
+        _timestamp = timestamp;
+        _closed = closed;
+    }
+
+    return self;
+}
+
+@end
+
+@implementation AVIMMessageInterval
+
+- (instancetype)initWithStartIntervalBound:(AVIMMessageIntervalBound *)startIntervalBound
+                          endIntervalBound:(AVIMMessageIntervalBound *)endIntervalBound
+{
+    self = [super init];
+
+    if (self) {
+        _startIntervalBound = startIntervalBound;
+        _endIntervalBound = endIntervalBound;
+    }
+
+    return self;
+}
+
+@end
+
 @interface AVIMConversation()
 
 @property (nonatomic, strong) NSMutableDictionary *propertiesForUpdate;
@@ -151,14 +187,19 @@ static dispatch_queue_t messageCacheOperationQueue;
         return;
 
     [self setValue:propertyValue forKey:propertyName];
+    [self postUpdateNotificationForKey:propertyName];
+}
 
-    AVIMClient *client = self.imClient;
-    SEL delegateMethod = @selector(conversation:didUpdateForKey:);
+- (void)postUpdateNotificationForKey:(NSString *)key {
+    id  delegate = self.imClient.delegate;
+    SEL selector = @selector(conversation:didUpdateForKey:);
 
-    if ([client.delegate respondsToSelector:delegateMethod])
-        [AVIMRuntimeHelper callMethodInMainThreadWithTarget:client.delegate
-                                                   selector:delegateMethod
-                                                  arguments:@[self, propertyName]];
+    if (![delegate respondsToSelector:selector])
+        return;
+
+    [AVIMRuntimeHelper callMethodInMainThreadWithTarget:delegate
+                                               selector:selector
+                                              arguments:@[self, key]];
 }
 
 - (void)didReceivePatchItem:(NSNotification *)notification {
@@ -204,7 +245,22 @@ static dispatch_queue_t messageCacheOperationQueue;
 }
 
 - (void)didReceiveMessage:(AVIMMessage *)message {
-    /* TODO */
+    if (!message.transient) {
+        self.lastMessage = message;
+        [self postUpdateNotificationForKey:NSStringFromSelector(@selector(lastMessage))];
+
+        /* Update last message timestamp if needed. */
+        NSDate *sentAt = [NSDate dateWithTimeIntervalSince1970:(message.sendTimestamp / 1000.0)];
+
+        if (!self.lastMessageAt || [self.lastMessageAt compare:sentAt] == NSOrderedAscending) {
+            self.lastMessageAt = sentAt;
+            [self postUpdateNotificationForKey:NSStringFromSelector(@selector(lastMessageAt))];
+        }
+
+        /* Increase unread messages count. */
+        self.unreadMessagesCount += 1;
+        [self postUpdateNotificationForKey:NSStringFromSelector(@selector(unreadMessagesCount))];
+    }
 }
 
 - (void)callDelegateMethod:(SEL)method withArguments:(NSArray *)arguments {
@@ -1087,9 +1143,7 @@ static dispatch_queue_t messageCacheOperationQueue;
 }
 
 - (LCIMConversationCache *)conversationCache {
-    NSString *clientId = self.clientId;
-
-    return clientId ? [[LCIMConversationCache alloc] initWithClientId:clientId] : nil;
+    return self.imClient.conversationCache;
 }
 
 - (void)cacheContinuousMessages:(NSArray *)messages {
@@ -1467,6 +1521,46 @@ static dispatch_queue_t messageCacheOperationQueue;
              }];
         }
     });
+}
+
+- (void)queryMessagesInInterval:(AVIMMessageInterval *)interval
+                      direction:(AVIMMessageQueryDirection)direction
+                          limit:(NSUInteger)limit
+                       callback:(AVIMArrayResultBlock)callback
+{
+    AVIMLogsCommand *logsCommand = [[AVIMLogsCommand alloc] init];
+
+    logsCommand.cid  = _conversationId;
+    logsCommand.l    = LCIM_VALID_LIMIT(limit);
+
+    logsCommand.direction = (direction == AVIMMessageQueryDirectionFromOldToNew)
+        ? AVIMLogsCommand_QueryDirection_New
+        : AVIMLogsCommand_QueryDirection_Old;
+
+    AVIMMessageIntervalBound *startIntervalBound = interval.startIntervalBound;
+    AVIMMessageIntervalBound *endIntervalBound = interval.endIntervalBound;
+
+    logsCommand.mid  = startIntervalBound.messageId;
+    logsCommand.tmid = endIntervalBound.messageId;
+
+    logsCommand.tIncluded = startIntervalBound.closed;
+    logsCommand.ttIncluded = endIntervalBound.closed;
+
+    int64_t t = startIntervalBound.timestamp;
+    int64_t tt = endIntervalBound.timestamp;
+
+    if (t > 0)
+        logsCommand.t = t;
+    if (tt > 0)
+        logsCommand.tt = tt;
+
+    AVIMGenericCommand *genericCommand = [[AVIMGenericCommand alloc] init];
+    genericCommand.needResponse = YES;
+    genericCommand.cmd = AVIMCommandType_Logs;
+    genericCommand.peerId = _imClient.clientId;
+    genericCommand.logsMessage = logsCommand;
+
+    [self queryMessagesFromServerWithCommand:genericCommand callback:callback];
 }
 
 - (void)postprocessMessages:(NSArray *)messages {

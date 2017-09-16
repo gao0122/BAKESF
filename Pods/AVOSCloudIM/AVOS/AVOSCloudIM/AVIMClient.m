@@ -194,9 +194,18 @@ static BOOL AVIMClientHasInstantiated = NO;
 }
 
 - (LCIMConversationCache *)conversationCache {
-    NSString *clientId = self.clientId;
+    if (_conversationCache)
+        return _conversationCache;
 
-    return clientId ? [[LCIMConversationCache alloc] initWithClientId:clientId] : nil;
+    @synchronized (self) {
+        if (_conversationCache)
+            return _conversationCache;
+
+        _conversationCache = [[LCIMConversationCache alloc] initWithClientId:self.clientId];
+        _conversationCache.client = self;
+
+        return _conversationCache;
+    }
 }
 
 - (NSString *)clientId {
@@ -280,17 +289,20 @@ static BOOL AVIMClientHasInstantiated = NO;
 }
 
 - (AVIMConversation *)conversationWithId:(NSString *)conversationId {
-    if (!conversationId) {
-        
+    if (!conversationId)
         return nil;
+
+    @synchronized (self) {
+        AVIMConversation *conversation = [self conversationForId:conversationId];
+
+        if (!conversation) {
+            conversation = [[AVIMConversation alloc] initWithConversationId:conversationId];
+            conversation.imClient = self;
+            [self addConversation:conversation];
+        }
+
+        return conversation;
     }
-    AVIMConversation *conversation = [self conversationForId:conversationId];
-    if (!conversation) {
-        conversation = [[AVIMConversation alloc] initWithConversationId:conversationId];
-        conversation.imClient = self;
-        [self addConversation:conversation];
-    }
-    return conversation;
 }
 
 - (void)sendCommand:(AVIMGenericCommand *)command {
@@ -1357,18 +1369,6 @@ static BOOL AVIMClientHasInstantiated = NO;
     __weak typeof(self) ws = self;
     
     [self fetchConversationIfNeeded:conversation withBlock:^(AVIMConversation *conversation) {
-        /* Update lastMessageAt if needed. */
-        NSDate *messageSentAt = [NSDate dateWithTimeIntervalSince1970:(message.sendTimestamp / 1000.0)];
-        if (!message.transient) {
-            if (!conversation.lastMessageAt || [conversation.lastMessageAt compare:messageSentAt] == NSOrderedAscending) {
-                conversation.lastMessageAt = messageSentAt;
-            }
-            LCIM_NOTIFY_PROPERTY_UPDATE(
-                ws.clientId,
-                conversationId,
-                NSStringFromSelector(@selector(lastMessage)),
-                message);
-        }
         [ws passMessage:message toConversation:conversation];
         [ws postNotificationForMessage:message];
     }];

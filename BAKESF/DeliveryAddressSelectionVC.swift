@@ -96,6 +96,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
         
         mapSearch.delegate = self
         
+        view.bringSubview(toFront: helperView)
         cityTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         bakerDATableView.estimatedRowHeight = 64
         bakerDATableView.rowHeight = UITableViewAutomaticDimension
@@ -411,8 +412,37 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             let cell = tableView.dequeueReusableCell(withIdentifier: "deliveryAddressSelectionTableViewCell", for: indexPath) as! DeliveryAddressSelectionTableViewCell
             let poi = pois[row]
             cell.poi = poi
-            cell.addressLabel.text = poi.address!
-            cell.aoiNameLabel.text = poi.name!
+            guard let addressText = poi.address else { return UITableViewCell() }
+            guard let aoiNameText = poi.name else { return UITableViewCell() }
+            let searchBarText = searchBar.text ?? ""
+            let addressTexts = addressText.components(separatedBy: searchBarText)
+            let aoiNameTexts = aoiNameText.components(separatedBy: searchBarText)
+            if addressTexts.count == 1 {
+                cell.addressLabel.text = addressText
+            } else {
+                let addressKeywordAttr = [NSForegroundColorAttributeName: UIColor.bkRed, NSFontAttributeName: UIFont.boldSystemFont(ofSize: cell.addressLabel.font.pointSize)]
+                let addressAttrText = NSMutableAttributedString()
+                for (i, text) in addressTexts.enumerated() {
+                    addressAttrText.append(NSMutableAttributedString(string: text))
+                    if i + 1 < addressTexts.count {
+                        addressAttrText.append(NSMutableAttributedString(string: searchBarText, attributes: addressKeywordAttr))
+                    }
+                }
+                cell.addressLabel.attributedText = addressAttrText
+            }
+            if aoiNameTexts.count == 1 {
+                cell.aoiNameLabel.text = aoiNameText
+            } else {
+                let aoiNameKeywordAttr = [NSForegroundColorAttributeName: UIColor.bkRed, NSFontAttributeName: UIFont.boldSystemFont(ofSize: cell.aoiNameLabel.font.pointSize)]
+                let aoiNameAttrText = NSMutableAttributedString()
+                for (i, text) in aoiNameTexts.enumerated() {
+                    aoiNameAttrText.append(NSMutableAttributedString(string: text))
+                    if i + 1 < aoiNameTexts.count {
+                        aoiNameAttrText.append(NSMutableAttributedString(string: searchBarText, attributes: aoiNameKeywordAttr))
+                    }
+                }
+                cell.aoiNameLabel.attributedText = aoiNameAttrText
+            }
             return cell
         case 1:
             let section = indexPath.section
