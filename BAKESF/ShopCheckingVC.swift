@@ -306,7 +306,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 if segmentedControlDeliveryWay == nil { return 1 }
                 return 3
             case 1:
-                return bakes.count + 3 // 配送费，红包，总计
+                return bakes.count + 2 // 配送费，总计
             case 2:
                 return tableSectionOtherCell.count // 支付方式，订单备注，发票
             default:
@@ -401,9 +401,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 case bakes.count:
                     return deliveryFeeCell(indexPath)
                 case bakes.count + 1:
-                    return redPacketCell(indexPath)
-                case bakes.count + 2:
                     return totalFeeCell(indexPath)
+                case bakes.count + 2:
+                    break
                 default:
                     return bakeItemCell(indexPath)
                 }
@@ -637,13 +637,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             case 1:
                 switch row {
                 case bakes.count + 1:
-                    // red packet
-                    if userRealm == nil { return }
-                    if redPacketVC == nil {
-                        redPacketVC = RedPacketVC.instantiateFromStoryboard()
-                    }
-                    let segue = UIStoryboardSegue(identifier: "showRedPacketVCFromShopCheckingVC", source: self, destination: redPacketVC)
-                    prepare(for: segue, sender: self)
+                    break
                 default:
                     break
                 }

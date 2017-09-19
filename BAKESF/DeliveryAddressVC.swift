@@ -54,6 +54,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
         tabBarController?.tabBar.isHidden = true
+        tabBarController?.tabBar.frame.origin.y = screenHeight
     }
     
     override func viewWillDisappear(_ animated: Bool) {

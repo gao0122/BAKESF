@@ -48,7 +48,7 @@ class RedPacketVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let _ = avbaker {
             if redPackets == nil {
-                let cell = UITableViewCell.centerTextCell(with: "暂无可用红包", in: .bkBlack)
+                let cell = UITableViewCell.centerTextCell(with: "暂无可用红包", in: .iron)
                 cell.selectionStyle = .none
                 return cell
             } else {

@@ -17,6 +17,7 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     var bakesDict = [String: [AVBake]]()
     
     var homeVC: HomeVC?
+    var bakeDict = [Int: [AVBake]]()
     
     lazy var refresher: UIRefreshControl = {
         let refresher = UIRefreshControl()
@@ -77,22 +78,57 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     }
     
     func loadBakes() {
-        loadBakes({
+        self.bakeDict = [Int: [AVBake]]()
+        self.loadBakes({
             bakes, error in
             if let bakes = bakes {
                 self.refresher.endRefreshing()
                 self.tableView.reloadData()
+                self.bakeDict[0] = bakes
             } else {
                 self.categories = nil
                 self.refresher.endRefreshing()
                 self.homeVC?.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重新尝试。")
             }
-        })
+        }, category: "分分")
+        
+        self.loadBakes({
+            bakes, error in
+            if let bakes = bakes {
+                self.refresher.endRefreshing()
+                self.tableView.reloadData()
+                self.bakeDict[1] = bakes
+            } else {
+                self.categories = nil
+                self.refresher.endRefreshing()
+                self.homeVC?.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重新尝试。")
+            }
+        }, category: "类类")
+        
+        self.loadBakes({
+            bakes, error in
+            if let bakes = bakes {
+                self.refresher.endRefreshing()
+                self.tableView.reloadData()
+                self.bakeDict[2] = bakes
+            } else {
+                self.categories = nil
+                self.refresher.endRefreshing()
+                self.homeVC?.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重新尝试。")
+            }
+        }, category: "")
     }
     
-    func loadBakes(_ completion: @escaping ([AVBake]?, Error?) -> ()) {
+    func loadBakes(_ completion: @escaping ([AVBake]?, Error?) -> (), category: String) {
         let query = AVBake.query()
+        query.includeKey("image")
+        query.includeKey("shop")
+        query.includeKey("defaultBake")
         query.addAscendingOrder("priority")
+        if category != "" {
+            query.whereKey("category", equalTo: category)
+        }
+        query.limit = 7
         query.findObjectsInBackground({
             objects, error in
             completion(objects as? [AVBake], error)
@@ -120,6 +156,8 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         guard let categories = categories else { return cell }
         guard let category = categories[row].object(forKey: "name") as? String else { return cell }
         cell.categoryLabel.text = category
+        cell.collectionView.tag = row
+        cell.collectionView.reloadData()
         return cell
     }
     
@@ -130,18 +168,34 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch collectionView.tag {
-        case 0:
-            break
-        default:
-            break
-        }
-        return 0
+        return bakeDict[collectionView.tag]?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "homeBakeCollectionViewCell", for: indexPath) as! HomeBakeCollectionViewCell
-        cell.imageView.image = UIImage(named: "seller3_hp")
+        let tag = collectionView.tag
+        let itm = indexPath.item
+        let bakes = bakeDict[tag]!
+        let bake = bakes[itm]
+        cell.nameLabel.text = bake.name
+        if let price = bake.price as? Double {
+            cell.priceLabel.text = "¥\(price.fixPriceTagFormat())"
+        } else {
+            cell.priceLabel.text = ""
+        }
+        cell.priceLabel.sizeToFit()
+        cell.priceLabel.frame.origin.x = cell.frame.width - cell.priceLabel.frame.size.width - 2
+        cell.nameLabel.frame.size.width = cell.priceLabel.frame.origin.x - 3
+        if let url = bake.image?.url {
+            cell.imageView.contentMode = .scaleAspectFill
+            cell.imageView.sd_setImage(with: URL(string: url), completed: nil)
+        }
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let tag = collectionView.tag
+        let itm = indexPath.item
+    }
+    
 }

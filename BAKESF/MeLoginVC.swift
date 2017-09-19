@@ -48,6 +48,8 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     var btnWidth: CGFloat = 0
     var loginBtnX: CGFloat = 0
     
+    var msgCode = ""
+    
     var showSegueID: String = ""
     var unwindSegueID: String!
     
@@ -68,7 +70,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         
         btnWidth = loginBtn.frame.width
         loginBtnX = loginBtn.frame.origin.x
-        
+
         switch showSegueID {
         case "showLogin": // from mevc
             unwindSegueID = "unwindToMeFromLogin"
@@ -131,10 +133,79 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         })
     }
     
+    @IBAction func textDidChange(_ sender: UITextField) {
+        switch sender.tag {
+        case 0:
+            checkPhoneTextFieldIsValid(with: sender.text)
+        case 1:
+            checkMsgPwdTextFieldIsValid(with: sender.text)
+        default:
+            break
+        }
+    }
+    
+    func checkPhoneTextFieldIsValid(with text: String?) {
+        guard let text = text else {
+            setBtnState(false)
+            return
+        }
+        if text.characters.count == 11 &&
+            (   text.starts(with: "13") ||
+                text.starts(with: "17") ||
+                text.starts(with: "15") ||
+                text.starts(with: "14") ||
+                text.starts(with: "18") ) {
+            setBtnState(true)
+        } else {
+            setBtnState(false)
+        }
+    }
+    
+    func setBtnState(_ enabled: Bool) {
+        switch loginMethod {
+        case .msg:
+            if timerState != .rolling {
+                getMsgBtn.isEnabled = enabled
+            }
+            checkMsgPwdTextFieldIsValid(with: msgOrPwdTextField.text)
+        case .pwd:
+            loginBtn.isEnabled = enabled
+        }
+    }
+    
+    func checkMsgPwdTextFieldIsValid(with text: String?) {
+        switch loginMethod {
+        case .msg:
+            if let msg = msgOrPwdTextField.text {
+                if msg.characters.count == 4 {
+                    loginBtn.isEnabled = true
+                } else {
+                    loginBtn.isEnabled = false
+                }
+            } else {
+                loginBtn.isEnabled = false
+            }
+        case .pwd:
+            if let pwd = msgOrPwdTextField.text {
+                if pwd.characters.count > 0 {
+                    loginBtn.isEnabled = true
+                } else {
+                    loginBtn.isEnabled = false
+                }
+            } else {
+                loginBtn.isEnabled = false
+            }
+        }
+    }
+    
     @IBAction func loginByMsgOrPwd(_ sender: Any) {
         if !msgOrPwdAnimating {
             msgOrPwdAnimating = true
-            if loginMethod == .msg {
+            switch loginMethod {
+            case .msg:
+                if let msg = msgOrPwdTextField.text {
+                    msgCode = msg
+                }
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
                     self.loginByMsgOrPwd.setTitle("验证码登录", for: .normal)
                     self.loginBtn.frame.origin = self.getMsgBtn.frame.origin
@@ -148,9 +219,12 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                     self.msgOrPwdTextField.keyboardType = UIKeyboardType.default
                     self.msgOrPwdTextField.text = ""
                     self.msgOrPwdTextField.isSecureTextEntry = true
+                    self.msgOrPwdTextField.clearsOnBeginEditing = true
                     self.switchLoginMethod()
+                    self.checkPhoneTextFieldIsValid(with: self.phoneTextField.text)
+                    self.checkMsgPwdTextFieldIsValid(with: self.msgOrPwdTextField.text)
                 })
-            } else {
+            case .pwd:
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
                     self.loginByMsgOrPwd.setTitle("密码登录", for: .normal)
                     self.loginBtn.frame.origin.x = self.loginBtnX
@@ -162,9 +236,12 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                     finished in
                     self.msgOrPwdAnimating = false
                     self.msgOrPwdTextField.keyboardType = UIKeyboardType.numberPad
-                    self.msgOrPwdTextField.text = ""
+                    self.msgOrPwdTextField.text = self.msgCode
                     self.msgOrPwdTextField.isSecureTextEntry = false
+                    self.msgOrPwdTextField.clearsOnBeginEditing = false
                     self.switchLoginMethod()
+                    self.checkPhoneTextFieldIsValid(with: self.phoneTextField.text)
+                    self.checkMsgPwdTextFieldIsValid(with: self.msgOrPwdTextField.text)
                 })
             }
         }
@@ -186,8 +263,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         if let phone = phoneTextField.text {
             if self.loginState == .normal {
                 self.loginState = .sending
-                self.getMsgBtn.isUserInteractionEnabled = false
-                self.getMsgBtn.titleLabel?.alpha = 0.51
+                self.getMsgBtn.isEnabled = false
                 self.getMsgBtn.setTitle("正在发送...", for: .normal)
                 if self.timerState == .done {
                     self.sendMsg(phone: phone)
@@ -470,7 +546,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         loginState = .normal
         getMsgBtn.titleLabel?.alpha = 1
         getMsgBtn.setTitle("获取验证码", for: .normal)
-        getMsgBtn.isUserInteractionEnabled = true
+        checkPhoneTextFieldIsValid(with: phoneTextField.text)
         getMsgBtn.setTitleColor(loginBtn.currentTitleColor, for: .normal)
     }
     

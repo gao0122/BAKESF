@@ -36,9 +36,9 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
 
     var settingDict: [Int: [Int: String]] = {
         return [
-            0: [0: "我的红包",
-                1: "我的地址",
-                2: "我的收藏"],
+            0: [//0: "我的红包",
+                0: "我的地址",
+                1: "我的收藏"],
             1: [0: "私房入驻",
                 1: "给个好评",
                 2: "服务中心"]
@@ -326,7 +326,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         switch section {
         case 0:
             switch row {
-            case 0:
+            case 10:
                 // 我的红包
                 if let avbaker = self.avbaker {
                     let redPacketVC = RedPacketVC.instantiateFromStoryboard()
@@ -337,7 +337,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
                     tableView.deselectRow(at: indexPath, animated: true)
                     view.notify(text: "登陆后才可以查看哦", color: .alertOrange, nav: navigationController?.navigationBar)
                 }
-            case 1:
+            case 0:
                 // 我的地址
                 if let avbaker = self.avbaker {
                     let daVC = DeliveryAddressVC.instantiateFromStoryboard()
@@ -348,7 +348,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
                     tableView.deselectRow(at: indexPath, animated: true)
                     view.notify(text: "登陆后才可以查看哦", color: .alertOrange, nav: navigationController?.navigationBar)
                 }
-            case 2:
+            case 1:
                 // 我的收藏
                 if let avbaker = self.avbaker {
                     let favorVC = MeFavoriteVC.instantiateFromStoryboard()

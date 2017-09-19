@@ -60,23 +60,38 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         guard let status = order.status?.intValue else { return 0 }
         switch status {
         case 0:
+            // new order, to be paid by user
             return 0
         case 1:
+            // paid, to be taken by shop
             return 0
         case 2:
+            // taken, to be produced by shop
             return 0
         case 3:
+            // produced, to be delivered by shop
             return 0
         case 4:
+            // delivered, to arrive
             return 0
         case 5:
+            // arrived, to be confirmed by user
             return 0
         case 6:
+            // confirmed, to be commented by user
             return 0
         case 7:
+            // commented, to be confirmed by user
             return 0
         case 8:
+            // commented and confirmed, done
             return 0
+        case 9:
+            // canceled
+            return 4
+        case 10:
+            // charge back
+            return 4
         default:
             return 0
         }

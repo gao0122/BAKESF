@@ -207,6 +207,8 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     
     @IBAction func unwindToHomeShopVC(segue: UIStoryboardSegue) {
         segue.source.tabBarController?.tabBar.isHidden = false
+        segue.source.tabBarController?.tabBar.frame.origin.y = screenHeight
+
     }
     
 }

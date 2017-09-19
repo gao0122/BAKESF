@@ -118,6 +118,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
         view.bringSubview(toFront: locateFailedView)
         view.bringSubview(toFront: indicatorSuperView)
         searchResultsTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
+        searchResultsView.bringSubview(toFront: searchResultsHelperView)
     }
     
     
@@ -313,7 +314,20 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        printit("searchbuttonclicked")
+        // search
+        guard let text = searchBar.text else { return }
+        let query = AVBake.query()
+        query.whereKey("name", contains: text)
+        query.addAscendingOrder("priority")
+        query.limit = 10
+        query.findObjectsInBackground({
+            objects, error in
+            if let bakes = objects as? [AVBake] {
+                
+            } else {
+                
+            }
+        })
     }
     
     func setSearchResultsViewHidden(for shouldHidden: Bool) {
@@ -339,12 +353,13 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
+        let cell = tableView.dequeueReusableCell(withIdentifier: "homeSearchResultTableViewCell", for: indexPath) as! HomeSearchResultTableViewCell
         if let res = searchResults[row] as? AVBake {
             printit(res)
         } else if let res = searchResults[row] as? AVShop {
             printit(res)
         }
-        return UITableViewCell()
+        return cell
     }
     
     
