@@ -378,7 +378,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
             case 1:
                 // 给个好评
                 tableView.deselectRow(at: indexPath, animated: true)
-                let url = URL(string: "itms-apps://itunes.apple.com/app/id1252056445")
+                let url = URL(string: "itms-apps://itunes.apple.com/app/id1291145342")
                 if #available(iOS 10.0, *) {
                     UIApplication.shared.open(url!, options: [:], completionHandler: nil)
                 } else {

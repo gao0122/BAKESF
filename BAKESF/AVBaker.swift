@@ -17,7 +17,8 @@ class AVBaker: AVObject, AVSubclassing {
     @NSManaged var headphoto: String?
     @NSManaged var gender: String?
     @NSManaged var birthday: Date?
-    
+    @NSManaged var signedup: Bool
+
 
     static func parseClassName() -> String {
         return "Baker"

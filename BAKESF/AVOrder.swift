@@ -30,6 +30,7 @@ class AVOrder: AVObject, AVSubclassing {
     @NSManaged var takenByShopAt: Date?
     @NSManaged var startedDeliveryAt: Date?
     @NSManaged var deliveredAt: Date?
+    @NSManaged var paymentMethod: String? // ApplePay, WePay, AliPay
 
     
     static func parseClassName() -> String {

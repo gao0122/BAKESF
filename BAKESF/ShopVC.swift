@@ -90,6 +90,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     let emptyBagText = "购物袋空空的"
     
+    var shouldShowShopCheckingRN = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         preInit()
@@ -113,6 +115,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        checkAVBaker()
+        if shouldShowShopCheckingRN && avbaker != nil {
+            performSegue(withIdentifier: "showShopCheckingSegue", sender: self)
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -134,6 +140,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                 vc.shopVC = self
                 vc.avshop = self.avshop
             case "showShopCheckingSegue":
+                shouldShowShopCheckingRN = false
                 guard let vc = segue.destination as? ShopCheckingVC else { break }
                 vc.shopVC = self
                 vc.avshop = self.avshop
@@ -141,6 +148,12 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
                 navigationController?.navigationBar.barTintColor = .bkRed
                 navigationController?.navigationBar.tintColor = .white
                 self.animateShopIfNeeded()
+            case "showShopInfoFromShopVC":
+                guard let vc = segue.destination as? ShopDetailVC else { break }
+                vc.avshop = self.avshop
+            case "showLoginFromShopVC":
+                guard let vc = segue.destination as? MeLoginVC else { break }
+                vc.showSegueID = id
             default:
                 break
             }
@@ -189,9 +202,14 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     func checkAVBaker() {
         if let usr = RealmHelper.retrieveCurrentUser() {
             userRealm = usr
-            if avbaker?.objectId != usr.id {
-                avbaker = retrieveBaker(withID: usr.id)
+            if let avbaker = self.avbaker {
+                if avbaker.objectId != usr.id {
+                    self.avbaker = retrieveBaker(withID: usr.id)
+                }
+            } else {
+                self.avbaker = retrieveBaker(withID: usr.id)
             }
+            
         }
     }
     
@@ -311,7 +329,9 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         cardBgImage.clipsToBounds = false
         
         shopNameLabel.text = avshop.name!
-        addressLabel.setTitle(" \(avshop.address!.formatted!)", for: .normal)
+        if let addr = avshop.address?.formatted {
+            addressLabel.setTitle(" \(addr)", for: .normal)
+        }
       
         // TODO: - comments
         commentNumberBtn.setTitle("\(423) 评论", for: .normal)
@@ -455,6 +475,17 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             self.animateShop(self.bagAniState)
         }
     }
+    
+    
+    // MARK: - Checkout
+    @IBAction func checkoutBtnPressed(_ sender: Any) {
+        if userRealm == nil {
+            performSegue(withIdentifier: "showLoginFromShopVC", sender: self)
+        } else {
+            performSegue(withIdentifier: "showShopCheckingSegue", sender: self)
+        }
+    }
+    
     
     // learn more about the shop
     @IBAction func introBtnPressed(_ sender: Any) {

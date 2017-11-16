@@ -112,7 +112,7 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
                 } else if errorMsg.contains("459") {
                     self.view.notify(text: "发送失败，不支持该地区发送短信", color: .alertRed, nav: self.navigationController?.navigationBar)
                 } else {
-                    self.view.notify(text: "发送失败", color: .alertRed, nav: self.navigationController?.navigationBar)
+                    self.view.notify(text: "验证码发送失败", color: .alertRed, nav: self.navigationController?.navigationBar)
                 }
             }
         })

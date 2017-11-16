@@ -10,7 +10,7 @@ import UIKit
 import PagingMenuController
 import AVOSCloud
 
-class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITableViewDelegate, UITableViewDataSource {
+class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource {
 
     @IBOutlet weak var masterView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -24,6 +24,12 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     @IBOutlet weak var searchResultsTableView: UITableView!
     @IBOutlet weak var searchResultsView: UIView!
     @IBOutlet weak var searchResultsHelperView: UIView!
+    @IBOutlet weak var searchHistoryLabel: UILabel!
+    @IBOutlet weak var searchHotLabel: UILabel!
+    @IBOutlet weak var searchHistoryView: UIView!
+    @IBOutlet weak var searchHotView: UIView!
+    @IBOutlet weak var searchHelperLabel: UILabel!
+    @IBOutlet weak var rapperView: UIView!
     
     private var homeShopVC: HomeShopVC!
     private var homeBakeVC: HomeBakeVC!
@@ -46,7 +52,10 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     var locatedOnce = false
     var searchBarWidth: CGFloat!
     var hasSetShopView = false
-    var searchResults = [Any]()
+    var searchResults = [AVShop: [AVBake]]()
+    var searchResultShops = [AVShop]()
+
+    let searchItemBtnWidthToAdd: CGFloat = 17
     
     let noShopsText = "未在该城市发现私房"
     let locateErrorText = "加载失败，请重试"
@@ -65,7 +74,15 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
         setPageMenu()
 
         locateOnce()
-        
+        searchBar.inputAccessoryView = {
+            let label = UILabel(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 34))
+            label.text = searchResultsToSearchText
+            label.textColor = .iron
+            label.backgroundColor = .bkWhite
+            label.textAlignment = .center
+            return label
+        }()
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -88,7 +105,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
 
         checkCurrentUser()
         if poiChanged && selectedPOI != nil {
-            if let locationRealm = locationRealm {
+            if let locationRealm = RealmHelper.retrieveLocation(by: 0) {
                 locateFailedView.isHidden = true
                 updateLocationBtnAndSearchBar(by: locationRealm.city)
                 homeShopVC.refresher.beginRefreshing()
@@ -96,7 +113,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
                 locateFailedView.isHidden = false
             }
         } else if selectedPOI == nil {
-            if let locationRealm = locationRealm {
+            if let locationRealm = RealmHelper.retrieveLocation(by: 0) {
                 locateFailedView.isHidden = true
                 updateLocationBtnAndSearchBar(by: locationRealm.city)
                 homeShopVC.refresher.beginRefreshing()
@@ -118,7 +135,10 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
         view.bringSubview(toFront: locateFailedView)
         view.bringSubview(toFront: indicatorSuperView)
         searchResultsTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
-        searchResultsView.bringSubview(toFront: searchResultsHelperView)
+        searchResultsHelperView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(cancelSearch(_:))))
+        searchResultsTableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(cancelSearch(_:))))
+        navigationController?.navigationBar.barTintColor = .bkRed
+        navigationController?.navigationBar.tintColor = .white
     }
     
     
@@ -273,6 +293,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     
     // MARK: - SearchBar
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        self.setSearchHotHelperItemLabels()
         self.searchBar.setShowsCancelButton(true, animated: true)
         UIView.animate(withDuration: 0.23, delay: 0, options: [.curveEaseInOut], animations: {
             self.searchBarFocusAni()
@@ -280,22 +301,40 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
             finished in
             self.searchBarFocusAni()
         })
+        
+        if let avbaker = self.avbaker {
+            let query = AVQuery(className: "HomePageSearchHistory")
+            query.addAscendingOrder("createdAt")
+            query.whereKey("baker", equalTo: avbaker)
+            query.findObjectsInBackground({
+                objs, error in
+                
+            })
+        } else {
+            let histories = RealmHelper.retrieveSearchHistories().reversed()
+            printit(histories)
+        }
+        
         setSearchResultsViewHidden(for: false)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        cancelSearch()
+        searchBar.text = ""
+        cancelSearch(self)
     }
     
-    func cancelSearch() {
-        dismissKeyboard(sender: self)
+    func cancelSearch(_ sender: Any) {
+        self.dismissKeyboard(sender: sender)
         UIView.animate(withDuration: 0.21, delay: 0, options: [.curveEaseInOut], animations: {
             self.searchBarCancelAni()
         }, completion: {
-            finished in
+            _ in
             self.searchBarCancelAni()
         })
-        setSearchResultsViewHidden(for: true)
+        self.setSearchResultsViewHidden(for: true)
+        self.searchBar.text = ""
+        self.searchResults.removeAll()
+        self.searchResultsTableView.reloadData()
     }
     
     func dismissKeyboard(_ sender: Any) {
@@ -312,22 +351,74 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
         self.searchBar.frame.size.width = self.searchBarWidth
         self.locationBtn.alpha = 1
     }
-
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // search
         guard let text = searchBar.text else { return }
+        guard text.count > 0 else {
+            setSearchHelperLabelHidden(for: false, with: "请输入搜索内容后重试。")
+            return
+        }
         let query = AVBake.query()
         query.whereKey("name", contains: text)
+        query.includeKey("image")
+        query.includeKey("shop")
+        query.includeKey("shop.address")
+        query.includeKey("shop.headphoto")
         query.addAscendingOrder("priority")
         query.limit = 10
         query.findObjectsInBackground({
             objects, error in
             if let bakes = objects as? [AVBake] {
-                
+                self.recordSearchHistory(with: text)
+                if bakes.count == 0 {
+                    self.setSearchHelperLabelHidden(for: false, with: "没有找到相关结果。")
+                    self.searchResultsHelperView.isHidden = false
+                    self.searchHistoryView.isHidden = true
+                    self.searchHotView.isHidden = true
+                } else {
+                    self.searchHistoryView.isHidden = false
+                    self.searchHotView.isHidden = false
+                    self.searchResultsHelperView.isHidden = true
+                    self.setSearchHelperLabelHidden(for: true, with: "")
+                    for bake in bakes {
+                        if let shop = bake.shop {
+                            if self.searchResults[shop] == nil {
+                                self.searchResults[shop] = [AVBake]()
+                            }
+                            self.searchResults[shop]!.append(bake)
+                            self.searchResultShops.append(shop)
+                        }
+                    }
+                    self.searchResultsTableView.reloadData()
+                    self.searchBar.resignFirstResponder()
+                }
             } else {
-                
+                self.view.notify(text: "发生未知错误，请检查网络。", color: UIColor.alertRed, nav: self.navigationController?.navigationBar)
             }
         })
+    }
+    
+    func recordSearchHistory(with text: String) {
+        let searchRealm = SearchHistoryRealm()
+        searchRealm.searchingDate = Date()
+        searchRealm.searchingText = text
+        if let baker = self.avbaker {
+            let searchObj = AVHomePageSearchHistory()
+            searchObj.baker = baker
+            searchObj.searchingText = text
+            searchObj.saveInBackground({
+                _ in
+            })
+            searchRealm.searchingUserID = baker.objectId!
+        }
+        RealmHelper.addSearchHistory(searchRealm)
+        printit("searching: \(text)")
+    }
+    
+    func setSearchHelperLabelHidden(for shouldHidden: Bool, with text: String) {
+        self.searchHelperLabel.text = text
+        self.searchHelperLabel.isHidden = shouldHidden
     }
     
     func setSearchResultsViewHidden(for shouldHidden: Bool) {
@@ -337,10 +428,52 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
             view.bringSubview(toFront: indicatorSuperView)
         } else {
             view.bringSubview(toFront: searchResultsView)
+            view.bringSubview(toFront: rapperView)
+            view.bringSubview(toFront: searchBar)
+            view.bringSubview(toFront: locationBtn)
         }
     }
     
+    func setSearchHotHelperItemLabels() {
+        let btn = setSearchHotHelperItemLabel(nil, with: "烘焙精选")
+        _ = setSearchHotHelperItemLabel(btn!, with: "私厨")
+    }
     
+    func setSearchHotHelperItemLabel(_ btnToBeCopied: UIButton?, with text: String) -> UIButton? {
+        let rightMargin: CGFloat = 17 // it is also the width te be added to button
+        if let btnToBeCopied = btnToBeCopied {
+            let leftMargin: CGFloat = 22
+            let x = btnToBeCopied.frame.origin.x
+            let width = btnToBeCopied.frame.width
+            let btn = UIButton(frame: btnToBeCopied.frame)
+            btn.titleLabel?.font = btnToBeCopied.titleLabel!.font
+            btn.setTitle(text, for: .normal)
+            btn.sizeToFit()
+            btn.frame.size.width += rightMargin
+            btn.frame.origin.x = x + width + rightMargin
+            guard leftMargin + btn.frame.origin.x + btn.frame.size.width + rightMargin <= screenWidth else { return nil }
+            self.setSearchBtn(btn)
+            self.searchHotView.addSubview(btn)
+            return btn
+        } else {
+            let btn = UIButton()
+            btn.setTitle(text, for: .normal)
+            btn.titleLabel?.font = btn.titleLabel!.font.withSize(14)
+            btn.sizeToFit()
+            btn.frame.size.width += rightMargin
+            btn.frame.origin = CGPoint(x: 0, y: 32)
+            self.setSearchBtn(btn)
+            self.searchHotView.addSubview(btn)
+            return btn
+        }
+    }
+    
+    func setSearchBtn(_ btn: UIButton) {
+        btn.layer.masksToBounds = true
+        btn.layer.cornerRadius = 4
+        btn.backgroundColor = UIColor.lightGray
+    }
+
     
     // MARK: - TableView
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -348,19 +481,85 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchResults.count
+        return searchResultShops.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
         let cell = tableView.dequeueReusableCell(withIdentifier: "homeSearchResultTableViewCell", for: indexPath) as! HomeSearchResultTableViewCell
-        if let res = searchResults[row] as? AVBake {
-            printit(res)
-        } else if let res = searchResults[row] as? AVShop {
-            printit(res)
+        let avshop = searchResultShops[row]
+        if let _ = searchResults[avshop] {
+            cell.nameLabel.text = avshop.name
+            cell.nameLabel.sizeToFit()
+            let lowestFee = avshop.lowestFee?.stringValue ?? "0"
+            let deliveryFee = avshop.deliveryFee?.stringValue ?? "0"
+            cell.starLabel.text = "评价5.0"
+            cell.starLabel.sizeToFit()
+            
+            cell.leastFeeLabel.frame.origin.x = cell.starLabel.frame.origin.x + cell.starLabel.frame.width + 15
+            cell.leastFeeLabel.text = "¥" + lowestFee + "起送"
+            cell.leastFeeLabel.sizeToFit()
+            
+            cell.deliveryFeeLabel.text = "配送费¥" + deliveryFee
+            cell.deliveryFeeLabel.sizeToFit()
+            
+            cell.deliveryCycleLabel.text = ""
+            cell.deliveryCycleLabel.frame.origin.x = cell.leastFeeLabel.frame.origin.x + cell.leastFeeLabel.frame.width + 15
+            cell.deliveryCycleLabel.sizeToFit()
+            
+            cell.distanceLabel.text = calDistance(latitude0: avshop.address?.latitude, longitude0: avshop.address?.longitude, latitude1: locationRealm?.latitude, longitude1: locationRealm?.longitude)
+            cell.distanceLabel.sizeToFit()
+            
+            if let url = avshop.headphoto?.url {
+                cell.avatarIV.sd_setImage(with: URL(string: url), completed: nil)
+                cell.avatarIV.contentMode = .scaleAspectFill
+                cell.avatarIV.clipsToBounds = true
+            }
+            
+            cell.bakesCollectionView.delegate = self
+            cell.bakesCollectionView.dataSource = self
+            cell.bakesCollectionView.tag = row
+            cell.bakesCollectionView.reloadData()
+        } else {
+            printit("Error: result is nil.")
         }
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    
+    // MARK: - Collection View
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        let tag = collectionView.tag
+        let shop = searchResultShops[tag]
+        let avbakes = searchResults[shop]
+        return avbakes?.count ?? 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "homeSearchBakeCollectionViewCell", for: indexPath) as! HomeSearchResultBakeCollectionViewCell
+        let tag = collectionView.tag
+        let item = indexPath.item
+        let shop = searchResultShops[tag]
+        guard let avbakes = searchResults[shop] else { return cell }
+        let avbake = avbakes[item]
+        
+        if let url = avbake.image?.url {
+            cell.imageView.sd_setImage(with: URL(string: url), completed: nil)
+        }
+        cell.nameLabel.text = avbake.name
+        
+        return cell
+    }
+    
     
     
     // MARK: - Page Menu

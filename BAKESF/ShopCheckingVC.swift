@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import PassKit
 
-class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSource, PKPaymentAuthorizationViewControllerDelegate {
 
     enum DeliveryTimeViewState {
         case collapsed, expanded
@@ -50,6 +51,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var timer = Timer()
     let checkoutBtnText = "支付全部"
+    
+    let SupportedPaymentNetworks = [PKPaymentNetwork.visa, PKPaymentNetwork.masterCard, PKPaymentNetwork.amex, PKPaymentNetwork.chinaUnionPay, PKPaymentNetwork.discover]
+    let ApplePayBakesfMerchantID = "merchant.com.yuchao.bakesf"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -179,37 +183,116 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     
     func setCheckOutBtn(enabled: Bool) {
-        let shouldEnabled = selectedTime != nil || (selectedTime == nil && isInBag && segmentedControlDeliveryWay.selectedSegmentIndex == 0)
-        let enabled = enabled && shouldEnabled
-        self.checkoutBtn.isEnabled = enabled && shouldEnabled
+        if let _ = RealmHelper.retrieveCurrentUser() {
+            var shouldEnabled = selectedTime != nil || (selectedTime == nil && isInBag && segmentedControlDeliveryWay.selectedSegmentIndex == 0)
+            shouldEnabled = shouldEnabled && avaddress != nil
+            let enabled = enabled && shouldEnabled
+            self.checkoutBtn.isEnabled = enabled
+        } else {
+            self.checkoutBtn.isEnabled = false
+        }
         UIView.animate(withDuration: 0.27, animations: {
-            self.checkoutBtn.backgroundColor = enabled ? .appleGreen : .checkBtnGray
+            self.checkoutBtn.backgroundColor = self.checkoutBtn.isEnabled ? .appleGreen : .checkBtnGray
         }, completion: {
             finished in
-            self.checkoutBtn.backgroundColor = enabled ? .appleGreen : .checkBtnGray
+            self.checkoutBtn.backgroundColor = self.checkoutBtn.isEnabled ? .appleGreen : .checkBtnGray
         })
+    }
+  
+    // MARK: - Apple Pay Payment Delegate Method
+    func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, completion: @escaping ((PKPaymentAuthorizationStatus) -> Void)) {
+        
+        completion(PKPaymentAuthorizationStatus.success)
+        
+        self.initializeOrder(paymentMethod: "ApplePay")
+        self.saveOrderAndBakes()
+
+    }
+    
+    @available(iOS 11.0, *)
+    func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
+        
+    }
+    
+    func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didSelectShippingContact contact: PKContact, completion: @escaping (PKPaymentAuthorizationStatus, [PKShippingMethod], [PKPaymentSummaryItem]) -> Void) {
+        
     }
     
     
+
+    
+    func makePayment() -> Bool {
+        let request = PKPaymentRequest()
+        request.countryCode = "CN"
+        request.currencyCode = "CNY"
+        request.merchantIdentifier = self.ApplePayBakesfMerchantID
+        request.supportedNetworks = self.SupportedPaymentNetworks
+        request.merchantCapabilities = PKMerchantCapability.capability3DS
+        let amountToPay = NSDecimalNumber(value: self.totalCost)
+        request.paymentSummaryItems = [PKPaymentSummaryItem(label: "焙可商品", amount: amountToPay)]
+        request.requiredShippingAddressFields = [PKAddressField.email, PKAddressField.postalAddress]
+        
+        let pkContact = PKContact()
+        if let avaddress = self.avaddress {
+            var name = PersonNameComponents()
+            name.givenName = avaddress.name
+            pkContact.name = name
+            pkContact.emailAddress = "bakesf@qq.com"
+            let addr = CNMutablePostalAddress()
+            let township = avaddress.township ?? ""
+            let streetName = avaddress.streetName ?? ""
+            let streetNo = avaddress.streetNumber ?? ""
+            let aoiName = avaddress.aoiName ?? ""
+            let addrDetailed = avaddress.detailed ?? ""
+            let addrDistrict = avaddress.district ?? ""
+            let addrAddr = addrDistrict + township + streetName + streetNo + aoiName + addrDetailed
+            addr.street = addrAddr
+            addr.city = avaddress.city ?? ""
+            addr.state = avaddress.province ?? ""
+            pkContact.postalAddress = addr
+        }
+        
+        request.shippingContact = pkContact
+        
+        if PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: self.SupportedPaymentNetworks, capabilities: PKMerchantCapability.capability3DS) {
+            let applePayController = PKPaymentAuthorizationViewController(paymentRequest: request)
+            applePayController.delegate = self
+            self.present(applePayController, animated: true, completion: nil)
+            return true
+        } else {
+            return false
+        }
+    }
+
     @IBAction func checkOutBtnPressed(_ sender: Any) {
         alertOkayOrNot(okTitle: "支付", notTitle: "取消", msg: "确认支付吗？", okAct: {
             _ in
-            self.saveOrderAndBakes()
+            if self.makePayment() {
+                // can make payment
+            }
         }, notAct: { _ in })
     }
     
-    func saveOrderAndBakes() {
-        let group = DispatchGroup()
-        
+    func initializeOrder(paymentMethod: String) {
         avorder = AVOrder()
         avorder.deliveryAddress = self.avaddress
         avorder.predictionDeliveryTime = self.selectedTime?.date
         avorder.baker = self.avbaker
         avorder.shop = self.avshop
+        avorder.status = 1
         avorder.type = (isInBag ? 0 : 1) as NSNumber
         avorder.shouldDeliveryAtOnce = self.selectedTime == nil
         avorder.totalCost = totalCost as NSNumber
         avorder.totalCostAfterDiscount = totalCost as NSNumber
+        avorder.paymentMethod = paymentMethod
+    }
+    
+    func saveOrderAndBakes() {
+        let group = DispatchGroup()
         
         var isSucceeded: Bool = true
         group.enter()

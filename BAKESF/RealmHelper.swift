@@ -408,8 +408,35 @@ class RealmHelper {
     
     static func deleteLocation(by tag: Int) {
         let realm = try! Realm()
-        if let location = retrieveLocation(by: tag) {
-            realm.delete(location)
+        try! realm.write {
+            if let location = retrieveLocation(by: tag) {
+                realm.delete(location)
+            }
+        }
+    }
+    
+    
+    // MARK: - Searching History
+    static func addSearchHistory(_ searchHistoryRealm: SearchHistoryRealm) {
+        let realm = try! Realm()
+        try! realm.write {
+            realm.add(searchHistoryRealm)
+        }
+    }
+
+    static func deleteAllHistory() {
+        let realm = try! Realm()
+        try! realm.write {
+            realm.delete(realm.objects(SearchHistoryRealm.self))
+        }
+    }
+    
+    static func retrieveSearchHistories(by baker: AVBaker? = nil) -> Results<SearchHistoryRealm> {
+        let realm = try! Realm()
+        if let baker = baker {
+            return realm.objects(SearchHistoryRealm.self).filter("searchingUserID = \(baker.objectId!)")
+        } else {
+            return realm.objects(SearchHistoryRealm.self)
         }
     }
     

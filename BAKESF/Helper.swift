@@ -165,6 +165,21 @@ func amapGeoPointToCLLocation(_ location: AMapGeoPoint) -> CLLocation {
     return CLLocation(latitude: CLLocationDegrees(location.latitude), longitude: CLLocationDegrees(location.longitude))
 }
 
+func calDistance(latitude0: String?, longitude0: String?, latitude1: String?, longitude1: String?) -> String? {
+    guard let latitude0 = latitude0 else { return nil }
+    guard let latitude1 = latitude1 else { return nil }
+    guard let longitude0 = longitude0 else { return nil }
+    guard let longitude1 = longitude1 else { return nil }
+    let p0 = MAMapPointForCoordinate(CLLocationCoordinate2D(latitude: Double(latitude0)!, longitude: Double(longitude0)!))
+    let p1 = MAMapPointForCoordinate(CLLocationCoordinate2D(latitude: Double(latitude1)!, longitude: Double(longitude1)!))
+    let meters = MAMetersBetweenMapPoints(p1, p0)
+    if meters < 1000 {
+        return "\(Int(meters))m"
+    } else {
+        return "\(String(format: "%.2f", meters / 1000))km"
+    }
+}
+
 func saveAVAddress(for address: AVAddress, from locationRealm: LocationRealm) {
     address.province = locationRealm.province
     address.city = locationRealm.city

@@ -95,6 +95,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AVBakeAttribute.registerSubclass()
         AVBakeAttributes.registerSubclass()
         AVBakeDetail.registerSubclass()
+        AVHomePageSearchHistory.registerSubclass()
     }
 }
 

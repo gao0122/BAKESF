@@ -58,6 +58,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        refresher.endRefreshing()
         checkCurrentUser()
         guard let tabBarController = self.tabBarController else { return }
         tabBarController.tabBar.isHidden = false
@@ -103,7 +104,6 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let queryBool = AVOrder.query()
         queryBool.whereKey("hasDeletedByUser", equalTo: false)
         let query = AVQuery.andQuery(withSubqueries: [queryBaker, queryBool])
-        query.addAscendingOrder("createAt")
         query.includeKey("baker")
         query.includeKey("shop")
         query.includeKey("shop.headphoto")
@@ -120,12 +120,13 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         var isSucceeded = true
         let group = DispatchGroup()
         group.enter()
+        query.addDescendingOrder("createdAt")
         query.findObjectsInBackground({
             objects, error in
             if let error = error {
                 printit("load order error: \(error.localizedDescription)")
                 isSucceeded = false
-                self.showHelperView(with: "获取订单失败，请重试。", indicating: false)
+                self.showHelperView(with: "获取订单失败，请重试", indicating: false)
             } else {
                 if let orders = objects as? [AVOrder] {
                     self.avorders = orders
@@ -179,16 +180,20 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                         }
                     }
                 } else {
-                    self.showHelperView(with: "加载订单失败，请重试。", indicating: false)
+                    self.showHelperView(with: "加载订单失败，请重试", indicating: false)
                 }
             }
             group.leave()
         })
         group.notify(queue: DispatchQueue.main, execute: {
             if isSucceeded {
-                self.hideHelperView()
-                self.refresher.endRefreshing()
-                self.tableView.reloadData()
+                if self.avorders.count == 0 {
+                    self.showHelperView(with: "你还没有下过单哦", btn: "去转转", indicating: false)
+                } else {
+                    self.hideHelperView()
+                    self.refresher.endRefreshing()
+                    self.tableView.reloadData()
+                }
             } else {
                 self.showHelperView(with: "订单加载失败", indicating: false)
             }
@@ -197,7 +202,11 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBAction func helperBtnPressed(_ sender: Any) {
         if let _ = avbaker {
-            loadOrdersAndBakes()
+            if helperBtn.title(for: .normal) == "去转转" {
+                self.tabBarController?.selectedIndex = 0
+            } else {
+                loadOrdersAndBakes()
+            }
         } else {
             let meLoginVC = MeLoginVC.instantiateFromStoryboard()
             meLoginVC.showSegueID = "showLoginFromOrder"
@@ -233,7 +242,12 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return avorders.count + 1
+        let count = avorders.count
+        if count == 0 {
+            return 0
+        } else {
+            return count + 1
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -434,9 +448,11 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
 
     func checkCurrentUser() {
-        if let usr = self.user {
+        if let usr = RealmHelper.retrieveCurrentUser() {
             if let _ = avbaker {
                 // logged in
+                self.hideHelperView()
+                self.loadOrdersAndBakes()
             } else {
                 showHelperView(indicating: true)
                 retrieveBaker(withID: usr.id, completion: {
@@ -453,6 +469,11 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 })
             }
         } else {
+            self.avbaker = nil
+            self.orderPresentState = .one
+            self.lastTableViewCellText = "查看更多"
+            self.avorders = [AVOrder]()
+            self.avbakesDict = [AVOrder: [AVObject]]()
             self.showHelperView(with: "需要登录后才可以查看订单哦", btn: "立即登录", indicating: false)
         }
     }

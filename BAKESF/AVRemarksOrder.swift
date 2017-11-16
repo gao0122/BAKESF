@@ -8,16 +8,12 @@
 
 import AVOSCloud
 
+//
+// Order remarks
 class AVRemarksOrder: AVObject, AVSubclassing {
     
     @NSManaged var order: AVOrder?
-    @NSManaged var name: String? // red packet name
-    @NSManaged var deliveryPhone: String? // should only be used by this phone
-    @NSManaged var fromDate: Date?
-    @NSManaged var beforeDate: Date?
-    @NSManaged var discount: NSNumber?
-    @NSManaged var noLessThan: NSNumber?
-    @NSManaged var categories: [String]?
+    @NSManaged var content: String?
     
     static func parseClassName() -> String {
         return "RemarksOrder"

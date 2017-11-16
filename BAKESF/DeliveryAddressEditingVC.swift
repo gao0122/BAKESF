@@ -58,8 +58,8 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
                 phoneTextField.text = address.phone
                 addressSelectionBtn.setTitle(address.formatted, for: .normal)
                 addressSelectionBtn.setTitleColor(.bkBlack, for: .normal)
-                addressSelectionBtn.titleLabel?.adjustsFontSizeToFitWidth = true
-                addressSelectionBtn.titleLabel?.minimumScaleFactor = 0.4
+//                addressSelectionBtn.titleLabel?.adjustsFontSizeToFitWidth = true
+//                addressSelectionBtn.titleLabel?.minimumScaleFactor = 0.4
                 detailAddressTextField.text = address.detailed
             } else {
                 self.title = "新增地址"

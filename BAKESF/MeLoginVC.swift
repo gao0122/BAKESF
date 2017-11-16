@@ -78,6 +78,8 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
             unwindSegueID = "unwindToShopCheckingFromLogin"
         case "showLoginFromOrder":
             unwindSegueID = "unwindToOrderFromLogin"
+        case "showLoginFromShopVC":
+            unwindSegueID = "unwindToShopVCFromLogin"
         default:
             break
         }
@@ -98,14 +100,20 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         if let id = segue.identifier {
             switch id {
             case "unwindToMeFromLogin":
-                let meVC = segue.destination as! MeVC
-                meVC.avbaker = self.avbaker
+                guard let vc = segue.destination as? MeVC else { return }
+                vc.avbaker = self.avbaker
             case "unwindToShopCheckingFromLogin":
-                let shopCheckingVC = segue.destination as! ShopCheckingVC
-                shopCheckingVC.avbaker = self.avbaker
+                guard let vc = segue.destination as? ShopCheckingVC else { return }
+                vc.avbaker = self.avbaker
             case "unwindToOrderFromLogin":
-                let orderVC = segue.destination as! OrderVC
-                orderVC.avbaker = self.avbaker
+                guard let vc = segue.destination as? OrderVC else { return }
+                vc.avbaker = self.avbaker
+            case "unwindToShopVCFromLogin":
+                guard let vc = segue.destination as? ShopVC else { return }
+                vc.avbaker = self.avbaker
+                if self.avbaker != nil {
+                    vc.shouldShowShopCheckingRN = true
+                }
             default:
                 break
             }
@@ -147,6 +155,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     func checkPhoneTextFieldIsValid(with text: String?) {
         guard let text = text else {
             setBtnState(false)
+            self.loginBtn.setTitle("登录/注册", for: .normal)
             return
         }
         if text.characters.count == 11 &&
@@ -155,9 +164,32 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                 text.starts(with: "15") ||
                 text.starts(with: "14") ||
                 text.starts(with: "18") ) {
+            if text != self.phoneNum && timerState == .rolling {
+                resetTimer()
+            }
             setBtnState(true)
+            let queryPhone = AVBaker.query()
+            queryPhone.whereKey(lcKey[.phone]!, equalTo: text)
+            queryPhone.findObjectsInBackground({
+                objects, error in
+                if let users = objects as? [AVBaker] {
+                    if let baker = users.first {
+                        if baker.signedup {
+                            self.avbaker = baker
+                            self.loginBtn.setTitle("登录", for: .normal)
+                        } else {
+                            self.avbaker = nil
+                            self.loginBtn.setTitle("注册", for: .normal)
+                        }
+                    } else {
+                        self.avbaker = nil
+                        self.loginBtn.setTitle("注册", for: .normal)
+                    }
+                }
+            })
         } else {
             setBtnState(false)
+            self.loginBtn.setTitle("登录/注册", for: .normal)
         }
     }
     
@@ -176,25 +208,25 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     func checkMsgPwdTextFieldIsValid(with text: String?) {
         switch loginMethod {
         case .msg:
-            if let msg = msgOrPwdTextField.text {
-                if msg.characters.count == 4 {
-                    loginBtn.isEnabled = true
-                } else {
-                    loginBtn.isEnabled = false
+            var enabled = false
+            if let phone = phoneTextField.text {
+                if phone.characters.count == 11 {
+                    if let msg = msgOrPwdTextField.text {
+                        enabled = msg.characters.count == 4
+                    }
                 }
-            } else {
-                loginBtn.isEnabled = false
             }
+            loginBtn.isEnabled = enabled
         case .pwd:
-            if let pwd = msgOrPwdTextField.text {
-                if pwd.characters.count > 0 {
-                    loginBtn.isEnabled = true
-                } else {
-                    loginBtn.isEnabled = false
+            var enabled = false
+            if let phone = phoneTextField.text {
+                if phone.characters.count == 11 {
+                    if let pwd = msgOrPwdTextField.text {
+                        enabled = pwd.characters.count > 5
+                    }
                 }
-            } else {
-                loginBtn.isEnabled = false
             }
+            loginBtn.isEnabled = enabled
         }
     }
     
@@ -207,9 +239,10 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                     msgCode = msg
                 }
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
-                    self.loginByMsgOrPwd.setTitle("验证码登录", for: .normal)
+                    self.loginByMsgOrPwd.setTitle("验证码登录/注册", for: .normal)
+                    self.loginBtn.setTitle("登录/注册", for: .normal)
                     self.loginBtn.frame.origin = self.getMsgBtn.frame.origin
-                    self.loginBtn.frame.size.width = self.phoneTextField.frame.width
+                    self.loginBtn.frame.size.width = self.msgOrPwdTextField.frame.width
                     self.getMsgBtn.frame.size.width = 0
                     self.getMsgBtn.alpha = 0.2
                     self.msgOrPwdTextField.placeholder = "密码"
@@ -227,6 +260,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
             case .pwd:
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
                     self.loginByMsgOrPwd.setTitle("密码登录", for: .normal)
+                    self.loginBtn.setTitle("登录/注册", for: .normal)
                     self.loginBtn.frame.origin.x = self.loginBtnX
                     self.loginBtn.frame.size.width = self.btnWidth
                     self.getMsgBtn.frame.size.width = self.btnWidth
@@ -450,17 +484,33 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     }
     
     func doLogin(_ sender: Any) {
-        var isFirstLogin = false
         if avbaker == nil {
             avbaker = retrieveBaker(withPhone: self.phoneNum)!
         }
+        if !avbaker.signedup {
+            avbaker.signedup = true
+            avbaker.saveInBackground({
+                succeeded, error in
+                if succeeded {
+                    self.setCurrentUser()
+                } else {
+                    self.view.notify(text: "注册失败，请重试。", color: .alertRed, nav: self.navigationController?.navigationBar)
+                }
+            })
+        } else {
+            setCurrentUser()
+        }
+    }
+    
+    func setCurrentUser() {
+        var isFirstLogin = false
         if let usr = RealmHelper.retrieveUser(withID: self.avbaker.objectId!) {
-            userRealm = usr
+            self.userRealm = usr
             isFirstLogin = false
         } else {
             isFirstLogin = true
         }
-        self.retrieveHeadphotoAndSetUser(baker: avbaker, first: isFirstLogin)
+        self.retrieveHeadphotoAndSetUser(baker: self.avbaker, first: isFirstLogin)
         self.loginState = .normal
     }
     

@@ -273,8 +273,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             
             let bakeName = bakee.name!
             let price = bakee.price!
-            let monthly = bakee.monthly as! Int
-            let amount = bakee.amount as! Int
+            let monthly = bakee.monthly as? Int ?? 100
+            let amount = bakee.amount as? Int ?? 10
             let bakeInBag = RealmHelper.retrieveOneBakeInBag(by: bakee.objectId!)
             let amountInBag = bakeInBag?.amount ?? 0
             
@@ -315,11 +315,6 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         }
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        // TODO: custom it
-        return nil
-    }
-    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return tableView.tag == 1 ? avtag[section] : nil
     }
@@ -341,6 +336,15 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return tableView.tag == 1 && section == avtag.count - 1 ? bagBarHeight : 0
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch tableView.tag {
+        case 1:
+            return 28
+        default:
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -136,23 +136,26 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         cell.selectionStyle = .none
         
         let shop = avshops[indexPath.row]
-        let bgUrl = URL(string: shop.bgImage!.url!)
-        let hpUrl = URL(string: shop.headphoto!.url!)
         cell.nameLabel.text = (shop["name"] as! String)
         
         cell.commentsNumber.setTitle("\(423) 评论", for: .normal)
         
-        cell.headphoto.sd_setImage(with: hpUrl)
-        cell.headphoto.contentMode = .scaleAspectFill
-        cell.headphoto.clipsToBounds = true
-        cell.headphoto.layer.cornerRadius = cell.headphoto.frame.size.width / 2
-        cell.headphoto.layer.masksToBounds = true
-
-        cell.bgImage.sd_setImage(with: bgUrl)
-        cell.bgImage.frame.origin = CGPoint(x: 0, y: 0)
-        cell.bgImage.contentMode = .scaleAspectFill
-        cell.bgImage.clipsToBounds = true
+        if let url = shop.headphoto?.url {
+            let hpUrl = URL(string: url)
+            cell.headphoto.sd_setImage(with: hpUrl)
+            cell.headphoto.contentMode = .scaleAspectFill
+            cell.headphoto.clipsToBounds = true
+            cell.headphoto.layer.cornerRadius = cell.headphoto.frame.size.width / 2
+            cell.headphoto.layer.masksToBounds = true
+        }
         
+        if let url = shop.bgImage?.url {
+            let bgUrl = URL(string: url)
+            cell.bgImage.sd_setImage(with: bgUrl)
+            cell.bgImage.frame.origin = CGPoint(x: 0, y: 0)
+            cell.bgImage.contentMode = .scaleAspectFill
+            cell.bgImage.clipsToBounds = true
+        }
         let starsSize = CGSize(width: starHeightInHomeVC * 5, height: starHeightInHomeVC)
         cell.stars.frame.size = starsSize
         cell.starsGray.frame = cell.stars.frame

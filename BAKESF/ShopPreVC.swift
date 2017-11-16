@@ -320,6 +320,15 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         return tableView.tag == 1 && section == avtag.count - 1 ? bagBarHeight : 0
     }
     
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch tableView.tag {
+        case 1:
+            return 28
+        default:
+            return 0
+        }
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView.tag {
         case 0:

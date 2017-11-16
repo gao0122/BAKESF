@@ -17,6 +17,7 @@
 		00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00020F8C1F0E2D5D008ABFB1 /* Int+Extensions.swift */; };
 		0008AD941F568D49005E4061 /* UIButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0008AD931F568D49005E4061 /* UIButton+Extensions.swift */; };
 		000D13781EFF862700A19D5A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000D13771EFF862700A19D5A /* Constants.swift */; };
+		00153E371F909B4C008AB585 /* SearchHistoryRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00153E361F909B4C008AB585 /* SearchHistoryRealm.swift */; };
 		001DB09D1F024CD100A09F32 /* CommunityVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001DB09C1F024CD100A09F32 /* CommunityVC.swift */; };
 		002515061F6CC71100DCEB80 /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002515051F6CC71100DCEB80 /* UITableView+Extensions.swift */; };
 		002515081F6D1B9100DCEB80 /* MeFavoriteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002515071F6D1B9100DCEB80 /* MeFavoriteVC.swift */; };
@@ -50,6 +51,7 @@
 		006024FE1EC9900F00FFB859 /* HomeShopVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006024FD1EC9900F00FFB859 /* HomeShopVC.swift */; };
 		006025001EC9995400FFB859 /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006024FF1EC9995400FFB859 /* HomeVC.swift */; };
 		006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006025011EC99DDE00FFB859 /* HomeBakeVC.swift */; };
+		006166E21FA2F7C90013F9B6 /* AVHomePageSearchHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006166E11FA2F7C90013F9B6 /* AVHomePageSearchHistory.swift */; };
 		00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00629C791EC80BBC00B78151 /* AppDelegate.swift */; };
 		00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00629C7D1EC80BBC00B78151 /* OrderVC.swift */; };
 		00629C811EC80BBC00B78151 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00629C7F1EC80BBC00B78151 /* Main.storyboard */; };
@@ -59,6 +61,7 @@
 		006A3E201F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */; };
 		006A3E221F3D8AAF00FE3064 /* cities.plist in Resources */ = {isa = PBXBuildFile; fileRef = 006A3E211F3D8AAF00FE3064 /* cities.plist */; };
 		006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006B2E511F1B514B00C10BB9 /* AVOrder.swift */; };
+		007F87161FA961CD0079AC0C /* HomeSearchResultBakeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007F87151FA961CD0079AC0C /* HomeSearchResultBakeCollectionViewCell.swift */; };
 		00846E0B1F282E7D004F2BDE /* BakePreOrderRealm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */; };
 		008F0AEF1F2C87EA00700C0D /* MeSettingPwdVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */; };
 		008F0AF11F2CBD7100700C0D /* MeSettingNameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008F0AF01F2CBD7100700C0D /* MeSettingNameVC.swift */; };
@@ -88,6 +91,9 @@
 		00BF126D1F2B7DAF00F67DF8 /* ShopCheckingVCPureCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */; };
 		00CA4A7C1F1DFF9F00541A4C /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */; };
 		00CA4A7E1F1E093500541A4C /* ShopBagEmbedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */; };
+		00CB8B621F7276570014F756 /* ShopDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00CB8B611F7276570014F756 /* ShopDetailVC.swift */; };
+		00CC00041F8388B100C19F29 /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00CC00031F8388B100C19F29 /* PassKit.framework */; };
+		00CC00061F8389F200C19F29 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00CC00051F8389F200C19F29 /* StoreKit.framework */; };
 		00D0AF9A1EE3C7F300B1F5A2 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D0AF991EE3C7F300B1F5A2 /* Helper.swift */; };
 		00D23B911F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D23B901F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift */; };
 		00D23B931F14AF04002E45B7 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D23B921F14AF04002E45B7 /* UIColor+Extensions.swift */; };
@@ -124,6 +130,7 @@
 		00020F8C1F0E2D5D008ABFB1 /* Int+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		0008AD931F568D49005E4061 /* UIButton+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+Extensions.swift"; sourceTree = "<group>"; };
 		000D13771EFF862700A19D5A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		00153E361F909B4C008AB585 /* SearchHistoryRealm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHistoryRealm.swift; sourceTree = "<group>"; };
 		001DB09C1F024CD100A09F32 /* CommunityVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommunityVC.swift; sourceTree = "<group>"; };
 		002515051F6CC71100DCEB80 /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
 		002515071F6D1B9100DCEB80 /* MeFavoriteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeFavoriteVC.swift; sourceTree = "<group>"; };
@@ -157,6 +164,7 @@
 		006024FD1EC9900F00FFB859 /* HomeShopVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeShopVC.swift; sourceTree = "<group>"; };
 		006024FF1EC9995400FFB859 /* HomeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeVC.swift; sourceTree = "<group>"; };
 		006025011EC99DDE00FFB859 /* HomeBakeVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeBakeVC.swift; sourceTree = "<group>"; };
+		006166E11FA2F7C90013F9B6 /* AVHomePageSearchHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVHomePageSearchHistory.swift; sourceTree = "<group>"; };
 		00629C761EC80BBC00B78151 /* BAKESF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BAKESF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		00629C791EC80BBC00B78151 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		00629C7D1EC80BBC00B78151 /* OrderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderVC.swift; sourceTree = "<group>"; };
@@ -170,6 +178,7 @@
 		006A3E1F1F39E92E00FE3064 /* DeliveryAddressSelectionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAddressSelectionTableViewCell.swift; sourceTree = "<group>"; };
 		006A3E211F3D8AAF00FE3064 /* cities.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = cities.plist; sourceTree = "<group>"; };
 		006B2E511F1B514B00C10BB9 /* AVOrder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVOrder.swift; sourceTree = "<group>"; };
+		007F87151FA961CD0079AC0C /* HomeSearchResultBakeCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSearchResultBakeCollectionViewCell.swift; sourceTree = "<group>"; };
 		00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BakePreOrderRealm.swift; sourceTree = "<group>"; };
 		008F0AEE1F2C87EA00700C0D /* MeSettingPwdVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingPwdVC.swift; sourceTree = "<group>"; };
 		008F0AF01F2CBD7100700C0D /* MeSettingNameVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeSettingNameVC.swift; sourceTree = "<group>"; };
@@ -201,6 +210,9 @@
 		00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopCheckingVCPureCoding.swift; sourceTree = "<group>"; };
 		00CA4A7B1F1DFF9F00541A4C /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		00CA4A7D1F1E093500541A4C /* ShopBagEmbedVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBagEmbedVC.swift; sourceTree = "<group>"; };
+		00CB8B611F7276570014F756 /* ShopDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopDetailVC.swift; sourceTree = "<group>"; };
+		00CC00031F8388B100C19F29 /* PassKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PassKit.framework; path = System/Library/Frameworks/PassKit.framework; sourceTree = SDKROOT; };
+		00CC00051F8389F200C19F29 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		00D0AF991EE3C7F300B1F5A2 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		00D23B901F14AC78002E45B7 /* UIPanDirectionGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIPanDirectionGestureRecognizer.swift; sourceTree = "<group>"; };
 		00D23B921F14AF04002E45B7 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
@@ -234,6 +246,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00CC00061F8389F200C19F29 /* StoreKit.framework in Frameworks */,
+				00CC00041F8388B100C19F29 /* PassKit.framework in Frameworks */,
 				7A39B2C152FC8E14A77AFBC0 /* Pods_BAKESF.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,6 +310,7 @@
 				009BA0181F46C67100C7ABF7 /* AVRedPacket.swift */,
 				009BA0201F4944E100C7ABF7 /* AVCommentShop.swift */,
 				009BA0221F49462000C7ABF7 /* AVRemarksOrder.swift */,
+				006166E11FA2F7C90013F9B6 /* AVHomePageSearchHistory.swift */,
 			);
 			name = AVObject;
 			sourceTree = "<group>";
@@ -307,6 +322,7 @@
 				00455A8A1F19E81D009F440F /* BakeInBagRealm.swift */,
 				00846E0A1F282E7D004F2BDE /* BakePreOrderRealm.swift */,
 				008F74161F38670700AFEC9E /* LocationRealm.swift */,
+				00153E361F909B4C008AB585 /* SearchHistoryRealm.swift */,
 			);
 			name = RealmObject;
 			sourceTree = "<group>";
@@ -343,6 +359,7 @@
 			children = (
 				006024FF1EC9995400FFB859 /* HomeVC.swift */,
 				00E5C3991F694ACC0061E7CE /* HomeSearchResultTableViewCell.swift */,
+				007F87151FA961CD0079AC0C /* HomeSearchResultBakeCollectionViewCell.swift */,
 				006024F91EC98FCF00FFB859 /* HomeMasterVC.swift */,
 				00DEA9D01F599B7D00641F9E /* HomeShopVC */,
 				00DEA9D21F599B9F00641F9E /* HomeBakeVC */,
@@ -437,6 +454,7 @@
 			isa = PBXGroup;
 			children = (
 				00B491A81EE4CFE1000C63EB /* ShopVC.swift */,
+				00CB8B611F7276570014F756 /* ShopDetailVC.swift */,
 				0034EE331EE7D59A005300AE /* ShopPagingVC.swift */,
 				0034EE351EE9116B005300AE /* ShopBuyVC.swift */,
 				0034EE371EE91176005300AE /* ShopPreVC.swift */,
@@ -536,6 +554,8 @@
 		BA9A938745FB83CEBCCFEA9C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				00CC00051F8389F200C19F29 /* StoreKit.framework */,
+				00CC00031F8388B100C19F29 /* PassKit.framework */,
 				00B474DF1ECD656000ED1B7A /* RealmSwift.framework */,
 				00B474DD1ECD655C00ED1B7A /* Realm.framework */,
 				00629C901EC8146900B78151 /* Alamofire.framework */,
@@ -584,13 +604,22 @@
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.ApplePay = {
+								enabled = 1;
+							};
 							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
 								enabled = 1;
 							};
 							com.apple.Maps.iOS = {
 								enabled = 0;
 							};
 							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.Wallet = {
 								enabled = 1;
 							};
 						};
@@ -753,6 +782,7 @@
 				006024FE1EC9900F00FFB859 /* HomeShopVC.swift in Sources */,
 				0034EE381EE91176005300AE /* ShopPreVC.swift in Sources */,
 				0025150A1F6D277D00DCEB80 /* MeJoinUsVC.swift in Sources */,
+				007F87161FA961CD0079AC0C /* HomeSearchResultBakeCollectionViewCell.swift in Sources */,
 				004318321F13EF8E00FD0227 /* ShopClassifyTableCell.swift in Sources */,
 				0000D8191F1F3DC100BB2B30 /* ShopPreBakeTableView.swift in Sources */,
 				00020F8D1F0E2D5D008ABFB1 /* CGFloat+Extensions.swift in Sources */,
@@ -778,6 +808,7 @@
 				00629C7E1EC80BBC00B78151 /* OrderVC.swift in Sources */,
 				00264E6F1F2F70EC00D83073 /* ShopCheckSegmentedControlTableCell.swift in Sources */,
 				00DEA9D41F5A4DBD00641F9E /* HomeBakeTableViewCell.swift in Sources */,
+				006166E21FA2F7C90013F9B6 /* AVHomePageSearchHistory.swift in Sources */,
 				006B2E521F1B514B00C10BB9 /* AVOrder.swift in Sources */,
 				00D3AB681F370D1F00A5E934 /* DeliveryAddressEditingVC.swift in Sources */,
 				00629C7A1EC80BBC00B78151 /* AppDelegate.swift in Sources */,
@@ -786,6 +817,7 @@
 				00DEA9D61F5A4DCA00641F9E /* HomeBakeCollectionViewCell.swift in Sources */,
 				00455A891F193079009F440F /* AVBake.swift in Sources */,
 				009BA01F1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift in Sources */,
+				00153E371F909B4C008AB585 /* SearchHistoryRealm.swift in Sources */,
 				00D23B9E1F14AF96002E45B7 /* Date+Extensions.swift in Sources */,
 				008F0AEF1F2C87EA00700C0D /* MeSettingPwdVC.swift in Sources */,
 				0048FDA91EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift in Sources */,
@@ -808,6 +840,7 @@
 				009BA01B1F46CE3E00C7ABF7 /* UITableViewCell+Extensions.swift in Sources */,
 				00D23B981F14AF4E002E45B7 /* Data+Extensions.swift in Sources */,
 				009BA0131F469D5800C7ABF7 /* RedPacketVC.swift in Sources */,
+				00CB8B621F7276570014F756 /* ShopDetailVC.swift in Sources */,
 				002515081F6D1B9100DCEB80 /* MeFavoriteVC.swift in Sources */,
 				006025021EC99DDE00FFB859 /* HomeBakeVC.swift in Sources */,
 				004BF0E01ED184CF00554A5E /* HomeShopTableView.swift in Sources */,
