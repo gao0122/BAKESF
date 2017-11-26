@@ -90,18 +90,8 @@
     return self;
 }
 
-- (NSString *)messageId {
-    return _messageId ?: (_messageId = [self tempMessageId]);
-}
-
 - (NSString *)payload {
     return self.content;
-}
-
-/* [-9223372036854775808 .. 9223372036854775807]~ */
-- (NSString *)tempMessageId {
-    static int64_t idx = INT64_MIN;
-    return [NSString stringWithFormat:@"%lld~", idx++];
 }
 
 - (AVIMMessageIOType)ioType {
@@ -114,6 +104,16 @@
     } else {
         return AVIMMessageIOTypeIn;
     }
+}
+
+- (BOOL)mentioned {
+    if (self.ioType == AVIMMessageIOTypeOut)
+        return NO;
+
+    if (self.mentionAll || [self.mentionList containsObject:self.localClientId])
+        return YES;
+
+    return NO;
 }
 
 /*!

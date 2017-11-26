@@ -136,7 +136,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         cell.selectionStyle = .none
         
         let shop = avshops[indexPath.row]
-        cell.nameLabel.text = (shop["name"] as! String)
+        cell.nameLabel.text = shop["name"] as? String
         
         cell.commentsNumber.setTitle("\(423) 评论", for: .normal)
         

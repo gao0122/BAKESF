@@ -143,9 +143,9 @@ class RealmHelper {
         return total
     }
     
-    static func retrieveBakesInBagCount(by tag: String) -> Int {
+    static func retrieveBakesInBagCount(by tag: String, avbakesIn: [String: AVBakeIn]) -> Int {
         let realm = try! Realm()
-        let bakes = realm.objects(BakeInBagRealm.self).filter("tag = '\(tag)'")
+        let bakes = realm.objects(BakeInBagRealm.self).filter("tag = '\(tag)'").filter({ return avbakesIn[$0.id] != nil })
         var total = 0
         for bake in bakes {
             total += bake.amount
@@ -244,9 +244,9 @@ class RealmHelper {
         return total
     }
     
-    static func retrieveBakesPreOrderCount(by tag: String) -> Int {
+    static func retrieveBakesPreOrderCount(by tag: String, avbakesPre: [String: AVBakePre]) -> Int {
         let realm = try! Realm()
-        let bakes = realm.objects(BakePreOrderRealm.self).filter("tag = '\(tag)'")
+        let bakes = realm.objects(BakePreOrderRealm.self).filter("tag = '\(tag)'").filter({ return avbakesPre[$0.id] != nil })
         var total = 0
         for bake in bakes {
             total += bake.amount

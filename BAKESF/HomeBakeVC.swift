@@ -18,6 +18,7 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     
     var homeVC: HomeVC?
     var bakeDict = [Int: [AVBake]]()
+    var bakeDetailDict = [AVBake: [AVBakeDetail]]()
     
     lazy var refresher: UIRefreshControl = {
         let refresher = UIRefreshControl()
@@ -177,8 +178,9 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
         let itm = indexPath.item
         let bakes = bakeDict[tag]!
         let bake = bakes[itm]
+        guard let defaultBake = bake.defaultBake else { return cell }
         cell.nameLabel.text = bake.name
-        if let price = bake.price as? Double {
+        if let price = defaultBake.price as? Double {
             cell.priceLabel.text = "¥\(price.fixPriceTagFormat())"
         } else {
             cell.priceLabel.text = ""
@@ -196,6 +198,8 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let tag = collectionView.tag
         let itm = indexPath.item
+        let bakes = bakeDict[tag]!
+        let bake = bakes[itm]
     }
     
 }

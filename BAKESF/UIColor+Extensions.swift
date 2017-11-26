@@ -23,15 +23,15 @@ extension UIColor {
     }
     
     static var alertGreen: UIColor {
-        return UIColor(red: 16 / 255, green: 206 / 255, blue: 105 / 255, alpha: 1)
+        return UIColor(red: 93 / 255, green: 186 / 255, blue: 125 / 255, alpha: 0.92)
     }
     
     static var alertRed: UIColor {
-        return UIColor(red: 255 / 255, green: 36 / 255, blue: 40 / 255, alpha: 1)
+        return UIColor(red: 255 / 255, green: 36 / 255, blue: 40 / 255, alpha: 0.92)
     }
     
     static var alertOrange: UIColor {
-        return UIColor(red: 255 / 255, green: 128 / 255, blue: 0, alpha: 1)
+        return UIColor(red: 255 / 255, green: 128 / 255, blue: 0, alpha: 0.92)
     }
     
     static var bkWhite: UIColor {

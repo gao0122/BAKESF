@@ -105,6 +105,8 @@ NSInteger const kAVErrorUserWithMobilePhoneNotFound = 213;
 NSInteger const kAVErrorUserMobilePhoneNumberTaken = 214;
 /*! @abstract 215: Mobile phone number isn't verified. */
 NSInteger const kAVErrorUserMobilePhoneNotVerified = 215;
+/*! @abstract 216: SNS Auth Data's format is invalid. */
+NSInteger const kAVErrorUserSNSAuthDataInvalid = 216;
 
 /*! @abstract 250: Linked id missing from request */
 NSInteger const kAVErrorLinkedIdMissing = 250;
@@ -129,17 +131,21 @@ NSInteger const kAVErrorFileDataNotAvailable = 401;
 }
 
 +(NSError *)errorWithCode:(NSInteger)code errorText:(NSString *)text {
-    if (!code) { code = 0; }
-    NSDictionary *errorInfo=@{
-                                @"code":@(code),
-                                @"error":text, //???: should we remove this key
-                                NSLocalizedDescriptionKey:NSLocalizedString(text, nil), //TODO: add localized error descriptions
-                            };
+    if (!code) {
+        code = 0;
+    }
+    
+    NSString *localizedString = NSLocalizedString(text, nil);
+    
+    NSDictionary *errorInfo = @{
+                                @"code" : @(code),
+                                @"error" : text, //???: should we remove this key
+                                NSLocalizedDescriptionKey : localizedString //TODO: add localized error descriptions
+                                };
     
     NSError *err= [NSError errorWithDomain:kAVErrorDomain
                                code:code
                            userInfo:errorInfo];
-    
     
     return err;
 }
@@ -229,26 +235,25 @@ NSInteger const kAVErrorFileDataNotAvailable = 401;
     
     NSString *errorString = [dic objectForKey:@"error"];
     NSNumber *code = [dic objectForKey:@"code"];
-    if (!code || ((id)code == [NSNull null])) {
+    if (code == NULL) {
         code = @(kAVErrorUnknownErrorCode);
     }
-    if (!errorString || ((id)errorString == [NSNull null])) {
+    if (errorString == NULL) {
         errorString = [NSString stringWithFormat:@"%@, `code` and `error` are reserved keys.", kAVErrorUnknownText];
     }
     return [AVErrorUtils errorWithCode:code.integerValue errorText:errorString];
 }
 
 + (BOOL)_isDictionaryError:(NSDictionary *)dic {
-    NSString *errorString = [dic objectForKey:@"error"];
-    NSNumber *code = [dic objectForKey:@"code"];
-    if (((id)code == [NSNull null]) && ((id)errorString == [NSNull null])) {
-        return NO;
-    }
-    if (code) {
+    
+    id errorString = [dic objectForKey:@"error"];
+    id code = [dic objectForKey:@"code"];
+    
+    if (code && [code isKindOfClass:[NSNumber class]]) {
         return YES;
     }
     
-    if (errorString) {
+    if (errorString && [errorString isKindOfClass:[NSString class]]) {
         return YES;
     }
     

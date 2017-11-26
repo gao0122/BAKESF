@@ -22,11 +22,11 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     var avbakes: [AVBake]!
     var avbakesTag = [String: [AVBake]]()
     var avbakesSoldOut = [String: [AVBake]]()
+    var avbakesDetailDict = [AVBake: [AVBakeDetail]]()
     
     var avbakesIn = [String: AVBakeIn]()
     var tappedAtTagTableview = false
     
-
     var bakeLiveQuery: AVLiveQuery!
 
     override func viewDidLoad() {
@@ -57,6 +57,14 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         let orQuery = AVQuery.orQuery(withSubqueries: [buyQuery, bothQuery])
         let query = AVQuery.andQuery(withSubqueries: [shopQuery, orQuery])
         query.includeKey("image")
+        query.includeKey("defaultBake")
+        query.includeKey("defaultBake.bake")
+        query.includeKey("defaultBake.image")
+        query.includeKey("defaultBake.attributes")
+        query.includeKey("defaultBake.attributes.attribute0")
+        query.includeKey("defaultBake.attributes.attribute1")
+        query.includeKey("defaultBake.attributes.attribute2")
+        query.includeKey("shop")
         query.addAscendingOrder("priority")
         query.findObjectsInBackground({
             objects, error in
@@ -83,39 +91,108 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     func assignBakeTag() {
         // assign bakes in their tags and take "sold out" as a new array
         for bake in self.avbakes {
-            let id = bake.objectId!
-            let tag = bake.tag!
-            if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: id) {
-                assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
-            }
-            if bake.amount == 0 {
-                if let _ = self.avbakesSoldOut[tag] {
-                    self.avbakesSoldOut[tag]!.append(bake)
+            guard let bakeAttr = bake.attributes else { break }
+            guard let tag = bake.tag else { break }
+            if bakeAttr.count == 0 {
+                guard let bakeDetail = bake.defaultBake else { break }
+                guard bakeDetail.status else { break }
+                let id = bakeDetail.objectId!
+                if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: id) {
+                    assignAVBakeOrder(bakeRealm: bakeRealm, bake: bakeDetail)
+                }
+                if bakeDetail.amount == 0 {
+                    if let _ = self.avbakesSoldOut[tag] {
+                        self.avbakesSoldOut[tag]!.append(bake)
+                    } else {
+                        self.avbakesSoldOut[tag] = [bake]
+                    }
                 } else {
-                    self.avbakesSoldOut[tag] = [bake]
+                    if let _ = self.avbakesTag[tag] {
+                        self.avbakesTag[tag]!.append(bake)
+                    } else {
+                        self.avbakesTag[tag] = [bake]
+                    }
                 }
             } else {
-                if let _ = self.avbakesTag[tag] {
-                    self.avbakesTag[tag]!.append(bake)
+                if let bakeDetails = avbakesDetailDict[bake] {
+                    assignAVBakeDetail(tag: tag, bake: bake, bakeDetails: bakeDetails)
                 } else {
-                    self.avbakesTag[tag] = [bake]
+                    let query = AVBakeDetail.query()
+                    query.includeKey("bake")
+                    query.includeKey("attributes")
+                    query.whereKey("bake", equalTo: bake)
+                    query.findObjectsInBackground({
+                        objects, error in
+                        if let error = error {
+                            self.shopVC.stopIndicatorViewAni()
+                            self.shopVC.showLoadFailedView()
+                            printit(any: "shop buy vc \(error.localizedDescription)")
+                        } else {
+                            self.avbakesDetailDict[bake] = objects as? [AVBakeDetail]
+                            if let bakeDetails = self.avbakesDetailDict[bake] {
+                                self.assignAVBakeDetail(tag: tag, bake: bake, bakeDetails: bakeDetails)
+                            } else {
+                                self.shopVC.showLoadFailedView()
+                            }
+                        }
+                    })
                 }
             }
         }
         // append sold out bakes to the end of all bakes
-        for tag in avtag {
+        for (n, tag) in avtag.enumerated() {
             if let _ = avbakesTag[tag] {
                 avbakesTag[tag]!.append(contentsOf: avbakesSoldOut[tag] ?? [])
             } else {
                 avbakesTag[tag] = avbakesSoldOut[tag]
             }
+            if let bakes = avbakesTag[tag] {
+                if bakes.count == 0 {
+                    avtag[n] = ""
+                }
+            } else {
+                avtag[n] = ""
+            }
         }
-        self.bakeTableView.reloadData()
+        avtag = avtag.filter({ return $0 != "" })
+        if avtag.count > 0 {
+            self.classifyTableView.reloadData()
+            self.bakeTableView.reloadData()
+        } else {
+            self.shopVC.stopIndicatorViewAni()
+            self.shopVC.showLoadFailedView()
+        }
     }
     
-    func assignAVBakeOrder(bakeRealm: BakeInBagRealm?, bake: AVBake) {
+    func assignAVBakeDetail(tag: String, bake: AVBake, bakeDetails: [AVBakeDetail]) {
+        var totalAmount = 0
+        for bakeDetail in bakeDetails {
+            guard bakeDetail.status else { break }
+            guard let amount = bakeDetail.amount as? Int else { break }
+            totalAmount += amount
+            let id = bakeDetail.objectId!
+            if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: id) {
+                assignAVBakeOrder(bakeRealm: bakeRealm, bake: bakeDetail)
+            }
+        }
+        if totalAmount == 0 {
+            if let _ = self.avbakesSoldOut[tag] {
+                self.avbakesSoldOut[tag]!.append(bake)
+            } else {
+                self.avbakesSoldOut[tag] = [bake]
+            }
+        } else {
+            if let _ = self.avbakesTag[tag] {
+                self.avbakesTag[tag]!.append(bake)
+            } else {
+                self.avbakesTag[tag] = [bake]
+            }
+        }
+    }
+    
+    func assignAVBakeOrder(bakeRealm: BakeInBagRealm?, bake: AVBakeDetail) {
         let bakeIn = AVBakeIn()
-        bakeIn.bakee = bake
+        bakeIn.bake = bake
         if let bakeRealm = bakeRealm {
             bakeIn.amount = bakeRealm.amount as NSNumber
         } else {
@@ -126,7 +203,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
 
     func reloadAVBakeOrder() {
         if avbakes == nil { return }
-        for bake in avbakes {
+        for avbake in avbakes {
+            guard let bake = avbake.defaultBake else { break }
             let id = bake.objectId!
             if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: id) {
                 assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
@@ -149,11 +227,12 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         cell.amountLabel.text = "\(amount)"
     }
     
-    func addBakeToRealm(_ bake: AVBake, amount: Int = 1) {
+    func addBakeToRealm(_ bakeDetail: AVBakeDetail, amount: Int = 1) {
+        guard let bake = bakeDetail.bake else { return }
         let bakeRealm = BakeInBagRealm()
-        bakeRealm.id = bake.objectId!
+        bakeRealm.id = bakeDetail.objectId!
         bakeRealm.amount = amount
-        bakeRealm.price = bake.price as! Double
+        bakeRealm.price = bakeDetail.price as! Double
         bakeRealm.name = bake.name!
         bakeRealm.tag = bake.tag!
         bakeRealm.shopID = avshop.objectId!
@@ -162,15 +241,16 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     
     func oneMoreBake(_ cell: ShopBuyBakeTableCell) {
         guard let bake = cell.bake else { return }
-        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: bake.objectId!) {
+        guard let bakeDetail = bake.defaultBake else { return }
+        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!) {
             RealmHelper.addOneMoreBake(bakeRealm)
             cell.amountLabel.text = "\(bakeRealm.amount)"
-            assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
+            assignAVBakeOrder(bakeRealm: bakeRealm, bake: bakeDetail)
         } else {
-            addBakeToRealm(bake)
+            addBakeToRealm(bakeDetail)
             setShopCellFromNoneToOne(cell)
             cell.amountLabel.text = "1"
-            assignAVBakeOrder(bakeRealm: nil, bake: bake)
+            assignAVBakeOrder(bakeRealm: nil, bake: bakeDetail)
         }
     }
     
@@ -185,15 +265,16 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     
     func minusOneBake(_ cell: ShopBuyBakeTableCell) {
         guard let bake = cell.bake else { return }
-        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: bake.objectId!) {
+        guard let bakeDetail = bake.defaultBake else { return }
+        if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!) {
             if RealmHelper.minueOneBake(bakeRealm) {
                 setShopCellToNone(cell)
-                avbakesIn[bake.objectId!] = nil
+                avbakesIn[bakeDetail.objectId!] = nil
                 printit(avbakesIn)
             } else {
                 let amount = bakeRealm.amount
                 cell.amountLabel.text = "\(amount)"
-                assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
+                assignAVBakeOrder(bakeRealm: bakeRealm, bake: bakeDetail)
             }
         }
     }
@@ -222,7 +303,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         case 0:
             count = avtag.count
         case 1:
-            count = avbakes == nil ? 0 : avbakesTag[avtag[section]]!.count
+            count = avbakes == nil ? 0 : (avbakesTag[avtag[section]]?.count ?? 0)
         default:
             break
         }
@@ -241,7 +322,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             let tag = avtag[indexPath.row]
             cell.classLabel.textColor = .bkBlack
             cell.classLabel.text = tag
-            let count = RealmHelper.retrieveBakesInBagCount(by: tag)
+            let count = RealmHelper.retrieveBakesInBagCount(by: tag, avbakesIn: avbakesIn)
             if count > 0 {
                 if count > 999 {
                     cell.amountLabel.text = "999+"
@@ -269,20 +350,30 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             let cell = bakeTableView.dequeueReusableCell(withIdentifier: "shopBuyBakeTableCell", for: IndexPath(row: indexPath.row, section: indexPath.section)) as! ShopBuyBakeTableCell
             cell.selectionStyle = .none
             
-            let bakee = avbakesTag[avtag[section]]![indexPath.row]
+            let bake = avbakesTag[avtag[section]]![indexPath.row]
+            guard let bakeDetail = bake.defaultBake else { return UITableViewCell() }
             
-            let bakeName = bakee.name!
-            let price = bakee.price!
-            let monthly = bakee.monthly as? Int ?? 100
-            let amount = bakee.amount as? Int ?? 10
-            let bakeInBag = RealmHelper.retrieveOneBakeInBag(by: bakee.objectId!)
+            let bakeName = bake.name!
+            let price = bakeDetail.price!
+            let monthly = 100 // TODO
+            let amount = bakeDetail.amount as? Int ?? 10
+
+            if let bakeAttr = bake.attributes {
+                if bakeAttr.count == 0 {
+                    cell.oneMoreBtn.isHidden = true
+                } else {
+                    
+                }
+            }
+            
+            let bakeInBag = RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!)
             let amountInBag = bakeInBag?.amount ?? 0
             
-            if bakee.image == nil { printit(any: "\n\n\n\n\n\n\(bakee.name!)\n\n\n\n\n\n") }
+            if bake.image == nil { printit(any: "\n\n\n\n\n\n\(bake.name!)\n\n\n\n\n\n") }
 
-            cell.bake = bakee
+            cell.bake = bake
             cell.bakeImage.contentMode = .scaleAspectFill
-            cell.bakeImage.sd_setImage(with: URL(string: bakee.image?.url ?? ""))
+            cell.bakeImage.sd_setImage(with: URL(string: bake.image?.url ?? ""))
             cell.bakeImage.clipsToBounds = true
             cell.bakeImage.layer.cornerRadius = 3
             cell.nameLabel.text = bakeName
@@ -348,16 +439,21 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let row = indexPath.row
         switch tableView.tag {
         case 0:
             if shopVC.menuAniState == .collapsed { shopVC.animateMenu(state: shopVC.menuAniState) }
             tappedAtTagTableview = true
-            bakeTableView.selectRow(at: IndexPath(row: 0, section: indexPath.row), animated: true, scrollPosition: .top)
+            if let bakes = avbakesTag[avtag[row]] {
+                if bakes.count > 0 {
+                    bakeTableView.selectRow(at: IndexPath(row: 0, section: row), animated: true, scrollPosition: .top)
+                }
+            }
         case 1:
             let cell = tableView.cellForRow(at: indexPath) as! ShopBuyBakeTableCell
             // TODO: - bake selection
             let avbake = cell.bake
-            _ = avbake?.amount
+            
         default:
             break
         }

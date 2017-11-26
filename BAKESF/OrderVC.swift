@@ -330,9 +330,13 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                     if let avbakes = avbakesDict[order] {
                         var bakesInfoText = ""
                         if let bake = avbakes.first as? AVBakeIn {
-                            bakesInfoText = bake.bakee!.name!
+                            if let avbake = bake.bake?.bake {
+                                bakesInfoText = bake.bake!.bake!.name!
+                            }
                         } else if let bake = avbakes.first as? AVBakePre {
-                            bakesInfoText = bake.bakee!.name!
+                            if let avbake = bake.bake?.bake {
+                                bakesInfoText = bake.bake!.bake!.name!
+                            }
                         }
                         if avbakes.count > 1 {
                             bakesInfoText += " 等\(avbakes.count)件商品"

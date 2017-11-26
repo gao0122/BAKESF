@@ -68,6 +68,8 @@
 - (NSArray *)updationRecordForMessage:(AVIMMessage *)message {
     return @[
         message.clientId,
+        @(message.mentionAll),
+        message.mentionList ? [NSKeyedArchiver archivedDataWithRootObject:message.mentionList] : [NSNull null],
         [self timestampForMessage:message],
         [self receiptTimestampForMessage:message],
         [self readTimestampForMessage:message],
@@ -79,26 +81,22 @@
     ];
 }
 
-- (NSArray *)insertionRecordForMessage:(AVIMMessage *)message {
-    return @[
-        message.messageId,
-        self.conversationId,
-        message.clientId,
-        [self timestampForMessage:message],
-        [self receiptTimestampForMessage:message],
-        [self readTimestampForMessage:message],
-        [self patchTimestampForMessage:message],
-        [message.payload dataUsingEncoding:NSUTF8StringEncoding],
-        @(message.status),
-        @(NO)
-    ];
+- (NSArray *)replacingRecordForMessage:(AVIMMessage *)message withBreakpoint:(BOOL)breakpoint {
+    NSAssert(message.seq > 0, @"Message must has a sequence number.");
+
+    NSMutableArray *record = [[self insertionRecordForMessage:message withBreakpoint:breakpoint] mutableCopy];
+    [record insertObject:@(message.seq) atIndex:0];
+
+    return record;
 }
 
 - (NSArray *)insertionRecordForMessage:(AVIMMessage *)message withBreakpoint:(BOOL)breakpoint {
     return @[
-        message.messageId,
+        message.messageId ?: [NSNull null],
         self.conversationId,
         message.clientId,
+        @(message.mentionAll),
+        message.mentionList ? [NSKeyedArchiver archivedDataWithRootObject:message.mentionList] : [NSNull null],
         [self timestampForMessage:message],
         [self receiptTimestampForMessage:message],
         [self readTimestampForMessage:message],
@@ -109,24 +107,33 @@
     ];
 }
 
-- (void)insertMessages:(NSArray *)messages {
+- (void)insertOrUpdateMessage:(AVIMMessage *)message {
+    [self insertOrUpdateMessage:message withBreakpoint:NO];
+}
+
+- (void)insertOrUpdateMessage:(AVIMMessage *)message withBreakpoint:(BOOL)breakpoint {
     LCIM_OPEN_DATABASE(db, ({
-        for (AVIMMessage *message in messages) {
-            NSArray *args = [self insertionRecordForMessage:message];
+        if (message.seq) {
+            NSArray *args = [self replacingRecordForMessage:message withBreakpoint:breakpoint];
+            [db executeUpdate:LCIM_SQL_REPLACE_MESSAGE withArgumentsInArray:args];
+        } else {
+            NSArray *args = [self insertionRecordForMessage:message withBreakpoint:breakpoint];
             [db executeUpdate:LCIM_SQL_INSERT_MESSAGE withArgumentsInArray:args];
+
+            /* Assign sequence number to message. */
+            LCResultSet *resultSet = [db executeQuery:LCIM_SQL_LAST_MESSAGE_SEQ];
+
+            if ([resultSet next])
+                message.seq = [resultSet longLongIntForColumn:@"seq"];
+
+            [resultSet close];
         }
     }));
 }
 
-- (void)insertMessage:(AVIMMessage *)message {
-    [self insertMessages:@[message]];
-}
-
-- (void)insertMessage:(AVIMMessage *)message withBreakpoint:(BOOL)breakpoint {
-    LCIM_OPEN_DATABASE(db, ({
-        NSArray *args = [self insertionRecordForMessage:message withBreakpoint:breakpoint];
-        [db executeUpdate:LCIM_SQL_INSERT_MESSAGE withArgumentsInArray:args];
-    }));
+- (void)insertOrUpdateMessages:(NSArray<AVIMMessage *> *)messages {
+    for (AVIMMessage *message in messages)
+        [self insertOrUpdateMessage:message];
 }
 
 - (void)updateBreakpoint:(BOOL)breakpoint forMessages:(NSArray *)messages {
@@ -185,9 +192,13 @@
     }));
 }
 
-- (void)deleteMessageForId:(NSString *)messageId {
+- (void)deleteMessage:(AVIMMessage *)message {
     LCIM_OPEN_DATABASE(db, ({
-        NSArray *args = @[self.conversationId, messageId];
+        NSArray *args = @[
+            self.conversationId,
+            @(message.seq),
+            message.messageId ?: [NSNull null]
+        ];
         [db executeUpdate:LCIM_SQL_DELETE_MESSAGE withArgumentsInArray:args];
     }));
 }
@@ -279,9 +290,16 @@
         message = [[AVIMMessage alloc] init];
     }
 
+    message.seq                = [record longLongIntForColumn:@"seq"];
     message.messageId          = [record stringForColumn:LCIM_FIELD_MESSAGE_ID];
     message.conversationId     = [record stringForColumn:LCIM_FIELD_CONVERSATION_ID];
     message.clientId           = [record stringForColumn:LCIM_FIELD_FROM_PEER_ID];
+    message.mentionAll         = [record boolForColumn:@"mention_all"];
+    message.mentionList        = ({
+        NSData *data = [record dataForColumn:@"mention_list"];
+        NSArray *mentionList = data ? [NSKeyedUnarchiver unarchiveObjectWithData:data] : nil;
+        mentionList;
+    });
     message.sendTimestamp      = [record longLongIntForColumn:LCIM_FIELD_TIMESTAMP];
     message.deliveredTimestamp = [record longLongIntForColumn:LCIM_FIELD_RECEIPT_TIMESTAMP];
     message.readTimestamp      = [record longLongIntForColumn:LCIM_FIELD_READ_TIMESTAMP];
@@ -289,6 +307,7 @@
     message.content            = payload;
     message.status             = [record intForColumn:LCIM_FIELD_STATUS];
     message.breakpoint         = [record boolForColumn:LCIM_FIELD_BREAKPOINT];
+    message.localClientId      = self.clientId;
 
     return message;
 }

@@ -236,3 +236,25 @@ func print(poi: AMapPOI) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

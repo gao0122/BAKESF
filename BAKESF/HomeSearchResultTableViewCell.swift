@@ -17,7 +17,6 @@ class HomeSearchResultTableViewCell: UITableViewCell {
     @IBOutlet weak var deliveryFeeLabel: UILabel! // 配送费
     @IBOutlet weak var deliveryCycleLabel: UILabel! // 配送时长
     @IBOutlet weak var distanceLabel: UILabel! // 距离
-    @IBOutlet weak var bakesCollectionView: UICollectionView!
     
     var shop: AVShop!
     

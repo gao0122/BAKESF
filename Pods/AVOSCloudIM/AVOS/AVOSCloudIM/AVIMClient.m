@@ -248,6 +248,9 @@ static BOOL AVIMClientHasInstantiated = NO;
 }
 
 - (AVIMConversation *)conversationForId:(NSString *)conversationId {
+    if (!conversationId)
+        return nil;
+
     AVIMConversation *conversation = [_conversations objectForKey:conversationId];
 
     /* Disable conversation cache for consistent */
@@ -842,7 +845,12 @@ static BOOL AVIMClientHasInstantiated = NO;
         }];
 
         AVIMSessionCommand *sessionCommand = [[AVIMSessionCommand alloc] init];
-        sessionCommand.sessionPeerIdsArray = clients ?: @[];
+        
+        NSMutableArray<NSString *> *sessionPeerIdsArray = [NSMutableArray new];
+        if (clients) {
+            [sessionPeerIdsArray addObjectsFromArray:clients];
+        }
+        sessionCommand.sessionPeerIdsArray = sessionPeerIdsArray;
 
         [genericCommand avim_addRequiredKeyWithCommand:sessionCommand];
 
@@ -947,6 +955,8 @@ static BOOL AVIMClientHasInstantiated = NO;
     message.hasMore = directCommand.hasMore;
     message.localClientId = self.clientId;
     message.transient = directCommand.transient;
+    message.mentionAll = directCommand.mentionAll;
+    message.mentionList = [directCommand.mentionPidsArray copy];
 
     if (directCommand.hasPatchTimestamp)
         message.updatedAt = [NSDate dateWithTimeIntervalSince1970:(directCommand.patchTimestamp / 1000.0)];
@@ -1047,43 +1057,35 @@ static BOOL AVIMClientHasInstantiated = NO;
     if (!conversation) return;
     
     [self fetchConversationIfNeeded:conversation withBlock:^(AVIMConversation *conversation) {
-        AVIMMessage *lastMessage = [self messageWithUnreadTuple:unreadTuple];
-        [self updateConversation:conversation unreadMessagesCount:unreadTuple.unread lastMessage:lastMessage];
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+
+        dictionary[@"unreadMessagesCount"] = @(unreadTuple.unread);
+        dictionary[@"lastMessage"] = [self messageWithUnreadTuple:unreadTuple];
+
+        if (unreadTuple.hasMentioned)
+            dictionary[@"unreadMessagesMentioned"] = @(unreadTuple.mentioned);
+
+        [self updateConversation:conversationId withDictionary:dictionary];
+
+        /* For compatibility, we reserve this callback. It should be removed in future. */
+        SEL selector = @selector(conversation:didReceiveUnread:);
+        if ([self.delegate respondsToSelector:selector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+            [self.delegate conversation:conversation didReceiveUnread:unreadTuple.unread];
+#pragma clang diagnostic pop
+        }
     }];
 }
 
-- (void)updateConversation:(AVIMConversation *)conversation unreadMessagesCount:(NSUInteger)unreadMessagesCount lastMessage:(AVIMMessage *)lastMessage {
-    LCIM_NOTIFY_PROPERTY_UPDATE(
-        self.clientId,
-        conversation.conversationId,
-        NSStringFromSelector(@selector(unreadMessagesCount)),
-        @(unreadMessagesCount));
-
-    AVIMMessage *originLastMessage = conversation.lastMessage;
-
-    if (lastMessage && (!originLastMessage || lastMessage.sendTimestamp > originLastMessage.sendTimestamp)) {
-        LCIM_NOTIFY_PROPERTY_UPDATE(
-            self.clientId,
-            conversation.conversationId,
-            NSStringFromSelector(@selector(lastMessage)),
-            lastMessage);
-
-        NSDate *lastMessageAt = [NSDate dateWithTimeIntervalSince1970:(lastMessage.sendTimestamp / 1000.0)];
-
-        LCIM_NOTIFY_PROPERTY_UPDATE(
-            self.clientId,
-            conversation.conversationId,
-            NSStringFromSelector(@selector(lastMessageAt)),
-            lastMessageAt);
-    }
-
-    /* For compatibility, we reserve this callback. It should be removed in future. */
-    if ([self.delegate respondsToSelector:@selector(conversation:didReceiveUnread:)])
-        [self.delegate conversation:conversation didReceiveUnread:unreadMessagesCount];
+- (void)updateConversation:(NSString *)conversationId withDictionary:(NSDictionary *)dictionary {
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
+        LCIM_NOTIFY_PROPERTY_UPDATE(self.clientId, conversationId, key, value);
+    }];
 }
 
 - (void)resetUnreadMessagesCountForConversation:(AVIMConversation *)conversation {
-    [self updateConversation:conversation unreadMessagesCount:0 lastMessage:nil];
+    [self updateConversation:conversation.conversationId withDictionary:@{@"unreadMessagesCount": @(0)}];
 }
 
 - (void)removeCachedConversationForId:(NSString *)conversationId {
@@ -1304,7 +1306,9 @@ static BOOL AVIMClientHasInstantiated = NO;
 
     NSDictionary<NSString *, id> *entries = @{
         LCIM_FIELD_PAYLOAD: patchItem.data_p,
-        LCIM_FIELD_PATCH_TIMESTAMP: @((double)patchItem.patchTimestamp)
+        LCIM_FIELD_PATCH_TIMESTAMP: @((double)patchItem.patchTimestamp),
+        @"mention_all": @(patchItem.mentionAll),
+        @"mention_list": patchItem.mentionPidsArray ? [NSKeyedArchiver archivedDataWithRootObject:patchItem.mentionPidsArray] : [NSNull null],
     };
 
     [messageCacheStore updateEntries:entries
@@ -1361,7 +1365,7 @@ static BOOL AVIMClientHasInstantiated = NO;
         }
         
         /* Otherwise, add message to cache and notify it to user */
-        [cacheStore insertMessage:message withBreakpoint:YES];
+        [cacheStore insertOrUpdateMessage:message withBreakpoint:YES];
     }
     
     AVIMConversation *conversation = [self conversationWithId:conversationId];
@@ -1489,9 +1493,11 @@ static BOOL AVIMClientHasInstantiated = NO;
 }
 
 + (void)setUnreadNotificationEnabled:(BOOL)enabled {
-    [self setUserOptions:@{
-        AVIMUserOptionUseUnread: @(enabled)
-    }];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    NSDictionary *options = @{ AVIMUserOptionUseUnread : @(enabled) };
+    [self setUserOptions:options];
+#pragma clang diagnostic pop
 }
 
 @end

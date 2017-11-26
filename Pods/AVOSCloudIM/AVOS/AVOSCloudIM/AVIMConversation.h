@@ -129,6 +129,11 @@ typedef NS_ENUM(NSInteger, AVIMMessageQueryDirection) {
 @property (nonatomic, assign, readonly)           NSUInteger    unreadMessagesCount;
 
 /**
+ *  A flag indicates whether an unread message mentioned you.
+ */
+@property (nonatomic, assign) BOOL unreadMessagesMentioned;
+
+/**
  *  The name of this conversation. Can be changed by update:callback: .
  */
 @property (nonatomic, copy, readonly, nullable) NSString     *name;
@@ -343,6 +348,20 @@ typedef NS_ENUM(NSInteger, AVIMMessageQueryDirection) {
  @param callback   Callback of message update.
  */
 - (void)recallMessage:(AVIMMessage *)oldMessage callback:(void(^)(BOOL succeeded, NSError * _Nullable error, AVIMRecalledMessage * _Nullable recalledMessage))callback;
+
+/*!
+ Add a message to cache.
+
+ @param message The message to be cached.
+ */
+- (void)addMessageToCache:(AVIMMessage *)message;
+
+/*!
+ Remove a message from cache.
+
+ @param message The message which you want to remove from cache.
+ */
+- (void)removeMessageFromCache:(AVIMMessage *)message;
 
 /*!
  从服务端拉取该会话的最近 limit 条消息。

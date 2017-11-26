@@ -186,8 +186,36 @@ static dispatch_queue_t messageCacheOperationQueue;
         || (!conversationId || ![conversationId isEqualToString:self.conversationId]))
         return;
 
-    [self setValue:propertyValue forKey:propertyName];
-    [self postUpdateNotificationForKey:propertyName];
+    [self tryUpdateKey:propertyName toValue:propertyValue];
+}
+
+- (void)tryUpdateKey:(NSString *)key toValue:(id)value {
+    if ([self shouldUpdateKey:key toValue:value]) {
+        [self updateKey:key toValue:value];
+    }
+}
+
+- (BOOL)shouldUpdateKey:(NSString *)key toValue:(id)value {
+    if ([key isEqualToString:@"lastMessage"]) {
+        AVIMMessage *lastMessage = value;
+        AVIMMessage *originLastMessage = self.lastMessage;
+
+        BOOL shouldUpdate = (lastMessage && (!originLastMessage || lastMessage.sendTimestamp > originLastMessage.sendTimestamp));
+
+        if (shouldUpdate) {
+            NSDate *lastMessageAt = [NSDate dateWithTimeIntervalSince1970:(lastMessage.sendTimestamp / 1000.0)];
+            [self updateKey:@"lastMessageAt" toValue:lastMessageAt];
+        }
+
+        return shouldUpdate;
+    }
+
+    return YES;
+}
+
+- (void)updateKey:(NSString *)key toValue:(id)value {
+    [self setValue:value forKey:key];
+    [self postUpdateNotificationForKey:key];
 }
 
 - (void)postUpdateNotificationForKey:(NSString *)key {
@@ -792,46 +820,22 @@ static dispatch_queue_t messageCacheOperationQueue;
     
     if ([message isKindOfClass:[AVIMTypedMessage class]]) {
         AVIMTypedMessage *typedMessage = (AVIMTypedMessage *)message;
-        
-        AVFile *file = nil;
-        
-        if (typedMessage.file) {
-            file = typedMessage.file;
-        } else if (typedMessage.attachedFilePath) {
-            NSString *attachedFilePath = typedMessage.attachedFilePath;
-            
-            if (![[NSFileManager defaultManager] fileExistsAtPath:attachedFilePath]) {
-                [AVIMBlockHelper callBooleanResultBlock:callback error:[AVErrorUtils fileNotFoundError]];
-                return;
-            }
-            
-            NSString *name = [attachedFilePath lastPathComponent];
-            
-            file = [AVFile fileWithName:name contentsAtPath:attachedFilePath];
-        }
+        AVFile *file = typedMessage.file;
         
         if (file) {
-            if ([file isDirty]) {
-                /* File need to be uploaded */
-                [file saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    if (succeeded) {
-                        /* If uploading is success, bind file to message */
-                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                            [self fillTypedMessage:typedMessage withFile:file];
-                            [self fillTypedMessageForLocationIfNeeded:typedMessage];
-                            [self sendRealMessage:message option:option callback:callback];
-                        });
-                    } else {
-                        message.status = AVIMMessageStatusFailed;
-                        [AVIMBlockHelper callBooleanResultBlock:callback error:error];
-                    }
-                } progressBlock:progressBlock];
-            } else {
-                /* File has already been uploaded, bind file to message */
-                [self fillTypedMessage:typedMessage withFile:file];
-                [self fillTypedMessageForLocationIfNeeded:typedMessage];
-                [self sendRealMessage:message option:option callback:callback];
-            }
+            [file saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    /* If uploading is success, bind file to message */
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                        [self fillTypedMessage:typedMessage withFile:file];
+                        [self fillTypedMessageForLocationIfNeeded:typedMessage];
+                        [self sendRealMessage:message option:option callback:callback];
+                    });
+                } else {
+                    message.status = AVIMMessageStatusFailed;
+                    [AVIMBlockHelper callBooleanResultBlock:callback error:error];
+                }
+            } progressBlock:progressBlock];
         } else {
             [self fillTypedMessageForLocationIfNeeded:typedMessage];
             [self sendRealMessage:message option:option callback:callback];
@@ -970,6 +974,12 @@ static dispatch_queue_t messageCacheOperationQueue;
                 }
             }
         }
+        if (message.mentionAll) {
+            directCommand.mentionAll = YES;
+        }
+        if (message.mentionList.count) {
+            directCommand.mentionPidsArray = [message.mentionList mutableCopy];
+        }
 
         [genericCommand setCallback:^(AVIMGenericCommand *outCommand, AVIMGenericCommand *inCommand, NSError *error) {
             AVIMDirectCommand *directOutCommand = outCommand.directMessage;
@@ -987,7 +997,7 @@ static dispatch_queue_t messageCacheOperationQueue;
                     self.lastMessage = message;
                 }
                 if (!directCommand.transient && self.imClient.messageQueryCacheEnabled) {
-                    [[self messageCacheStore] insertMessage:message withBreakpoint:NO];
+                    [[self messageCacheStore] insertOrUpdateMessage:message withBreakpoint:NO];
                 }
                 if (!transient) {
                     if (directOutCommand.r) {
@@ -1024,10 +1034,17 @@ static dispatch_queue_t messageCacheOperationQueue;
     patchItem.timestamp = oldMessage.sendTimestamp;
     patchItem.data_p = newMessage.payload;
 
-    NSMutableArray *patchesArray = @[patchItem];
+    if (newMessage.mentionAll) {
+        patchItem.mentionAll = newMessage.mentionAll;
+    }
+    if (newMessage.mentionList.count) {
+        patchItem.mentionPidsArray = [newMessage.mentionList mutableCopy];
+    }
+
+    NSArray<AVIMPatchItem*> *patchesArray = @[patchItem];
     AVIMPatchCommand *patchMessage = [[AVIMPatchCommand alloc] init];
 
-    patchMessage.patchesArray = patchesArray;
+    patchMessage.patchesArray = [patchesArray mutableCopy];
     command.patchMessage = patchMessage;
 
     return command;
@@ -1167,7 +1184,7 @@ static dispatch_queue_t messageCacheOperationQueue;
     if (breakpoint) {
         [[self messageCache] addContinuousMessages:messages forConversationId:self.conversationId];
     } else {
-        [[self messageCacheStore] insertMessages:messages];
+        [[self messageCacheStore] insertOrUpdateMessages:messages];
     }
 
     [self messagesDidCache];
@@ -1175,22 +1192,7 @@ static dispatch_queue_t messageCacheOperationQueue;
 
 - (void)messagesDidCache {
     AVIMMessage *lastMessage = [[self queryMessagesFromCacheWithLimit:1] firstObject];
-
-    if (lastMessage) {
-        LCIM_NOTIFY_PROPERTY_UPDATE(
-            self.clientId,
-            self.conversationId,
-            NSStringFromSelector(@selector(lastMessage)),
-            lastMessage);
-
-        NSDate *lastMessageAt = [NSDate dateWithTimeIntervalSince1970:(lastMessage.sendTimestamp / 1000.0)];
-
-        LCIM_NOTIFY_PROPERTY_UPDATE(
-            self.clientId,
-            self.conversationId,
-            NSStringFromSelector(@selector(lastMessageAt)),
-            lastMessageAt);
-    }
+    [self tryUpdateKey:@"lastMessage" toValue:lastMessage];
 }
 
 - (void)removeCachedConversation {
@@ -1201,11 +1203,26 @@ static dispatch_queue_t messageCacheOperationQueue;
     [[self messageCacheStore] cleanCache];
 }
 
+- (void)addMessageToCache:(AVIMMessage *)message {
+    message.clientId = _imClient.clientId;
+    message.conversationId = _conversationId;
+
+    [[self messageCacheStore] insertOrUpdateMessage:message];
+}
+
+- (void)removeMessageFromCache:(AVIMMessage *)message {
+    [[self messageCacheStore] deleteMessage:message];
+}
+
 #pragma mark - Message Query
 
 - (void)sendACKIfNeeded:(NSArray *)messages {
     NSDictionary *userOptions = [AVIMClient userOptions];
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL useUnread = [userOptions[AVIMUserOptionUseUnread] boolValue];
+#pragma clang diagnostic pop
     
     if (useUnread) {
         AVIMClient *client = self.imClient;
@@ -1256,6 +1273,8 @@ static dispatch_queue_t messageCacheOperationQueue;
                     message.sendTimestamp = [logsItem timestamp];
                     message.clientId = [logsItem from];
                     message.messageId = [logsItem msgId];
+                    message.mentionAll = logsItem.mentionAll;
+                    message.mentionList = [logsItem.mentionPidsArray copy];
 
                     if (logsItem.hasPatchTimestamp)
                         message.updatedAt = [NSDate dateWithTimeIntervalSince1970:(logsItem.patchTimestamp / 1000.0)];
@@ -1290,7 +1309,10 @@ static dispatch_queue_t messageCacheOperationQueue;
     logsCommand.cid    = _conversationId;
     logsCommand.mid    = messageId;
     logsCommand.t      = LCIM_VALID_TIMESTAMP(timestamp);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     logsCommand.l      = LCIM_VALID_LIMIT(limit);
+#pragma clang diagnostic pop
     
     [genericCommand avim_addRequiredKeyWithCommand:logsCommand];
     [self queryMessagesFromServerWithCommand:genericCommand callback:callback];
@@ -1313,7 +1335,10 @@ static dispatch_queue_t messageCacheOperationQueue;
     logsCommand.tmid   = toMessageId;
     logsCommand.tt     = MAX(toTimestamp, 0);
     logsCommand.t      = MAX(timestamp, 0);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     logsCommand.l      = LCIM_VALID_LIMIT(limit);
+#pragma clang diagnostic pop
     [genericCommand avim_addRequiredKeyWithCommand:logsCommand];
     [self queryMessagesFromServerWithCommand:genericCommand callback:callback];
 }
@@ -1321,7 +1346,10 @@ static dispatch_queue_t messageCacheOperationQueue;
 - (void)queryMessagesFromServerWithLimit:(NSUInteger)limit
                                 callback:(AVIMArrayResultBlock)callback
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     limit = LCIM_VALID_LIMIT(limit);
+#pragma clang diagnostic pop
     
     [self queryMessagesFromServerBeforeId:nil
                                 timestamp:LCIM_DISTANT_FUTURE_TIMESTAMP
@@ -1340,7 +1368,10 @@ static dispatch_queue_t messageCacheOperationQueue;
 }
 
 - (NSArray *)queryMessagesFromCacheWithLimit:(NSUInteger)limit {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     limit = LCIM_VALID_LIMIT(limit);
+#pragma clang diagnostic pop
     NSArray *cachedMessages = [[self messageCacheStore] latestMessagesWithLimit:limit];
     [self postprocessMessages:cachedMessages];
     
@@ -1350,7 +1381,10 @@ static dispatch_queue_t messageCacheOperationQueue;
 - (void)queryMessagesWithLimit:(NSUInteger)limit
                       callback:(AVIMArrayResultBlock)callback
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     limit = LCIM_VALID_LIMIT(limit);
+#pragma clang diagnostic pop
     
     BOOL socketOpened = self.imClient.status == AVIMClientStatusOpened;
     // 如果屏蔽了本地缓存则全部走网络
@@ -1373,9 +1407,11 @@ static dispatch_queue_t messageCacheOperationQueue;
                                      callback:^(NSArray *messages, NSError *error)
          {
              if (!error) {
-                 [AVIMBlockHelper callArrayResultBlock:callback array:messages error:nil];
                  dispatch_async(messageCacheOperationQueue, ^{
                      [self cacheContinuousMessages:messages withBreakpoint:YES];
+
+                     NSArray *messages = [self queryMessagesFromCacheWithLimit:limit];
+                     [AVIMBlockHelper callArrayResultBlock:callback array:messages error:nil];
                  });
              } else if ([error.domain isEqualToString:NSURLErrorDomain]) {
                  /* If network has an error, fallback to query from cache */
@@ -1398,7 +1434,10 @@ static dispatch_queue_t messageCacheOperationQueue;
                         limit:(NSUInteger)limit
                      callback:(AVIMArrayResultBlock)callback
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     limit     = LCIM_VALID_LIMIT(limit);
+#pragma clang diagnostic pop
     timestamp = LCIM_VALID_TIMESTAMP(timestamp);
 
     /*
@@ -1483,11 +1522,14 @@ static dispatch_queue_t messageCacheOperationQueue;
                      if (hasContinuous) {
                          [fetchedMessages addObjectsFromArray:continuousMessages];
                      }
-                     
-                     [AVIMBlockHelper callArrayResultBlock:callback array:fetchedMessages error:nil];
 
                      dispatch_async(messageCacheOperationQueue, ^{
                          [self cacheContinuousMessages:fetchedMessages plusMessage:fromMessage];
+
+                         NSArray *messages = [[self messageCacheStore] messagesBeforeTimestamp:timestamp
+                                                                                     messageId:messageId
+                                                                                         limit:limit];
+                         [AVIMBlockHelper callArrayResultBlock:callback array:messages error:nil];
                      });
                  }];
             } else {
@@ -1531,7 +1573,10 @@ static dispatch_queue_t messageCacheOperationQueue;
     AVIMLogsCommand *logsCommand = [[AVIMLogsCommand alloc] init];
 
     logsCommand.cid  = _conversationId;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     logsCommand.l    = LCIM_VALID_LIMIT(limit);
+#pragma clang diagnostic pop
 
     logsCommand.direction = (direction == AVIMMessageQueryDirectionFromOldToNew)
         ? AVIMLogsCommand_QueryDirection_New

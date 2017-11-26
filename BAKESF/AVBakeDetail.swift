@@ -15,6 +15,8 @@ class AVBakeDetail: AVObject, AVSubclassing {
     @NSManaged var attributes: AVBakeAttributes?
     @NSManaged var price: NSNumber?
     @NSManaged var amount: NSNumber?
+    @NSManaged var status: Bool
+    @NSManaged var skuid: String?
     
     static func parseClassName() -> String {
         return "BakeDetail"

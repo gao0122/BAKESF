@@ -48,10 +48,10 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     func reloadBakes() {
         // TODO: - change 'bakee' to 'bake' after finished bake specification
         if shopVC.pagingMenuController.currentPage == 0 {
-            avbakesIn = shopVC.shopBuyVC.avbakesIn.values.sorted(by: { b1, b2 in return b1.bakee!.objectId! < b2.bakee!.objectId! })
+            avbakesIn = shopVC.shopBuyVC.avbakesIn.values.sorted(by: { b1, b2 in return b1.bake!.objectId! < b2.bake!.objectId! })
             bakesInBag = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { b1, b2 in return b1.id < b2.id })
         } else {
-            avbakesPre = shopVC.shopPreVC.avbakesPre.values.sorted(by: { b1, b2 in return b1.bakee!.objectId! < b2.bakee!.objectId! })
+            avbakesPre = shopVC.shopPreVC.avbakesPre.values.sorted(by: { b1, b2 in return b1.bake!.objectId! < b2.bake!.objectId! })
             bakesPreOrder = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { b1, b2 in return b1.id < b2.id })
         }
     }
@@ -78,15 +78,16 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBAction func oneMoreBtnPressed(_ sender: UIButton) {
         guard let cell = sender.superview?.superview as? ShopBagEmbedTableCell else { return }
+        guard let bakeDetail = cell.bake?.defaultBake else { return }
         if let bake = cell.bakePre {
             RealmHelper.addOneMoreBake(bake)
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
-            shopVC.shopPreVC.assignAVBakeOrder(bakeRealm: bake, bake: cell.bake!)
+            shopVC.shopPreVC.assignAVBakeOrder(bakeRealm: bake, bake: bakeDetail)
         }
         if let bake = cell.bakeIn {
             RealmHelper.addOneMoreBake(bake)
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
-            shopVC.shopBuyVC.assignAVBakeOrder(bakeRealm: bake, bake: cell.bake!)
+            shopVC.shopBuyVC.assignAVBakeOrder(bakeRealm: bake, bake: bakeDetail)
         }
         shopVC.setShopBagStateAndTables()
     }
@@ -108,9 +109,9 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     shopVC.shopBuyVC.avbakesIn[id] = nil
                     reloadShopBagEmbedTable()
                 }
-            } else {
+            } else if let bakeDetail = cell.bake?.defaultBake {
                 setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
-                shopVC.shopPreVC.assignAVBakeOrder(bakeRealm: bake, bake: cell.bake!)
+                shopVC.shopPreVC.assignAVBakeOrder(bakeRealm: bake, bake: bakeDetail)
             }
         }
         if let bake = cell.bakeIn {
@@ -126,9 +127,9 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 } else {
                     reloadShopBagEmbedTable()
                 }
-            } else {
+            } else if let bakeDetail = cell.bake?.defaultBake {
                 setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
-                shopVC.shopBuyVC.assignAVBakeOrder(bakeRealm: bake, bake: cell.bake!)
+                shopVC.shopBuyVC.assignAVBakeOrder(bakeRealm: bake, bake: bakeDetail)
             }
         }
         shopVC.setShopBagStateAndTables()
@@ -149,9 +150,9 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if shopVC.pagingMenuController == nil { return 0 }
         if shopVC.pagingMenuController.currentPage == 0 {
-            return bakesInBag?.count ?? 0
+            return avbakesIn?.count ?? 0
         } else {
-            return bakesPreOrder?.count ?? 0
+            return avbakesPre?.count ?? 0
         }
     }
     
@@ -160,13 +161,13 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         let row = indexPath.row
         if shopVC.pagingMenuController.currentPage == 0 {
             guard let bake = bakesInBag?[row] else { return cell }
-            cell.bake = avbakesIn![row].bakee
+            cell.bake = avbakesIn![row].bake?.bake
             cell.bakeIn = bake
             cell.bakePre = nil
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)
         } else {
             guard let bake = bakesPreOrder?[indexPath.row] else { return cell }
-            cell.bake = avbakesPre![row].bakee
+            cell.bake = avbakesPre![row].bake?.bake
             cell.bakePre = bake
             cell.bakeIn = nil
             setCellAmountPriceLabel(for: cell, with: bake.amount, price: bake.price, name: bake.name)

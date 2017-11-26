@@ -17,6 +17,8 @@ class LocationRealm: Object {
 //    return []
 //  }
     
+    dynamic var userID: String = ""
+    
     dynamic var formatted: String = "" // full address string
     dynamic var address: String = "" // province to street number
     dynamic var province: String = ""

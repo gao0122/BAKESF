@@ -6,11 +6,13 @@
 //  Copyright © 2017 Yuchao. All rights reserved.
 //
 
+// TODO: - Searching(Semantic search)
+
 import UIKit
 import PagingMenuController
 import AVOSCloud
 
-class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource {
+class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var masterView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -30,7 +32,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     @IBOutlet weak var searchHotView: UIView!
     @IBOutlet weak var searchHelperLabel: UILabel!
     @IBOutlet weak var rapperView: UIView!
-    
+    @IBOutlet weak var mainView: UIView!
+
     private var homeShopVC: HomeShopVC!
     private var homeBakeVC: HomeBakeVC!
     private var homeFollowVC: HomeFollowVC!
@@ -69,6 +72,12 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // if the device is iPhone X
+        if UIScreen.main.nativeBounds.height == 2436 {
+            mainView.frame.size.height -= (42 - mainView.frame.origin.y)
+            mainView.frame.origin.y = 42
+        }
+        
         preInit()
         
         setPageMenu()
@@ -167,6 +176,9 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     
     func updateLocationBtnAndSearchBar(by city: String) {
         locationBtn.setTitle(city, for: .normal)
+        if city == "" {
+            locationBtn.setTitle("火星", for: .normal)
+        }
         locationBtn.sizeToFit()
         locationBtn.frame.size.width += 8
         locationBtn.frame.origin.x = screenWidth - 12 - locationBtn.frame.width
@@ -295,6 +307,13 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         self.setSearchHotHelperItemLabels()
         self.searchBar.setShowsCancelButton(true, animated: true)
+        if let searchText = searchBar.text {
+            if searchText == "" {
+                self.searchResultsTableView.isHidden = true
+            }
+        } else {
+            self.searchResultsTableView.isHidden = true
+        }
         UIView.animate(withDuration: 0.23, delay: 0, options: [.curveEaseInOut], animations: {
             self.searchBarFocusAni()
         }, completion: {
@@ -477,58 +496,83 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     
     // MARK: - TableView
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return searchResultShops.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchResultShops.count
+        let avshop = searchResultShops[section]
+        guard let avbakes = searchResults[avshop] else { return 0 }
+        if avbakes.count == 1 {
+            return 1
+        } else {
+            return 3
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
-        let cell = tableView.dequeueReusableCell(withIdentifier: "homeSearchResultTableViewCell", for: indexPath) as! HomeSearchResultTableViewCell
-        let avshop = searchResultShops[row]
-        if let _ = searchResults[avshop] {
-            cell.nameLabel.text = avshop.name
-            cell.nameLabel.sizeToFit()
-            let lowestFee = avshop.lowestFee?.stringValue ?? "0"
-            let deliveryFee = avshop.deliveryFee?.stringValue ?? "0"
-            cell.starLabel.text = "评价5.0"
-            cell.starLabel.sizeToFit()
-            
-            cell.leastFeeLabel.frame.origin.x = cell.starLabel.frame.origin.x + cell.starLabel.frame.width + 15
-            cell.leastFeeLabel.text = "¥" + lowestFee + "起送"
-            cell.leastFeeLabel.sizeToFit()
-            
-            cell.deliveryFeeLabel.text = "配送费¥" + deliveryFee
-            cell.deliveryFeeLabel.sizeToFit()
-            
-            cell.deliveryCycleLabel.text = ""
-            cell.deliveryCycleLabel.frame.origin.x = cell.leastFeeLabel.frame.origin.x + cell.leastFeeLabel.frame.width + 15
-            cell.deliveryCycleLabel.sizeToFit()
-            
-            cell.distanceLabel.text = calDistance(latitude0: avshop.address?.latitude, longitude0: avshop.address?.longitude, latitude1: locationRealm?.latitude, longitude1: locationRealm?.longitude)
-            cell.distanceLabel.sizeToFit()
-            
-            if let url = avshop.headphoto?.url {
-                cell.avatarIV.sd_setImage(with: URL(string: url), completed: nil)
-                cell.avatarIV.contentMode = .scaleAspectFill
-                cell.avatarIV.clipsToBounds = true
+        let section = indexPath.section
+        let avshop = searchResultShops[section]
+        if row == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "homeSearchResultTableViewCell", for: indexPath) as! HomeSearchResultTableViewCell
+            if let _ = searchResults[avshop] {
+                guard let name = avshop.name else { return cell }
+                guard let searchBarText = searchBar.text else { return cell }
+                cell.nameLabel.attributedText = name.attributedString(key: searchBarText, keyFont: UIFont.boldSystemFont(ofSize: cell.nameLabel.font.pointSize), color: UIColor.bkRed)
+                cell.nameLabel.sizeToFit()
+                let lowestFee = avshop.lowestFee?.stringValue ?? "0"
+                let deliveryFee = avshop.deliveryFee?.stringValue ?? "0"
+                cell.starLabel.text = "评价5.0"
+                cell.starLabel.sizeToFit()
+                
+                cell.leastFeeLabel.frame.origin.x = cell.starLabel.frame.origin.x + cell.starLabel.frame.width + 15
+                cell.leastFeeLabel.text = "¥" + lowestFee + "起送"
+                cell.leastFeeLabel.sizeToFit()
+                
+                cell.deliveryFeeLabel.text = "配送费¥" + deliveryFee
+                cell.deliveryFeeLabel.sizeToFit()
+                
+                cell.deliveryCycleLabel.text = ""
+                cell.deliveryCycleLabel.frame.origin.x = cell.leastFeeLabel.frame.origin.x + cell.leastFeeLabel.frame.width + 15
+                cell.deliveryCycleLabel.sizeToFit()
+                
+                cell.distanceLabel.text = calDistance(latitude0: avshop.address?.latitude, longitude0: avshop.address?.longitude, latitude1: locationRealm?.latitude, longitude1: locationRealm?.longitude)
+                cell.distanceLabel.sizeToFit()
+                
+                if let url = avshop.headphoto?.url {
+                    cell.avatarIV.sd_setImage(with: URL(string: url), completed: nil)
+                    cell.avatarIV.contentMode = .scaleAspectFill
+                    cell.avatarIV.clipsToBounds = true
+                }
+                
+            } else {
+                printit("Error: result is nil.")
             }
-            
-            cell.bakesCollectionView.delegate = self
-            cell.bakesCollectionView.dataSource = self
-            cell.bakesCollectionView.tag = row
-            cell.bakesCollectionView.reloadData()
         } else {
-            printit("Error: result is nil.")
+            let cell = tableView.dequeueReusableCell(withIdentifier: "homeSearchResultBakeTableViewCell", for: indexPath) as! HomeSearchResultBakeTableViewCell
+            let tag = tableView.tag
+            let item = indexPath.item
+            let shop = searchResultShops[tag]
+            guard let avbakes = searchResults[shop] else { return cell }
+            let avbake = avbakes[item]
+            
+            if let url = avbake.image?.url {
+                cell.bakeIV.sd_setImage(with: URL(string: url), completed: nil)
+            }
+            guard let name = avbake.name else { return cell }
+            guard let searchBarText = searchBar.text else { return cell }
+            cell.nameLabel.attributedText = name.attributedString(key: searchBarText, keyFont: UIFont.boldSystemFont(ofSize: cell.nameLabel.font.pointSize), color: UIColor.bkRed)
         }
-        return cell
+        return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        tableView.beginUpdates()
+        
+        tableView.endUpdates()
     }
     
     
@@ -544,21 +588,6 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
         return avbakes?.count ?? 0
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "homeSearchBakeCollectionViewCell", for: indexPath) as! HomeSearchResultBakeCollectionViewCell
-        let tag = collectionView.tag
-        let item = indexPath.item
-        let shop = searchResultShops[tag]
-        guard let avbakes = searchResults[shop] else { return cell }
-        let avbake = avbakes[item]
-        
-        if let url = avbake.image?.url {
-            cell.imageView.sd_setImage(with: URL(string: url), completed: nil)
-        }
-        cell.nameLabel.text = avbake.name
-        
-        return cell
-    }
     
     
     

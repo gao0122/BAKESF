@@ -60,7 +60,6 @@
         db.logsErrors = LCIM_SHOULD_LOG_ERRORS;
 
         [db executeUpdate:LCIM_SQL_CREATE_MESSAGE_TABLE];
-        [db executeUpdate:LCIM_SQL_CREATE_MESSAGE_UNIQUE_INDEX];
 
         [db executeUpdate:LCIM_SQL_CREATE_CONVERSATION_TABLE];
     }));
@@ -71,7 +70,7 @@
 
     [migrator executeMigrations:@[
         [LCDatabaseMigration migrationWithBlock:^(LCDatabase *db) {
-            [db executeUpdate:@"ALTER TABLE conversation ADD COLUMN muted INTEGER"];
+            [db executeUpdate:LCIM_SQL_MESSAGE_MIGRATION_V1];
         }],
 
         [LCDatabaseMigration migrationWithBlock:^(LCDatabase *db) {
@@ -79,11 +78,26 @@
         }],
 
         [LCDatabaseMigration migrationWithBlock:^(LCDatabase *db) {
-            [db executeUpdate:@"ALTER TABLE message ADD COLUMN read_timestamp REAL"];
+            [db executeUpdate:LCIM_SQL_MESSAGE_MIGRATION_V2];
         }],
 
         [LCDatabaseMigration migrationWithBlock:^(LCDatabase *db) {
-            [db executeUpdate:@"ALTER TABLE message ADD COLUMN patch_timestamp REAL"];
+            [db executeUpdate:LCIM_SQL_MESSAGE_MIGRATION_V3];
+        }],
+
+        [LCDatabaseMigration migrationWithBlock:^(LCDatabase *db) {
+            [db executeStatements:LCIM_SQL_MESSAGE_MIGRATION_V4];
+        }],
+
+        [LCDatabaseMigration migrationWithBlock:^(LCDatabase *db) {
+            LCResultSet *resultSet = [db executeQuery:LCIM_SQL_MESSAGE_UNIQUE_INDEX_INFO];
+            BOOL hasIndex = [resultSet next];
+
+            if (!hasIndex) {
+                [db executeStatements:LCIM_SQL_REBUILD_MESSAGE_UNIQUE_INDEX];
+            }
+
+            [resultSet close];
         }]
     ]];
 }

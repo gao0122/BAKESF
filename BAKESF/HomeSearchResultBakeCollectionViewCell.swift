@@ -6,11 +6,14 @@
 //  Copyright © 2017 Yuchao. All rights reserved.
 //
 
-import UIKit.UICollectionViewCell
+import UIKit.UITableViewCell
 
-class HomeSearchResultBakeCollectionViewCell: UICollectionViewCell {
+class HomeSearchResultBakeTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var bakeIV: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var monthlyLabel: UILabel!
+    @IBOutlet weak var likeRatesLabel: UILabel!
+    @IBOutlet weak var priceLabel: UILabel!
     
 }

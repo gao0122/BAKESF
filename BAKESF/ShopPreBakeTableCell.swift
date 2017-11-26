@@ -18,6 +18,7 @@ class ShopPreBakeTableCell: UITableViewCell {
     @IBOutlet weak var minusOneBtn: UIButton!
     @IBOutlet weak var amountLabel: UILabel!
     @IBOutlet weak var soldOutLabel: UILabel!
+    @IBOutlet weak var specBtn: UIButton!
     
     var bake: AVBake!
     

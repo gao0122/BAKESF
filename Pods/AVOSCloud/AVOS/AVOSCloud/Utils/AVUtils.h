@@ -10,6 +10,7 @@
 #import "AVConstants.h"
 #import "AVOSCloud.h"
 #import "AVHelpers.h"
+#import "LCExtension+Cocoa.h"
 
 /**
  * Check the equality of two security key.
@@ -107,7 +108,7 @@ SecCertificateRef LCGetCertificateFromBase64String(NSString *base64);
 
  @param task The task to be dispatched.
  */
-+ (void)asynchronizeTask:(void(^)())task;
++ (void)asynchronizeTask:(void(^)(void))task;
 
 #pragma mark - String Util
 + (NSString *)MIMEType:(NSString *)filePathOrName;

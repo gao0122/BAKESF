@@ -43,6 +43,7 @@
 		0048FDA91EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDA81EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift */; };
 		0048FDAB1EEA725C002B49B6 /* ShopBuyBakeTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0048FDAA1EEA725C002B49B6 /* ShopBuyBakeTableView.swift */; };
 		004BF0E01ED184CF00554A5E /* HomeShopTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004BF0DF1ED184CF00554A5E /* HomeShopTableView.swift */; };
+		004ED9021FC9859A008492C0 /* ShopCheckingOrderRemarksVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004ED9011FC9859A008492C0 /* ShopCheckingOrderRemarksVC.swift */; };
 		006024F21EC9738800FFB859 /* MeMasterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006024F11EC9738800FFB859 /* MeMasterVC.swift */; };
 		006024F41EC973D600FFB859 /* MeMemoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006024F31EC973D600FFB859 /* MeMemoryVC.swift */; };
 		006024F61EC97D8700FFB859 /* MeTweetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006024F51EC97D8700FFB859 /* MeTweetVC.swift */; };
@@ -156,6 +157,7 @@
 		0048FDA81EE9E6AC002B49B6 /* ShopBuyBakeTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBuyBakeTableCell.swift; sourceTree = "<group>"; };
 		0048FDAA1EEA725C002B49B6 /* ShopBuyBakeTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopBuyBakeTableView.swift; sourceTree = "<group>"; };
 		004BF0DF1ED184CF00554A5E /* HomeShopTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeShopTableView.swift; sourceTree = "<group>"; };
+		004ED9011FC9859A008492C0 /* ShopCheckingOrderRemarksVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopCheckingOrderRemarksVC.swift; sourceTree = "<group>"; };
 		006024F11EC9738800FFB859 /* MeMasterVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeMasterVC.swift; sourceTree = "<group>"; };
 		006024F31EC973D600FFB859 /* MeMemoryVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeMemoryVC.swift; sourceTree = "<group>"; };
 		006024F51EC97D8700FFB859 /* MeTweetVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeTweetVC.swift; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 				00264E6C1F2F64C200D83073 /* ShopCheckDeliveryTimeTableCell.swift */,
 				009BA01E1F48060000C7ABF7 /* DeliveryTimeDateViewCell.swift */,
 				009BA01C1F4805E700C7ABF7 /* DeliveryTimeViewCell.swift */,
+				004ED9011FC9859A008492C0 /* ShopCheckingOrderRemarksVC.swift */,
 				009BA0141F469D5E00C7ABF7 /* RedPacketVC */,
 				00264E661F2F637500D83073 /* BakeTableViewAndCell */,
 				00BF126C1F2B7DAE00F67DF8 /* ShopCheckingVCPureCoding.swift */,
@@ -755,6 +758,7 @@
 				0034EE341EE7D59A005300AE /* ShopPagingVC.swift in Sources */,
 				004318341F13F21900FD0227 /* ShopClassifyTableView.swift in Sources */,
 				00264E6B1F2F63DE00D83073 /* ShopCheckAddressTableViewCell.swift in Sources */,
+				004ED9021FC9859A008492C0 /* ShopCheckingOrderRemarksVC.swift in Sources */,
 				008F0AF11F2CBD7100700C0D /* MeSettingNameVC.swift in Sources */,
 				006024FC1EC9900000FFB859 /* HomeFollowVC.swift in Sources */,
 				00020F901F0E2D5D008ABFB1 /* Int+Extensions.swift in Sources */,

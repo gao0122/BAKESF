@@ -17,7 +17,17 @@
 #import "AVFriendQuery.h"
 #import "AVUtils.h"
 
+NSString *const LeanCloudSocialPlatformWeiBo  = @"weibo";
+NSString *const LeanCloudSocialPlatformQQ     = @"qq";
+NSString *const LeanCloudSocialPlatformWeiXin = @"weixin";
+
 static BOOL enableAutomatic = NO;
+
+static BOOL is_sync_callback(dispatch_queue_t queue)
+{
+    BOOL isMainQueue = (dispatch_get_main_queue() == queue);
+    return (isMainQueue && NSThread.isMainThread);
+}
 
 @class AVQuery;
 
@@ -109,23 +119,8 @@ static BOOL enableAutomatic = NO;
     }];
 }
 
-- (BOOL)isAuthDataExistInMemory {
-    if (self.sessionToken.length > 0 ||
-        self.sinaWeiboToken.length > 0 ||
-        [self objectForKey:authDataTag]) // for sns user
-    {
-        return YES;
-    }
-    return NO;
-}
-
 - (BOOL)isAuthenticated {
     return [self isAuthDataExistInMemory];
-}
-
-- (NSArray *)linkedServiceNames {
-    NSDictionary *dict = [self objectForKey:authDataTag];
-    return[dict allKeys];
 }
 
 - (NSArray<AVRole *> *)getRoles:(NSError * _Nullable __autoreleasing *)error {
@@ -151,23 +146,9 @@ static BOOL enableAutomatic = NO;
     return u;
 }
 
-+ (AVUser *)userOrSubclassUser {
-    return (AVUser *)[AVObjectUtils avObjectForClass:[AVUser userTag]];
-}
-
 + (void)enableAutomaticUser
 {
     enableAutomatic = YES;
-}
-
-+(BOOL)isAutomaticUserEnabled
-{
-    return enableAutomatic;
-}
-
-+(void)disableAutomaticUser
-{
-    enableAutomatic = NO;
 }
 
 -(NSError *)preSave
@@ -232,19 +213,26 @@ static BOOL enableAutomatic = NO;
 
 -(NSMutableDictionary *)userDictionary
 {
+    NSString *username = self.username;
+    NSString *password = self.password;
+    NSString *email = self.email;
+    NSString *mobilePhoneNumber = self.mobilePhoneNumber;
+
     NSMutableDictionary * parameters = [[NSMutableDictionary alloc] init];
-    if (self.username) {
-        [parameters setObject:self.username forKey:usernameTag];
+
+    if (username) {
+        [parameters setObject:username forKey:usernameTag];
     }
-    if (self.password) {
-        [parameters setObject:self.password forKey:passwordTag];
+    if (password) {
+        [parameters setObject:password forKey:passwordTag];
     }
-    if (self.email) {
-        [parameters setObject:self.email forKey:emailTag];
+    if (email) {
+        [parameters setObject:email forKey:emailTag];
     }
-    if (self.mobilePhoneNumber) {
-        [parameters setObject:self.mobilePhoneNumber forKey:mobilePhoneNumberTag];
+    if (mobilePhoneNumber) {
+        [parameters setObject:mobilePhoneNumber forKey:mobilePhoneNumberTag];
     }
+
     return parameters;
 }
 
@@ -406,6 +394,8 @@ static BOOL enableAutomatic = NO;
     return parameters;
 }
 
+// MARK: - login with username & password
+
 + (instancetype)logInWithUsername:(NSString *)username
                      password:(NSString *)password
 {
@@ -470,9 +460,9 @@ static BOOL enableAutomatic = NO;
             user = [self userOrSubclassUser];
             user.username = username;
             user.password = password;
-            [AVObjectUtils copyDictionary:object toObject:user];
-            [user.requestManager clear];
-            [[self class] changeCurrentUser:user save:YES];
+            
+            [self configAndChangeCurrentUserWithUser:user
+                                              object:object];
         }
         
         if (wait) {
@@ -492,6 +482,8 @@ static BOOL enableAutomatic = NO;
     if (theError != NULL) *theError = blockError;
     return theResult;
 }
+
+// MARK: - login with mobile
 
 + (instancetype)logInWithMobilePhoneNumber:(NSString *)phoneNumber
                          password:(NSString *)password
@@ -554,9 +546,9 @@ static BOOL enableAutomatic = NO;
         if (error == nil)
         {
             user = [self userOrSubclassUser];
-            [AVObjectUtils copyDictionary:object toObject:user];
-            [user.requestManager clear];
-            [[self class] changeCurrentUser:user save:YES];
+            
+            [self configAndChangeCurrentUserWithUser:user
+                                              object:object];
         }
         
         if (wait) {
@@ -576,6 +568,8 @@ static BOOL enableAutomatic = NO;
     if (theError != NULL) *theError = blockError;
     return theResult;
 }
+
+// MARK: - login with token
 
 + (void)becomeWithSessionTokenInBackground:(NSString *)sessionToken block:(AVUserResultBlock)block {
     [self internalBecomeWithSessionTokenInBackground:sessionToken block:^(AVUser *user, NSError *error) {
@@ -612,7 +606,7 @@ static BOOL enableAutomatic = NO;
     }];
 }
 
-+ (instancetype)becomeWithSessionToken:(NSString *)sessionToken error:(NSError **)error {
++ (instancetype)becomeWithSessionToken:(NSString *)sessionToken error:(NSError * __autoreleasing *)error {
     __block Boolean hasCallback = NO;
     __block AVUser *user;
     [self internalBecomeWithSessionTokenInBackground:sessionToken block:^(AVUser *theUser, NSError *theError) {
@@ -625,6 +619,8 @@ static BOOL enableAutomatic = NO;
     AV_WAIT_TIL_TRUE(hasCallback, 0.1);
     return user;
 }
+
+// MARK: - SMS code
 
 + (void)requestLoginSmsCode:(NSString *)phoneNumber withBlock:(AVBooleanResultBlock)block {
     [self requestLoginCodeForPhoneNumber:phoneNumber options:nil callback:block];
@@ -644,6 +640,8 @@ static BOOL enableAutomatic = NO;
         [AVUtils callBooleanResultBlock:callback error:error];
     }];
 }
+
+// MARK: - login with mobile
 
 + (instancetype)logInWithMobilePhoneNumber:(NSString *)phoneNumber
                                   smsCode:(NSString *)code
@@ -706,12 +704,10 @@ static BOOL enableAutomatic = NO;
         if (error == nil)
         {
             user = [self userOrSubclassUser];
-            //            user.username = username;
-            //            user.password = password;
             user.mobilePhoneVerified = YES;
-            [AVObjectUtils copyDictionary:object toObject:user];
-            [user.requestManager clear];
-            [[self class] changeCurrentUser:user save:YES];
+
+            [self configAndChangeCurrentUserWithUser:user
+                                              object:object];
         }
         
         if (wait) {
@@ -787,11 +783,9 @@ static BOOL enableAutomatic = NO;
         if (error == nil)
         {
             user = [self userOrSubclassUser];
-            //            user.username = username;
-            //            user.password = password;
-            [AVObjectUtils copyDictionary:object toObject:user];
-            [user.requestManager clear];
-            [[self class] changeCurrentUser:user save:YES];
+            
+            [self configAndChangeCurrentUserWithUser:user
+                                              object:object];
         }
         
         if (wait) {
@@ -812,10 +806,14 @@ static BOOL enableAutomatic = NO;
     return theResult;
 }
 
+// MARK: - logout
+
 + (void)logOut {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:AnonymousIdKey];
     [[self class] changeCurrentUser:nil save:YES];
 }
+
+// MARK: - password reset
 
 + (BOOL)requestPasswordResetForEmail:(NSString *)email
 {
@@ -913,30 +911,355 @@ static BOOL enableAutomatic = NO;
     }];
 }
 
+// MARK: - query
+
 + (AVQuery *)query
 {
     AVQuery *query = [[AVQuery alloc] initWithClassName:[[self class] userTag]];
     return query;
 }
 
-+(NSString *)userTag
+// MARK: - SNS
+
++ (void)loginOrSignUpWithAuthData:(NSDictionary *)authData
+                         platform:(NSString *)platform
+                            block:(AVUserResultBlock)block
 {
-    return @"_User";
+    [self loginOrSignUpWithAuthData:authData
+                               user:nil
+                           platform:platform
+                              queue:dispatch_get_main_queue()
+                              block:block];
 }
 
-+(NSString *)endPoint
+- (void)associateWithAuthData:(NSDictionary *)authData
+                     platform:(NSString *)platform
+                        block:(AVUserResultBlock)block
 {
-    return @"users";
+    [self associateWithAuthData:authData
+                       platform:platform
+                          queue:dispatch_get_main_queue()
+                          block:block];
 }
 
--(NSString *)internalClassName
+- (void)disassociateWithPlatform:(NSString *)platform
+                           block:(AVUserResultBlock)block
 {
-    return @"_User";
+    [self disassociateWithPlatform:platform
+                             queue:dispatch_get_main_queue()
+                             block:block];
 }
 
--(void)setNewFlag:(BOOL)isNew
++ (void)loginOrSignUpWithAuthData:(NSDictionary *)authData
+                             user:(AVUser *)user
+                         platform:(NSString *)platform
+                            queue:(dispatch_queue_t)queue
+                            block:(AVUserResultBlock)block
 {
-    self.isNew = isNew;
+    void (^callbackInQueue)(AVUser *, NSError *) = ^(AVUser *cbUser, NSError *cbError)
+    {
+        if (is_sync_callback(queue)) {
+            
+            block(cbUser, cbError);
+            
+        } else {
+            
+            dispatch_async(queue, ^{
+                
+                block(cbUser, cbError);
+            });
+        }
+    };
+    
+    /* check `authData` */
+    
+    NSError *ckErr = nil;
+    
+    [self checkingAuthData:authData
+                  platform:platform
+                     error:&ckErr];
+    
+    if (ckErr) {
+        
+        callbackInQueue(nil, ckErr);
+        
+        return;
+    }
+    
+    /* POST */
+    
+    AVIdResultBlock callback = ^(id object, NSError *cbErr) {
+        
+        if (cbErr) {
+            
+            callbackInQueue(nil, cbErr);
+            
+            return;
+        }
+        
+        NSDictionary *dic = (NSDictionary *)object;
+        
+        AVUser *aUser = nil;
+        
+        if (user) {
+            
+            aUser = user;
+            
+        } else {
+            
+            aUser = [self userOrSubclassUser];
+        }
+        
+        if (dic[authDataTag] == nil) {
+            
+            [aUser setNewFlag:true]; // unnecessary?
+            
+            [aUser setObject:authData[authDataTag]
+                      forKey:authDataTag];
+        }
+        
+        [self configAndChangeCurrentUserWithUser:aUser
+                                          object:dic];
+        
+        callbackInQueue(aUser, nil);
+    };
+    
+    [AVPaasClient.sharedInstance postObject:@"users"
+                             withParameters:authData
+                                      block:callback];
+}
+
+- (void)associateWithAuthData:(NSDictionary *)authData
+                     platform:(NSString *)platform
+                        queue:(dispatch_queue_t)queue
+                        block:(AVUserResultBlock)block
+{
+    void (^callbackInQueue)(AVUser *, NSError *) = ^(AVUser *cbUser, NSError *cbError)
+    {
+        if (is_sync_callback(queue)) {
+            
+            block(cbUser, cbError);
+            
+        } else {
+            
+            dispatch_async(queue, ^{
+                
+                block(cbUser, cbError);
+            });
+        }
+    };
+    
+    if (self.objectId && self.sessionToken) { /* check the user if registered */
+        
+        /* check `authData` */
+        
+        NSError *ckErr = nil;
+        
+        [self.class checkingAuthData:authData
+                            platform:platform
+                               error:&ckErr];
+        
+        if (ckErr) {
+            
+            callbackInQueue(nil, ckErr);
+            
+            return;
+        }
+        
+        /* POST */
+        
+        AVIdResultBlock callback = ^(id object, NSError *cbErr) {
+            
+            if (cbErr) {
+                
+                callbackInQueue(nil, cbErr);
+                
+                return;
+            }
+            
+            [self setObject:authData[authDataTag]
+                     forKey:authDataTag];
+            
+            [self.class configAndChangeCurrentUserWithUser:self
+                                                    object:@{}];
+            
+            callbackInQueue(self, nil);
+        };
+        
+        NSString *path = [NSString stringWithFormat:@"users/%@", self.objectId];
+        
+        [AVPaasClient.sharedInstance putObject:path
+                                withParameters:authData
+                                  sessionToken:self.sessionToken
+                                         block:callback];
+        
+    } else {
+        
+        /* register the user */
+        
+        [self.class loginOrSignUpWithAuthData:authData
+                                         user:self
+                                     platform:platform
+                                        queue:queue
+                                        block:block];
+    }
+}
+
+- (void)disassociateWithPlatform:(NSString *)platform
+                           queue:(dispatch_queue_t)queue
+                           block:(AVUserResultBlock)block
+{
+    void (^callbackInQueue)(AVUser *, NSError *) = ^(AVUser *cbUser, NSError *cbError)
+    {
+        if (is_sync_callback(queue)) {
+            
+            block(cbUser, cbError);
+            
+        } else {
+            
+            dispatch_async(queue, ^{
+                
+                block(cbUser, cbError);
+            });
+        }
+    };
+    
+    if (self.objectId && self.sessionToken) { /* check the user if registered */
+        
+        /* generate `authData` */
+        
+        NSMutableDictionary *platformDic = @{ platform : @"" }.mutableCopy;
+        
+        platformDic[platform] = nil;
+        
+        NSDictionary *authData = @{ authDataTag : platformDic };
+        
+        /* POST */
+        
+        AVIdResultBlock callback = ^(id object, NSError *cbErr) {
+            
+            if (cbErr) {
+                
+                callbackInQueue(nil, cbErr);
+                
+                return;
+            }
+            
+            NSMutableDictionary *authDataValue = ((NSDictionary *)[self objectForKey:authDataTag]).mutableCopy;
+            
+            authDataValue[platform] = nil;
+            
+            [self setObject:authDataValue forKey:authDataTag];
+            
+            [self.class configAndChangeCurrentUserWithUser:self
+                                                    object:@{}];
+            
+            callbackInQueue(self, nil);
+        };
+        
+        NSString *path = [NSString stringWithFormat:@"users/%@", self.objectId];
+        
+        [AVPaasClient.sharedInstance putObject:path
+                                withParameters:authData
+                                  sessionToken:self.sessionToken
+                                         block:callback];
+        
+    } else {
+        
+        NSString *reason = @"The user which call the method is not valid.";
+        
+        NSDictionary *info = @{ @"reason" : reason };
+        
+        NSError *err = [NSError errorWithDomain:kAVErrorDomain
+                                           code:kAVErrorUserNotFound
+                                       userInfo:info];
+        
+        callbackInQueue(nil, err);
+    }
+}
+
++ (void)checkingAuthData:(NSDictionary *)authData
+                platform:(NSString *)platform
+                   error:(NSError * __autoreleasing *)error
+{
+    /* do not call me */
+    
+    NSError *(^newErrBlock)(NSString *) = ^NSError *(NSString *key) {
+        
+        NSString *reason = [NSString stringWithFormat:@"The value for key('%@') is not a valid type", key];
+        
+        NSDictionary *info = @{ @"reason" : reason };
+        
+        NSError *err = [NSError errorWithDomain:kAVErrorDomain
+                                           code:kAVErrorUserSNSAuthDataInvalid
+                                       userInfo:info];
+        
+        return err;
+    };
+    
+    /* check value for key('authData') */
+    
+    NSDictionary *authDataValue = authData[authDataTag];
+    
+    if ([NSDictionary lc_isInvalidForCheckingTypeWith:authDataValue]) {
+        
+        *error = newErrBlock(authDataTag);
+        
+        return;
+    }
+    
+    /* check value for key('platform') */
+    
+    NSDictionary *platformValue = authDataValue[platform];
+    
+    if ([NSDictionary lc_isInvalidForCheckingTypeWith:platformValue]) {
+        
+        *error = newErrBlock(platform);
+        
+        return;
+    }
+    
+    /* check value for key('unique id') */
+    
+    NSString *just_id_key = nil;
+    
+    if ([LeanCloudSocialPlatformWeiBo isEqualToString:platform]) {
+        
+        just_id_key = @"uid";
+        
+    } else if ([LeanCloudSocialPlatformQQ isEqualToString:platform]) {
+        
+        just_id_key = @"openid";
+        
+    } else if ([LeanCloudSocialPlatformWeiXin isEqualToString:platform]) {
+        
+        just_id_key = @"openid";
+        
+    } else {
+        
+        just_id_key = @"uid";
+        
+    }
+    
+    NSString *just_id = platformValue[just_id_key];
+    
+    if ([NSString lc_isInvalidForCheckingTypeWith:just_id]) {
+        
+        *error = newErrBlock(just_id_key);
+        
+        return;
+    }
+    
+    /* check value for key('accessToken') */
+    
+    NSString *access_token = platformValue[@"access_token"];
+    
+    if ([NSString lc_isInvalidForCheckingTypeWith:access_token]) {
+        
+        *error = newErrBlock(@"access_token");
+        
+        return;
+    }
 }
 
 #pragma mark - Override from AVObject
@@ -967,8 +1290,74 @@ static BOOL enableAutomatic = NO;
     return snapshot;
 }
 
-@end
+#pragma mark - internal method
 
++(NSString *)userTag
+{
+    return @"_User";
+}
+
++(NSString *)endPoint
+{
+    return @"users";
+}
+
++(BOOL)isAutomaticUserEnabled
+{
+    return enableAutomatic;
+}
+
++(void)disableAutomaticUser
+{
+    enableAutomatic = NO;
+}
+
++ (AVUser *)userOrSubclassUser {
+    return (AVUser *)[AVObjectUtils avObjectForClass:[AVUser userTag]];
+}
+
++ (void)configAndChangeCurrentUserWithUser:(AVUser *)user
+                                    object:(id)object
+{
+    if ([NSDictionary lc_isInvalidForCheckingTypeWith:object]) {
+        return;
+    }
+    
+    NSDictionary *dic = (NSDictionary *)object;
+    
+    [AVObjectUtils copyDictionary:dic toObject:user];
+    
+    [user.requestManager clear];
+    
+    [self changeCurrentUser:user save:YES];
+}
+
+-(NSString *)internalClassName
+{
+    return @"_User";
+}
+
+-(void)setNewFlag:(BOOL)isNew
+{
+    self.isNew = isNew;
+}
+
+- (BOOL)isAuthDataExistInMemory {
+    if (self.sessionToken.length > 0 ||
+        self.sinaWeiboToken.length > 0 ||
+        [self objectForKey:authDataTag]) // for sns user
+    {
+        return YES;
+    }
+    return NO;
+}
+
+- (NSArray *)linkedServiceNames {
+    NSDictionary *dict = [self objectForKey:authDataTag];
+    return[dict allKeys];
+}
+
+@end
 
 @implementation AVUser (Friendship)
 

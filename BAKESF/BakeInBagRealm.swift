@@ -10,6 +10,7 @@ import RealmSwift
 
 class BakeInBagRealm: Object {
     
+    
     dynamic var id: String = ""
     dynamic var name: String = ""
     dynamic var amount: Int = 0
@@ -17,9 +18,6 @@ class BakeInBagRealm: Object {
     dynamic var shopID: String = ""
     dynamic var tag: String = ""
 
-    override static func primaryKey() -> String? {
-        return "id"
-    }
     
     
 }

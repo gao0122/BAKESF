@@ -10,6 +10,7 @@ import AVOSCloud
 
 class AVBakeAttributes: AVObject, AVSubclassing {
     
+    @NSManaged var bake: AVBake?
     @NSManaged var attribute0: AVBakeAttribute?
     @NSManaged var attribute1: AVBakeAttribute?
     @NSManaged var attribute2: AVBakeAttribute?

@@ -819,14 +819,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             deliveryDatecs.removeAll()
             if days == 0 {
                 let cs = date.getDeliveryDateComponents()
-                if cs.hour! >= 12 {
-                    view.notify(text: "暂不接受预订哦。", color: .alertOrange, nav: navigationController?.navigationBar)
-                    return
-                } else {
-                    let dateText = "\(weekdays[cs.weekday!]) \(cs.month!).\(cs.day!) (今天)"
-                    deliveryDatecs.append(cs)
-                    deliveryDates.append(dateText)
-                }
+                let dateText = "\(weekdays[cs.weekday!]) \(cs.month!).\(cs.day!) (今天)"
+                deliveryDatecs.append(cs)
+                deliveryDates.append(dateText)
             }
             if isInBag {
                 let cs = date.getDeliveryDateComponents()
