@@ -15,10 +15,11 @@ class ShopBagEmbedTableCell: UITableViewCell {
     @IBOutlet weak var amountLabel: UILabel!
     @IBOutlet weak var oneMoreBtn: UIButton!
     @IBOutlet weak var minusOneBtn: UIButton!
+    @IBOutlet weak var nameLabelWidth: NSLayoutConstraint!
     
     var bakeIn: BakeInBagRealm?
     var bakePre: BakePreOrderRealm?
-    var bake: AVBake?
+    var bakeDetail: AVBakeDetail?
 
 }
 

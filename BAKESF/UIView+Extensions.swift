@@ -52,5 +52,10 @@ extension UIView {
         for view in views { self.addSubview(view) }
     }
     
+    func makeRoundCorder(radius: CGFloat = 4) {
+        self.layer.masksToBounds = true
+        self.layer.cornerRadius = radius
+    }
+    
 }
 

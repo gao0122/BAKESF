@@ -17,8 +17,8 @@ class AVBake: AVObject, AVSubclassing {
     @NSManaged var shop: AVShop?
     @NSManaged var image: AVFile?
     @NSManaged var stock: NSNumber? // 0, 1 or 2
-    @NSManaged var priceRange: NSNumber?
-    @NSManaged var priority: [NSNumber]?
+    @NSManaged var priceRange: [NSNumber]?
+    @NSManaged var priority: NSNumber?
     @NSManaged var attributes: [String]?
     @NSManaged var defaultBake: AVBakeDetail?
 

@@ -21,4 +21,8 @@ class SearchHistoryRealm: Object {
     dynamic var searchingText: String = ""
     dynamic var searchingDate: Date?
 
+    override static func primaryKey() -> String? {
+        return "searchingText"
+    }
+    
 }

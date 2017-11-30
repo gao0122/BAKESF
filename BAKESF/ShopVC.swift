@@ -50,7 +50,25 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var tryOneMoreTimeBtn: UIButton!
     @IBOutlet weak var takeItYourselfLabel: UILabel!
     @IBOutlet weak var deliveryByShopLabel: UILabel!
-    
+    @IBOutlet weak var bakeSpecView: UIView!
+    @IBOutlet weak var bakeSpecImageView: UIImageView!
+    @IBOutlet weak var bakeSpecOneMoreBtn: UIButton!
+    @IBOutlet weak var bakeSpecMinusOneBtn: UIButton!
+    @IBOutlet weak var bakeSpecAmountLabel: UILabel!
+    @IBOutlet weak var bakeSpecNameLabel: UILabel!
+    @IBOutlet weak var bakeSpecMainView: UIView!
+    @IBOutlet weak var bakeSpecBgFocusView: UIView!
+    @IBOutlet weak var bakeSpecAttributeView0: UIView!
+    @IBOutlet weak var bakeSpecAttributeView1: UIView!
+    @IBOutlet weak var bakeSpecAttributeView2: UIView!
+    @IBOutlet weak var bakeSpecAttributeLabel0: UILabel!
+    @IBOutlet weak var bakeSpecAttributeLabel1: UILabel!
+    @IBOutlet weak var bakeSpecAttributeLabel2: UILabel!
+    @IBOutlet weak var bakeSpecAttributeBtn0: UIButton!
+    @IBOutlet weak var bakeSpecAttributeBtn1: UIButton!
+    @IBOutlet weak var bakeSpecAttributeBtn2: UIButton!
+    @IBOutlet weak var bakeSpecPriceLabel: UILabel!
+
     var shopBuyVC: ShopBuyVC!
     var shopPreVC: ShopPreVC!
     var shopBagVC: ShopBagEmbedVC!
@@ -91,7 +109,15 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     let emptyBagText = "购物袋空空的"
     
     var shouldShowShopCheckingRN = false
+
+    var bakeSpecButtons: [Int: [UIButton]]!
+    var bakeSpecDict = [String: AVBakeDetail]()
+    var currentSpecBtn0: UIButton?
+    var currentSpecBtn1: UIButton?
+    var currentSpecBtn2: UIButton?
+    var currentSpecBake: AVBake?
     
+
     override func viewDidLoad() {
         super.viewDidLoad()
         preInit()
@@ -197,6 +223,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         }
         deliveryFeeLabel.alpha = 0
         totalFeeLabel.alpha = 0
+        bakeSpecMainView.makeRoundCorder(radius: 10)
     }
     
     func checkAVBaker() {
@@ -430,27 +457,27 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     func retrieveBakesCost() -> Double {
         let shopID = avshop.objectId!
         if pagingMenuController.currentPage == 0 {
-            return RealmHelper.retrieveBakesInBagCost(avshopID: shopID)
+            return RealmHelper.retrieveBakesInBagCost(avshopID: shopID, avbakesIn: shopBuyVC.avbakesIn)
         } else {
-            return RealmHelper.retrieveBakesPreOrderCost(avshopID: shopID)
+            return RealmHelper.retrieveBakesPreOrderCost(avshopID: shopID, avbakesPre: shopPreVC.avbakesPre)
         }
     }
     
     func retrieveBakesCount() -> Int {
         let shopID = avshop.objectId!
         if pagingMenuController.currentPage == 0 {
-            return RealmHelper.retrieveBakesInBagCount(avshopID: shopID)
+            return RealmHelper.retrieveBakesInBagCount(avshopID: shopID, avbakesIn: shopBuyVC.avbakesIn)
         } else {
-            return RealmHelper.retrieveBakesPreOrderCount(avshopID: shopID)
+            return RealmHelper.retrieveBakesPreOrderCount(avshopID: shopID, avbakesPre: shopPreVC.avbakesPre)
         }
     }
     
     func retrieveBakesKindsCount() -> Int {
         let shopID = avshop.objectId!
         if pagingMenuController.currentPage == 0 {
-            return RealmHelper.retrieveBakesInBag(avshopID: shopID).count
+            return RealmHelper.retrieveBakesInBag(avshopID: shopID, avbakesIn: shopBuyVC.avbakesIn).count
         } else {
-            return RealmHelper.retrieveBakesPreOrder(avshopID: shopID).count
+            return RealmHelper.retrieveBakesPreOrder(avshopID: shopID, avbakesPre: shopPreVC.avbakesPre).count
         }
     }
     
@@ -469,7 +496,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func handleBagBarTap(_ sender: UITapGestureRecognizer) {
-        let secs = determineSections(avshop)
+        let secs = determineSections(avshop, avbakesIn: shopBuyVC.avbakesIn, avbakesPre: shopPreVC.avbakesPre)
         let page = pagingMenuController.currentPage
         if secs == 3 || secs / 2 - 1 == page {
             self.animateShop(self.bagAniState)
@@ -528,8 +555,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         case .collapsed:
             shopBagVC.reloadShopBagEmbedTable()
             // compute the height of table view according to the amount of bakes
-            let bakeCount = retrieveBakesKindsCount()
-            let bakesHeight = CGFloat(bakeCount) * shopBagVC.cellHeight
+            var bakesHeight: CGFloat = 0
+            for cell in shopBagVC.tableView.visibleCells {
+                bakesHeight += cell.frame.height
+            }
             let oy = view.frame.height - bagBarHeight - shopBagVC.tableView.frame.origin.y - bakesHeight
             let y = oy < originBagViewY ? originBagViewY : oy
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
@@ -1106,6 +1135,320 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             $0.continueAnimation(withTimingParameters: nil, durationFactor: 0)
         }
     }
+    
+    
+    // MARK: - Bake Specification View
+    @IBAction func bakeSpecViewCloseBtnPressed(_ sender: Any) {
+        hideBakeSpecView()
+    }
+    
+    func hideBakeSpecView() {
+        for btns in bakeSpecButtons {
+            for btn in btns.value {
+                btn.removeFromSuperview()
+            }
+        }
+        currentSpecBtn0 = nil
+        UIView.animate(withDuration: 0.18, animations: {
+            self.bakeSpecView.alpha = 0
+            self.bakeSpecBgFocusView.alpha = 0
+        }, completion: { _ in
+            self.bakeSpecView.isHidden = true
+        })
+    }
+    
+    func showBakeSpecView(bake: AVBake, bakeDetails: [AVBakeDetail]) {
+        guard let attributes = bake.attributes else { return }
+        switch attributes.count {
+        case 1:
+            bakeSpecMainView.frame.size.height = 130 + 6
+            bakeSpecAttributeLabel0.text = attributes[0] + "："
+        case 2:
+            bakeSpecMainView.frame.size.height = 130 + 6 + 62
+            bakeSpecAttributeLabel0.text = attributes[0] + "："
+            bakeSpecAttributeLabel1.text = attributes[1] + "："
+        case 3:
+            bakeSpecMainView.frame.size.height = 130 + 6 + 62 * 2
+            bakeSpecAttributeLabel0.text = attributes[0] + "："
+            bakeSpecAttributeLabel1.text = attributes[1] + "："
+            bakeSpecAttributeLabel2.text = attributes[2] + "："
+        default:
+            break
+        }
+        bakeSpecImageView.image = nil
+        bakeSpecView.isHidden = false
+        UIView.animate(withDuration: 0.12, animations: {
+            self.bakeSpecView.alpha = 1
+            self.bakeSpecBgFocusView.alpha = 0.98
+        })
+        
+        bakeSpecButtons = [
+            0: [], 1: [], 2: []
+        ]
+        bakeSpecNameLabel.text = bake.name
+        //currentSpecBtn0 = nil // btn 0 will always be set
+        currentSpecBtn1 = nil
+        currentSpecBtn2 = nil
+        
+        for bakeDetail in bakeDetails {
+            var bakeSpec = ""
+            if bakeDetail.attributes?.attribute0?.key == attributes[0] {
+                let button = UIButton(frame: bakeSpecAttributeBtn0.frame)
+                if bakeSpecButtons[0]?.count == 0 {
+                    currentSpecBtn0 = button
+                }
+                if let spec = bakeDetail.attributes?.attribute0?.value {
+                    bakeSpecDict[bakeSpec] = nil
+                    bakeSpec += spec
+                    if attributes.count == 0 {
+                        printit("BakeAttributes: \(bakeDetail.attributes!.objectId!) \(bakeSpec)")
+                    }
+                    bakeSpecDict[bakeSpec] = bakeDetail
+                    setBakeSpecBtn(0, spec: spec, button: button)
+                }
+            }
+            if attributes.count > 1 {
+                if bakeDetail.attributes?.attribute1?.key == attributes[1] {
+                    let button = UIButton(frame: bakeSpecAttributeBtn0.frame)
+                    if bakeSpecButtons[1]?.count == 0 {
+                        currentSpecBtn1 = button
+                    }
+                    if let spec = bakeDetail.attributes?.attribute1?.value {
+                        bakeSpecDict[bakeSpec] = nil
+                        bakeSpec += spec
+                        if attributes.count == 1 {
+                            printit("BakeAttributes: \(bakeDetail.attributes!.objectId!) \(bakeSpec)")
+                        }
+                        bakeSpecDict[bakeSpec] = bakeDetail
+                        setBakeSpecBtn(1, spec: spec, button: button)
+                    }
+                }
+                if attributes.count > 2 {
+                    if bakeDetail.attributes?.attribute2?.key == attributes[2] {
+                        let button = UIButton(frame: bakeSpecAttributeBtn0.frame)
+                        if bakeSpecButtons[2]?.count == 0 {
+                            currentSpecBtn2 = button
+                        }
+                        if let spec = bakeDetail.attributes?.attribute2?.value {
+                            bakeSpecDict[bakeSpec] = nil
+                            bakeSpec += spec
+                            if attributes.count == 2 {
+                                printit("BakeAttributes: \(bakeDetail.attributes!.objectId!) \(bakeSpec)")
+                            }
+                            bakeSpecDict[bakeSpec] = bakeDetail
+                            setBakeSpecBtn(2, spec: spec, button: button)
+                        }
+                    }
+                }
+            }
+        }
+        
+        bakeSpecMinusOneBtn.isHidden = true
+        bakeSpecAmountLabel.isHidden = true
+        
+        var bakeSpec = ""
+        if let btn = currentSpecBtn0 {
+            specBtn0Pressed(btn)
+            guard let spec = btn.currentTitle else { return }
+            bakeSpec += spec
+        }
+        if let btn = currentSpecBtn1 {
+            specBtn1Pressed(btn)
+            guard let spec = btn.currentTitle else { return }
+            bakeSpec += spec
+        }
+        if let btn = currentSpecBtn2 {
+            specBtn2Pressed(btn)
+            guard let spec = btn.currentTitle else { return }
+            bakeSpec += spec
+        }
+        guard let bakeDetail = bakeSpecDict[bakeSpec] else { return }
+        resetBakeSpecBtnLabel(bakeDetail: bakeDetail)
+    }
+
+    func resetBakeSpecBtnLabel(bakeDetail: AVBakeDetail) {
+        guard let bakeID = bakeDetail.objectId else { return }
+        bakeSpecMinusOneBtn.isHidden = true
+        bakeSpecAmountLabel.isHidden = true
+        if pagingMenuController.currentPage == 0 {
+            if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: bakeID) {
+                if bakeRealm.amount > 0 {
+                    bakeSpecMinusOneBtn.isHidden = false
+                    bakeSpecAmountLabel.isHidden = false
+                    bakeSpecAmountLabel.text = "\(bakeRealm.amount)"
+                }
+            }
+        } else {
+            if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: bakeID) {
+                if bakeRealm.amount > 0 {
+                    bakeSpecMinusOneBtn.isHidden = false
+                    bakeSpecAmountLabel.isHidden = false
+                    bakeSpecAmountLabel.text = "\(bakeRealm.amount)"
+                }
+            }
+        }
+    }
+    
+    func setBakeSpecBtn(_ attribute: Int, spec: String, button: UIButton) {
+        guard let shouldReturn = bakeSpecButtons[attribute]?.contains(where: { button in
+            return button.currentTitle == spec
+        }) else { return }
+        guard !shouldReturn else { return }
+        button.titleLabel?.font = button.titleLabel?.font.withSize(11)
+        button.setTitle(spec, for: .normal)
+        button.setTitleColor(.bkBlack, for: .normal)
+        button.backgroundColor = UIColor(hex: 0xefefef)
+        button.makeRoundCorder()
+        button.sizeToFit()
+        button.frame.size.width += 10
+        button.frame.size.height += 4
+        if let lastBtn = bakeSpecButtons[attribute]?.last {
+            button.frame.origin.x = lastBtn.frame.origin.x + lastBtn.frame.width + 4
+        }
+        switch attribute {
+        case 0:
+            button.addTarget(self, action: #selector(ShopVC.specBtn0Pressed), for: .touchUpInside)
+            bakeSpecAttributeView0.addSubview(button)
+        case 1:
+            button.addTarget(self, action: #selector(ShopVC.specBtn1Pressed), for: .touchUpInside)
+            bakeSpecAttributeView1.addSubview(button)
+        case 2:
+            button.addTarget(self, action: #selector(ShopVC.specBtn2Pressed), for: .touchUpInside)
+            bakeSpecAttributeView2.addSubview(button)
+        default:
+            break
+        }
+        bakeSpecButtons[attribute]?.append(button)
+    }
+    
+    func specBtn0Pressed(_ sender: UIButton) {
+        var spec = ""
+        guard let spec0 = sender.currentTitle else { return }
+        spec += spec0
+        if let spec1 = currentSpecBtn1?.currentTitle {
+            spec += spec1
+        }
+        if let spec2 = currentSpecBtn2?.currentTitle {
+            spec += spec2
+        }
+        guard let bakeDetail = bakeSpecDict[spec] else { return }
+        guard let price = bakeDetail.price as? Double else { return }
+        currentSpecBtn0?.setTitleColor(.bkBlack, for: .normal)
+        currentSpecBtn0?.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        currentSpecBtn0 = sender
+        currentSpecBtn0?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        currentSpecBtn0?.setTitleColor(.bkRed, for: .normal)
+        if let imageURL = bakeDetail.image?.url {
+            bakeSpecImageView.sd_setImage(with: URL(string: imageURL), completed: nil)
+        }
+        bakeSpecPriceLabel.text = "¥" + price.fixPriceTagFormat()
+        resetBakeSpecBtnLabel(bakeDetail: bakeDetail)
+    }
+    
+    func specBtn1Pressed(_ sender: UIButton) {
+        var spec = ""
+        guard let spec1 = sender.currentTitle else { return }
+        if let spec0 = currentSpecBtn0?.currentTitle {
+            spec += spec0
+        }
+        spec += spec1
+        if let spec2 = currentSpecBtn2?.currentTitle {
+            spec += spec2
+        }
+        guard let bakeDetail = bakeSpecDict[spec] else { return }
+        guard let price = bakeDetail.price as? Double else { return }
+        currentSpecBtn1?.setTitleColor(.bkBlack, for: .normal)
+        currentSpecBtn1?.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        currentSpecBtn1 = sender
+        currentSpecBtn1?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        currentSpecBtn1?.setTitleColor(.bkRed, for: .normal)
+        if let imageURL = bakeDetail.image?.url {
+            bakeSpecImageView.sd_setImage(with: URL(string: imageURL), completed: nil)
+        }
+        bakeSpecPriceLabel.text = "¥" + price.fixPriceTagFormat()
+        resetBakeSpecBtnLabel(bakeDetail: bakeDetail)
+    }
+    
+    func specBtn2Pressed(_ sender: UIButton) {
+        var spec = ""
+        guard let spec2 = sender.currentTitle else { return }
+        if let spec0 = currentSpecBtn0?.currentTitle {
+            spec += spec0
+        }
+        if let spec1 = currentSpecBtn1?.currentTitle {
+            spec += spec1
+        }
+        spec += spec2
+        guard let bakeDetail = bakeSpecDict[spec] else { return }
+        guard let price = bakeDetail.price as? Double else { return }
+        currentSpecBtn2?.setTitleColor(.bkBlack, for: .normal)
+        currentSpecBtn2?.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        currentSpecBtn2 = sender
+        currentSpecBtn2?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        currentSpecBtn2?.setTitleColor(.bkRed, for: .normal)
+        if let imageURL = bakeDetail.image?.url {
+            bakeSpecImageView.sd_setImage(with: URL(string: imageURL), completed: nil)
+        }
+        bakeSpecPriceLabel.text = "¥" + price.fixPriceTagFormat()
+        resetBakeSpecBtnLabel(bakeDetail: bakeDetail)
+    }
+    
+    @IBAction func bakeSpecMinusOneBtnPressed(_ sender: Any) {
+        guard var spec = currentSpecBtn0?.currentTitle else { return }
+        if let spc = currentSpecBtn1?.currentTitle {
+            spec += spc
+        }
+        if let spc = currentSpecBtn2?.currentTitle {
+            spec += spc
+        }
+        guard let bakeDetail = bakeSpecDict[spec] else { return }
+        guard let bake = bakeDetail.bake else { return }
+
+        if pagingMenuController.currentPage == 0 {
+            if shopBuyVC.minusOneBake(bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
+                bakeSpecMinusOneBtn.isHidden = true
+                bakeSpecAmountLabel.isHidden = true
+            }
+            shopBuyVC.classifyTableView.reloadData()
+        } else {
+            if shopPreVC.minusOneBake(bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
+                bakeSpecMinusOneBtn.isHidden = true
+                bakeSpecAmountLabel.isHidden = true
+            }
+            shopPreVC.classifyTableView.reloadData()
+        }
+        setShopBagState()
+    }
+    
+    @IBAction func bakeSpecOneMoreBtnPressed(_ sender: Any) {
+        guard var spec = currentSpecBtn0?.currentTitle else { return }
+        if let spc = currentSpecBtn1?.currentTitle {
+            spec += spc
+        }
+        if let spc = currentSpecBtn2?.currentTitle {
+            spec += spc
+        }
+        guard let bakeDetail = bakeSpecDict[spec] else { return }
+        guard let bake = bakeDetail.bake else { return }
+
+        if pagingMenuController.currentPage == 0 {
+            if shopBuyVC.oneMoreBake(bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
+                bakeSpecMinusOneBtn.isHidden = false
+                bakeSpecAmountLabel.isHidden = false
+                bakeSpecAmountLabel.text = "1"
+            }
+            shopBuyVC.classifyTableView.reloadData()
+        } else {
+            if shopPreVC.oneMoreBake(bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
+                bakeSpecMinusOneBtn.isHidden = false
+                bakeSpecAmountLabel.isHidden = false
+                bakeSpecAmountLabel.text = "1"
+            }
+            shopPreVC.classifyTableView.reloadData()
+        }
+        setShopBagState()
+    }
+    
     
 }
 

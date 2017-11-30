@@ -139,7 +139,8 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                             query.includeKey("order")
                             query.includeKey("order.shop")
                             query.includeKey("bake")
-                            query.includeKey("bakee")
+                            query.includeKey("bake.bake")
+                            query.includeKey("bake.bake.image")
                             group.enter()
                             query.findObjectsInBackground({
                                 objects, error in
@@ -161,7 +162,8 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                             query.whereKey("order", equalTo: order)
                             query.includeKey("order.shop")
                             query.includeKey("bake")
-                            query.includeKey("bakee")
+                            query.includeKey("bake.bake")
+                            query.includeKey("bake.bake.image")
                             group.enter()
                             query.findObjectsInBackground({
                                 objects, error in

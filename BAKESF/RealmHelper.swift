@@ -122,18 +122,18 @@ class RealmHelper {
         return realm.objects(BakeInBagRealm.self).filter("id = '\(id)'").first
     }
     
-    static func retrieveBakesInBag(avshopID shopID: String? = nil) -> Results<BakeInBagRealm> {
+    static func retrieveBakesInBag(avshopID shopID: String? = nil, avbakesIn: [String: AVBakeIn]) -> [BakeInBagRealm] {
         let realm = try! Realm()
         if let id = shopID {
-            return realm.objects(BakeInBagRealm.self).filter("shopID = '\(id)'")
+            return realm.objects(BakeInBagRealm.self).filter("shopID = '\(id)'").filter({ return avbakesIn[$0.id] != nil }).reversed().reversed()
         } else {
-            return realm.objects(BakeInBagRealm.self)
+            return realm.objects(BakeInBagRealm.self).reversed().reversed()
         }
     }
     
-    static func retrieveBakesInBagCount(avshopID shopID: String? = nil) -> Int {
+    static func retrieveBakesInBagCount(avshopID shopID: String? = nil, avbakesIn: [String: AVBakeIn]) -> Int {
         let realm = try! Realm()
-        let bakes = realm.objects(BakeInBagRealm.self)
+        let bakes = realm.objects(BakeInBagRealm.self).filter({ return avbakesIn[$0.id] != nil })
         var total = 0
         for bake in bakes {
             if shopID == bake.shopID || shopID == nil {
@@ -153,9 +153,9 @@ class RealmHelper {
         return total
     }
     
-    static func retrieveBakesInBagCost(avshopID shopID: String? = nil) -> Double {
+    static func retrieveBakesInBagCost(avshopID shopID: String? = nil, avbakesIn: [String: AVBakeIn]) -> Double {
         let realm = try! Realm()
-        let bakes = realm.objects(BakeInBagRealm.self)
+        let bakes = realm.objects(BakeInBagRealm.self).filter({ return avbakesIn[$0.id] != nil })
         var total: Double = 0
         for bake in bakes {
             if shopID == bake.shopID || shopID == nil {
@@ -223,18 +223,18 @@ class RealmHelper {
         return realm.objects(BakePreOrderRealm.self).filter("id = '\(id)'").first
     }
     
-    static func retrieveBakesPreOrder(avshopID shopID: String? = nil) -> Results<BakePreOrderRealm> {
+    static func retrieveBakesPreOrder(avshopID shopID: String? = nil, avbakesPre: [String: AVBakePre]) -> [BakePreOrderRealm] {
         let realm = try! Realm()
         if let id = shopID {
-            return realm.objects(BakePreOrderRealm.self).filter("shopID = '\(id)'")
+            return realm.objects(BakePreOrderRealm.self).filter("shopID = '\(id)'").filter({ return avbakesPre[$0.id] != nil }).reversed().reversed()
         } else {
-            return realm.objects(BakePreOrderRealm.self)
+            return realm.objects(BakePreOrderRealm.self).reversed().reversed()
         }
     }
     
-    static func retrieveBakesPreOrderCount(avshopID shopID: String? = nil) -> Int {
+    static func retrieveBakesPreOrderCount(avshopID shopID: String? = nil, avbakesPre: [String: AVBakePre]) -> Int {
         let realm = try! Realm()
-        let bakes = realm.objects(BakePreOrderRealm.self)
+        let bakes = realm.objects(BakePreOrderRealm.self).filter({ return avbakesPre[$0.id] != nil })
         var total = 0
         for bake in bakes {
             if shopID == bake.shopID || shopID == nil {
@@ -254,9 +254,9 @@ class RealmHelper {
         return total
     }
     
-    static func retrieveBakesPreOrderCost(avshopID shopID: String? = nil) -> Double {
+    static func retrieveBakesPreOrderCost(avshopID shopID: String? = nil, avbakesPre: [String: AVBakePre]) -> Double {
         let realm = try! Realm()
-        let bakes = realm.objects(BakePreOrderRealm.self)
+        let bakes = realm.objects(BakePreOrderRealm.self).filter({ return avbakesPre[$0.id] != nil })
         var total: Double = 0
         for bake in bakes {
             if shopID == bake.shopID || shopID == nil {
@@ -281,12 +281,12 @@ class RealmHelper {
     
     
     // All Bakes
-    static func retrieveAllBakesCount(avshopID shopID: String? = nil) -> Int {
-        return retrieveBakesInBagCount(avshopID: shopID) + retrieveBakesPreOrderCount(avshopID: shopID)
+    static func retrieveAllBakesCount(avshopID shopID: String? = nil, avbakesIn: [String: AVBakeIn], avbakesPre: [String: AVBakePre]) -> Int {
+        return retrieveBakesInBagCount(avshopID: shopID, avbakesIn: avbakesIn) + retrieveBakesPreOrderCount(avshopID: shopID, avbakesPre: avbakesPre)
     }
     
-    static func retrieveAllBakesCost(avshopID shopID: String? = nil) -> Double {
-        return retrieveBakesInBagCost(avshopID: shopID) + retrieveBakesPreOrderCost(avshopID: shopID)
+    static func retrieveAllBakesCost(avshopID shopID: String? = nil, avbakesIn: [String: AVBakeIn], avbakesPre: [String: AVBakePre]) -> Double {
+        return retrieveBakesInBagCost(avshopID: shopID, avbakesIn: avbakesIn) + retrieveBakesPreOrderCost(avshopID: shopID, avbakesPre: avbakesPre)
     }
     
     static func retrieveAllBakes(avshopID shopID: String? = nil) -> [Object] {

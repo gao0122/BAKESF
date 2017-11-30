@@ -69,9 +69,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         deliveryTimeView.frame.origin.y = view.frame.height
         if isInBag {
-            bakes = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
+            bakes = RealmHelper.retrieveBakesInBag(avshopID: avshop.objectId!, avbakesIn: shopVC.shopBuyVC.avbakesIn).sorted(by: { _, _ in return true })
         } else {
-            bakes = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!).sorted(by: { _, _ in return true })
+            bakes = RealmHelper.retrieveBakesPreOrder(avshopID: avshop.objectId!, avbakesPre: shopVC.shopPreVC.avbakesPre).sorted(by: { _, _ in return true })
         }
         let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         tableView.tableFooterView = footerView
@@ -166,6 +166,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             vc.avorder = self.avorder
             vc.shopVC = self.shopVC
             vc.isInBag = self.isInBag
+        case "showOrderRemarksFromShopCheckingVC":
+            guard let vc = segue.destination as? ShopCheckingOrderRemarksVC else { break }
+            vc.title = "订单备注"
         default:
             break
         }
@@ -222,7 +225,6 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
-    
 
     
     func makePayment() -> Bool {
@@ -273,6 +275,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             _ in
             if self.makePayment() {
                 // can make payment
+            } else {
+                self.initializeOrder(paymentMethod: "ApplePay")
+                self.saveOrderAndBakes()
             }
         }, notAct: { _ in })
     }
@@ -537,9 +542,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         // TODO: Delivery fee part
         var fee: Double = (avshop.deliveryFee as? Double) ?? 0
         if isInBag {
-            fee += RealmHelper.retrieveBakesInBagCost(avshopID: avshop.objectId!)
+            fee += RealmHelper.retrieveBakesInBagCost(avshopID: avshop.objectId!, avbakesIn: shopVC.shopBuyVC.avbakesIn)
         } else {
-            fee += RealmHelper.retrieveBakesPreOrderCost(avshopID: avshop.objectId!)
+            fee += RealmHelper.retrieveBakesPreOrderCost(avshopID: avshop.objectId!, avbakesPre: shopVC.shopPreVC.avbakesPre)
         }
         cell.priceLabel.alpha = 1
         cell.nameLabel.alpha = 0
@@ -730,8 +735,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     // pay method
                     break
                 case 1:
-                    // comments
-                    break
+                    // order remarks/comments
+                    performSegue(withIdentifier: "showOrderRemarksFromShopCheckingVC", sender: self)
                 case 2:
                     // invoice
                     break
@@ -814,19 +819,20 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         case .collapsed:
             deliveryTimeViewState = .expanded
             let date = Date()
-            let days = avshop.deliveryPreOrderDays as! Int
             deliveryDates.removeAll()
             deliveryDatecs.removeAll()
-            if days == 0 {
+            let days = avshop.deliveryPreOrderDays as! Int
+//            if days == 0 {
+//                let cs = date.getDeliveryDateComponents()
+//                let dateText = "\(weekdays[cs.weekday!]) \(cs.month!).\(cs.day!) (今天)"
+//                deliveryDatecs.append(cs)
+//                deliveryDates.append(dateText)
+//            }
+            if isInBag {
                 let cs = date.getDeliveryDateComponents()
                 let dateText = "\(weekdays[cs.weekday!]) \(cs.month!).\(cs.day!) (今天)"
                 deliveryDatecs.append(cs)
                 deliveryDates.append(dateText)
-            }
-            if isInBag {
-                let cs = date.getDeliveryDateComponents()
-                deliveryDatecs.append(cs)
-                deliveryDates.append("今天")
             } else {
                 for i in 1...days {
                     let dateToBeAdd = date.addingTimeInterval(TimeInterval(i * 60 * 60 * 24))
