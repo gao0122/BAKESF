@@ -65,8 +65,17 @@ extension UIColor {
     static var textGray: UIColor {
         return UIColor(hex: 0x787878)
     }
+    
     static var iron: UIColor {
         return UIColor(hex: 0x4C4C4C)
+    }
+    
+    static var btnBgGray: UIColor {
+        return UIColor(red: 0.959, green: 0.959, blue: 0.959, alpha: 1)
+    }
+    
+    static var btnBgGraySelected: UIColor {
+        return UIColor(red: 0.981, green: 0.959, blue: 0.959, alpha: 1)
     }
     
 }

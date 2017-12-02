@@ -394,7 +394,6 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             cell.selectionStyle = .none
             
             let bake = avbakesTag[avtag[section]]![indexPath.row]
-            guard let bakeDetail = bake.defaultBake else { return UITableViewCell() }
             
             guard let bakeName = bake.name else { return UITableViewCell() }
             guard let priceRange = bake.priceRange else { return UITableViewCell() }
@@ -408,8 +407,6 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             }
 
             let monthly = 100 // TODO
-            let bakePreOrder = RealmHelper.retrieveOneBakePreOrder(by: bake.objectId!)
-            let amountPreOrder = bakePreOrder?.amount ?? 0
             
             if bake.image == nil { printit(any: "\n\n\n\n\n\n\(bake.name ?? "nil")\n\n\n\n\n\n") }
             
@@ -424,14 +421,17 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             cell.amountLabel.isHidden = false
             cell.minusOneBtn.isHidden = false
             cell.oneMoreBtn.isHidden = false
-            if amountPreOrder == 0 {
-                cell.amountLabel.isHidden = true
-                cell.minusOneBtn.isHidden = true
-            } else {
-                cell.amountLabel.text = "\(amountPreOrder)"
-            }
             if let bakeAttr = bake.attributes {
                 if bakeAttr.count == 0 {
+                    guard let bakeDetail = bake.defaultBake else { return UITableViewCell() }
+                    let bakePreOrder = RealmHelper.retrieveOneBakePreOrder(by: bake.objectId!)
+                    let amountPreOrder = bakePreOrder?.amount ?? 0
+                    if amountPreOrder == 0 {
+                        cell.amountLabel.isHidden = true
+                        cell.minusOneBtn.isHidden = true
+                    } else {
+                        cell.amountLabel.text = "\(amountPreOrder)"
+                    }
                     cell.specBtn.isHidden = true
                     let amount = bakeDetail.amount as? Int ?? 10
                     if amount == 0 {
@@ -445,7 +445,17 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                         cell.soldOutLabel.isHidden = true
                     }
                 } else {
-                    let amount = bakeDetail.amount as? Int ?? 10
+                    var amountPreOrder = 0
+                    for bakeDetail in avbakesDetailDict[bake]! {
+                        amountPreOrder += (RealmHelper.retrieveOneBakePreOrder(by: bakeDetail.objectId!)?.amount ?? 0)
+                    }
+                    if amountPreOrder == 0 {
+                        cell.specBtn.setTitle("选规格", for: .normal)
+                    } else {
+                        var amountText = "\(amountPreOrder)"
+                        if amountPreOrder > 99 { amountText = "99+" }
+                        cell.specBtn.setTitle("已选 \(amountText)", for: .normal)
+                    }
                     cell.amountLabel.isHidden = true
                     cell.minusOneBtn.isHidden = true
                     cell.oneMoreBtn.isHidden = true

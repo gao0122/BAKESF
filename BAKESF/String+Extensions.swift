@@ -33,7 +33,7 @@ extension String {
         return self.components(separatedBy: .whitespaces).joined()
     }
     
-    // parse String to NSAttributedString
+    // parse String to NSAttributedString to highlight key string
     func attributedString(key: String, keyFont: UIFont, color: UIColor) -> NSMutableAttributedString {
         let texts = self.components(separatedBy: key)
         if texts.count == 1 {
@@ -49,5 +49,7 @@ extension String {
         }
         return string
     }
+    
+    
 }
 

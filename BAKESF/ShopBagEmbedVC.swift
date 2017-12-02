@@ -136,37 +136,47 @@ class ShopBagEmbedVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func setCellAmountPriceLabel(for cell: ShopBagEmbedTableCell, with amount: Int, price: Double, name: String, bakeDetail: AVBakeDetail? = nil) {
-        var bakeName = name
+        var bakeSpec = ""
         if let bake = bakeDetail?.bake {
             if let attrs = bake.attributes {
                 switch attrs.count {
                 case 1:
                     if let attr0 = bakeDetail?.attributes?.attribute0 {
-                        bakeName += "（\(attr0.key ?? ""):\(attr0.value ?? "")）"
+                        bakeSpec += "\(attr0.key ?? "")：\(attr0.value ?? "")"
                     }
                 case 2:
                     if let attr0 = bakeDetail?.attributes?.attribute0 {
-                        bakeName += "（\(attr0.key ?? ""):\(attr0.value ?? ""),"
+                        bakeSpec += "\(attr0.key ?? "")：\(attr0.value ?? "")，"
                     }
                     if let attr1 = bakeDetail?.attributes?.attribute1 {
-                        bakeName += " \(attr1.key ?? ""):\(attr1.value ?? "")）"
+                        bakeSpec += " \(attr1.key ?? "")：\(attr1.value ?? "")"
                     }
                 case 3:
                     if let attr0 = bakeDetail?.attributes?.attribute0 {
-                        bakeName += "（\(attr0.key ?? ""):\(attr0.value ?? ""),"
+                        bakeSpec += "\(attr0.key ?? "")：\(attr0.value ?? "")，"
                     }
                     if let attr1 = bakeDetail?.attributes?.attribute1 {
-                        bakeName += " \(attr1.key ?? ""):\(attr1.value ?? ""),"
+                        bakeSpec += " \(attr1.key ?? "")：\(attr1.value ?? "")，"
                     }
                     if let attr2 = bakeDetail?.attributes?.attribute2 {
-                        bakeName += " \(attr2.key ?? ""):\(attr2.value ?? "")）"
+                        bakeSpec += " \(attr2.key ?? "")：\(attr2.value ?? "")"
                     }
                 default:
                     break
                 }
             }
         }
-        cell.nameLabel.text = bakeName
+        if bakeSpec.count > 0 {
+            let text = NSMutableAttributedString(string: name + "\n")
+            text.append(NSAttributedString(string: "\n", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 2)]))
+            let attr = [NSFontAttributeName: UIFont.systemFont(ofSize: 10), NSForegroundColorAttributeName: UIColor.iron]
+            let spec = NSAttributedString(string: bakeSpec, attributes: attr)
+            text.append(spec)
+            cell.nameLabel.attributedText = text
+        } else {
+            cell.nameLabel.text = name
+        }
+        
         cell.amountLabel.text = "\(amount)"
         cell.priceLabel.text = "¥ \((price * Double(amount)).fixPriceTagFormat())"
         

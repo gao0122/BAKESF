@@ -58,9 +58,9 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var bakeSpecNameLabel: UILabel!
     @IBOutlet weak var bakeSpecMainView: UIView!
     @IBOutlet weak var bakeSpecBgFocusView: UIView!
-    @IBOutlet weak var bakeSpecAttributeView0: UIView!
-    @IBOutlet weak var bakeSpecAttributeView1: UIView!
-    @IBOutlet weak var bakeSpecAttributeView2: UIView!
+    @IBOutlet weak var bakeSpecAttributeView0: UIView! // useless
+    @IBOutlet weak var bakeSpecAttributeView1: UIView! // useless
+    @IBOutlet weak var bakeSpecAttributeView2: UIView! // useless
     @IBOutlet weak var bakeSpecAttributeLabel0: UILabel!
     @IBOutlet weak var bakeSpecAttributeLabel1: UILabel!
     @IBOutlet weak var bakeSpecAttributeLabel2: UILabel!
@@ -68,7 +68,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var bakeSpecAttributeBtn1: UIButton!
     @IBOutlet weak var bakeSpecAttributeBtn2: UIButton!
     @IBOutlet weak var bakeSpecPriceLabel: UILabel!
-
+    @IBOutlet weak var bakeSpecScrollView0: UIScrollView!
+    @IBOutlet weak var bakeSpecScrollView1: UIScrollView!
+    @IBOutlet weak var bakeSpecScrollView2: UIScrollView!
+    
     var shopBuyVC: ShopBuyVC!
     var shopPreVC: ShopPreVC!
     var shopBagVC: ShopBagEmbedVC!
@@ -391,6 +394,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         
         bagBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.handleBagBarTap(_:))))
         bagFocusBgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.handleBagBarTap(_:))))
+        bakeSpecBgFocusView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.bakeSpecViewCloseBtnPressed(_:))))
+        bakeSpecView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.bakeSpecViewCloseBtnPressed(_:))))
     }
     
     // set state of outlets in shop bag view
@@ -503,7 +508,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    
+
     // MARK: - Checkout
     @IBAction func checkoutBtnPressed(_ sender: Any) {
         if userRealm == nil {
@@ -1159,6 +1164,9 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     
     func showBakeSpecView(bake: AVBake, bakeDetails: [AVBakeDetail]) {
         guard let attributes = bake.attributes else { return }
+        bakeSpecScrollView0.contentSize.width = bakeSpecMainView.frame.width - 24
+        bakeSpecScrollView1.contentSize.width = bakeSpecMainView.frame.width - 24
+        bakeSpecScrollView2.contentSize.width = bakeSpecMainView.frame.width - 24
         switch attributes.count {
         case 1:
             bakeSpecMainView.frame.size.height = 130 + 6
@@ -1186,7 +1194,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             0: [], 1: [], 2: []
         ]
         bakeSpecNameLabel.text = bake.name
-        //currentSpecBtn0 = nil // btn 0 will always be set
+        currentSpecBtn0 = nil // btn 0 will always be set
         currentSpecBtn1 = nil
         currentSpecBtn2 = nil
         
@@ -1300,7 +1308,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         button.backgroundColor = UIColor(hex: 0xefefef)
         button.makeRoundCorder()
         button.sizeToFit()
-        button.frame.size.width += 10
+        button.frame.origin.y = 0
+        button.frame.size.width += 12
         button.frame.size.height += 4
         if let lastBtn = bakeSpecButtons[attribute]?.last {
             button.frame.origin.x = lastBtn.frame.origin.x + lastBtn.frame.width + 4
@@ -1308,17 +1317,26 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         switch attribute {
         case 0:
             button.addTarget(self, action: #selector(ShopVC.specBtn0Pressed), for: .touchUpInside)
-            bakeSpecAttributeView0.addSubview(button)
+            updateScrollView(bakeSpecScrollView0, with: button)
         case 1:
             button.addTarget(self, action: #selector(ShopVC.specBtn1Pressed), for: .touchUpInside)
-            bakeSpecAttributeView1.addSubview(button)
+            updateScrollView(bakeSpecScrollView1, with: button)
         case 2:
             button.addTarget(self, action: #selector(ShopVC.specBtn2Pressed), for: .touchUpInside)
-            bakeSpecAttributeView2.addSubview(button)
+            updateScrollView(bakeSpecScrollView2, with: button)
         default:
             break
         }
         bakeSpecButtons[attribute]?.append(button)
+    }
+    
+    func updateScrollView(_ scrollView: UIScrollView, with button: UIButton) {
+        scrollView.addSubview(button)
+        let rightBorderY = button.frame.origin.x + button.frame.width
+        let rightMargin = scrollView.contentSize.width - rightBorderY - 4
+        if rightMargin < 0 {
+            scrollView.contentSize.width -= rightMargin
+        }
     }
     
     func specBtn0Pressed(_ sender: UIButton) {
@@ -1334,9 +1352,9 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         guard let bakeDetail = bakeSpecDict[spec] else { return }
         guard let price = bakeDetail.price as? Double else { return }
         currentSpecBtn0?.setTitleColor(.bkBlack, for: .normal)
-        currentSpecBtn0?.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        currentSpecBtn0?.backgroundColor = .btnBgGray
         currentSpecBtn0 = sender
-        currentSpecBtn0?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        currentSpecBtn0?.backgroundColor = .btnBgGraySelected
         currentSpecBtn0?.setTitleColor(.bkRed, for: .normal)
         if let imageURL = bakeDetail.image?.url {
             bakeSpecImageView.sd_setImage(with: URL(string: imageURL), completed: nil)
@@ -1358,9 +1376,9 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         guard let bakeDetail = bakeSpecDict[spec] else { return }
         guard let price = bakeDetail.price as? Double else { return }
         currentSpecBtn1?.setTitleColor(.bkBlack, for: .normal)
-        currentSpecBtn1?.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        currentSpecBtn1?.backgroundColor = .btnBgGray
         currentSpecBtn1 = sender
-        currentSpecBtn1?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        currentSpecBtn1?.backgroundColor = .btnBgGraySelected
         currentSpecBtn1?.setTitleColor(.bkRed, for: .normal)
         if let imageURL = bakeDetail.image?.url {
             bakeSpecImageView.sd_setImage(with: URL(string: imageURL), completed: nil)
@@ -1382,9 +1400,9 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         guard let bakeDetail = bakeSpecDict[spec] else { return }
         guard let price = bakeDetail.price as? Double else { return }
         currentSpecBtn2?.setTitleColor(.bkBlack, for: .normal)
-        currentSpecBtn2?.titleLabel?.font = UIFont.systemFont(ofSize: 13)
+        currentSpecBtn2?.backgroundColor = .btnBgGray
         currentSpecBtn2 = sender
-        currentSpecBtn2?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 13)
+        currentSpecBtn2?.backgroundColor = .btnBgGraySelected
         currentSpecBtn2?.setTitleColor(.bkRed, for: .normal)
         if let imageURL = bakeDetail.image?.url {
             bakeSpecImageView.sd_setImage(with: URL(string: imageURL), completed: nil)

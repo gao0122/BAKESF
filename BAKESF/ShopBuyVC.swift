@@ -397,7 +397,6 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             cell.selectionStyle = .none
             
             let bake = avbakesTag[avtag[section]]![indexPath.row]
-            guard let bakeDetail = bake.defaultBake else { return UITableViewCell() }
             
             guard let bakeName = bake.name else { return UITableViewCell() }
             guard let priceRange = bake.priceRange else { return UITableViewCell() }
@@ -412,8 +411,6 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             let monthly = 100 // TODO
 
             
-            let bakeInBag = RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!)
-            let amountInBag = bakeInBag?.amount ?? 0
             
             if bake.image == nil { printit(any: "\n\n\n\n\n\n\(bake.name!)\n\n\n\n\n\n") }
 
@@ -429,14 +426,17 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             cell.minusOneBtn.isHidden = false
             cell.oneMoreBtn.isHidden = false
             cell.soldOutLabel.isHidden = false
-            if amountInBag == 0 {
-                cell.amountLabel.isHidden = true
-                cell.minusOneBtn.isHidden = true
-            } else {
-                cell.amountLabel.text = "\(amountInBag)"
-            }
             if let bakeAttr = bake.attributes {
                 if bakeAttr.count == 0 {
+                    guard let bakeDetail = bake.defaultBake else { return UITableViewCell() }
+                    let bakeInBag = RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!)
+                    let amountInBag = bakeInBag?.amount ?? 0
+                    if amountInBag == 0 {
+                        cell.amountLabel.isHidden = true
+                        cell.minusOneBtn.isHidden = true
+                    } else {
+                        cell.amountLabel.text = "\(amountInBag)"
+                    }
                     cell.specBtn.isHidden = true
                     let amount = bakeDetail.amount as? Int ?? 10
                     if amount == 0 {
@@ -450,7 +450,17 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
                         cell.soldOutLabel.isHidden = true
                     }
                 } else {
-                    let amount = bakeDetail.amount as? Int ?? 10
+                    var amountInBag = 0
+                    for bakeDetail in avbakesDetailDict[bake]! {
+                        amountInBag += (RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!)?.amount ?? 0)
+                    }
+                    if amountInBag == 0 {
+                        cell.specBtn.setTitle("选规格", for: .normal)
+                    } else {
+                        var amountText = "\(amountInBag)"
+                        if amountInBag > 99 { amountText = "99+" }
+                        cell.specBtn.setTitle("已选 \(amountText)", for: .normal)
+                    }
                     cell.amountLabel.isHidden = true
                     cell.minusOneBtn.isHidden = true
                     cell.oneMoreBtn.isHidden = true
