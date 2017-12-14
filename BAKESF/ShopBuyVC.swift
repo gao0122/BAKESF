@@ -38,6 +38,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         classifyTableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .top)
         classifyTableView.rowHeight = UITableViewAutomaticDimension
         classifyTableView.estimatedRowHeight = 58
+
+        bakeTableView.tableFooterView = UIView.tableFooterView(height: bagBarHeight)
         
         loadAVBakes()
         
@@ -183,7 +185,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             self.bakeTableView.reloadData()
         } else {
             self.shopVC.stopIndicatorViewAni()
-            self.shopVC.showLoadFailedView()
+            self.shopVC.showLoadFailedView(with: "烘焙师暂时还没有上架商品")
         }
     }
     
@@ -485,10 +487,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         switch tableView.tag {
         case 1:
             if section == avtag.count - 1 {
-                let tableFooterView = UIView()
-                tableFooterView.frame.size.width = bakeTableView.frame.width
-                tableFooterView.frame.size.height = bagBarHeight
-                return tableFooterView
+                // footer view of the last section
             }
         default:
             break
@@ -497,7 +496,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return tableView.tag == 1 && section == avtag.count - 1 ? bagBarHeight : 0
+        return 0
+        //return tableView.tag == 1 && section == avtag.count - 1 ? bagBarHeight : 0
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

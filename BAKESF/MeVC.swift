@@ -27,7 +27,9 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var rightArrowLabel: UILabel!
     @IBOutlet weak var settingTableView: UITableView!
-
+    
+    @IBOutlet weak var xView: UIView!
+    
     
     var user: UserRealm!
     var avbaker: AVBaker?
@@ -48,7 +50,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
+        xView.fixiPhoneX(nav: self.navigationController?.navigationBar, tab: self.tabBarController?.tabBar)
         vcInit()
         
         // page menu

@@ -77,13 +77,20 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
     
     
     @IBAction func backToHomeBtnPressed(_ sender: Any) {
-        let transition = CATransition()
-        transition.duration = 0.32
-        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        transition.type = kCATransitionMoveIn
-        transition.type = kCATransitionFromTop
-        self.navigationController?.view.layer.add(transition, forKey: nil)
-        navigationController?.popToRootViewController(animated: false)
+        if self.navigationController?.view.layer.animation(forKey: "backToHomeFromOrder") == nil {
+            let transition = CATransition()
+            transition.duration = 0.32
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+            transition.type = kCATransitionReveal
+            transition.subtype = kCATransitionFromBottom
+
+            self.navigationController?.view.layer.add(transition, forKey: "backToHomeFromOrder")
+        }
+        guard let homeVC = self.navigationController?.viewControllers.first as? HomeVC else { return }
+        self.navigationController?.popToRootViewController(animated: false)
+
+        homeVC.searchBar.text = ""
+        homeVC.cancelSearch(sender)
     }
     
     @IBAction func backToShopBtnPressed(_ sender: Any) {

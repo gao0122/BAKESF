@@ -70,7 +70,7 @@ func generateRandomPwd(length: Int = 14) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*()_+-="
     var pwd = "Bk"
     for _ in 0..<length {
-        let index = Int(arc4random_uniform(UInt32(chars.characters.count)))
+        let index = Int(arc4random_uniform(UInt32(chars.count)))
         pwd.append(chars.substring(from: index, to: index + 1))
     }
     return pwd
@@ -196,6 +196,10 @@ func saveAVAddress(for address: AVAddress, from locationRealm: LocationRealm) {
     address.latitude = locationRealm.latitude
 }
 
+
+
+
+
 func print(regeocode: AMapReGeocode) {
     let ac = regeocode.addressComponent!
     printit("\(regeocode.formattedAddress!)")
@@ -233,28 +237,5 @@ func print(poi: AMapPOI) {
     printit("citycode\t\(1)")
     printit("businessArea\t\(poi.businessArea!)")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

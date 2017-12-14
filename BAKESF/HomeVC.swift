@@ -31,8 +31,10 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     @IBOutlet weak var searchHistoryView: UIView!
     @IBOutlet weak var searchHotView: UIView!
     @IBOutlet weak var searchHelperLabel: UILabel!
+    @IBOutlet weak var searchHistoryBtnsView: UIView!
+    @IBOutlet weak var searchHotBtnsView: UIView!
     @IBOutlet weak var rapperView: UIView!
-    @IBOutlet weak var mainView: UIView!
+    @IBOutlet weak var xView: UIView!
 
     private var homeShopVC: HomeShopVC!
     private var homeBakeVC: HomeBakeVC!
@@ -40,6 +42,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     private var sellerTableView: UITableView!
     private var bakeTableView: UITableView!
     private var followTableView: UITableView!
+    
+    var needToUpdateHotSearchWords: Bool = false
     
     let bakeLocationRadius: CGFloat = 3000
     
@@ -55,7 +59,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     var locatedOnce = false
     var searchBarWidth: CGFloat!
     var hasSetShopView = false
-    var searchResults = [AVShop: [AVBake]]()
+    var searchResults = [String: [AVBake]]() // key: shop id.
     var searchResultShops = [AVShop]()
 
     let searchItemBtnWidthToAdd: CGFloat = 17
@@ -72,11 +76,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // if the device is iPhone X
-        if UIScreen.main.nativeBounds.height == 2436 {
-            mainView.frame.size.height -= (42 - mainView.frame.origin.y)
-            mainView.frame.origin.y = 42
-        }
+        xView.fixiPhoneX(tab: self.tabBarController?.tabBar)
         
         preInit()
         
@@ -101,6 +101,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         if let tabBarController = self.tabBarController {
             tabBarController.tabBar.isHidden = false
             let duration: TimeInterval = animated ? 0.17 : 0
@@ -111,6 +112,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
                 tabBarController.tabBar.frame.origin.y = screenHeight - tabBarController.tabBar.frame.height
             })
         }
+        if (searchBar.text?.count ?? 0) > 0 { return }
 
         checkCurrentUser()
         if poiChanged && selectedPOI != nil {
@@ -130,6 +132,11 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
         }
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.needToUpdateHotSearchWords = true
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
@@ -141,11 +148,11 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
         indicatorStartAni()
         retryBtn.setBorder(with: .bkRed)
         locateManuallyBtn.setBorder(with: .bkRed)
-        view.bringSubview(toFront: locateFailedView)
-        view.bringSubview(toFront: indicatorSuperView)
+        xView.bringSubview(toFront: locateFailedView)
+        xView.bringSubview(toFront: indicatorSuperView)
+        searchResultsView.bringSubview(toFront: searchResultsHelperView)
         searchResultsTableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         searchResultsHelperView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(cancelSearch(_:))))
-        searchResultsTableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(cancelSearch(_:))))
         navigationController?.navigationBar.barTintColor = .bkRed
         navigationController?.navigationBar.tintColor = .white
     }
@@ -163,6 +170,21 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
                 locateManuallyBtnPressed = false
                 vc.showSegueID = id + "NaN"
             }
+        case "homeToShopFromSearchingShop":
+            guard let sellerVC = segue.destination as? ShopVC else { return }
+            guard let indexPath = searchResultsTableView.indexPathForSelectedRow else { return }
+            let section = indexPath.section
+            let avshop = searchResultShops[section]
+            
+            sellerVC.avshop = avshop
+        case "homeToShopFromSearchingBake":
+            guard let sellerVC = segue.destination as? ShopVC else { return }
+            guard let indexPath = searchResultsTableView.indexPathForSelectedRow else { return }
+            let section = indexPath.section
+            let avshop = searchResultShops[section]
+            //let avbake =
+            sellerVC.avshop = avshop
+            
         default:
             break
         }
@@ -305,7 +327,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     
     // MARK: - SearchBar
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        self.setSearchHotHelperItemLabels()
+        self.resetSearchHotHelperItemLabels()
+        self.resetSearchHistoryHelperItemLabels()
         self.searchBar.setShowsCancelButton(true, animated: true)
         if let searchText = searchBar.text {
             if searchText == "" {
@@ -321,20 +344,21 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
             self.searchBarFocusAni()
         })
         
-        if let avbaker = self.avbaker {
-            let query = AVQuery(className: "HomePageSearchHistory")
-            query.addAscendingOrder("createdAt")
-            query.whereKey("baker", equalTo: avbaker)
-            query.findObjectsInBackground({
-                objs, error in
-                
-            })
-        } else {
-            let histories = RealmHelper.retrieveSearchHistories().reversed()
-            printit(histories)
+        self.setSearchResultsViewHidden(for: false)
+        self.setSearchResultsHelperViewHidden(for: false)
+        self.setSearchResultsTableViewHidden(for: false)
+        self.setSearchHelperLabelHidden(for: true)
+        self.setSearchResultsHotViewHidden(for: false)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText == "" {
+            self.setSearchResultsHelperViewHidden(for: false)
+            self.setSearchResultsTableViewHidden(for: true)
+            self.setSearchHelperLabelHidden(for: true)
+            self.setSearchResultsHotViewHidden(for: false)
+            self.resetSearchHistoryHelperItemLabels()
         }
-        
-        setSearchResultsViewHidden(for: false)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -374,45 +398,57 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // search
         guard let text = searchBar.text else { return }
+        search(with: text)
+    }
+    
+    func search(with text: String) {
         guard text.count > 0 else {
             setSearchHelperLabelHidden(for: false, with: "请输入搜索内容后重试。")
+            self.setSearchResultsHotViewHidden(for: true)
+            self.setSearchResultsHistoryViewHidden(for: true)
             return
         }
+        
         let query = AVBake.query()
         query.whereKey("name", contains: text)
         query.includeKey("image")
         query.includeKey("shop")
+        query.includeKey("shop.baker")
         query.includeKey("shop.address")
         query.includeKey("shop.headphoto")
+        query.includeKey("shop.bgImage")
         query.addAscendingOrder("priority")
         query.limit = 10
         query.findObjectsInBackground({
             objects, error in
+            self.searchResults.removeAll()
+            self.searchResultShops.removeAll()
             if let bakes = objects as? [AVBake] {
                 self.recordSearchHistory(with: text)
+                self.setSearchResultsHelperViewHidden(for: false)
                 if bakes.count == 0 {
                     self.setSearchHelperLabelHidden(for: false, with: "没有找到相关结果。")
-                    self.searchResultsHelperView.isHidden = false
-                    self.searchHistoryView.isHidden = true
-                    self.searchHotView.isHidden = true
+                    self.setSearchResultsHotViewHidden(for: true)
+                    self.setSearchResultsHistoryViewHidden(for: true)
                 } else {
-                    self.searchHistoryView.isHidden = false
-                    self.searchHotView.isHidden = false
-                    self.searchResultsHelperView.isHidden = true
-                    self.setSearchHelperLabelHidden(for: true, with: "")
+                    self.setSearchResultsHelperViewHidden(for: true)
+                    self.setSearchResultsTableViewHidden(for: false)
                     for bake in bakes {
-                        if let shop = bake.shop {
-                            if self.searchResults[shop] == nil {
-                                self.searchResults[shop] = [AVBake]()
+                        if let shopID = bake.shop?.objectId {
+                            if self.searchResults[shopID] == nil {
+                                self.searchResults[shopID] = [AVBake]()
                             }
-                            self.searchResults[shop]!.append(bake)
-                            self.searchResultShops.append(shop)
+                            self.searchResults[shopID]!.append(bake)
+                            if !self.searchResultShops.contains(bake.shop!) {
+                                self.searchResultShops.append(bake.shop!)
+                            }
                         }
                     }
                     self.searchResultsTableView.reloadData()
                     self.searchBar.resignFirstResponder()
                 }
             } else {
+                self.setSearchResultsHelperViewHidden(for: false)
                 self.view.notify(text: "发生未知错误，请检查网络。", color: UIColor.alertRed, nav: self.navigationController?.navigationBar)
             }
         })
@@ -435,7 +471,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
         printit("searching: \(text)")
     }
     
-    func setSearchHelperLabelHidden(for shouldHidden: Bool, with text: String) {
+    func setSearchHelperLabelHidden(for shouldHidden: Bool, with text: String = "") {
         self.searchHelperLabel.text = text
         self.searchHelperLabel.isHidden = shouldHidden
     }
@@ -443,56 +479,122 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     func setSearchResultsViewHidden(for shouldHidden: Bool) {
         searchResultsView.isHidden = shouldHidden
         if shouldHidden {
-            view.bringSubview(toFront: locateFailedView)
-            view.bringSubview(toFront: indicatorSuperView)
+            xView.bringSubview(toFront: locateFailedView)
+            xView.bringSubview(toFront: indicatorSuperView)
         } else {
-            view.bringSubview(toFront: searchResultsView)
-            view.bringSubview(toFront: rapperView)
-            view.bringSubview(toFront: searchBar)
-            view.bringSubview(toFront: locationBtn)
+            xView.bringSubview(toFront: searchResultsView)
+            xView.bringSubview(toFront: rapperView)
+            xView.bringSubview(toFront: searchBar)
+            xView.bringSubview(toFront: locationBtn)
         }
     }
     
-    func setSearchHotHelperItemLabels() {
-        let btn = setSearchHotHelperItemLabel(nil, with: "烘焙精选")
-        _ = setSearchHotHelperItemLabel(btn!, with: "私厨")
+    func setSearchResultsHelperViewHidden(for shouldHidden: Bool) {
+        searchResultsHelperView.isHidden = shouldHidden
     }
     
-    func setSearchHotHelperItemLabel(_ btnToBeCopied: UIButton?, with text: String) -> UIButton? {
-        let rightMargin: CGFloat = 17 // it is also the width te be added to button
+    func setSearchResultsTableViewHidden(for shouldHidden: Bool) {
+        searchResultsTableView.isHidden = shouldHidden
+    }
+    
+    func setSearchResultsHotViewHidden(for shouldHidden: Bool) {
+        searchHotView.isHidden = shouldHidden
+        if !shouldHidden {
+            setSearchHotHelperItemLabels()
+        }
+    }
+    
+    func setSearchResultsHistoryViewHidden(for shouldHidden: Bool) {
+        searchHistoryView.isHidden = shouldHidden
+        if !shouldHidden {
+            setSearchHistoryHelperItemLabels()
+        }
+    }
+    
+
+    func resetSearchHotHelperItemLabels() {
+        let query = AVQuery(className: "HotSearchingWord")
+        query.addAscendingOrder("priority")
+        query.findObjectsInBackground({
+            (objs, error) in
+            if let error = error {
+                printit("search hot labels error: \(error.localizedDescription)")
+            } else if let objs = objs as? [AVObject] {
+                var lastBtn: UIButton?
+                for hotWord in objs {
+                    if let word = hotWord.object(forKey: "text") as? String {
+                        lastBtn = self.setSearchHelperItemLabel(lastBtn, with: word, view: self.searchHotBtnsView)
+                    }
+                }
+                self.needToUpdateHotSearchWords = false
+            }
+        })
+    }
+
+    func setSearchHotHelperItemLabels() {
+        
+    }
+
+    func resetSearchHistoryHelperItemLabels() {
+        self.searchHistoryBtnsView.subviews.forEach({ $0.removeFromSuperview() })
+        let histories = RealmHelper.retrieveSearchHistories(by: avbaker)
+        setSearchResultsHistoryViewHidden(for: histories.count == 0)
+    }
+    
+    func setSearchHistoryHelperItemLabels() {
+        var lastBtn: UIButton?
+        for his in RealmHelper.retrieveSearchHistories(by: avbaker) {
+            lastBtn = setSearchHelperItemLabel(lastBtn, with: his.searchingText, view: self.searchHistoryBtnsView)
+        }
+    }
+    
+    func setSearchHelperItemLabel(_ btnToBeCopied: UIButton?, with text: String, view: UIView) -> UIButton? {
+        let rightMargin: CGFloat = 12 // it is also the width te be added to button
         if let btnToBeCopied = btnToBeCopied {
-            let leftMargin: CGFloat = 22
-            let x = btnToBeCopied.frame.origin.x
+            let leftMargin: CGFloat = 0
+            let ox = btnToBeCopied.frame.origin.x
             let width = btnToBeCopied.frame.width
             let btn = UIButton(frame: btnToBeCopied.frame)
-            btn.titleLabel?.font = btnToBeCopied.titleLabel!.font
-            btn.setTitle(text, for: .normal)
-            btn.sizeToFit()
+            self.setSearchBtn(btn, with: text)
             btn.frame.size.width += rightMargin
-            btn.frame.origin.x = x + width + rightMargin
+            let x = ox + width + rightMargin
+            
+            btn.frame.origin.x = x
             guard leftMargin + btn.frame.origin.x + btn.frame.size.width + rightMargin <= screenWidth else { return nil }
-            self.setSearchBtn(btn)
-            self.searchHotView.addSubview(btn)
+            view.addSubview(btn)
             return btn
         } else {
             let btn = UIButton()
-            btn.setTitle(text, for: .normal)
-            btn.titleLabel?.font = btn.titleLabel!.font.withSize(14)
-            btn.sizeToFit()
+            self.setSearchBtn(btn, with: text)
             btn.frame.size.width += rightMargin
-            btn.frame.origin = CGPoint(x: 0, y: 32)
-            self.setSearchBtn(btn)
-            self.searchHotView.addSubview(btn)
+            btn.frame.origin = CGPoint(x: 0, y: 0)
+            view.addSubview(btn)
             return btn
         }
     }
     
-    func setSearchBtn(_ btn: UIButton) {
+    func setSearchBtn(_ btn: UIButton, with text: String) {
+        btn.setTitle(text, for: .normal)
+        btn.setTitleColor(.bkBlack, for: .normal)
+        btn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        btn.sizeToFit()
         btn.layer.masksToBounds = true
         btn.layer.cornerRadius = 4
-        btn.backgroundColor = UIColor.lightGray
+        btn.backgroundColor = UIColor.btnBgGray
+        btn.addTarget(self, action: #selector(HomeVC.searchHistoryBtnPresses(_:)), for: .touchUpInside)
+    }
+    
+    func searchHistoryBtnPresses(_ sender: UIButton) {
+        guard let text = sender.title(for: .normal) else { return }
+        searchBar.text = text
+        search(with: text)
     }
 
+    @IBAction func removeAllBtnPressed(_ sender: Any) {
+        RealmHelper.deleteAllSearchHistory()
+        resetSearchHistoryHelperItemLabels()
+    }
+    
     
     // MARK: - TableView
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -501,11 +603,15 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let avshop = searchResultShops[section]
-        guard let avbakes = searchResults[avshop] else { return 0 }
-        if avbakes.count == 1 {
-            return 1
+        guard let shopID = avshop.objectId else { return 0 }
+        guard let avbakes = searchResults[shopID] else { return 0 }
+        let count = avbakes.count
+        if count == 1 {
+            return 1 + 1
+        } else if count < 3 {
+            return 1 + count
         } else {
-            return 3
+            return 1 + 3 + 1
         }
     }
     
@@ -515,7 +621,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
         let avshop = searchResultShops[section]
         if row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "homeSearchResultTableViewCell", for: indexPath) as! HomeSearchResultTableViewCell
-            if let _ = searchResults[avshop] {
+            guard let shopID = avshop.objectId else { return cell }
+            if let _ = searchResults[shopID] {
                 guard let name = avshop.name else { return cell }
                 guard let searchBarText = searchBar.text else { return cell }
                 cell.nameLabel.attributedText = name.attributedString(key: searchBarText, keyFont: UIFont.boldSystemFont(ofSize: cell.nameLabel.font.pointSize), color: UIColor.bkRed)
@@ -543,27 +650,35 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
                     cell.avatarIV.sd_setImage(with: URL(string: url), completed: nil)
                     cell.avatarIV.contentMode = .scaleAspectFill
                     cell.avatarIV.clipsToBounds = true
+                    cell.avatarIV.makeRoundCorder(radius: cell.avatarIV.frame.width / 2)
                 }
-                
             } else {
                 printit("Error: result is nil.")
             }
+            return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "homeSearchResultBakeTableViewCell", for: indexPath) as! HomeSearchResultBakeTableViewCell
-            let tag = tableView.tag
-            let item = indexPath.item
-            let shop = searchResultShops[tag]
-            guard let avbakes = searchResults[shop] else { return cell }
-            let avbake = avbakes[item]
-            
-            if let url = avbake.image?.url {
-                cell.bakeIV.sd_setImage(with: URL(string: url), completed: nil)
+            let item = row - 1
+            guard let shopID = avshop.objectId else { return UITableViewCell() }
+            guard let avbakes = searchResults[shopID] else { return UITableViewCell() }
+            if avbakes.count > 3 && row == 4 {
+                return UITableViewCell.centerTextCell(with: "进店查看更多...", in: .buttonBlue)
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "homeSearchResultBakeTableViewCell", for: indexPath) as! HomeSearchResultBakeTableViewCell
+                let avbake = avbakes[item]
+                
+                if let url = avbake.image?.url {
+                    cell.bakeIV.sd_setImage(with: URL(string: url), completed: nil)
+                    cell.bakeIV.contentMode = .scaleAspectFill
+                    cell.bakeIV.clipsToBounds = true
+                    cell.bakeIV.makeRoundCorder()
+                }
+                guard let name = avbake.name else { return cell }
+                guard let searchBarText = searchBar.text else { return cell }
+                cell.nameLabel.attributedText = name.attributedString(key: searchBarText, keyFont: UIFont.boldSystemFont(ofSize: cell.nameLabel.font.pointSize), color: UIColor.bkRed)
+                cell.nameLabel.sizeToFit()
+                return cell
             }
-            guard let name = avbake.name else { return cell }
-            guard let searchBarText = searchBar.text else { return cell }
-            cell.nameLabel.attributedText = name.attributedString(key: searchBarText, keyFont: UIFont.boldSystemFont(ofSize: cell.nameLabel.font.pointSize), color: UIColor.bkRed)
         }
-        return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -576,18 +691,18 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     }
     
     
-    // MARK: - Collection View
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let tag = collectionView.tag
-        let shop = searchResultShops[tag]
-        let avbakes = searchResults[shop]
-        return avbakes?.count ?? 0
-    }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let row = indexPath.row
+        if row == 0 {
+            return 75
+        } else if row == 4 {
+            return 42
+        } else {
+            return 90
+        }
+    }
     
     
     
@@ -688,6 +803,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
             }
         }
     }
+    
 }
 
 

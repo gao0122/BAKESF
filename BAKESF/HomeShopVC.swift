@@ -41,7 +41,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
         navigationController?.navigationBar.tintColor = .white
 
         tableView.addSubview(refresher)
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 5))
+        self.tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 5))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,13 +49,16 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         self.loadShops()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
@@ -156,6 +159,7 @@ class HomeShopVC: UIViewController, UITableViewDelegate, UITableViewDataSource, 
             cell.bgImage.contentMode = .scaleAspectFill
             cell.bgImage.clipsToBounds = true
         }
+        
         let starsSize = CGSize(width: starHeightInHomeVC * 5, height: starHeightInHomeVC)
         cell.stars.frame.size = starsSize
         cell.starsGray.frame = cell.stars.frame

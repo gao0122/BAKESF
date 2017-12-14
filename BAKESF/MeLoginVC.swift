@@ -158,7 +158,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
             self.loginBtn.setTitle("登录/注册", for: .normal)
             return
         }
-        if text.characters.count == 11 &&
+        if text.count == 11 &&
             (   text.starts(with: "13") ||
                 text.starts(with: "17") ||
                 text.starts(with: "15") ||
@@ -210,9 +210,9 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         case .msg:
             var enabled = false
             if let phone = phoneTextField.text {
-                if phone.characters.count == 11 {
+                if phone.count == 11 {
                     if let msg = msgOrPwdTextField.text {
-                        enabled = msg.characters.count == 4
+                        enabled = msg.count == 4
                     }
                 }
             }
@@ -220,9 +220,9 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         case .pwd:
             var enabled = false
             if let phone = phoneTextField.text {
-                if phone.characters.count == 11 {
+                if phone.count == 11 {
                     if let pwd = msgOrPwdTextField.text {
-                        enabled = pwd.characters.count > 5
+                        enabled = pwd.count > 5
                     }
                 }
             }
@@ -397,10 +397,10 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     
     @IBAction func loginBtnPressed(_ sender: Any) {
         guard let phoneText = self.phoneTextField.text else { return }
-        if phoneText.characters.count > 0 {
+        if phoneText.count > 0 {
             if self.phoneNum == phoneText || self.loginMethod == .pwd {
                 if let code = msgOrPwdTextField.text {
-                    if code.characters.count > 0 {
+                    if code.count > 0 {
                         if self.loginState != .loggingIn {
                             self.loginBtn.isEnabled = false
                             self.loginState = .loggingIn

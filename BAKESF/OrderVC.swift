@@ -20,7 +20,7 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var helperLabel: UILabel!
     @IBOutlet weak var helperBtn: UIButton!
     @IBOutlet weak var indicatorView: UIActivityIndicatorView!
-    @IBOutlet weak var tableFooterView: UIView!
+    @IBOutlet weak var xView: UIView!
     
     lazy var refresher: UIRefreshControl = {
         let refresher = UIRefreshControl()
@@ -43,11 +43,13 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        xView.fixiPhoneX(nav: navigationController?.navigationBar, tab: tabBarController?.tabBar)
+        
         navigationController?.navigationBar.barTintColor = .bkRed
         navigationController?.navigationBar.barStyle = .black
         navigationController?.navigationBar.tintColor = .white
 
-        view.bringSubview(toFront: helperView)
+        xView.bringSubview(toFront: helperView)
         
         tableView.addSubview(refresher)
         tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))

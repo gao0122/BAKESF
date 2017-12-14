@@ -37,6 +37,8 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         classifyTableView.rowHeight = UITableViewAutomaticDimension
         classifyTableView.estimatedRowHeight = 58
 
+        bakeTableView.tableFooterView = UIView.tableFooterView(height: bagBarHeight)
+
         loadAVBakes()
 
     }
@@ -180,7 +182,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             self.bakeTableView.reloadData()
         } else {
             self.shopVC.stopIndicatorViewAni()
-            self.shopVC.showLoadFailedView()
+            self.shopVC.showLoadFailedView(with: "烘焙师暂时还没有上架商品")
         }
     }
     
@@ -424,7 +426,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             if let bakeAttr = bake.attributes {
                 if bakeAttr.count == 0 {
                     guard let bakeDetail = bake.defaultBake else { return UITableViewCell() }
-                    let bakePreOrder = RealmHelper.retrieveOneBakePreOrder(by: bake.objectId!)
+                    let bakePreOrder = RealmHelper.retrieveOneBakePreOrder(by: bakeDetail.objectId!)
                     let amountPreOrder = bakePreOrder?.amount ?? 0
                     if amountPreOrder == 0 {
                         cell.amountLabel.isHidden = true
@@ -483,19 +485,21 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         switch tableView.tag {
         case 1:
             if section == avtag.count - 1 {
-                let tableFooterView = UIView()
-                tableFooterView.frame.size.width = bakeTableView.frame.width
-                tableFooterView.frame.size.height = bagBarHeight
-                return tableFooterView
+                // footer view of the last section
             }
         default:
             break
         }
-        return nil
+        return {
+            let view = UIView()
+            view.backgroundColor = .white
+            return view
+        }()
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return tableView.tag == 1 && section == avtag.count - 1 ? bagBarHeight : 0
+        return 0
+        //return tableView.tag == 1 && section == avtag.count - 1 ? bagBarHeight : 0
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

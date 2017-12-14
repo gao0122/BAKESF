@@ -37,6 +37,12 @@ let screenWidth: CGFloat = {
     return UIScreen.main.bounds.width
 }()
 
+let iPhoneX: Bool = {
+    return UIScreen.main.nativeBounds.height == 2436
+}()
+let xTopMargin: CGFloat = 42
+let xBottomMargin: CGFloat = 34
+
 let starHeightInHomeVC: CGFloat = 18
 
 let weekdays: [String] = [

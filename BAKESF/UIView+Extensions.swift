@@ -57,5 +57,31 @@ extension UIView {
         self.layer.cornerRadius = radius
     }
     
+    func fixiPhoneX(nav: UINavigationBar? = nil, tab: UITabBar? = nil) {
+        guard iPhoneX else { return }
+        if let navBar = nav {
+            let originY = self.frame.origin.y
+            self.frame.origin.y = navBar.frame.height + navBar.frame.origin.y
+            self.frame.size.height += originY - self.frame.origin.y
+        } else {
+            self.frame.size.height -= (xTopMargin - self.frame.origin.y)
+            self.frame.origin.y = xTopMargin
+        }
+        if let tabBar = tab {
+            self.frame.size.height -= (self.frame.origin.y + self.frame.height - tabBar.frame.origin.y)
+        } else {
+            
+        }
+        
+    }
+    
+    
+    static func tableFooterView(height: CGFloat) -> UIView {
+        let footerHeight = iPhoneX ? (height + xBottomMargin) : height
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: footerHeight))
+        footerView.backgroundColor = .white
+        return footerView
+    }
+    
 }
 

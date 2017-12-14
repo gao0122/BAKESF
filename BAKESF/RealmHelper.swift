@@ -320,7 +320,7 @@ class RealmHelper {
             let realm = try! Realm()
             try! realm.write {
                 setLocation(location, by: regeocode, poi: poi, for: tag)
-            }
+            } 
             return location
         } else {
             let location = LocationRealm()
@@ -419,12 +419,18 @@ class RealmHelper {
     // MARK: - Searching History
     static func addSearchHistory(_ searchHistoryRealm: SearchHistoryRealm) {
         let realm = try! Realm()
-        try! realm.write {
-            realm.add(searchHistoryRealm)
+        if let historyRealm = realm.objects(SearchHistoryRealm.self).filter("searchingUserID = '\(searchHistoryRealm.searchingUserID)' && searchingText = '\(searchHistoryRealm.searchingText)'").first {
+            try! realm.write {
+                historyRealm.searchingDate = Date()
+            }
+        } else {
+            try! realm.write {
+                realm.add(searchHistoryRealm)
+            }
         }
     }
 
-    static func deleteAllHistory() {
+    static func deleteAllSearchHistory() {
         let realm = try! Realm()
         try! realm.write {
             realm.delete(realm.objects(SearchHistoryRealm.self))
@@ -434,9 +440,9 @@ class RealmHelper {
     static func retrieveSearchHistories(by baker: AVBaker? = nil) -> Results<SearchHistoryRealm> {
         let realm = try! Realm()
         if let baker = baker {
-            return realm.objects(SearchHistoryRealm.self).filter("searchingUserID = \(baker.objectId!)")
+            return realm.objects(SearchHistoryRealm.self).filter("searchingUserID = '\(baker.objectId!)'").sorted(byKeyPath: "searchingDate", ascending: false)
         } else {
-            return realm.objects(SearchHistoryRealm.self)
+            return realm.objects(SearchHistoryRealm.self).sorted(byKeyPath: "searchingDate", ascending: false)
         }
     }
     

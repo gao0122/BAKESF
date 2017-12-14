@@ -273,6 +273,13 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBAction func checkOutBtnPressed(_ sender: Any) {
         alertOkayOrNot(okTitle: "支付", notTitle: "取消", msg: "确认支付吗？", okAct: {
             _ in
+            
+            // test start
+            self.initializeOrder(paymentMethod: "ApplePay")
+            self.saveOrderAndBakes()
+            return
+            // test end
+            
             if self.makePayment() {
                 // can make payment
             } else {

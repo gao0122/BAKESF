@@ -18,6 +18,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         case collapsed
     }
 
+    @IBOutlet weak var xView: UIView!
     @IBOutlet weak var introBtn: UIButton!
     @IBOutlet weak var shopNameLabel: UILabel!
     @IBOutlet weak var back: UIButton!
@@ -47,6 +48,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var indicatorSuperView: UIView!
     @IBOutlet weak var indicatorView: UIActivityIndicatorView!
     @IBOutlet weak var loadFailedView: UIView!
+    @IBOutlet weak var helperLabel: UILabel!
     @IBOutlet weak var tryOneMoreTimeBtn: UIButton!
     @IBOutlet weak var takeItYourselfLabel: UILabel!
     @IBOutlet weak var deliveryByShopLabel: UILabel!
@@ -71,6 +73,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var bakeSpecScrollView0: UIScrollView!
     @IBOutlet weak var bakeSpecScrollView1: UIScrollView!
     @IBOutlet weak var bakeSpecScrollView2: UIScrollView!
+    @IBOutlet weak var bakeSpecBgView: UIView!
     
     var shopBuyVC: ShopBuyVC!
     var shopPreVC: ShopPreVC!
@@ -82,10 +85,14 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     var avbaker: AVBaker?
     var userRealm: UserRealm!
     
-    let topViewHeight: CGFloat = 64
-    let menuAniDuration: TimeInterval = 0.48
-    let nameLabelTransformY: CGFloat = 173
+    let topViewHeight: CGFloat = {
+        return iPhoneX ? (64 + 24) : 64
+    }()
+    let nameLabelTransformY: CGFloat = {
+        return iPhoneX ? (173 - 24) : 173
+    }()
     let bagBarHeight: CGFloat = 50
+    let menuAniDuration: TimeInterval = 0.48
     var startTranslationY: CGFloat = 0
     var startMenuState: AniState = .collapsed
     var addedPanRecognizer = false
@@ -120,14 +127,17 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     var currentSpecBtn2: UIButton?
     var currentSpecBake: AVBake?
     
+    var searchingBake: AVBake?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        xView.fixiPhoneX()
         preInit()
         checkAVBaker()
         setPageMenu()
         shopInit()
         setShopBagState()
+        checkSearchingBake()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -339,15 +349,19 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
 
     func shopInit() {
-        bgImage.sd_setImage(with: URL(string: avshop.bgImage!.url!))
-        bgImage.contentMode = .scaleAspectFill
-        bgImage.clipsToBounds = true
+        if let url = avshop.bgImage?.url {
+            bgImage.sd_setImage(with: URL(string: url))
+            bgImage.contentMode = .scaleAspectFill
+            bgImage.clipsToBounds = true
+        }
         
-        hpImage.sd_setImage(with: URL(string: avshop.headphoto!.url!))
-        hpImage.contentMode = .scaleAspectFill
-        hpImage.clipsToBounds = true
-        hpImage.layer.cornerRadius = hpImage.frame.size.width / 2
-        hpImage.layer.masksToBounds = true
+        if let url = avshop.headphoto?.url {
+            hpImage.sd_setImage(with: URL(string: url))
+            hpImage.contentMode = .scaleAspectFill
+            hpImage.clipsToBounds = true
+            hpImage.layer.cornerRadius = hpImage.frame.size.width / 2
+            hpImage.layer.masksToBounds = true
+        }
         
         cardBgImage.layer.cornerRadius = 10
         cardBgImage.layer.masksToBounds = true
@@ -395,13 +409,14 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         bagBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.handleBagBarTap(_:))))
         bagFocusBgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.handleBagBarTap(_:))))
         bakeSpecBgFocusView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.bakeSpecViewCloseBtnPressed(_:))))
-        bakeSpecView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.bakeSpecViewCloseBtnPressed(_:))))
+        bakeSpecBgView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShopVC.bakeSpecViewCloseBtnPressed(_:))))
+        
     }
     
     // set state of outlets in shop bag view
     func setShopBagState() {
-        let lowest = avshop.lowestFee as! Double
-        let deliveryFee = avshop.deliveryFee as! Double
+        let lowest = avshop.lowestFee as? Double ?? 0
+        let deliveryFee = avshop.deliveryFee as? Double ?? 0
         let totalCost = retrieveBakesCost()
         let totalAmount = retrieveBakesCount()
         let shouldReset = totalCost == 0
@@ -508,6 +523,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+    func checkSearchingBake() {
+        
+    }
+    
 
     // MARK: - Checkout
     @IBAction func checkoutBtnPressed(_ sender: Any) {
@@ -536,7 +555,8 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         view.isUserInteractionEnabled = false
     }
     
-    func showLoadFailedView() {
+    func showLoadFailedView(with text: String = "加载失败") {
+        helperLabel.text = text
         loadFailedView.isHidden = false
     }
     

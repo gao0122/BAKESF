@@ -91,7 +91,7 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
                 self.refresher.endRefreshing()
                 self.homeVC?.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重新尝试。")
             }
-        }, category: "分分")
+        }, category: "甜点")
         
         self.loadBakes({
             bakes, error in
@@ -104,7 +104,7 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
                 self.refresher.endRefreshing()
                 self.homeVC?.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重新尝试。")
             }
-        }, category: "类类")
+        }, category: "蛋糕")
         
         self.loadBakes({
             bakes, error in
@@ -117,7 +117,20 @@ class HomeBakeVC: UIViewController, UICollectionViewDelegate, UICollectionViewDa
                 self.refresher.endRefreshing()
                 self.homeVC?.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重新尝试。")
             }
-        }, category: "")
+        }, category: "面包")
+        
+        self.loadBakes({
+            bakes, error in
+            if let bakes = bakes {
+                self.refresher.endRefreshing()
+                self.tableView.reloadData()
+                self.bakeDict[3] = bakes
+            } else {
+                self.categories = nil
+                self.refresher.endRefreshing()
+                self.homeVC?.showLocateFailedViewAndStopIndicator(with: "商品获取失败，请重新尝试。")
+            }
+        }, category: "其他")
     }
     
     func loadBakes(_ completion: @escaping ([AVBake]?, Error?) -> (), category: String) {
