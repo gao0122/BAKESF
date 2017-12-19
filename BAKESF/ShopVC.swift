@@ -128,6 +128,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     var currentSpecBake: AVBake?
     
     var searchingBake: AVBake?
+    var selectedMultiSpecCell: UITableViewCell?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -157,12 +158,15 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         checkAVBaker()
         if shouldShowShopCheckingRN && avbaker != nil {
             performSegue(withIdentifier: "showShopCheckingSegue", sender: self)
+        } else {
+            checkSearchingBake()
         }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+        self.searchingBake = nil
     }
 
     
@@ -524,7 +528,11 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func checkSearchingBake() {
-        
+        guard let bake = searchingBake else { return }
+        guard let stock = bake.stock as? Int else { return }
+        if stock == 1 {
+            pagingMenuController.move(toPage: 1, animated: true)
+        }
     }
     
 
@@ -641,7 +649,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func animateMenu(_ sender: Any) {
-        self.animateMenu(self.menuAniState)
+        self.animateMenu(state: self.menuAniState)
     }
     
     // MARK: - interactive animations
@@ -1107,7 +1115,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         case .expanded:
             if velocity.y >= 0 && fraction >= 0 {
                 // expanding but paning down
-                let progress = menuProgressWhenInterrupted.first!
+                let progress = menuProgressWhenInterrupted.first ?? 0
                 if progress == 0 {
                     // not interrupted
                     startTranslationY = locationY   // reset the start translation position
@@ -1125,7 +1133,7 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
             }
         case .collapsed:
             if velocity.y <= 0 && fraction <= 0 {
-                let progress = menuProgressWhenInterrupted.first!
+                let progress = menuProgressWhenInterrupted.first ?? 0
                 if progress == 0 {
                     startTranslationY = locationY
                     fraction = progress
@@ -1182,8 +1190,10 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         })
     }
     
-    func showBakeSpecView(bake: AVBake, bakeDetails: [AVBakeDetail]) {
+    func showBakeSpecView(_ cell: UITableViewCell, bake: AVBake, bakeDetails: [AVBakeDetail]) {
         guard let attributes = bake.attributes else { return }
+        selectedMultiSpecCell = cell
+        
         bakeSpecScrollView0.contentSize.width = bakeSpecMainView.frame.width - 24
         bakeSpecScrollView1.contentSize.width = bakeSpecMainView.frame.width - 24
         bakeSpecScrollView2.contentSize.width = bakeSpecMainView.frame.width - 24
@@ -1443,13 +1453,13 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         guard let bake = bakeDetail.bake else { return }
 
         if pagingMenuController.currentPage == 0 {
-            if shopBuyVC.minusOneBake(bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
+            if shopBuyVC.minusOneBake(selectedMultiSpecCell, bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
                 bakeSpecMinusOneBtn.isHidden = true
                 bakeSpecAmountLabel.isHidden = true
             }
             shopBuyVC.classifyTableView.reloadData()
         } else {
-            if shopPreVC.minusOneBake(bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
+            if shopPreVC.minusOneBake(selectedMultiSpecCell, bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
                 bakeSpecMinusOneBtn.isHidden = true
                 bakeSpecAmountLabel.isHidden = true
             }
@@ -1470,14 +1480,14 @@ class ShopVC: UIViewController, UIGestureRecognizerDelegate {
         guard let bake = bakeDetail.bake else { return }
 
         if pagingMenuController.currentPage == 0 {
-            if shopBuyVC.oneMoreBake(bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
+            if shopBuyVC.oneMoreBake(selectedMultiSpecCell, bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
                 bakeSpecMinusOneBtn.isHidden = false
                 bakeSpecAmountLabel.isHidden = false
                 bakeSpecAmountLabel.text = "1"
             }
             shopBuyVC.classifyTableView.reloadData()
         } else {
-            if shopPreVC.oneMoreBake(bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
+            if shopPreVC.oneMoreBake(selectedMultiSpecCell, bake: bake, bakeDetail: bakeDetail, amountLabel: bakeSpecAmountLabel) {
                 bakeSpecMinusOneBtn.isHidden = false
                 bakeSpecAmountLabel.isHidden = false
                 bakeSpecAmountLabel.text = "1"

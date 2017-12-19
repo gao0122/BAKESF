@@ -46,13 +46,12 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         xView.fixiPhoneX(nav: navigationController?.navigationBar, tab: tabBarController?.tabBar)
         
         navigationController?.navigationBar.barTintColor = .bkRed
-        navigationController?.navigationBar.barStyle = .black
         navigationController?.navigationBar.tintColor = .white
 
         xView.bringSubview(toFront: helperView)
         
         tableView.addSubview(refresher)
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 0))
         
         helperBtn.setBorder(with: .bkRed)
         

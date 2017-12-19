@@ -11,7 +11,7 @@ import UIKit
 // MARK :- TableViewCell
 public extension UITableViewCell {
 
-    static func centerTextCell(with text: String, in color: UIColor) -> UITableViewCell {
+    static func centerTextCell(with text: String, in color: UIColor, fontSize: CGFloat = 14) -> UITableViewCell {
         let cell = UITableViewCell()
         let label: UILabel = {
             let label = UILabel()
@@ -20,6 +20,7 @@ public extension UITableViewCell {
             label.text = text
             label.textColor = color
             label.textAlignment = .center
+            label.font = label.font.withSize(fontSize)
             return label
         }()
         cell.addSubview(label)

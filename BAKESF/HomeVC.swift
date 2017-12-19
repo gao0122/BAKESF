@@ -14,6 +14,7 @@ import AVOSCloud
 
 class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var xView: UIView!
     @IBOutlet weak var masterView: UIView!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var locationBtn: UIButton!
@@ -34,7 +35,8 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     @IBOutlet weak var searchHistoryBtnsView: UIView!
     @IBOutlet weak var searchHotBtnsView: UIView!
     @IBOutlet weak var rapperView: UIView!
-    @IBOutlet weak var xView: UIView!
+    @IBOutlet weak var searchHotIndicatorView: UIActivityIndicatorView!
+    
 
     private var homeShopVC: HomeShopVC!
     private var homeBakeVC: HomeBakeVC!
@@ -43,7 +45,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     private var bakeTableView: UITableView!
     private var followTableView: UITableView!
     
-    var needToUpdateHotSearchWords: Bool = false
+    var needToUpdateHotSearchWords: Bool = true
     
     let bakeLocationRadius: CGFloat = 3000
     
@@ -91,6 +93,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
             label.textAlignment = .center
             return label
         }()
+        
 
     }
     
@@ -171,20 +174,23 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
                 vc.showSegueID = id + "NaN"
             }
         case "homeToShopFromSearchingShop":
-            guard let sellerVC = segue.destination as? ShopVC else { return }
+            guard let shopVC = segue.destination as? ShopVC else { return }
             guard let indexPath = searchResultsTableView.indexPathForSelectedRow else { return }
             let section = indexPath.section
             let avshop = searchResultShops[section]
             
-            sellerVC.avshop = avshop
+            shopVC.avshop = avshop
         case "homeToShopFromSearchingBake":
-            guard let sellerVC = segue.destination as? ShopVC else { return }
+            guard let shopVC = segue.destination as? ShopVC else { return }
             guard let indexPath = searchResultsTableView.indexPathForSelectedRow else { return }
             let section = indexPath.section
+            let row = indexPath.row
             let avshop = searchResultShops[section]
-            //let avbake =
-            sellerVC.avshop = avshop
-            
+            guard let avshopID = avshop.objectId else { return }
+            guard let avbakes = searchResults[avshopID] else { return }
+            shopVC.searchingBake = avbakes[row - 1]
+            shopVC.avshop = avshop
+            printit(avbakes)
         default:
             break
         }
@@ -500,7 +506,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     func setSearchResultsHotViewHidden(for shouldHidden: Bool) {
         searchHotView.isHidden = shouldHidden
         if !shouldHidden {
-            setSearchHotHelperItemLabels()
+            resetSearchHotHelperItemLabels()
         }
     }
     
@@ -513,6 +519,9 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     
 
     func resetSearchHotHelperItemLabels() {
+        guard needToUpdateHotSearchWords else { return }
+        
+        self.searchHotIndicatorView.startAnimating()
         let query = AVQuery(className: "HotSearchingWord")
         query.addAscendingOrder("priority")
         query.findObjectsInBackground({
@@ -527,12 +536,9 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
                     }
                 }
                 self.needToUpdateHotSearchWords = false
+                self.searchHotIndicatorView.stopAnimating()
             }
         })
-    }
-
-    func setSearchHotHelperItemLabels() {
-        
     }
 
     func resetSearchHistoryHelperItemLabels() {
@@ -661,7 +667,7 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
             guard let shopID = avshop.objectId else { return UITableViewCell() }
             guard let avbakes = searchResults[shopID] else { return UITableViewCell() }
             if avbakes.count > 3 && row == 4 {
-                return UITableViewCell.centerTextCell(with: "进店查看更多...", in: .buttonBlue)
+                return UITableViewCell.centerTextCell(with: "进店查看更多 >>", in: .bkBlack, fontSize: 12)
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "homeSearchResultBakeTableViewCell", for: indexPath) as! HomeSearchResultBakeTableViewCell
                 let avbake = avbakes[item]
@@ -683,11 +689,12 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        if indexPath.row == 4 {
+            self.performSegue(withIdentifier: "homeToShopFromSearchingShop", sender: tableView)
+        }
+        
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        tableView.beginUpdates()
-        
-        tableView.endUpdates()
+
     }
     
     
@@ -696,12 +703,24 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let row = indexPath.row
         if row == 0 {
-            return 75
+            return 66
         } else if row == 4 {
-            return 42
+            return 40
         } else {
             return 90
         }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if tableView.numberOfSections == section + 1 { return nil }
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 0))
+        view.backgroundColor = UIColor(hex: 0xefefef)
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if tableView.numberOfSections == section + 1 { return 0 }
+        return 10
     }
     
     

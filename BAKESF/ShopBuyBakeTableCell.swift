@@ -21,6 +21,7 @@ class ShopBuyBakeTableCell: UITableViewCell {
     @IBOutlet weak var specBtn: UIButton!
     
     var bake: AVBake!
+    var bakesCount: Int = 0
 
 }
 

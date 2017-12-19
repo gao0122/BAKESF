@@ -42,7 +42,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         loadAVBakes()
 
     }
-    
+    // TOFIX --
     override func viewDidAppear(_ animated: Bool) {
     }
     
@@ -85,6 +85,22 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     class func instantiateFromStoryboard() -> ShopPreVC {
         return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! ShopPreVC
     }
+    
+    func checkSearchingBake() {
+        guard let bake = shopVC.searchingBake else { return }
+        guard let tag = bake.tag else { return }
+        guard let bakes = avbakesTag[tag] else { return }
+        guard let row: Int = bakes.index(of: bake) else { return }
+        guard let section: Int = avtag.index(of: tag) else { return }
+        let indexPath = IndexPath(row: row, section: section)
+        if let cell = bakeTableView.cellForRow(at: indexPath) as? ShopPreBakeTableCell {
+            cell.backgroundColor = UIColor.yellow.withAlphaComponent(0.0448)
+            guard shopVC.pagingMenuController.currentPage == 1 else { return }
+            bakeTableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+            shopVC.animateMenu(self)
+        }
+    }
+    
     
     func assignBakeTag() {
         // assign bakes in their tags and take "sold out" as a new array
@@ -180,6 +196,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             self.shopVC.stopIndicatorViewAni()
             self.classifyTableView.reloadData()
             self.bakeTableView.reloadData()
+            self.checkSearchingBake()
         } else {
             self.shopVC.stopIndicatorViewAni()
             self.shopVC.showLoadFailedView(with: "烘焙师暂时还没有上架商品")
@@ -269,7 +286,11 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         }
     }
     
-    func oneMoreBake(bake: AVBake, bakeDetail: AVBakeDetail, amountLabel: UILabel) -> Bool {
+    func oneMoreBake(_ cell: UITableViewCell? = nil, bake: AVBake, bakeDetail: AVBakeDetail, amountLabel: UILabel) -> Bool {
+        if let cell = cell as? ShopPreBakeTableCell {
+            cell.bakesCount += 1
+            resetSpecBtnText(cell)
+        }
         if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: bakeDetail.objectId!) {
             RealmHelper.addOneMoreBake(bakeRealm)
             amountLabel.text = "\(bakeRealm.amount)"
@@ -292,6 +313,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         classifyTableView.reloadData()
     }
     
+    // one spec
     func minusOneBake(_ cell: ShopPreBakeTableCell) {
         guard let bake = cell.bake else { return }
         guard let bakeDetail = bake.defaultBake else { return }
@@ -300,8 +322,13 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         }
     }
     
-    func minusOneBake(bake: AVBake, bakeDetail: AVBakeDetail, amountLabel: UILabel) -> Bool {
+    // one or more specs
+    func minusOneBake(_ cell: UITableViewCell? = nil, bake: AVBake, bakeDetail: AVBakeDetail, amountLabel: UILabel) -> Bool {
         if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: bakeDetail.objectId!) {
+            if let cell = cell as? ShopPreBakeTableCell {
+                cell.bakesCount -= 1
+                resetSpecBtnText(cell)
+            }
             if RealmHelper.minueOneBake(bakeRealm) {
                 avbakesPre[bakeDetail.objectId!] = nil
                 return true
@@ -326,7 +353,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         guard let bake = cell.bake else { return }
         guard let bakeDetails = avbakesDetailDict[bake] else { return }
         if shopVC.menuAniState == .collapsed { shopVC.animateMenu(state: shopVC.menuAniState) }
-        shopVC.showBakeSpecView(bake: bake, bakeDetails: bakeDetails)
+        shopVC.showBakeSpecView(cell, bake: bake, bakeDetails: bakeDetails)
     }
     
 
@@ -451,13 +478,8 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                     for bakeDetail in avbakesDetailDict[bake]! {
                         amountPreOrder += (RealmHelper.retrieveOneBakePreOrder(by: bakeDetail.objectId!)?.amount ?? 0)
                     }
-                    if amountPreOrder == 0 {
-                        cell.specBtn.setTitle("选规格", for: .normal)
-                    } else {
-                        var amountText = "\(amountPreOrder)"
-                        if amountPreOrder > 99 { amountText = "99+" }
-                        cell.specBtn.setTitle("已选 \(amountText)", for: .normal)
-                    }
+                    cell.bakesCount = amountPreOrder
+                    resetSpecBtnText(cell)
                     cell.amountLabel.isHidden = true
                     cell.minusOneBtn.isHidden = true
                     cell.oneMoreBtn.isHidden = true
@@ -470,6 +492,17 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             return cell
         default:
             return UITableViewCell()
+        }
+    }
+    
+    func resetSpecBtnText(_ cell: ShopPreBakeTableCell) {
+        let amount = cell.bakesCount
+        if amount == 0 {
+            cell.specBtn.setTitle("选规格", for: .normal)
+        } else {
+            var amountText = "\(amount)"
+            if amount > 99 { amountText = "99+" }
+            cell.specBtn.setTitle("已选 \(amountText)", for: .normal)
         }
     }
     

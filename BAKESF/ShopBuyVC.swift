@@ -89,6 +89,21 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! ShopBuyVC
     }
     
+    func checkSearchingBake() {
+        guard let bake = shopVC.searchingBake else { return }
+        guard let tag = bake.tag else { return }
+        guard let bakes = avbakesTag[tag] else { return }
+        guard let row: Int = bakes.index(of: bake) else { return }
+        guard let section: Int = avtag.index(of: tag) else { return }
+        let indexPath = IndexPath(row: row, section: section)
+        if let cell = bakeTableView.cellForRow(at: indexPath) as? ShopBuyBakeTableCell {
+            cell.backgroundColor = UIColor.yellow.withAlphaComponent(0.0448)
+            guard shopVC.pagingMenuController.currentPage == 0 else { return }
+            bakeTableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+            shopVC.animateMenu(self)
+        }
+    }
+    
     func assignBakeTag() {
         // assign bakes in their tags and take "sold out" as a new array
         var bakeDetailsCount = 0
@@ -139,7 +154,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
                                 self.assignAVBakeDetail(tag: tag, bake: bake, bakeDetails: bakeDetails)
                                 bakeDetailsCount -= 1
                                 if bakeDetailsCount == 0 {
-                                    self.assignTags()
+                                    self.assignSoldOutTags()
                                 }
                                 self.shopVC.setShopBagState()
                             } else {
@@ -151,12 +166,12 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             }
         }
         if bakeDetailsCount == 0 {
-            assignTags()
+            assignSoldOutTags()
         }
         self.shopVC.setShopBagState()
     }
     
-    func assignTags() {
+    func assignSoldOutTags() {
         // append sold out bakes to the end of all bakes
         for (n, tag) in avtag.enumerated() {
             let soldOutBakes = avbakesSoldOut[tag] ?? []
@@ -170,6 +185,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             } else {
                 avbakesTag[tag] = soldOutBakes
             }
+            // filter bakes which are sold out or not valid
             if let bakes = avbakesTag[tag] {
                 if bakes.count == 0 {
                     avtag[n] = ""
@@ -183,6 +199,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             self.shopVC.stopIndicatorViewAni()
             self.classifyTableView.reloadData()
             self.bakeTableView.reloadData()
+            self.checkSearchingBake()
         } else {
             self.shopVC.stopIndicatorViewAni()
             self.shopVC.showLoadFailedView(with: "烘焙师暂时还没有上架商品")
@@ -272,7 +289,11 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         }
     }
     
-    func oneMoreBake(bake: AVBake, bakeDetail: AVBakeDetail, amountLabel: UILabel) -> Bool {
+    func oneMoreBake(_ cell: UITableViewCell? = nil, bake: AVBake, bakeDetail: AVBakeDetail, amountLabel: UILabel) -> Bool {
+        if let cell = cell as? ShopBuyBakeTableCell {
+            cell.bakesCount += 1
+            resetSpecBtnText(cell)
+        }
         if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!) {
             RealmHelper.addOneMoreBake(bakeRealm)
             amountLabel.text = "\(bakeRealm.amount)"
@@ -303,8 +324,12 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         }
     }
     
-    func minusOneBake(bake: AVBake, bakeDetail: AVBakeDetail, amountLabel: UILabel) -> Bool {
+    func minusOneBake(_ cell: UITableViewCell? = nil, bake: AVBake, bakeDetail: AVBakeDetail, amountLabel: UILabel) -> Bool {
         if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!) {
+            if let cell = cell as? ShopBuyBakeTableCell {
+                cell.bakesCount -= 1
+                resetSpecBtnText(cell)
+            }
             if RealmHelper.minueOneBake(bakeRealm) {
                 avbakesIn[bakeDetail.objectId!] = nil
                 return true
@@ -329,7 +354,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         guard let bake = cell.bake else { return }
         guard let bakeDetails = avbakesDetailDict[bake] else { return }
         if shopVC.menuAniState == .collapsed { shopVC.animateMenu(state: shopVC.menuAniState) }
-        shopVC.showBakeSpecView(bake: bake, bakeDetails: bakeDetails)
+        shopVC.showBakeSpecView(cell, bake: bake, bakeDetails: bakeDetails)
     }
     
     
@@ -456,13 +481,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
                     for bakeDetail in avbakesDetailDict[bake]! {
                         amountInBag += (RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!)?.amount ?? 0)
                     }
-                    if amountInBag == 0 {
-                        cell.specBtn.setTitle("选规格", for: .normal)
-                    } else {
-                        var amountText = "\(amountInBag)"
-                        if amountInBag > 99 { amountText = "99+" }
-                        cell.specBtn.setTitle("已选 \(amountText)", for: .normal)
-                    }
+                    cell.bakesCount = amountInBag
+                    resetSpecBtnText(cell)
                     cell.amountLabel.isHidden = true
                     cell.minusOneBtn.isHidden = true
                     cell.oneMoreBtn.isHidden = true
@@ -479,6 +499,17 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         }
     }
     
+    func resetSpecBtnText(_ cell: ShopBuyBakeTableCell) {
+        let amount = cell.bakesCount
+        if amount == 0 {
+            cell.specBtn.setTitle("选规格", for: .normal)
+        } else {
+            var amountText = "\(amount)"
+            if amount > 99 { amountText = "99+" }
+            cell.specBtn.setTitle("已选 \(amountText)", for: .normal)
+        }
+    }
+
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return tableView.tag == 1 ? avtag[section] : nil
     }
