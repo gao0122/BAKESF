@@ -20,6 +20,8 @@ class UserRealm: Object {
     dynamic var headphoto: Data?
     dynamic var headphotoURL: String?
     
+    dynamic var wxOpenID: String?
+    
     let followers = List<UserRealm>()
     let following = List<UserRealm>()
  

@@ -105,19 +105,23 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AVOSCloud/AVOSCloud.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/AVOSCloudIM/AVOSCloudIM.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/AVOSCloudLiveQuery/AVOSCloudLiveQuery.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PagingMenuController/PagingMenuController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SwiftyRSA/SwiftyRSA.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/AVOSCloud/AVOSCloud.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/AVOSCloudIM/AVOSCloudIM.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/AVOSCloudLiveQuery/AVOSCloudLiveQuery.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PagingMenuController/PagingMenuController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/Realm/Realm.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/SwiftyRSA/SwiftyRSA.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

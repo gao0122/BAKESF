@@ -50,7 +50,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
                 if let gender = address.gender {
                     if gender.characters.count > 0 {
                         genderBtn.setTitle(gender, for: .normal)
-                        if gender == "帅哥" || gender == "靓女" {
+                        if gender == "先生" || gender == "女士" {
                             genderBtn.setTitleColor(.bkBlack, for: .normal)
                         }
                     }
@@ -64,7 +64,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
             } else {
                 self.title = "新增地址"
                 nameTextField.text = ""
-                genderBtn.setTitle("帅哥/靓女", for: .normal)
+                genderBtn.setTitle("先生/女士", for: .normal)
                 phoneTextField.text = ""
                 addressSelectionBtn.setTitle("选择收货地址", for: .normal)
                 addressSelectionBtn.setTitleColor(UIColor(hex: 0xcbcbcf), for: .normal)
@@ -107,14 +107,14 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
     }
 
     @IBAction func genderBtnPressed(_ sender: Any) {
-        if genderBtn.title(for: .normal) == "帅哥" {
-            genderBtn.setTitle("靓女", for: .normal)
+        if genderBtn.title(for: .normal) == "先生" {
+            genderBtn.setTitle("女士", for: .normal)
             genderBtn.setTitleColor(.bkBlack, for: .normal)
-        } else if genderBtn.title(for: .normal) == "靓女" {
+        } else if genderBtn.title(for: .normal) == "女士" {
             genderBtn.setTitle("不告诉你", for: .normal)
             genderBtn.setTitleColor(.textGray, for: .normal)
-        } else if genderBtn.title(for: .normal) == "帅哥/靓女" || genderBtn.title(for: .normal) == "不告诉你" {
-            genderBtn.setTitle("帅哥", for: .normal)
+        } else if genderBtn.title(for: .normal) == "先生/女士" || genderBtn.title(for: .normal) == "不告诉你" {
+            genderBtn.setTitle("先生", for: .normal)
             genderBtn.setTitleColor(.bkBlack, for: .normal)
         }
     }
@@ -148,7 +148,7 @@ class DeliveryAddressEditingVC: UIViewController, UITextFieldDelegate {
         address.name = name
         address.phone = phone
         var gender = genderBtn.title(for: .normal)
-        if gender == "帅哥/靓女" {
+        if gender == "先生/女士" {
             gender = "不告诉你"
         }
         address.gender = gender

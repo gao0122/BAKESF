@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.in-app-payments</key>
 	<array>
-		<string>merchant.com.yuchao.bakesf</string>
+		<string>merchant.com.cydlz.bakesf</string>
 	</array>
 	<key>com.apple.developer.pass-type-identifiers</key>
 	<array>
@@ -14,7 +14,7 @@
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.bakesf</string>
+		<string>group.bakesfdomi</string>
 	</array>
 </dict>
 </plist>

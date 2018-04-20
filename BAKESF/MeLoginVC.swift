@@ -9,10 +9,11 @@
 import UIKit
 import RealmSwift
 import AVOSCloud
+import Alamofire
 
-let TEST = true
+let TEST = false
 
-class MeLoginVC: UIViewController, UITextFieldDelegate {
+class MeLoginVC: UIViewController, UITextFieldDelegate, WXApiDelegate {
 
     enum LoginMethod {
         case pwd, msg
@@ -31,10 +32,13 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var loginByWB: UIButton!
     @IBOutlet weak var loginByMsgOrPwd: UIButton!
     @IBOutlet weak var loginInputView: UIView!
+    @IBOutlet weak var logoIV: UIImageView!
+
     
     var avbaker: AVBaker!
     var userRealm: UserRealm!
-    
+    var meVC: MeVC!
+
     var users: Results<UserRealm>!
     let totalSeconds = 42 + 3
     var seconds = 0
@@ -44,14 +48,18 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     var timerState: TimerState = .inited
     var loginMethod: LoginMethod = .msg
     var phoneNum = ""
+    var phoneZone = "86"
     var msgOrPwdAnimating = false
     var btnWidth: CGFloat = 0
     var loginBtnX: CGFloat = 0
     
     var msgCode = ""
     
+    
     var showSegueID: String = ""
     var unwindSegueID: String!
+    
+    var userInfo: [String: Any]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,6 +69,8 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
 
         users = RealmHelper.retrieveUsers()
+    
+        autoFitLogoIV()
         
         getMsgBtn.layer.cornerRadius = 2
         getMsgBtn.layer.masksToBounds = true
@@ -70,7 +80,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         
         btnWidth = loginBtn.frame.width
         loginBtnX = loginBtn.frame.origin.x
-
+        
         switch showSegueID {
         case "showLogin": // from mevc
             unwindSegueID = "unwindToMeFromLogin"
@@ -97,6 +107,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        setBackItemTitle(for: navigationItem)
         if let id = segue.identifier {
             switch id {
             case "unwindToMeFromLogin":
@@ -114,6 +125,11 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                 if self.avbaker != nil {
                     vc.shouldShowShopCheckingRN = true
                 }
+            case "showConnNewPhoneVCFromMeLoginVC":
+                guard let vc = segue.destination as? MeConnNewPhoneVC else { return }
+                vc.meVC = self.meVC
+                vc.userInfo = self.userInfo
+                vc.meLoginVC = self
             default:
                 break
             }
@@ -124,6 +140,16 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         return UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: String(describing: self)) as! MeLoginVC
     }
     
+    func autoFitLogoIV() {
+        let ratio: CGFloat = 0.25
+        let wh = screenWidth * ratio
+        logoIV.frame.size = CGSize(width: wh, height: wh)
+        logoIV.frame.origin.x = (screenWidth - wh) / 2
+        if iPhoneX {
+            logoIV.frame.origin.y += 16
+        }
+    }
+    
     @IBAction func backBtnPressed(_ sender: Any) {
         performSegue(withIdentifier: unwindSegueID, sender: self)
     }
@@ -131,7 +157,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     // MARK: - TextField
     func textFieldDidBeginEditing(_ textField: UITextField) {
         UIView.animate(withDuration: 0.32, animations: {
-            self.loginInputView.frame.origin.y = -44
+            self.loginInputView.frame.origin.y = -24
         })
     }
     
@@ -155,7 +181,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     func checkPhoneTextFieldIsValid(with text: String?) {
         guard let text = text else {
             setBtnState(false)
-            self.loginBtn.setTitle("登录/注册", for: .normal)
+            setLoginBtnTitleByLoginMethod()
             return
         }
         if text.count == 11 &&
@@ -179,17 +205,36 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                             self.loginBtn.setTitle("登录", for: .normal)
                         } else {
                             self.avbaker = nil
-                            self.loginBtn.setTitle("注册", for: .normal)
+                            if self.loginMethod == .msg {
+                                self.loginBtn.setTitle("注册", for: .normal)
+                            } else {
+                                self.setBtnState(false)
+                                self.loginBtn.setTitle("手机号未注册", for: .normal)
+                            }
                         }
                     } else {
                         self.avbaker = nil
-                        self.loginBtn.setTitle("注册", for: .normal)
+                        if self.loginMethod == .msg {
+                            self.loginBtn.setTitle("注册", for: .normal)
+                        } else {
+                            self.setBtnState(false)
+                            self.loginBtn.setTitle("手机号未注册", for: .normal)
+                        }
                     }
                 }
             })
         } else {
             setBtnState(false)
+            setLoginBtnTitleByLoginMethod()
+        }
+    }
+    
+    func setLoginBtnTitleByLoginMethod() {
+        switch loginMethod {
+        case .msg:
             self.loginBtn.setTitle("登录/注册", for: .normal)
+        case .pwd:
+            self.loginBtn.setTitle("登录", for: .normal)
         }
     }
     
@@ -240,8 +285,9 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
                 }
                 UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
                     self.loginByMsgOrPwd.setTitle("验证码登录/注册", for: .normal)
-                    self.loginBtn.setTitle("登录/注册", for: .normal)
+                    self.loginBtn.setTitle("登录", for: .normal)
                     self.loginBtn.frame.origin = self.getMsgBtn.frame.origin
+                    self.loginBtn.frame.origin.x = self.msgOrPwdTextField.frame.origin.x
                     self.loginBtn.frame.size.width = self.msgOrPwdTextField.frame.width
                     self.getMsgBtn.frame.size.width = 0
                     self.getMsgBtn.alpha = 0.2
@@ -285,10 +331,40 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
         self.loginMethod = self.loginMethod == .pwd ? .msg : .pwd
     }
     
+    // WeChat login
     @IBAction func loginByWX(_ sender: Any) {
-        
+        sendWXAuthRequest()
     }
     
+    func sendWXAuthRequest() {
+        let req = SendAuthReq()
+        req.scope = "snsapi_userinfo"
+        WXApi.sendAuthReq(req, viewController: self, delegate: self)
+    }
+    
+    func loggedinByWX(userInfo: [String: Any]) {
+        guard let openid = userInfo["openid"] as? String else { return }
+        self.userInfo = userInfo
+        let query = AVBaker.query()
+        query.whereKey("wxOpenID", equalTo: openid)
+        query.findObjectsInBackground({
+            objects, error in
+            if let error = error {
+                printit(error.localizedDescription)
+            } else if let avbakers = objects as? [AVBaker] {
+                if avbakers.count == 0 {
+                    // not connected with a phone number, connecting a phone number
+                    self.performSegue(withIdentifier: "showConnNewPhoneVCFromMeLoginVC", sender: self)
+                } else {
+                    // connected with a phone number, login
+                    self.avbaker = avbakers.first!
+                    self.doLogin(self)
+                }
+            }
+        })
+    }
+    
+    // Weibo login
     @IBAction func loginByWB(_ sender: Any) {
         
     }
@@ -368,7 +444,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
             updateSentMsgDate(phone: phone)
             return
         }
-        SMSSDK.getVerificationCode(by: SMSGetCodeMethodSMS, phoneNumber: phone, zone: "86", result: {
+        SMSSDK.getVerificationCode(by: SMSGetCodeMethodSMS, phoneNumber: phone, zone: phoneZone, result: {
             error in
             if error == nil {
                 self.msgOrPwdTextField.becomeFirstResponder()
@@ -465,7 +541,7 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
     }
     
     func commitSmsCode(code: String, sender: Any) {
-        SMSSDK.commitVerificationCode(code, phoneNumber: self.phoneNum, zone: "86", result: {
+        SMSSDK.commitVerificationCode(code, phoneNumber: self.phoneNum, zone: phoneZone, result: {
             error in
             if let error = error {
                 let errorMsg = error.localizedDescription
@@ -534,19 +610,17 @@ class MeLoginVC: UIViewController, UITextFieldDelegate {
             self.view.bringSubview(toFront: progressView)
             file.getDataInBackground({
                 result, error in
-                if result != nil && error == nil {
-                    let data = UIImage(data: result!)?.cropAndResize(width: 100, height: 100).imageData
-                    if isFirstLogin {
-                        RealmHelper.addUser(user: self.realmUser(byAVBaker: baker, data: data))
-                    } else {
-                        self.userRealm = RealmHelper.setCurrentUser(baker: baker, data: data)
-                    }
-                    self.avbaker = baker
-                    self.performSegue(withIdentifier: self.unwindSegueID, sender: self)
-                } else {
-                    self.view.notify(text: "登录失败", color: .alertRed, nav: self.navigationController?.navigationBar)
-                    printit(any: error!.localizedDescription)
+                var data: Data? = nil
+                if let result = result {
+                    data = UIImage(data: result)?.cropAndResize(width: 100, height: 100).imageData
                 }
+                if isFirstLogin {
+                    RealmHelper.addUser(user: self.realmUser(byAVBaker: baker, data: data))
+                } else {
+                    self.userRealm = RealmHelper.setCurrentUser(baker: baker, data: data)
+                }
+                self.avbaker = baker
+                self.performSegue(withIdentifier: self.unwindSegueID, sender: self)
                 progressView.removeFromSuperview()
             }, progressBlock: {
                 percent in

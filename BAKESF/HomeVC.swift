@@ -190,7 +190,6 @@ class HomeVC: UIViewController, UISearchBarDelegate, AMapSearchDelegate, UITable
             guard let avbakes = searchResults[avshopID] else { return }
             shopVC.searchingBake = avbakes[row - 1]
             shopVC.avshop = avshop
-            printit(avbakes)
         default:
             break
         }

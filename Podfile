@@ -11,7 +11,7 @@ target 'BAKESF' do
   pod 'SMSSDK'
 
   # http networking
-  #pod 'Alamofire'
+  pod 'Alamofire'
   
   # local database
   pod 'RealmSwift'
@@ -40,6 +40,10 @@ target 'BAKESF' do
   pod 'AMapSearch'
   pod 'AMapLocation'
   pod 'AMap3DMap'
+
+  # OpenSSL
+  pod 'OpenSSL', '~> 1.0'
+  pod 'SwiftyRSA'
 
 
 end

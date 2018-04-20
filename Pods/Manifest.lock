@@ -1,4 +1,5 @@
 PODS:
+  - Alamofire (4.5.1)
   - AMap3DMap (5.5.0):
     - AMapFoundation (~> 1.3)
   - AMapFoundation (1.4.2)
@@ -23,6 +24,7 @@ PODS:
     - Fabric (~> 1.7.2)
   - Fabric (1.7.2)
   - MOBFoundation (3.0.6)
+  - OpenSSL (1.0.210)
   - PagingMenuController (2.2.0)
   - Realm (3.0.2):
     - Realm/Headers (= 3.0.2)
@@ -34,8 +36,12 @@ PODS:
   - SDWebImage/Core (4.2.2)
   - SMSSDK (3.0.1):
     - MOBFoundation
+  - SwiftyRSA (1.3.0):
+    - SwiftyRSA/ObjC (= 1.3.0)
+  - SwiftyRSA/ObjC (1.3.0)
 
 DEPENDENCIES:
+  - Alamofire
   - AMap3DMap
   - AMapLocation
   - AMapSearch
@@ -43,12 +49,15 @@ DEPENDENCIES:
   - AVOSCloudLiveQuery
   - Crashlytics
   - Fabric
+  - OpenSSL (~> 1.0)
   - PagingMenuController
   - RealmSwift
   - SDWebImage
   - SMSSDK
+  - SwiftyRSA
 
 SPEC CHECKSUMS:
+  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
   AMap3DMap: 548723d9646c082b7d9b6102a8b070f712d83924
   AMapFoundation: 6c0471c9a6a0ad17dad46e3d800ad56ca170f82a
   AMapLocation: d02bd8c0081b0bc51b2e4cf89925ef57448263c9
@@ -59,12 +68,14 @@ SPEC CHECKSUMS:
   Crashlytics: dbb07d01876c171c5ccbdf7826410380189e452c
   Fabric: 9cd6a848efcf1b8b07497e0b6a2e7d336353ba15
   MOBFoundation: 6f6ec1c2513278551f1a808b5692e983d99e5069
+  OpenSSL: 246ffb948e9d56466727fd318134af35f5aa764e
   PagingMenuController: 6176618987bb170096664f2da097313e45ed9c31
   Realm: 6f23fd1f178a09342eac21bfa7c2bf4312a7a180
   RealmSwift: 695393add1b8f9d5fa75dd16e6355cf3935f71e2
   SDWebImage: 89a9d32cd520bbb46eb14e541d5109b3564af198
   SMSSDK: a811c8ea6e89393097037b7cf6493248a40e50f0
+  SwiftyRSA: 28e1c9ab1f396fd3001d197ba03e1153b524d155
 
-PODFILE CHECKSUM: 9830aefb5480861404224a6d7f99858f76256d78
+PODFILE CHECKSUM: 7e47f46632c9aa63d1c269a621e7ba3ee07771c2
 
 COCOAPODS: 1.3.0

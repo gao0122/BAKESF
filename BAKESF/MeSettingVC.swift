@@ -59,7 +59,8 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
             let pwdVC = segue.destination as! MeSettingPwdVC
             pwdVC.avbaker = self.avbaker
         case "unwindToMeFromSetting":
-            break
+            guard let meVC = segue.destination as? MeVC else { return }
+            meVC.avbaker = nil
         default:
             break
         }
@@ -72,6 +73,7 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
 
     func logoutBtnPressed(_ sender: Any) {
         RealmHelper.logoutCurrentUser(user: user)
+        
         performSegue(withIdentifier: "unwindToMeFromSetting", sender: sender)
     }
     
@@ -164,16 +166,19 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
             switch row {
             case 0:
                 break
+            case 1:
+                // change password
+                if canGetMsg() {
+                    sendMsg(phone: avbaker.mobilePhoneNumber!)
+                }
             default:
                 break
             }
         case 1:
             switch row {
             case 0:
-                // change password
-                if canGetMsg() {
-                    sendMsg(phone: avbaker.mobilePhoneNumber!)
-                }
+                // about us
+                showAboutUsVC()
             default:
                 break
             }
@@ -210,11 +215,15 @@ class MeSettingVC: UIViewController, UITableViewDelegate, UITableViewDataSource 
     }
         
 
+    func showAboutUsVC() {
+        performSegue(withIdentifier: "showAboutVCFromSettingVC", sender: self)
+    }
+    
 }
 
 private let settingDictLogin: [Int: [Int: String]] = [
-    0: [0: "用户名"],
-    1: [0: "修改密码"],
+    0: [0: "用户名", 1: "修改密码"],
+    1: [0: "关于焙可私房"],
     2: [0: "退出登录"]
 ]
 

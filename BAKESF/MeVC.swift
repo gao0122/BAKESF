@@ -15,14 +15,12 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     
     @IBOutlet weak var bakerView: UIView!
     @IBOutlet weak var loginBtn0: UIButton! // currently using
-    @IBOutlet weak var loginBtn: UIButton! // enabled when community is open
     @IBOutlet weak var editBtn: UIButton!
     @IBOutlet weak var headphoto: UIButton!
     @IBOutlet weak var settingBtn: UIButton!
     @IBOutlet weak var tweetsBtn: UIButton!
     @IBOutlet weak var followeeBtn: UIButton!
     @IBOutlet weak var followerBtn: UIButton!
-    @IBOutlet weak var likeBtn: UIButton!
     @IBOutlet weak var editBtnBg: UIButton!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var rightArrowLabel: UILabel!
@@ -85,12 +83,14 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         super.viewWillDisappear(animated)
     }
     
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        printit("will show \(viewController.classForCoder)")
+    }
+    
     func vcInit() {
         picker.delegate = self
         headphoto.layer.cornerRadius = headphoto.frame.width / 2
         headphoto.layer.masksToBounds = true
-        loginBtn.setBorder(with: .bkBlack)
-        likeBtn.setBorder(with: .bkBlack)
         editBtnBg.layer.masksToBounds = true
         editBtnBg.layer.cornerRadius = 8
         editBtnBg.backgroundColor = .bkWhite
@@ -121,6 +121,7 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
                 guard let loginVC = segue.destination as? MeLoginVC else { break }
                 setBackItemTitle(for: navigationItem)
                 loginVC.showSegueID = id
+                loginVC.meVC = self
             case "showSettingFromMeVC":
                 guard let settingVC = segue.destination as? MeSettingVC else { break }
                 setBackItemTitle(for: navigationItem)
@@ -425,14 +426,13 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
     }
     
     
-    
     // MARK: - functions
     func checkCurrentUser() {
         if let usr = RealmHelper.retrieveCurrentUser() {
             if let avbaker = retrieveBaker(withID: usr.id) {
                 self.avbaker = avbaker
+                self.user = usr
                 setupViewsAfterChecking(loggedin: true)
-                user = usr
                 userNameLabel.text = usr.name
                 if let data = usr.headphoto {
                     let img = UIImage(data: data)?.cropAndResize(width: self.headphoto.frame.width, height: self.headphoto.frame.height)
@@ -442,7 +442,15 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
                 setupLogout(usr: usr)
             }
         } else {
-            setupLogout()
+            if let avbaker = self.avbaker {
+                setupViewsAfterChecking(loggedin: true)
+                userNameLabel.text = avbaker.username
+                if let url = avbaker.headphoto {
+                    self.headphoto.sd_setImage(with: URL(string: url), for: .normal, completed: nil)
+                }
+            } else {
+                setupLogout()
+            }
         }
     }
     
@@ -460,7 +468,6 @@ class MeVC: UIViewController, UIImagePickerControllerDelegate, UINavigationContr
         editBtn.isHidden = !loggedin
         editBtnBg.isHidden = !loggedin
         userNameLabel.isHidden = !loggedin
-        loginBtn.isHidden = loggedin
         loginBtn0.isHidden = loggedin
     }
     

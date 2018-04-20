@@ -51,7 +51,6 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     var selectedPOI: AMapPOI?
     var fromCellSelection = false
     var avbaker: AVBaker?
-    var shouldSearchAround = true
     var currentReGeocode: AMapReGeocode?
     var tag: Int = 0
 
@@ -192,7 +191,6 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
 
     @IBAction func relocateBtnPressed(_ sender: Any) {
-        shouldSearchAround = true
         showHelperView(with: locatingText)
         hideCityTableView()
         locateOnce()
@@ -468,14 +466,12 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
             guard let cell = tableView.cellForRow(at: indexPath) as? DeliveryAddressSelectionTableViewCell else { break }
             selectedPOI = cell.poi
             fromCellSelection = true
-            shouldSearchAround = true
             doReGeocode(with: amapGeoPointToCLLocation(selectedPOI!.location))
         case 1:
             guard let cell = tableView.cellForRow(at: indexPath) else { break }
             guard let city = cell.textLabel?.text else { break }
             cityBtn.setTitle(city, for: .normal)
             sizeToFitCityBtn()
-            shouldSearchAround = false
             hideCityTableView()
             doPOIKeywordSearch()
             tableView.deselectRow(at: indexPath, animated: true)
@@ -504,7 +500,7 @@ class DeliveryAddressSelectionVC: UIViewController, UISearchBarDelegate, UITable
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        shouldSearchAround ? doPOIAroundSearch() : doPOIKeywordSearch()
+        self.doPOIKeywordSearch()
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {

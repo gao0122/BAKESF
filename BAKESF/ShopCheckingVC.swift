@@ -9,8 +9,10 @@
 import UIKit
 import RealmSwift
 import PassKit
+import Alamofire
+import SwiftyRSA
 
-class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSource, PKPaymentAuthorizationViewControllerDelegate {
+class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSource, PKPaymentAuthorizationViewControllerDelegate, XMLParserDelegate {
 
     enum DeliveryTimeViewState {
         case collapsed, expanded
@@ -48,9 +50,14 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     var deliveryTimes = [String]()
     var selectedTime: DateComponents?
     var totalCost: Double = 0
+    var selectedPM: PaymentMethod = .alipay // PaymentMethod
     
     var timer = Timer()
     let checkoutBtnText = "支付全部"
+    
+    var xmlElementName = ""
+    var wxPrepayID = ""
+    var prepaySucceed = true
     
     let SupportedPaymentNetworks = [PKPaymentNetwork.visa, PKPaymentNetwork.masterCard, PKPaymentNetwork.amex, PKPaymentNetwork.chinaUnionPay, PKPaymentNetwork.discover]
     let ApplePayBakesfMerchantID = "merchant.com.yuchao.bakesf"
@@ -207,8 +214,8 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         completion(PKPaymentAuthorizationStatus.success)
         
-        self.initializeOrder(paymentMethod: "ApplePay")
-        self.saveOrderAndBakes()
+        //self.initializeOrder()//paymentMethod: "ApplePay"
+        //self.saveOrderAndBakes()
 
     }
     
@@ -225,9 +232,169 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         
     }
     
-
+    // MARK: - XML Parser Delegate
+    //
+    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
+        xmlElementName = elementName
+    }
     
-    func makePayment() -> Bool {
+    // found xml content
+    func parser(_ parser: XMLParser, foundCharacters string: String) {
+        guard string.removeSpacesAndLines() != "" else { return }
+        switch self.selectedPM {
+        case .alipay:
+            break
+        case .wepay:
+            switch xmlElementName {
+            case "return_code":
+                if string != "SUCCESS" {
+                    prepaySucceed = false
+                }
+            case "return_msg":
+                break
+            case "result_code":
+                if string != "SUCCESS" {
+                    prepaySucceed = false
+                }
+            case "error_code":
+                wxPrepayID = ""
+            case "error_code_des":
+                self.view.notify(text: "支付异常。\(string)", color: .alertOrange, nav: self.navigationController?.navigationBar)
+            case "prepay_id":
+                wxPrepayID = string
+            default:
+                break
+            }
+        }
+    }
+    
+    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+        
+    }
+    
+    func parserDidEndDocument(_ parser: XMLParser) {
+        switch self.selectedPM {
+        case .alipay:
+            break
+        case .wepay:
+            if prepaySucceed {
+                let timestamp = Date().getTimestamp() + 28800 // 8 * 60 * 60
+                let nonceStr = generateRandomString()
+                let req = PayReq()
+                req.nonceStr = nonceStr
+                req.package = "Sign=WXPay"
+                req.partnerId = wxMchID
+                req.prepayId = wxPrepayID
+                req.timeStamp = timestamp
+                let main = "appid=\(wxAppID)&noncestr=\(nonceStr)&package=\(req.package!)&partnerid=\(wxMchID)&prepayid=\(wxPrepayID)&timestamp=\(timestamp)"
+                let sign = "\(main)&key=\(wxAppSecret)".md5.uppercased()
+                req.sign = sign
+                WXApi.send(req)
+            }
+        }
+    }
+    
+    // MARK: - make payment
+    //
+    func makeWXPayment() {
+        guard let ip = getHostIP() else {
+            self.view.notify(text: "获取 IP 失败，请检查网络后重试", color: .alertOrange, nav: self.navigationController?.navigationBar)
+            return
+        }
+        var para = "<xml>"
+        let body = "test"
+        let nonceStr = generateRandomString()
+        let notifyURL = "http://www.weixin.qq.com/wxpay/pay.php"
+        let outTradeNum = outTradeNo(phone: avbaker.mobilePhoneNumber)
+        let totalFee = 1 //Int(totalCost * 100)
+        let main = "appid=\(wxAppID)&body=\(body)&mch_id=\(wxMchID)&nonce_str=\(nonceStr)&notify_url=\(notifyURL)&out_trade_no=\(outTradeNum)&spbill_create_ip=\(ip)&total_fee=\(totalFee)&trade_type=APP"
+        let sign = "\(main)&key=\(wxAppSecret)".md5.uppercased()
+        para += "<appid>\(wxAppID)</appid>"
+        para += "<body>\(body)</body>"
+        para += "<mch_id>\(wxMchID)</mch_id>"
+        para += "<nonce_str>\(nonceStr)</nonce_str>"
+        para += "<notify_url>\(notifyURL)</notify_url>"
+        para += "<out_trade_no>\(outTradeNum)</out_trade_no>"
+        para += "<spbill_create_ip>\(ip)</spbill_create_ip>"
+        para += "<total_fee>\(totalFee)</total_fee>"
+        para += "<trade_type>APP</trade_type>"
+        para += "<sign>\(sign)</sign>"
+        para += "</xml>"
+        
+        var req = URLRequest(url: URL(string: WXUnifiedOrderURL)!)
+        req.httpBody = para.data(using: String.Encoding.utf8, allowLossyConversion: true)
+        req.httpMethod = "POST"
+        req.addValue("application/xml", forHTTPHeaderField: "Content-Type")
+        Alamofire.request(req).response(completionHandler: {
+            response in
+            if let error = response.error {
+                printit(error.localizedDescription)
+            } else {
+                guard let data = response.data else { return }
+                let xml = XMLParser(data: data)
+                xml.delegate = self
+                xml.parse()
+            }
+        })
+    }
+    
+    func makeAliPayment() {
+        alertOkayOrNot(okTitle: "更换微信支付", notTitle: "取消", msg: "暂不支持支付宝", okAct: { _ in
+            guard let cell = self.tableView.cellForRow(at: IndexPath.init(row: 0, section: 3)) else { return }
+            self.changePaymentMethod(for: cell)
+        }, notAct: { _ in })
+        return
+        let bizContentDict = [
+            "body": "焙可私房商品",
+            "subject": "烘焙食品",
+            "out_trade_no": outTradeNo(phone: avbaker.mobilePhoneNumber),
+            "total_amount": "0.01", // \(totalFee)
+            "timeout_express": "30m"
+        ]
+        guard let bizData = try? JSONSerialization.data(withJSONObject: bizContentDict, options: .init(rawValue: 0)) else { return }
+        guard let bizContentStr = String(data: bizData, encoding: .utf8) else { return }
+        let charset = "utf-8"
+        let method = "alipay.trade.app.pay"
+        let notifyURL = "https://www.gaoyuchao.com"
+        let signType = "RSA2"
+        let version = "1.0"
+        
+        let orderInfo =
+            "app_id=\(alipayAppID)&" +
+                "biz_content=\(bizContentStr)&" +
+                "charset=\(charset)&" +
+                "method=\(method)&" +
+                //"notify_url=\(notifyURL)&" +
+                "sign_type=\(signType)&" +
+                "timestamp=\(Date().formatted())&" +
+        "version=\(version)"
+        
+        let orderEncoded =
+            "app_id=\(alipayAppID.urlEncoded)&" +
+                "biz_content=\(bizContentStr.urlEncoded)&" +
+                "charset=\(charset.urlEncoded)&" +
+                "method=\(method.urlEncoded)&" +
+                //"notify_url=\(notifyURL.urlEncoded)&" +
+                "sign_type=\(signType.urlEncoded)&" +
+                "timestamp=\(Date().formatted().urlEncoded)&" +
+        "version=\(version.urlEncoded)"
+        
+        guard let clear = try? ClearMessage(string: orderInfo, using: .utf8) else { return }
+        guard let priKey = try? PrivateKey(base64Encoded: aliRSAprivateKey) else { return }
+        guard let sign = try? clear.signed(with: priKey, digestType: .sha256).base64String else { return }
+        let orderStr = "\(orderEncoded)&sign=\(sign.urlEncoded)"
+        printit("orderInfo: \(orderInfo)")
+        printit("orderEncoded: \(orderEncoded)")
+        printit("orderStr: \(orderStr)")
+        AlipaySDK.defaultService().payOrder(orderStr, fromScheme: alipayScheme, callback: {
+            result in
+            if let res = result {
+                printit(res)
+            }
+        })
+    }
+    
+    func makeApplePayment() -> Bool {
         let request = PKPaymentRequest()
         request.countryCode = "CN"
         request.currencyCode = "CNY"
@@ -271,25 +438,21 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
     @IBAction func checkOutBtnPressed(_ sender: Any) {
-        alertOkayOrNot(okTitle: "支付", notTitle: "取消", msg: "确认支付吗？", okAct: {
-            _ in
-            
-            // test start
-            self.initializeOrder(paymentMethod: "ApplePay")
-            self.saveOrderAndBakes()
-            return
-            // test end
-            
-            if self.makePayment() {
-                // can make payment
-            } else {
-                self.initializeOrder(paymentMethod: "ApplePay")
-                self.saveOrderAndBakes()
-            }
-        }, notAct: { _ in })
+        switch self.selectedPM {
+        case .alipay:
+            alertOkayOrNot(okTitle: "支付", notTitle: "取消", msg: "您将使用 支付宝 付款 \(totalCost)元", okAct: {
+                _ in
+                self.makeAliPayment()
+            }, notAct: { _ in })
+        case .wepay:
+            alertOkayOrNot(okTitle: "支付", notTitle: "取消", msg: "您将使用 微信支付 付款 \(totalCost)元", okAct: {
+                _ in
+                self.makeWXPayment()
+            }, notAct: { _ in })
+        }
     }
     
-    func initializeOrder(paymentMethod: String) {
+    func initializeOrder() {
         avorder = AVOrder()
         avorder.deliveryAddress = self.avaddress
         avorder.predictionDeliveryTime = self.selectedTime?.date
@@ -300,7 +463,12 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         avorder.shouldDeliveryAtOnce = self.selectedTime == nil
         avorder.totalCost = totalCost as NSNumber
         avorder.totalCostAfterDiscount = totalCost as NSNumber
-        avorder.paymentMethod = paymentMethod
+        switch self.selectedPM {
+        case .alipay:
+            avorder.paymentMethod = "AliPay"
+        case .wepay:
+            avorder.paymentMethod = "WeChatPay"
+        }
     }
     
     func saveOrderAndBakes() {
@@ -503,7 +671,12 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                     return bakeItemCell(indexPath)
                 }
             case 2:
-                return otherCell(indexPath)
+                switch row {
+                case 0:
+                    return paymentMethodCell(indexPath)
+                default:
+                    return otherCell(indexPath)
+                }
             default:
                 break
             }
@@ -619,6 +792,12 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         labelText = tableSectionOtherCell[indexPath.row]!
         return UITableViewCell.btnCell(with: labelText)
     }
+    
+    private func paymentMethodCell(_ indexPath: IndexPath) -> UITableViewCell {
+        let cell = otherCell(indexPath)
+        cell.detailTextLabel?.text = paymentMethods[selectedPM]
+        return cell
+    }
         
     private func deliveryTimeCell(_ indexPath: IndexPath) -> ShopCheckDeliveryTimeTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shopCheckDeliveryTimeTableViewCell", for: indexPath) as! ShopCheckDeliveryTimeTableViewCell
@@ -645,10 +824,11 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
         } else {
             cell.arrivalTime.alpha = 1
             if let selectedTime = selectedTime {
+                let hour = selectedTime.hour! % 24
                 let mins = selectedTime.minute!
                 let minsText = mins < 10 ? "0\(mins)" : "\(mins)"
                 let endText = segmentedControlDeliveryWay.selectedSegmentIndex == 0 ? "送达" : "自取"
-                cell.arrivalTime.text = "预约 \(selectedTime.hour!):\(minsText) 前\(endText)"
+                cell.arrivalTime.text = "预约 \(hour):\(minsText) 前\(endText)"
                 cell.deliveryTime.text = "\(selectedTime.month!).\(selectedTime.day!)"
                 cell.deliveryTime.textColor = .black
                 cell.deliveryTime.sizeToFit()
@@ -740,13 +920,15 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 switch row {
                 case 0:
                     // pay method
-                    break
+                    guard let pmCell = tableView.cellForRow(at: indexPath) else { return }
+                    paymentMethodSelection(cell: pmCell)
+                    tableView.deselection()
                 case 1:
                     // order remarks/comments
                     performSegue(withIdentifier: "showOrderRemarksFromShopCheckingVC", sender: self)
                 case 2:
                     // invoice
-                    break
+                    tableView.deselection()
                 default:
                     break
                 }
@@ -797,9 +979,9 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         }
         for i in startHour...(startHour + 10) {
-            for j in 0...2 {
+            for j in 0...1 {
                 let h = i % 24
-                var timeText = "\(h):\(j * 2)0"
+                var timeText = "\(h):\(j * 3)0"
                 if h < i {
                     timeText += " (明天)"
                 }
@@ -809,7 +991,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 components.month = cs.month
                 components.day = cs.day
                 components.hour = i
-                components.minute = j * 20
+                components.minute = j * 30
                 if let openTime = avshop.openTime, let closeTime = avshop.closeTime, let dateToAdd = components.date {
                     if dateToAdd.isTimeBetween(from: openTime, to: closeTime) {
                         deliveryTimes.append(timeText)
@@ -819,6 +1001,19 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         }
         deliveryTimeTableView.reloadData()
+    }
+    
+    func paymentMethodSelection(cell: UITableViewCell) {
+        changePaymentMethod(for: cell)
+    }
+    
+    func changePaymentMethod(for cell: UITableViewCell) {
+        if self.selectedPM == .alipay {
+            self.selectedPM = .wepay
+        } else {
+            self.selectedPM = .alipay
+        }
+        cell.detailTextLabel?.text = paymentMethods[self.selectedPM]
     }
     
     func deliveryTimeSwitch() {
@@ -841,7 +1036,7 @@ class ShopCheckingVC: UIViewController, UITableViewDelegate, UITableViewDataSour
                 deliveryDatecs.append(cs)
                 deliveryDates.append(dateText)
             } else {
-                for i in 1...days {
+                for i in 0...days {
                     let dateToBeAdd = date.addingTimeInterval(TimeInterval(i * 60 * 60 * 24))
                     let cs = dateToBeAdd.getDeliveryDateComponents()
                     var dateText = "\(weekdays[cs.weekday! - 1]) \(cs.month!).\(cs.day!)"

@@ -36,6 +36,7 @@ class RealmHelper {
                 user.phone = baker.mobilePhoneNumber!
                 user.headphotoURL = baker.headphoto
                 user.headphoto = data
+                user.wxOpenID = baker.wxOpenID
             }
             return user
         } else {

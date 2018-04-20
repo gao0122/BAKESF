@@ -380,6 +380,9 @@ class OrderVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 let order = avorders[row]
                 let orderDetailVC = OrderDetailVC.instantiateFromStoryboard(with: order, orderVC: self)
                 orderDetailVC.title = order.shop?.name
+                orderDetailVC.orderVC = self
+                orderDetailVC.order = order
+                orderDetailVC.avbakes = avbakesDict[order]
                 let segue = UIStoryboardSegue(identifier: "showOrderDetailVCFromOrderTableViewCell", source: self, destination: orderDetailVC)
                 prepare(for: segue, sender: self)
             }

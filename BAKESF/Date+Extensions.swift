@@ -10,6 +10,10 @@ import Foundation
 
 extension Date {
     
+    func getTimestamp() -> UInt32 {
+        return UInt32(self.timeIntervalSince1970)
+    }
+    
     func seconds(fromDate from: Date) -> Int {
         return Calendar.current.dateComponents([.second], from: from, to: self).second ?? 0
     }

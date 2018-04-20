@@ -205,7 +205,7 @@ class DeliveryAddressVC: UIViewController, UITableViewDelegate, UITableViewDataS
         
         let name = addr.name ?? ""
         let gender = addr.gender ?? ""
-        if gender == "帅哥" || gender == "靓女" {
+        if gender == "先生" || gender == "女士" {
             cell.nameLabel.text = name + " " + gender
         } else {
             cell.nameLabel.text = name

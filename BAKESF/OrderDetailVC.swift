@@ -12,9 +12,9 @@ import AVOSCloud
 class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     
-    var orderVC: OrderVC!
-    var order: AVOrder!
-    var avbakes: [AVObject]!
+    var orderVC: OrderVC?
+    var order: AVOrder?
+    var avbakes: [AVObject]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +35,7 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        orderVC.tableViewCellDeselection()
+        orderVC?.tableViewCellDeselection()
     }
     
     class func instantiateFromStoryboard(with order: AVOrder, orderVC: OrderVC) -> OrderDetailVC {
@@ -57,14 +57,14 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     // MARK: - TableView
     func numberOfSections(in tableView: UITableView) -> Int {
-        guard let status = order.status?.intValue else { return 0 }
+        guard let status = order?.status?.intValue else { return 0 }
         switch status {
         case 0:
             // new order, to be paid by user
             return 0
         case 1:
             // paid, to be taken by shop
-            return 0
+            return 4
         case 2:
             // taken, to be produced by shop
             return 0
@@ -81,7 +81,7 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             // confirmed, to be commented by user
             return 0
         case 7:
-            // commented, to be confirmed by user
+            
             return 0
         case 8:
             // commented and confirmed, done
@@ -98,7 +98,8 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let status = order.status?.intValue else { return 0 }
+        guard let status = order?.status?.intValue else { return 0 }
+        guard let avbakes = self.avbakes else { return 0 }
         switch status {
         case 0:
             switch section {
@@ -125,7 +126,29 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 break
             }
         case 1:
-            return 0
+            switch section {
+            case 0:
+                // basic info
+                return 1
+            case 1:
+                // delivery time or ad.
+                return 1
+            case 2:
+                // bakes: - shop name, delivery fee, total cost
+                return avbakes.count + 3
+            case 3:
+                // delivery info: - title, delivery time, delivery address, delivery way
+                return 4
+            case 4:
+                // order detail: - title, order id, payment method, createdTime
+                return 4
+            case 5:
+                break
+            case 6:
+                break
+            default:
+                break
+            }
         case 2:
             return 0
         case 3:
@@ -148,14 +171,30 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let section = indexPath.section
+        let row = indexPath.row
         switch section {
         case 0:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "", for: indexPath)
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "orderBasicTableViewCell", for:  indexPath) as? OrderBasicTableViewCell else { break }
             return cell
         case 1:
-            break
+            switch row {
+            case 0:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "orderShopHeaderTableViewCell", for:  indexPath) as? OrderShopHeaderTableViewCell else { break }
+                return cell
+            default:
+                break
+            }
         case 2:
-            break
+            switch row {
+            case 0:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "orderInfoTableViewCell", for:  indexPath) as? OrderInfoTableViewCell else { break }
+                return cell
+            case 1:
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "orderInfoTableViewCell", for:  indexPath) as? OrderInfoTableViewCell else { break }
+                return cell
+            default:
+                break
+            }
         case 3:
             break
         case 4:
@@ -170,5 +209,34 @@ class OrderDetailVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         return UITableViewCell()
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let section = indexPath.section
+        let row = indexPath.row
+        switch section {
+        case 0:
+            return 123
+        case 1:
+            switch row {
+            case 0:
+                return 60
+            default:
+                return 50
+            }
+        case 2:
+            return 50
+        case 3:
+            break
+        case 4:
+            break
+        case 5:
+            break
+        case 6:
+            break
+        default:
+            break
+        }
+        return tableView.estimatedRowHeight
+
+    }
     
 }

@@ -19,6 +19,7 @@ class AVBaker: AVObject, AVSubclassing {
     @NSManaged var birthday: Date?
     @NSManaged var signedup: Bool
 
+    @NSManaged var wxOpenID: String?
 
     static func parseClassName() -> String {
         return "Baker"

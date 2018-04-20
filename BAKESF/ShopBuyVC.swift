@@ -26,6 +26,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     
     var avbakesIn = [String: AVBakeIn]()
     var tappedAtTagTableview = false
+    var assignedSoldOutTags = false
     
     var bakeLiveQuery: AVLiveQuery!
 
@@ -68,6 +69,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         query.includeKey("defaultBake.attributes.attribute2")
         query.includeKey("shop")
         query.addAscendingOrder("priority")
+        self.shopVC.startIndicatorViewAni()
         query.findObjectsInBackground({
             objects, error in
             if error == nil {
@@ -96,24 +98,22 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         guard let row: Int = bakes.index(of: bake) else { return }
         guard let section: Int = avtag.index(of: tag) else { return }
         let indexPath = IndexPath(row: row, section: section)
-        if let cell = bakeTableView.cellForRow(at: indexPath) as? ShopBuyBakeTableCell {
-            cell.backgroundColor = UIColor.yellow.withAlphaComponent(0.0448)
-            guard shopVC.pagingMenuController.currentPage == 0 else { return }
-            bakeTableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
-            shopVC.animateMenu(self)
-        }
+        guard shopVC.pagingMenuController.currentPage == 0 else { return }
+        shopVC.animateMenu(self)
+        bakeTableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
     }
     
     func assignBakeTag() {
         // assign bakes in their tags and take "sold out" as a new array
         var bakeDetailsCount = 0
+        assignedSoldOutTags = false
         for bake in self.avbakes {
-            guard let bakeAttr = bake.attributes else { break }
-            guard let tag = bake.tag else { break }
+            guard let bakeAttr = bake.attributes else { continue }
+            guard let tag = bake.tag else { continue }
             if bakeAttr.count == 0 {
-                guard let bakeDetail = bake.defaultBake else { break }
-                guard bakeDetail.status else { break }
-                let id = bakeDetail.objectId!
+                guard let bakeDetail = bake.defaultBake else { continue }
+                guard bakeDetail.status else { continue }
+                guard let id = bakeDetail.objectId else { continue }
                 if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: id) {
                     assignAVBakeOrder(bakeRealm: bakeRealm, bake: bakeDetail)
                 }
@@ -172,6 +172,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     func assignSoldOutTags() {
+        guard !assignedSoldOutTags else { return }
+        assignedSoldOutTags = true
         // append sold out bakes to the end of all bakes
         for (n, tag) in avtag.enumerated() {
             let soldOutBakes = avbakesSoldOut[tag] ?? []
@@ -197,6 +199,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         avtag = avtag.filter({ return $0 != "" })
         if avtag.count > 0 {
             self.shopVC.stopIndicatorViewAni()
+            self.shopVC.hideLoadFailedView()
             self.classifyTableView.reloadData()
             self.bakeTableView.reloadData()
             self.checkSearchingBake()
@@ -209,8 +212,8 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     func assignAVBakeDetail(tag: String, bake: AVBake, bakeDetails: [AVBakeDetail]) {
         var totalAmount = 0
         for bakeDetail in bakeDetails {
-            guard bakeDetail.status else { break }
-            guard let amount = bakeDetail.amount as? Int else { break }
+            guard bakeDetail.status else { continue }
+            guard let amount = bakeDetail.amount as? Int else { continue }
             totalAmount += amount
             let id = bakeDetail.objectId!
             if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: id) {
@@ -246,7 +249,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     func reloadAVBakeOrder() {
         if avbakes == nil { return }
         for avbake in avbakes {
-            guard let bake = avbake.defaultBake else { break }
+            guard let bake = avbake.defaultBake else { continue }
             let id = bake.objectId!
             if let bakeRealm = RealmHelper.retrieveOneBakeInBag(by: id) {
                 assignAVBakeOrder(bakeRealm: bakeRealm, bake: bake)
@@ -442,6 +445,11 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             if bake.image == nil { printit(any: "\n\n\n\n\n\n\(bake.name!)\n\n\n\n\n\n") }
 
             cell.bake = bake
+            if bake == shopVC.searchingBake {
+                cell.backgroundColor = UIColor.yellow.withAlphaComponent(0.0448)
+            } else {
+                cell.backgroundColor = UIColor.clear
+            }
             cell.bakeImage.contentMode = .scaleAspectFill
             cell.bakeImage.sd_setImage(with: URL(string: bake.image?.url ?? ""))
             cell.bakeImage.clipsToBounds = true
@@ -478,18 +486,20 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
                     }
                 } else {
                     var amountInBag = 0
-                    for bakeDetail in avbakesDetailDict[bake]! {
-                        amountInBag += (RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!)?.amount ?? 0)
+                    if let avbakesDetail = avbakesDetailDict[bake] {
+                        for bakeDetail in avbakesDetail {
+                            amountInBag += (RealmHelper.retrieveOneBakeInBag(by: bakeDetail.objectId!)?.amount ?? 0)
+                        }
+                        cell.bakesCount = amountInBag
+                        resetSpecBtnText(cell)
+                        cell.amountLabel.isHidden = true
+                        cell.minusOneBtn.isHidden = true
+                        cell.oneMoreBtn.isHidden = true
+                        cell.soldOutLabel.isHidden = true
+                        cell.specBtn.isHidden = false
+                        cell.specBtn.makeRoundCorder()
+                        cell.specBtn.addTarget(self, action: #selector(ShopBuyVC.specBtnPressed(_:)), for: .touchUpInside)
                     }
-                    cell.bakesCount = amountInBag
-                    resetSpecBtnText(cell)
-                    cell.amountLabel.isHidden = true
-                    cell.minusOneBtn.isHidden = true
-                    cell.oneMoreBtn.isHidden = true
-                    cell.soldOutLabel.isHidden = true
-                    cell.specBtn.isHidden = false
-                    cell.specBtn.makeRoundCorder()
-                    cell.specBtn.addTarget(self, action: #selector(ShopBuyVC.specBtnPressed(_:)), for: .touchUpInside)
                 }
             }
 
@@ -517,7 +527,7 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch tableView.tag {
         case 1:
-            if section == avtag.count - 1 {
+            if section == avtag.count - 1 { 
                 // footer view of the last section
             }
         default:
@@ -544,7 +554,9 @@ class ShopBuyVC: UIViewController, UITableViewDataSource, UITableViewDelegate, U
         let row = indexPath.row
         switch tableView.tag {
         case 0:
-            if shopVC.menuAniState == .collapsed { shopVC.animateMenu(state: shopVC.menuAniState) }
+            if shopVC.menuAniState == .collapsed {
+                shopVC.animateMenu(state: shopVC.menuAniState)
+            }
             tappedAtTagTableview = true
             if let bakes = avbakesTag[avtag[row]] {
                 if bakes.count > 0 {

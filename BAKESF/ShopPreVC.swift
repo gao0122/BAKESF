@@ -93,12 +93,9 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         guard let row: Int = bakes.index(of: bake) else { return }
         guard let section: Int = avtag.index(of: tag) else { return }
         let indexPath = IndexPath(row: row, section: section)
-        if let cell = bakeTableView.cellForRow(at: indexPath) as? ShopPreBakeTableCell {
-            cell.backgroundColor = UIColor.yellow.withAlphaComponent(0.0448)
-            guard shopVC.pagingMenuController.currentPage == 1 else { return }
-            bakeTableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
-            shopVC.animateMenu(self)
-        }
+        guard shopVC.pagingMenuController.currentPage == 1 else { return }
+        shopVC.animateMenu(self)
+        bakeTableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
     }
     
     
@@ -106,11 +103,11 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         // assign bakes in their tags and take "sold out" as a new array
         var bakeDetailsCount = 0
         for bake in self.avbakes {
-            guard let bakeAttr = bake.attributes else { break }
-            guard let tag = bake.tag else { break }
+            guard let bakeAttr = bake.attributes else { continue }
+            guard let tag = bake.tag else { continue }
             if bakeAttr.count == 0 {
-                guard let bakeDetail = bake.defaultBake else { break }
-                guard bakeDetail.status else { break }
+                guard let bakeDetail = bake.defaultBake else { continue }
+                guard bakeDetail.status else { continue }
                 let id = bakeDetail.objectId!
                 if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: id) {
                     assignAVBakeOrder(bakeRealm: bakeRealm, bake: bakeDetail)
@@ -206,8 +203,8 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     func assignAVBakeDetail(tag: String, bake: AVBake, bakeDetails: [AVBakeDetail]) {
         var totalAmount = 0
         for bakeDetail in bakeDetails {
-            guard bakeDetail.status else { break }
-            guard let amount = bakeDetail.amount as? Int else { break }
+            guard bakeDetail.status else { continue }
+            guard let amount = bakeDetail.amount as? Int else { continue }
             totalAmount += amount
             let id = bakeDetail.objectId!
             if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: id) {
@@ -243,7 +240,7 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     func reloadAVBakeOrder() {
         if avbakes == nil { return }
         for bake in avbakes {
-            guard let bakeDetail = bake.defaultBake else { break }
+            guard let bakeDetail = bake.defaultBake else { continue }
             let id = bakeDetail.objectId!
             if let bakeRealm = RealmHelper.retrieveOneBakePreOrder(by: id) {
                 assignAVBakeOrder(bakeRealm: bakeRealm, bake: bakeDetail)
@@ -440,6 +437,11 @@ class ShopPreVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             if bake.image == nil { printit(any: "\n\n\n\n\n\n\(bake.name ?? "nil")\n\n\n\n\n\n") }
             
             cell.bake = bake
+            if bake == shopVC.searchingBake {
+                cell.backgroundColor = UIColor.yellow.withAlphaComponent(0.0448)
+            } else {
+                cell.backgroundColor = UIColor.clear
+            }
             cell.bakeImage.contentMode = .scaleAspectFill
             cell.bakeImage.sd_setImage(with: URL(string: bake.image?.url ?? ""))
             cell.bakeImage.clipsToBounds = true

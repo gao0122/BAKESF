@@ -17,7 +17,7 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
     
     var avshop: AVShop!
     var avbaker: AVBaker!
-    var avorder: AVOrder!
+    var avorder: AVOrder?
     var shopVC: ShopVC!
     
     var isInBag: Bool = false
@@ -36,21 +36,23 @@ class OrderCheckOutVC: UIViewController, UIGestureRecognizerDelegate, AVLiveQuer
         checkTheOrderBtn.setBorder(with: .bkRed)
         backToHomeVCBtn.setBorder(with: .bkRed)
         
-        let query = AVOrder.query()
-        query.includeKey("deliveryAddress")
-        query.includeKey("shop")
-        query.includeKey("baker")
-        query.whereKey("objectId", equalTo: avorder.objectId!)
-        liveQuery = AVLiveQuery(query: query)
-        liveQuery.delegate = self
-        liveQuery.subscribe(callback: {
-            succeeded, error in
-            if succeeded {
-                
-            } else {
-                self.title = "下单异常，订阅失败。"
-            }
-        })
+        if let avorder = self.avorder {
+            let query = AVOrder.query()
+            query.includeKey("deliveryAddress")
+            query.includeKey("shop")
+            query.includeKey("baker")
+            query.whereKey("objectId", equalTo: avorder.objectId!)
+            liveQuery = AVLiveQuery(query: query)
+            liveQuery.delegate = self
+            liveQuery.subscribe(callback: {
+                succeeded, error in
+                if succeeded {
+                    
+                } else {
+                    self.title = "下单异常，订阅失败。"
+                }
+            })
+        }
 
     }
 

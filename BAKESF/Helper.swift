@@ -65,6 +65,32 @@ func connectedToNetwork() -> Bool {
     return (isReachable && !needsConnection)
 }
 
+// MARK: - get ip address
+public func getHostIP() -> String? {
+    var addresses = [String]()
+    var ifaddr : UnsafeMutablePointer<ifaddrs>? = nil
+    if getifaddrs(&ifaddr) == 0 {
+        var ptr = ifaddr
+        while (ptr != nil) {
+            let flags = Int32(ptr!.pointee.ifa_flags)
+            var addr = ptr!.pointee.ifa_addr.pointee
+            if (flags & (IFF_UP|IFF_RUNNING|IFF_LOOPBACK)) == (IFF_UP|IFF_RUNNING) {
+                if addr.sa_family == UInt8(AF_INET) || addr.sa_family == UInt8(AF_INET6) {
+                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    if (getnameinfo(&addr, socklen_t(addr.sa_len), &hostname, socklen_t(hostname.count),nil, socklen_t(0), NI_NUMERICHOST) == 0) {
+                        if let address = String(validatingUTF8:hostname) {
+                            addresses.append(address)
+                        }
+                    }
+                }
+            }
+            ptr = ptr!.pointee.ifa_next
+        }
+        freeifaddrs(ifaddr)
+    }
+    return addresses.first
+}
+
 // random password generator
 func generateRandomPwd(length: Int = 14) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*()_+-="
@@ -74,6 +100,17 @@ func generateRandomPwd(length: Int = 14) -> String {
         pwd.append(chars.substring(from: index, to: index + 1))
     }
     return pwd
+}
+
+// random string generator
+func generateRandomString(length: Int = 16) -> String {
+    let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+    var str = ""
+    for _ in 0..<length {
+        let index = Int(arc4random_uniform(UInt32(chars.count)))
+        str.append(chars.substring(from: index, to: index + 1))
+    }
+    return str
 }
 
 // MARK: - LeanCloud
@@ -238,4 +275,20 @@ func print(poi: AMapPOI) {
     printit("businessArea\t\(poi.businessArea!)")
 }
 
+
+// 订单ID - out_trade_no
+func outTradeNo(phone: String?) -> String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyyMMddhhmmss"
+    var outTradeNum = formatter.string(from: Date())
+    if let phone = phone {
+        outTradeNum += phone.substring(from: 0, to: 4)
+        outTradeNum += phone.substring(from: 7, to: 11)
+    }
+    for _ in 0..<8 {
+        let index = Int(arc4random_uniform(UInt32(10)))
+        outTradeNum += "\(index)"
+    }
+    return outTradeNum
+}
 
